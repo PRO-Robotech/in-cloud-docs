@@ -1,0 +1,102 @@
+---
+id: cilium-main
+---
+
+1)Для того, чтобы изменения в `ciliumpodippool` вступили в силу, нужно либо перезапустить оператор, либо пересоздать `ciliumpodippool`
+
+```bash
+kubectl get ciliumpodippool default | \
+  grep -v -e "creationTimestamp" -e "generation" -e "resourceVersion" -e "uid" > \
+  cpipp_default.yaml
+
+kubectl delete -f cpipp_default.yaml
+
+kubectl apply -f cpipp_default.yaml
+```
+
+2)После того как пул будет пересоздан, все новые адреса для `ciliumnode` будут выделяться с префиксом `/32`.
+
+3)Чтобы посмотреть текущие выданные пулы, можно воспользоваться командой:
+
+```bash
+POOLN=default ; \
+  kubectl get ciliumnodes -o \
+  custom-columns='NAME:.metadata.name,IPPools:.spec.ipam.pools.allocated[?(@.pool=="'$POOLN'")],ADDR:.spec.addresses[?(@.type=="CiliumInternalIP")].ip,ADDR2:.spec.health.ipv4'
+```
+
+В столбцах `ADDR` и `ADDR2` указаны служебные IP адреса выделенные из первой назначенной на ноду подсети из дефолтного пула. Нельзя удалять с ноды подсеть с указанными адресами - это может привести к ошибкам.
+
+4)Чтобы освободить какую-нибудь подсеть, выполните следующие действия:
+
+4.1) Определите ноду, с которой хотите удалить подсеть. Например, на ноде `in-cloud-k8s-sandbox-test-csko-1-default-nf56t-mdtbd-74pgq` две подсети `10.5.120.128/27` `10.5.120.32/27` и служебные адреса `10.5.120.154` `10.5.120.131`.
+
+4.2)Необходимо закордонить ноду:
+
+```bash
+export NN=in-cloud-k8s-sandbox-test-csko-1-default-nf56t-mdtbd-74pgq
+
+kubectl cordon $NN
+```
+
+4.3)Определить подсеть, в которой меньше запущенных подов:
+
+```bash
+kubectl get pod -o wide -A --field-selector spec.nodeName=$NN | \
+  awk '{print $(NF-3)" "$1" "$2}'|column -t | sort
+```
+
+Будет выведен список подов с сортировкой по IP адресам. Подсчитываем, в какой подсети меньше подов.
+
+4.4)Удаляем поды из выбранной подсети
+
+4.5)Редактируем выбранную `ciliumnode` `in-cloud-k8s-sandbox-test-csko-1-default-nf56t-mdtbd-74pgq`. Сокращаем реквест до значения "меньше либо равное `30`", и удаляем строку с выбранной подсетью:
+
+```bash
+kubectl edit ciliumnode $NN
+```
+
+> Пример в редакторе:
+
+```bash
+apiVersion: cilium.io/v2
+kind: CiliumNode
+metadata:
+...
+spec:
+...
+  ipam:
+    pools:
+      allocated:
+      - cidrs:
+        - 10.5.120.128/27
+        - 10.5.120.32/27 #Эту строку удаляем
+        pool: default
+      requested:
+      - needed:
+          ipv4-addrs: 34 #Например на 30
+        pool: default
+...
+```
+
+4.6)Раскордониваем ноду
+
+```bash
+kubectl uncordon $NN
+```
+
+4.7)Проверяем, что пул освобожден. Если какой-то ноде не хватало адресов, она должна получить новые подсети, с маской `/32`.
+
+```bash
+POOLN=default ; \
+  kubectl get ciliumnodes -o \
+  custom-columns='NAME:.metadata.name,IPPools:.spec.ipam.pools.allocated[?(@.pool=="'$POOLN'")],ADDR:.spec.addresses[?(@.type=="CiliumInternalIP")].ip,ADDR2:.spec.health.ipv4'
+```
+
+Пример:
+
+```bash
+NAME                                                       IPPools                                                                   ADDR           ADDR2
+in-cloud-k8s-sandbox-test-csko-1-default-nf56t-mdtbd-74pgq   map[cidrs:[10.5.120.128/27 10.5.120.32/32 10.5.120.33/32] pool:default]   10.5.120.154   10.5.120.131
+```
+
+5)В некоторых случаях, если новая подсеть все равно выделяется с маской `/27`, может помочь перезапуск подов `cilium-operator`-а и `cilium-agent`-ов.

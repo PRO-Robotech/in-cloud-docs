@@ -1,0 +1,31 @@
+import UploadConfigsInit from '@site/docs/tech-docs/kubernetes/additional-setup/upload-configs/uploadConfigsInitComponent.mdx'
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+> Этот раздел посвящён загрузке актуальной конфигурации `kubeadm` и `kubelet` в кластер в виде `ConfigMap`. Такая конфигурация необходима для корректного выполнения команды `kubeadm join`, так как она используется при инициализации новых узлов управляющего контура.
+> Загрузка конфигурации централизует управление параметрами кластера и обеспечивает единообразие между всеми нодами, включая как `master`, так и `worker`-узлы.
+
+<Tabs groupId="phase">
+  <TabItem value="init">
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Загрузка конфигурации в кластер</p>
+          <p className="obligatory-note-orange">● Обязателен к применению</p>
+        </div>
+      </summary>
+      <UploadConfigsInit />
+    </details>
+  </TabItem>
+  <TabItem value="join">
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Загрузка конфигурации в кластер</p>
+          <p className="obligatory-note-orange">● Обязателен к применению</p>
+        </div>
+      </summary>
+      TODO
+    </details>
+  </TabItem>
+</Tabs>

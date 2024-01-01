@@ -1,0 +1,47 @@
+import dedent from 'ts-dedent'
+import CodeBlock from '@theme/CodeBlock'
+import { COMPONENTS_VERSION } from '@site/src/constants/kubernetes/componentsVersion'
+
+<CodeBlock language="bash">
+  {dedent`
+    journalctl -t containerd-installer
+  `}
+</CodeBlock>
+
+:::note Вывод команды
+
+<CodeBlock language="text">
+  {dedent`
+    ***** [INFO] Checking current containerd version...
+    ***** [INFO] Current: none, Target: ${COMPONENTS_VERSION.containerd.value}
+    ***** [INFO] Download URL: https://*******
+    ***** [INFO] Updating containerd to version ${COMPONENTS_VERSION.containerd.value}...
+    ***** [INFO] Working directory: /tmp/tmp.*****
+    ***** [INFO] Downloading containerd...
+    ***** [INFO] Downloading checksum file...
+    ***** [INFO] Verifying checksum...
+    ***** [INFO] Extracting files...
+    ***** [INFO] Installing binaries...
+    ***** [INFO] Containerd successfully updated to ${COMPONENTS_VERSION.containerd.value}.
+  `}
+</CodeBlock>
+:::
+
+<CodeBlock language="bash">
+  {dedent`
+    ls -la /usr/local/bin/ | grep -E "containerd|ctr"
+  `}
+</CodeBlock>
+
+:::note Вывод команды
+
+<CodeBlock language="bash">
+  {dedent`
+    -rwxr-xr-x  1 root root  54855296 Feb 18 15:12 containerd
+    -rwxr-xr-x  1 root root   7176192 Feb 18 15:12 containerd-shim
+    -rwxr-xr-x  1 root root   8884224 Feb 18 15:12 containerd-shim-containerd-v1
+    -rwxr-xr-x  1 root root  12169216 Feb 18 15:12 containerd-shim-containerd-v2
+    -rwxr-xr-x  1 root root  12169216 Feb 18 15:12 ctr
+  `}
+</CodeBlock>
+:::

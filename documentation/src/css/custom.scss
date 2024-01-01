@@ -1,0 +1,152 @@
+@use './infima';
+@use './layout';
+@use './header';
+@use './sidebar';
+@use './table-of-contents';
+@use './global';
+
+/* TODO dobry_kot для увеличения ширины боковой навигационной панели по заголовкам */
+
+.tableOfContents_bqdL {
+  position: sticky;
+  top: calc(var(--ifm-navbar-height) + 1rem);
+  max-height: calc(100vh - (var(--ifm-navbar-height) + 2rem));
+  margin-right: -30px;
+  overflow-y: auto; /* этот параметр исправляет в нужную сторону */
+}
+
+.custom-gray-block {
+  background-color: #55555573; /* светло-голубой */
+  border-radius: 6px;
+  padding: 10px;
+  margin-top: 10px;
+}
+
+.custom-gray-block summary {
+  color: #ffffff;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.custom-blue-block {
+  background-color: #544c9292; /* светло-голубой */
+  border-radius: 6px;
+  padding: 10px;
+  margin-top: 10px;
+}
+
+.custom-blue-block summary {
+  color: #ffffff;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* В styles.module.css */
+.headerContainer {
+  display: flex;
+  align-items: center; /* Выровнять по вертикали */
+  justify-content: space-between; /* Распределить элементы по краям */
+  position: relative;
+}
+
+.textContainer {
+  flex: 1;
+  margin-right: 30px;
+  margin-left: auto; /* Добавляем отступ слева для сдвига */
+}
+
+.logoContainer {
+  position: relative;
+  width: 100px;
+  height: auto;
+  margin-right: +200px;
+  margin-left: auto;
+  box-sizing: border-box;
+  padding: 0px 0px 0px 0px; /* сверху, справа, снизу, слева */
+}
+
+.logo {
+  padding: 20px; /* внутренние отступы вокруг логотипа */
+  max-width: 270%; /* ограничить размер внутри контейнера */
+  height: auto;
+  border-radius: 2px;
+  box-shadow: 0 4px 10px rgba(255, 255, 255, 0.2);
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.logoContainer:hover .logo {
+  transform: translateY(-2px); /* Поднимаем логотип при наведении */
+  box-shadow: 0 8px 20px rgba(255, 255, 255, 0.3); /* Увеличиваем тень при наведении */
+}
+
+/* Контейнер для текста и логотипа */
+.text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+/* Стили для заголовка in-cloud */
+.header-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  margin-bottom: -42px; /* Убираем отступ между логотипом и текстом */
+}
+
+/* Стили для подзаголовка */
+.subheading {
+  font-size: 1.3rem;
+  color: gray;
+  margin-top: 0; /* Убираем отступ сверху */
+  margin-bottom: 10; /* Убираем лишний отступ снизу */
+  font-weight: normal;
+  margin-right: 0px;
+  margin-left: +225px; /* Сдвигаем логотип влево */
+}
+
+/* Стили для логотипа */
+.logo2 {
+  padding: 10px;
+  width: 120px; /* Устанавливаем фиксированный размер логотипа */
+  height: 120px; /* Устанавливаем фиксированную высоту для круглой формы */
+  object-fit: contain; /* Убедитесь, что изображение сохраняет пропорции */
+  margin-right: 10px; /* Уменьшаем отступ между логотипом и текстом */
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease; /* Плавный переход для эффектов */
+  border-radius: 50%; /* Логотип круглый */
+
+  /* Начальная подсветка */
+  box-shadow: 0 0 8px 2px rgba(255, 255, 255, 0.5); /* Легкое свечение по контуру */
+}
+
+/* Эффект при наведении на логотип */
+.logo2:hover {
+  transform: scale(1.1); /* Увеличиваем размер при наведении */
+  box-shadow: 0 0 10px 3px rgba(255, 255, 255, 0.8); /* Усиленное свечение при наведении */
+}
+
+.obligatory-note-orange {
+  // position: absolute;
+  // right: 0;
+  color: orange;
+  font-weight: bold;
+  font-size: 15px;
+  margin-bottom: 0;
+  margin-top: 0px;
+}
+
+.obligatory-note-green {
+  // position: absolute;
+  // right: 0;
+  color: rgb(0, 171, 43);
+  font-weight: bold;
+  font-size: 15px;
+  margin-top: 0px;
+}

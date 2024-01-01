@@ -1,0 +1,22 @@
+---
+id: phases
+---
+
+import TabItem          from '@theme/TabItem'
+import Tabs             from '@theme/Tabs'
+import PhaseKubeadmInit from '@site/docs/tech-docs/kubernetes/components/kubeadm/phases/phaseKubeadmInit.mdx'
+import PhaseKubeadmJoin from '@site/docs/tech-docs/kubernetes/components/kubeadm/phases/phaseKubeadmJoin.mdx'
+
+# 5.2.2.1. Фазы Kubeadm
+
+> **Прежде чем начать настройку кластера, надо разобраться какие этапы использует Kubeadm при инициализации ноды.**
+
+<Tabs>
+    <TabItem value='kubeadm init'>
+        <PhaseKubeadmInit />
+    </TabItem>
+
+    <TabItem value='kubeadm join'>
+        <PhaseKubeadmJoin />
+    </TabItem>
+</Tabs>

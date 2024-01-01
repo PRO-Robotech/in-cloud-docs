@@ -1,0 +1,48 @@
+name: documentation
+
+on:
+  push:
+    branches:
+      - '*'
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    name: Deploy to GitHub Pages
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./documentation
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependency
+        run: npm install
+
+      - name: Build documentation
+        env:
+          BASEURL:  "/"
+          Docusaurus_GIT_API_URL_STAR: https://api.github.com/repos/PRO-Robotech/in-cloud-docs
+          Docusaurus_GIT_API_URL_TAG: https://api.github.com/repos/PRO-Robotech/in-cloud-docs/tags
+          Docusaurus_GIT_URL: https://github.com/PRO-Robotech/in-cloud-docs
+          URL:    "http://example.com"
+          TITLE: ""
+          DOC_INCLUDE_CURRENT_VERSION: false
+        run: |
+          npm run build
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./documentation/build
+          user_name: gh-pages-bot
+          user_email: gh-pages-bot@bot.com

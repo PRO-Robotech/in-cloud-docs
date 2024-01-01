@@ -1,0 +1,9 @@
+build/
+node_modules/
+*.woff
+*.ico
+*.png
+*.mdx
+*.svg
+*.jpg
+.history

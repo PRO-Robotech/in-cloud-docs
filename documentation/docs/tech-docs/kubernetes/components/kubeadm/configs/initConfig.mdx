@@ -1,0 +1,171 @@
+
+import dedent                   from 'ts-dedent'
+
+import CodeBlock                from '@theme/CodeBlock'
+import {ETCD_ARGS}              from '@site/src/constants/kubernetes/etcdArgs'
+import {KUBE_API_ARGS}          from '@site/src/constants/kubernetes/kubeAPIArgs'
+import { CUSTOM_VALUE }         from '@site/src/constants/kubernetes/customValue'
+import { COMPONENTS_VERSION }   from '@site/src/constants/kubernetes/componentsVersion'
+import { KUBEADM_COFNIG_DATA } from '@site/src/constants/kubernetes/kubeadmConfigData'
+import {KUBERNETES_ETCD_API_ARGS} from '@site/src/constants/kubernetes/kubernetesArgs'
+import {KUBERNETES_KUBE_API_ARGS} from '@site/src/constants/kubernetes/kubernetesArgs'
+import {KUBERNETES_KUBE_CONTROLLER_MANAGER_ARGS} from '@site/src/constants/kubernetes/kubernetesArgs'
+import {KUBERNETES_KUBE_SCHEDULER_ARGS} from '@site/src/constants/kubernetes/kubernetesArgs'
+
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+<details>
+<summary>Конфигурация Kubeadm для инициализации кластера</summary>
+<Tabs groupId="install-type">
+
+    <TabItem value='Bash'>
+      <h4>Переменные окружения для шаблона конфигурационного файла</h4>
+      <CodeBlock language="bash">
+        {dedent`
+          export CLUSTER_NAME='${CUSTOM_VALUE.clusterName.value}'
+          export BASE_DOMAIN='${CUSTOM_VALUE.kubernetesBaseDomain.value}'
+          export FULL_HOST_NAME=${CUSTOM_VALUE.virtualMachineFullName.value}
+          export INTERNAL_API=api.${CUSTOM_VALUE.kubernetesClusterExternalDomain.value}
+          export MACHINE_LOCAL_ADDRESS=${CUSTOM_VALUE.virtualMachineLocalAddress.value}
+          export ETCD_INITIAL_CLUSTER="$\{FULL_HOST_NAME}=${ETCD_ARGS.initialAdvertisePeerUrls.value}"
+          export CERTIFICATE_UPLOAD_KEY=0c00c2fd5c67c37656c00d78a9d7e1f2eb794ef8e4fc3e2a4b532eb14323cd59
+        `}
+      </CodeBlock>
+
+      <h4>Конфигурационный файл kubeadm для инициализации кластера</h4>
+      :::warning
+      Обратите внимание, что в данном конфигурационном файле этап установки ```addons``` игнорируется.
+      :::
+      <CodeBlock>
+        {dedent`
+          cat <<EOF > ${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
+          ---
+          apiVersion: kubeadm.k8s.io/v1beta3
+          kind: InitConfiguration
+          skipPhases:
+            - addon
+          bootstrapTokens:
+            - token: "fjt9ex.lwzqgdlvoxtqk4yw"
+              description: "kubeadm bootstrap token"
+              ttl: "24h"
+          certificateKey: $\{CERTIFICATE_UPLOAD_KEY}
+          nodeRegistration:
+            imagePullPolicy: IfNotPresent
+            taints: null
+            kubeletExtraArgs:
+              # -> Включить, если управляете состоянием через Cloud Controller Manager
+              # cloud-provider: external
+              config: "${CUSTOM_VALUE.kuberneteKubeletFolderPath.value}/config-custom.yaml"
+              cluster-domain: ${CUSTOM_VALUE.kubernetesClusterDomain.value}
+              cluster-dns: "${CUSTOM_VALUE.kubernetesDNSAddress.value}"
+            # name: '$\{FULL_HOST_NAME}'
+            ignorePreflightErrors:
+              # > При поэтапной сборке кластера, а не выполнении единой команды,
+              # > необходимо указать исключения в параметре ignorePreflightErrors,
+              # > чтобы команда kubeadm init phase preflight выполнялась без препятствий.
+              # > Для этого в nodeRegistration добавляются следующие исключения:
+              - FileAvailable--etc-kubernetes-manifests-kube-apiserver.yaml
+              - FileAvailable--etc-kubernetes-manifests-kube-controller-manager.yaml
+              - FileAvailable--etc-kubernetes-manifests-kube-scheduler.yaml
+              - FileAvailable--etc-kubernetes-manifests-etcd.yaml
+          ---
+          ${KUBEADM_COFNIG_DATA.data.value}
+          EOF
+        `}
+      </CodeBlock>
+    </TabItem>
+
+    <TabItem value='Cloud-init'>
+
+      <CodeBlock>
+        {dedent`
+          - path: ${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
+            owner: root:root
+            permissions: '0644'
+            content: |
+              ---
+              apiVersion: kubeadm.k8s.io/v1beta3
+              kind: InitConfiguration
+              skipPhases:
+                - addon
+              bootstrapTokens:
+                - token: "fjt9ex.lwzqgdlvoxtqk4yw"
+                  description: "kubeadm bootstrap token"
+                  ttl: "24h"
+              certificateKey: 0c00c2fd5c67c37656c00d78a9d7e1f2eb794ef8e4fc3e2a4b532eb14323cd59
+              nodeRegistration:
+                imagePullPolicy: IfNotPresent
+                taints: null
+                kubeletExtraArgs:
+                  cloud-provider: external
+                  config: "${CUSTOM_VALUE.kuberneteKubeletFolderPath.value}/config-custom.yaml"
+                  cluster-domain: cluster.local
+                  cluster-dns: "${CUSTOM_VALUE.kubernetesDNSAddress.value}"
+
+                # TODO тут нужно подумать, нужно ли определение имени узла при инициализации УК
+                # name: {{ local_hostname }}
+
+                ignorePreflightErrors:
+                  # > При поэтапной сборке кластера, а не выполнении единой команды,
+                  # > необходимо указать исключения в параметре ignorePreflightErrors,
+                  # > чтобы команда kubeadm init phase preflight выполнялась без препятствий.
+                  # > Для этого в nodeRegistration добавляются следующие исключения:
+                  - FileAvailable--etc-kubernetes-manifests-kube-apiserver.yaml
+                  - FileAvailable--etc-kubernetes-manifests-kube-controller-manager.yaml
+                  - FileAvailable--etc-kubernetes-manifests-kube-scheduler.yaml
+                  - FileAvailable--etc-kubernetes-manifests-etcd.yaml
+              ---
+              apiVersion: kubeadm.k8s.io/v1beta3
+              kind: ClusterConfiguration
+
+              clusterName: "${CUSTOM_VALUE.clusterName.value}"
+              # TODO нужно указывать VIP LoadBalancer
+              controlPlaneEndpoint: {{ local_hostname }}:${KUBE_API_ARGS.securePort.value}
+
+              imageRepository: "${CUSTOM_VALUE.baseDockerRegistry.value}"
+
+              networking:
+                serviceSubnet: ${CUSTOM_VALUE.kubernetesServiceCIDR.value}
+                dnsDomain: cluster.local
+              kubernetesVersion: ${COMPONENTS_VERSION.kubernetes.value}
+
+              dns: {}
+              etcd:
+                local:
+                  imageRepository: "${CUSTOM_VALUE.baseDockerRegistry.value}"
+                  dataDir: "/var/lib/etcd"
+                  extraArgs:
+                    ${KUBERNETES_ETCD_API_ARGS.data.value}
+                  peerCertSANs:
+                    - 127.0.0.1
+                  serverCertSANs:
+                    - 127.0.0.1
+
+              apiServer:
+                extraArgs:
+                  ${KUBERNETES_KUBE_API_ARGS.data.value}
+
+                extraVolumes:
+                - name: "k8s-audit"
+                  hostPath: "/var/log/kubernetes/audit/"
+                  mountPath: "/var/log/kubernetes/audit/"
+                  pathType: DirectoryOrCreate
+                certSANs:
+                  - "127.0.0.1"
+                timeoutForControlPlane: 4m0s
+
+              controllerManager:
+                extraArgs:
+                  cluster-name: "${CUSTOM_VALUE.clusterName.value}"
+                  ${KUBERNETES_KUBE_CONTROLLER_MANAGER_ARGS.data.value}
+
+              scheduler:
+                extraArgs:
+                  ${KUBERNETES_KUBE_SCHEDULER_ARGS.data.value}
+        `}
+        </CodeBlock>
+    </TabItem>
+</Tabs>
+
+</details>

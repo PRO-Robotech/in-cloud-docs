@@ -1,0 +1,48 @@
+---
+id: blackbox-exporter-setup
+---
+
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+import CodeBlock from '@theme/CodeBlock'
+import dedent from 'ts-dedent'
+
+# 5.5.3.2. Blackbox Exporter
+
+### 5.5.3.2.1. Подключение к мониторингу
+:::info
+Для подключения данного компонента к системе мониторинга необходимо настроить сбор метрик с использованием агента кластера, соответствующего вашему технологическому стеку. Ниже приведены варианты настройки.
+:::
+<Tabs>
+    <TabItem value='VictoriaMetrics'>
+        <CodeBlock language="bash">
+          {dedent`
+            ---
+            apiVersion: operator.victoriametrics.com/v1beta1
+            kind: VMProbe
+            metadata:
+              name: vmprobe-blackbox-exporter-http
+            spec:
+              jobName: blackbox-http-probe
+              vmProberSpec:
+                url: prometheus-blackbox-exporter.in-cloud-blackbox.svc:9115
+              module: http_2xx
+              targets:
+                staticConfig:
+                  targets:
+                    - "http://example.com/"
+              metricRelabelConfigs:
+                - source_labels: [instance]
+                  target_label: instance
+                  regex: "http://(.+)/(.*)"
+                  replacement: '${1}'
+                - source_labels: [job]
+                  target_label: job
+                  replacement: 'blackbox'
+              interval: 10s
+          `}
+        </CodeBlock>
+    </TabItem>
+</Tabs>
+
+### 5.5.3.2.2. Настройка сетевых политик

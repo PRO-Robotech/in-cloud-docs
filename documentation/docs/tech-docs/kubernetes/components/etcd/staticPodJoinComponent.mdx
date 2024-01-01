@@ -1,0 +1,228 @@
+import { CUSTOM_VALUE }           from '@site/src/constants/kubernetes/customValue'
+import { PORTS }                  from '@site/src/constants/kubernetes/ports'
+import { COMPONENTS_VERSION }     from '@site/src/constants/kubernetes/componentsVersion'
+import {ETCD_ARGS}                from '@site/src/constants/kubernetes/etcdArgs'
+
+import dedent                     from 'ts-dedent'
+import CodeBlock                  from '@theme/CodeBlock'
+import SecondaryMasterTabs from '@site/docs/tech-docs/kubernetes/setup-environments/secondaryMasters.mdx'
+
+
+<h4>Переменные окружния</h4>
+
+<SecondaryMasterTabs />
+
+<CodeBlock language="bash">
+  {dedent(`
+    export CLUSTER_NAME=${CUSTOM_VALUE.clusterName.value}
+    export BASE_DOMAIN=${CUSTOM_VALUE.kubernetesBaseDomain.value}
+    export MACHINE_LOCAL_ADDRESS=${CUSTOM_VALUE.virtualMachineLocalAddress.value}
+    export FULL_HOST_NAME=${CUSTOM_VALUE.virtualMachineFullName.value}
+
+    # Получаем список существующих etcd-нод
+    mapfile -t ETCD_PODS < <(kubectl get pods \\
+      --kubeconfig=/etc/kubernetes/admin.conf \\
+      -n kube-system -l component=etcd \\
+      -o jsonpath="{range .items[*]}{.metadata.name} {.status.podIP}{'\\n'}{end}")
+
+    ETCD_EXISTING_NODES=""
+    ETCD_ENDPOINTS=""
+
+    for entry in "\${ETCD_PODS[@]}"; do
+      read -r podname podip <<< "\$entry"
+      nodename="\${podname#etcd-}"
+      ETCD_EXISTING_NODES+="\${nodename}=https://\${podip}:2380,"
+      ETCD_ENDPOINTS+="https://\${podip}:2379,"
+    done
+
+    ETCD_EXISTING_NODES="\${ETCD_EXISTING_NODES%,}"
+    ETCD_ENDPOINTS="\${ETCD_ENDPOINTS%,}"
+
+    # Добавляем текущий узел, если его нет в списке
+    ETCD_CURRENT_NODE="\${FULL_HOST_NAME}=https://\${MACHINE_LOCAL_ADDRESS}:2380"
+
+    if [[ "\$ETCD_EXISTING_NODES" == *"\${FULL_HOST_NAME}="* ]]; then
+      export ETCD_INITIAL_CLUSTER="\$ETCD_EXISTING_NODES"
+    else
+      if [[ -n "\$ETCD_EXISTING_NODES" ]]; then
+        export ETCD_INITIAL_CLUSTER="\${ETCD_EXISTING_NODES},\${ETCD_CURRENT_NODE}"
+      else
+        export ETCD_INITIAL_CLUSTER="\${ETCD_CURRENT_NODE}"
+      fi
+    fi
+
+    export ETCD_ENDPOINTS
+  `)}
+</CodeBlock>
+
+
+
+
+<h4>Рабочая директория</h4>
+
+<CodeBlock language="bash">
+    {dedent`
+        mkdir -p ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/manifests
+    `}
+</CodeBlock>
+
+<details className="custom-blue-block">
+<summary>Static Pod ETCD</summary>
+
+<h4>Генерация манифеста</h4>
+
+<CodeBlock language="bash">
+  {dedent`
+    cat <<EOF > ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/manifests/etcd.yaml
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      annotations:
+        kubeadm.kubernetes.io/etcd.advertise-client-urls: https://$\{MACHINE_LOCAL_ADDRESS}:${PORTS.etcdServer.portNumber}
+      creationTimestamp: null
+      labels:
+        component: etcd
+        tier: control-plane
+      name: etcd
+      namespace: kube-system
+    spec:
+      containers:
+      - command:
+        - etcd
+        - --advertise-client-urls=${ETCD_ARGS.advertiseClientUrls.value}
+        - --auto-compaction-retention=${ETCD_ARGS.autoCompactionRetention.value}
+        - --cert-file=${ETCD_ARGS.certFile.value}
+        - --client-cert-auth=${ETCD_ARGS.clientCertAuth.value}
+        - --data-dir=${ETCD_ARGS.dataDir.value}
+        - --election-timeout=${ETCD_ARGS.electionTimeout.value}
+        - --experimental-initial-corrupt-check=true
+        - --experimental-watch-progress-notify-interval=5s
+        - --heartbeat-interval=${ETCD_ARGS.heartbeatInterval.value}
+        - --initial-advertise-peer-urls=${ETCD_ARGS.initialAdvertisePeerUrls.value}
+        - --initial-cluster=${ETCD_ARGS.initialCluster.value}
+        - --initial-cluster-state=existing
+        - --key-file=${ETCD_ARGS.keyFile.value}
+        - --listen-client-urls=${ETCD_ARGS.listenClientUrls.value}
+        - --listen-metrics-urls=${ETCD_ARGS.listenMetricsUrls.value}
+        - --listen-peer-urls=${ETCD_ARGS.listenPeerUrls.value}
+        - --logger=${ETCD_ARGS.logger.value}
+        - --max-snapshots=${ETCD_ARGS.maxSnapshots.value}
+        - --max-wals=${ETCD_ARGS.maxWals.value}
+        - --metrics=${ETCD_ARGS.metrics.value}
+        - --name=${ETCD_ARGS.name.value}
+        - --peer-cert-file=${ETCD_ARGS.peerCertFile.value}
+        - --peer-client-cert-auth=${ETCD_ARGS.peerClientCertAuth.value}
+        - --peer-key-file=${ETCD_ARGS.peerKeyFile.value}
+        - --peer-trusted-ca-file=${ETCD_ARGS.peerTrustedCAFile.value}
+        - --snapshot-count=${ETCD_ARGS.snapshotCount.value}
+        - --quota-backend-bytes=${ETCD_ARGS.quotaBackendBytes.value}
+        - --trusted-ca-file=${ETCD_ARGS.trustedCAFile.value}
+        image: ${CUSTOM_VALUE.baseDockerRegistry.value}/etcd:${COMPONENTS_VERSION.etcd.value}
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 8
+          httpGet:
+            host: 0.0.0.0
+            path: /health?exclude=NOSPACE&serializable=true
+            port: ${PORTS.etcdMetricServer.portNumber}
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 15
+        name: etcd
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        startupProbe:
+          failureThreshold: 24
+          httpGet:
+            host: 0.0.0.0
+            path: /health?serializable=false
+            port: ${PORTS.etcdMetricServer.portNumber}
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 15
+        volumeMounts:
+        - mountPath: /var/lib/etcd
+          name: etcd-data
+        - mountPath: ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/pki/etcd
+          name: etcd-certs
+      hostNetwork: true
+      priority: 2000001000
+      priorityClassName: system-node-critical
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      volumes:
+      - hostPath:
+          path: ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/pki/etcd
+          type: DirectoryOrCreate
+        name: etcd-certs
+      - hostPath:
+          path: /var/lib/etcd
+          type: DirectoryOrCreate
+        name: etcd-data
+    status: {}
+    EOF
+  `}
+</CodeBlock>
+</details>
+
+<details className="custom-blue-block">
+<summary>Расширение ETCD кластера</summary>
+
+<h4>Добавление узла</h4>
+
+> Объявляем alias для `etcdctl` с использованием нужных сертификатов
+
+<CodeBlock language="bash">
+  {dedent`
+    alias etcdctl='etcdctl \\
+      --cert=/etc/kubernetes/pki/etcd/peer.crt \\
+      --key=/etc/kubernetes/pki/etcd/peer.key \\
+      --cacert=/etc/kubernetes/pki/etcd/ca.crt'
+  `}
+</CodeBlock>
+
+> Функция для получения списка client-URL'ов всех текущих членов кластера
+
+<CodeBlock language="bash">
+  {dedent`
+    etcdctlMembers() {
+      etcdctl member list \\
+        --endpoints="$ETCD_ENDPOINTS" \\
+        --write-out=json | jq \\
+        -r '[.members[].clientURLs[]] | join(",")'
+    }
+  `}
+</CodeBlock>
+
+> Просмотр текущих членов кворума
+
+<CodeBlock language="bash">
+  {dedent`
+    etcdctl \\
+      --endpoints=$(etcdctlMembers) member list \\
+      -w table
+  `}
+</CodeBlock>
+
+> Добавление нового узла в ETCD кластер
+
+<CodeBlock language="bash">
+  {dedent`
+    etcdctl \\
+      --endpoints=$(etcdctlMembers) \\
+      member add $\{FULL_HOST_NAME} \\
+      --peer-urls=https://$\{MACHINE_LOCAL_ADDRESS}:2380
+  `}
+</CodeBlock>
+
+:::danger ВНИМАНИЕ!
+  После добавления второй ноды в ETCD-кворум, первый мастер может стать **недоступным**, пока второй узел ETCD не будет запущен.
+  Обязательно запустите ETCD на новой ноде с помощью `kubelet` (см. шаг ниже), прежде чем продолжать.
+:::
+
+</details>

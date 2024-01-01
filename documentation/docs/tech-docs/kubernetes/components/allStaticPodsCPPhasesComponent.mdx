@@ -1,0 +1,30 @@
+import AllStaticPodsCPInitComponent from '@site/docs/tech-docs/kubernetes/components/allStaticPodsCPInitComponent.mdx'
+import AllStaticPodsCPJoinComponent from '@site/docs/tech-docs/kubernetes/components/allStaticPodsCPJoinComponent.mdx'
+
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+<Tabs groupId="phase">
+  <TabItem value="init">
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Настройка Static Pods</p>
+          <p className="obligatory-note-orange">● Обязателен к применению</p>
+        </div>
+      </summary>
+      <AllStaticPodsCPInitComponent />
+    </details>
+  </TabItem>
+  <TabItem value="join">
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Настройка Static Pods</p>
+          <p className="obligatory-note-orange">● Обязателен к применению</p>
+        </div>
+      </summary>
+      <AllStaticPodsCPJoinComponent />
+    </details>
+  </TabItem>
+</Tabs>

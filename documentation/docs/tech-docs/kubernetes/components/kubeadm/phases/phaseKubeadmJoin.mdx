@@ -1,0 +1,65 @@
+
+```
+root@compute:/home/user# kubeadm join phase
+
+*****
+Available Commands:
+  control-plane-join    Join a machine as a control plane instance
+  control-plane-prepare Prepare the machine for serving a control plane
+  kubelet-start         Write kubelet settings, certificates and (re)start the kubelet
+  preflight             Run join pre-flight checks
+  wait-control-plane    EXPERIMENTAL: Wait for the control plane to start
+```
+
+<div className="scrollable-x">
+  <table>
+    <thead>
+      <tr>
+        <th>Путь</th>
+        <th>Комментарий</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>`$control-plane-join.all`</td>
+        <td>Устанавливает все дополнения</td>
+      </tr>
+      <tr>
+        <td>`$control-plane-join.etcd`</td>
+        <td>Устанавливает CoreDNS</td>
+      </tr>
+      <tr>
+        <td>`$control-plane-join.mark-control-plane`</td>
+        <td>Устанавливает kube-proxy</td>
+      </tr>
+      <tr>
+        <td>`$control-plane-prepare.all`</td>
+        <td>Генерирует все сертификаты</td>
+      </tr>
+      <tr>
+        <td>`$control-plane-prepare.control-plane`</td>
+        <td>Генерирует сертификат для Kubernetes API</td>
+      </tr>
+      <tr>
+        <td>`$control-plane-prepare.certs`</td>
+        <td>Генерирует сертификат apiserver для доступа к etcd</td>
+      </tr>
+      <tr>
+        <td>`$control-plane-prepare.download-certs`</td>
+        <td>Генерирует сертификат apiserver для подключения к kubelet</td>
+      </tr>
+      <tr>
+        <td>`$control-plane-prepare.kubeconfig`</td>
+        <td>Генерирует самоподписанный Kubernetes ЦА</td>
+      </tr>
+      <tr>
+        <td>`$kubelet-start` </td>
+        <td>Генерирует самоподписанный ETCD ЦА</td>
+      </tr>
+      <tr>
+        <td>`$preflight`</td>
+        <td>Генерирует самоподписанный Front Proxy ЦА</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

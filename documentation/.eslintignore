@@ -1,0 +1,7 @@
+**/build/*
+**/static/*
+**/node_modules/*
+plugins/*
+babel.config.js
+docusaurus.config.ts
+!src/

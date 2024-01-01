@@ -1,0 +1,40 @@
+import CodeBlock                from '@theme/CodeBlock'
+import {KUBE_API_ARGS}          from '@site/src/constants/kubernetes/kubeAPIArgs'
+import dedent                   from 'ts-dedent'
+import { CUSTOM_VALUE }         from '@site/src/constants/kubernetes/customValue'
+import { PORTS }                from '@site/src/constants/kubernetes/ports'
+
+
+<details>
+<summary>Конфигурация Kubeadm для подключения мастер ноды к кластеру</summary>
+
+  <h4>Переменные окружения для шаблона конфигурационного файла</h4>
+  <CodeBlock language="bash">
+      {dedent`
+        export MACHINE_LOCAL_ADDRESS="${CUSTOM_VALUE.virtualMachineLocalAddress.value}"
+        export CLUSTER_API_ENDPOINT=api.${CUSTOM_VALUE.clusterName.value}.${CUSTOM_VALUE.kubernetesBaseDomain.value}
+        export CERTIFICATE_UPLOAD_KEY=0c00c2fd5c67c37656c00d78a9d7e1f2eb794ef8e4fc3e2a4b532eb14323cd59
+
+      `}
+  </CodeBlock>
+
+  <h4>Конфигурационный файл kubeadm для подключения мастера к кластеру</h4>
+  <CodeBlock>
+    {dedent`cat <<EOF > ${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
+      ---
+      apiVersion: kubeadm.k8s.io/v1beta3
+      controlPlane:
+        localAPIEndpoint:
+          advertiseAddress: $\{MACHINE_LOCAL_ADDRESS}
+          bindPort: ${PORTS.kubeAPIServer.portNumber}
+        certificateKey: $\{CERTIFICATE_UPLOAD_KEY}
+      discovery:
+        bootstrapToken:
+          apiServerEndpoint: $\{CLUSTER_API_ENDPOINT}:${KUBE_API_ARGS.securePort.value}
+          unsafeSkipCAVerification: true
+          token: "fjt9ex.lwzqgdlvoxtqk4yw"
+      kind: JoinConfiguration
+      EOF
+    `}
+  </CodeBlock>
+</details>

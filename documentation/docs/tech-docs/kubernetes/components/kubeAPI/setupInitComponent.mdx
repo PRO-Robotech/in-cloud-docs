@@ -1,0 +1,21 @@
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+import StaticPodHW from '@site/docs/tech-docs/kubernetes/components/kubeAPI/staticPod.mdx'
+import StaticPodKubeadm from '@site/docs/tech-docs/kubernetes/components/kubeAPI/kubeadm.mdx'
+
+:::warning Обратите внимание!
+Данный раздел является опциональным и предназначен только для случаев, когда необходимо настроить данный ресурс отдельно от остальных.
+:::
+
+<Tabs groupId="install-type">
+
+    <TabItem value='HardWay'>
+        <StaticPodHW />
+    </TabItem>
+
+    <TabItem value='Kubeadm'>
+        <StaticPodKubeadm />
+    </TabItem>
+
+</Tabs>

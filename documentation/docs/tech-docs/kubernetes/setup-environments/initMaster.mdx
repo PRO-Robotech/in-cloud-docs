@@ -1,0 +1,16 @@
+
+import TabItem  from '@theme/TabItem'
+import Tabs     from '@theme/Tabs'
+
+import dedent                     from 'ts-dedent'
+import CodeBlock                  from '@theme/CodeBlock'
+
+<Tabs>
+    <TabItem value='master-1'>
+      <CodeBlock language="bash">
+        {dedent`
+          export HOST_NAME=master-1
+        `}
+      </CodeBlock>
+    </TabItem>
+</Tabs>

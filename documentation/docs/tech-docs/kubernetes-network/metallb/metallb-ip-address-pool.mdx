@@ -1,0 +1,34 @@
+import CodeBlock  from '@theme/CodeBlock'
+import dedent     from 'ts-dedent'
+
+:::warning
+Важно: При создании ресурса IPAddressPool необходимо правильно указать следующие атрибуты:
+
+1. `spec.addresses`: список IP-адресов, которые будут назначены пространству имен клиента.
+
+2. `spec.avoidBuggyIPs`: значение должно быть установлено в false, так как без этого невозможно использовать IP-адреса, оканчивающиеся на 0 и 255.
+
+3. `spec.serviceAllocation.namespaceSelectors`: метка должна указывать на существующую метку пространства имен клиента.
+
+4. `metadata.namespace`: ресурс `IPAddressPool` должен находиться в том же Namespace, что и metallb.
+:::
+<CodeBlock language="yaml">
+  {dedent`
+    ---
+    apiVersion: metallb.io/v1beta1
+    kind: IPAddressPool
+    metadata:
+      name: in-cloud-sandbox-instance
+      namespace: in-cloud-metallb
+    spec:
+      addresses:
+      - 10.84.131.22/32
+      autoAssign: true
+      avoidBuggyIPs: false
+      serviceAllocation:
+        namespaceSelectors:
+          - matchLabels:
+              kubernetes.io/metadata.name: in-cloud-sandbox-instance
+        priority: 50
+  `}
+</CodeBlock>

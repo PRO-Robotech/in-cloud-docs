@@ -1,0 +1,18 @@
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+import Openssl from '@site/docs/tech-docs/etcd/certificates/components/etcd/etcdClient/openssl.mdx'
+import Kubeadm from '@site/docs/tech-docs/etcd/certificates/components/etcd/etcdClient/kubeadm.mdx'
+
+import StatusOpenssl from '@site/docs/tech-docs/etcd/certificates/components/etcd/etcdClient/checks/statusOpenssl.mdx'
+import StatusKubeadm from '@site/docs/tech-docs/etcd/certificates/components/etcd/etcdClient/checks/statusKubeadm.mdx'
+
+<Tabs groupId="install-type">
+  <TabItem value="HardWay">
+    <Openssl />
+    <StatusOpenssl />
+  </TabItem>
+  <TabItem value="Kubeadm">
+    <Kubeadm />
+    <StatusKubeadm />
+  </TabItem>
+</Tabs>

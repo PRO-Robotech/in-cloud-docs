@@ -1,0 +1,35 @@
+import dedent                   from 'ts-dedent'
+import CodeBlock                from '@theme/CodeBlock'
+
+<CodeBlock language="bash">
+  {dedent`
+    ls -la /etc/crictl.yaml
+  `}
+</CodeBlock>
+
+:::note Вывод команды
+<CodeBlock language="bash">
+  {dedent`
+    -rw-r--r-- 1 root root 61 Feb 18 15:18 /etc/crictl.yaml
+  `}
+</CodeBlock>
+:::
+
+
+<CodeBlock language="bash">
+  {dedent`
+    crictl info \|
+      jq '.status.conditions[] \|
+      select(.type=="RuntimeReady") \|
+      .status'
+
+  `}
+</CodeBlock>
+
+:::note Вывод команды
+<CodeBlock language="bash">
+  {dedent`
+    true
+  `}
+</CodeBlock>
+:::

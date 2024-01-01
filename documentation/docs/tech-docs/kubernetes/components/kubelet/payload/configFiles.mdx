@@ -1,0 +1,40 @@
+import dedent from 'ts-dedent'
+import CodeBlock from '@theme/CodeBlock'
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+import { KUBELET_COFNIG_DATA } from '@site/src/constants/kubernetes/kubeletConfigData'
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+<Tabs groupId="install-type">
+
+    <TabItem value='Bash'>
+      <h4>Кастомный конфигурационный файл kubelet</h4>
+
+      <CodeBlock language="bash">
+      {dedent`
+        cat <<EOF > ${CUSTOM_VALUE.kuberneteKubeletFolderPath.value}/config-custom.yaml
+        ---
+        ${KUBELET_COFNIG_DATA.data.value}
+        EOF
+      `}
+      </CodeBlock>
+
+    </TabItem>
+
+    <TabItem value='Cloud-init'>
+
+      <h4>Кастомный конфигурационный файл kubelet</h4>
+      <CodeBlock language="bash">
+      {dedent`
+        - path: ${CUSTOM_VALUE.kuberneteKubeletFolderPath.value}/config-custom.yaml
+          owner: root:root
+          permissions: '0644'
+          content: |
+            ---
+            ${KUBELET_COFNIG_DATA.data.value}
+      `}
+      </CodeBlock>
+
+    </TabItem>
+
+</Tabs>

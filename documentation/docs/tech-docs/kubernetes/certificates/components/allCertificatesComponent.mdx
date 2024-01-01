@@ -1,0 +1,38 @@
+import AllCertificatesAppsInitComponent from '@site/docs/tech-docs/kubernetes/certificates/components/allCertificatesAppsInitComponent.mdx'
+import AllCertificatesAppsJoinComponent from '@site/docs/tech-docs/kubernetes/certificates/components/allCertificatesAppsJoinComponent.mdx'
+
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+> Сертификаты — это цифровые документы, удостоверяющие подлинность компонентов внутри кластера Kubernetes. Они обеспечивают **безопасную коммуникацию, аутентификацию и шифрование** при взаимодействии между узлами, компонентами управления и пользователями.
+
+> Все сертификаты создаются на основе **инфраструктуры открытых ключей (PKI)** и содержат информацию о владельце, сроке действия и удостоверяющем центре (CA), выдавшем сертификат.
+
+> В этом разделе формируются сертификаты, необходимые для различных компонентов Kubernetes (API-сервер, kubelet, controller-manager и др.).
+
+
+<Tabs groupId="phase">
+  <TabItem value="init" label="Init">
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Создание сертификатов приложений</p>
+          <p className="obligatory-note-orange">● Обязателен к применению</p>
+        </div>
+      </summary>
+      <AllCertificatesAppsInitComponent />
+    </details>
+  </TabItem>
+
+  <TabItem value="join" label="Join">
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Создание сертификатов приложений</p>
+          <p className="obligatory-note-orange">● Обязателен к применению</p>
+        </div>
+      </summary>
+      <AllCertificatesAppsJoinComponent />
+    </details>
+  </TabItem>
+</Tabs>

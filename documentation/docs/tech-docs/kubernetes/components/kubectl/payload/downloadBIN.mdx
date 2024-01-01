@@ -1,0 +1,137 @@
+import dedent                   from 'ts-dedent'
+import CodeBlock                from '@theme/CodeBlock'
+
+import { KUBECTL_DOWNLOAD_SCRIPT }     from '@site/docs/tech-docs/kubernetes/components/kubectl/scripts/download-script.sh'
+
+import { DOWNLOAD_VERSION }     from '@site/src/constants/kubernetes/downloads'
+import { COMPONENTS_VERSION }   from '@site/src/constants/kubernetes/componentsVersion'
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+<Tabs groupId="install-type">
+
+    <TabItem value='Bash'>
+        <h4>Создание рабочих директорий</h4>
+        <CodeBlock language="bash">
+            {dedent`
+              mkdir -p /etc/default/kubectl
+            `}
+        </CodeBlock>
+
+        <h4>Переменные окружения</h4>
+        <CodeBlock language="bash">
+            {dedent`
+              cat <<EOF > /etc/default/kubectl/download.env
+              COMPONENT_VERSION="${COMPONENTS_VERSION.kubernetes.value}"
+              REPOSITORY="${DOWNLOAD_VERSION.kubectl.baseUrl}"
+              EOF
+            `}
+        </CodeBlock>
+
+        <h4>Инструкция загрузки</h4>
+        <CodeBlock language="bash">
+          {dedent`
+            cat <<"EOF" > /etc/default/kubectl/download-script.sh
+            ${KUBECTL_DOWNLOAD_SCRIPT.data.value}
+            EOF
+          `}
+        </CodeBlock>
+
+        <h4>Настройка прав</h4>
+        <CodeBlock language="bash">
+          {dedent`
+            chmod +x /etc/default/kubectl/download-script.sh
+          `}
+        </CodeBlock>
+
+        <h4>Сервис загрузки</h4>
+        <CodeBlock language="bash">
+          {dedent`
+            cat <<EOF > /usr/lib/systemd/system/kubectl-install.service
+            [Unit]
+            Description=Install and update kubectl
+            After=network.target
+            Wants=network-online.target
+
+            [Service]
+            Type=oneshot
+            EnvironmentFile=-/etc/default/kubectl/download.env
+            ExecStart=/bin/bash -c "/etc/default/kubectl/download-script.sh"
+            RemainAfterExit=yes
+
+            [Install]
+            WantedBy=multi-user.target
+            EOF
+          `}
+        </CodeBlock>
+
+        <h4>Загрузка</h4>
+        <CodeBlock language="bash">
+          {dedent`
+            systemctl enable kubectl-install.service
+            systemctl start kubectl-install.service
+          `}
+        </CodeBlock>
+
+    </TabItem>
+
+    <TabItem value='Cloud-init'>
+
+        <h4>Переменные окружения</h4>
+        <CodeBlock language="yaml">
+          {dedent`
+            - path: /etc/default/kubectl/download.env
+              owner: root:root
+              permissions: '0644'
+              content: |
+                COMPONENT_VERSION="${COMPONENTS_VERSION.kubernetes.value}"
+                REPOSITORY="${DOWNLOAD_VERSION.kubectl.baseUrl}"
+          `}
+        </CodeBlock>
+
+        <h4>Инструкция загрузки/Настройка прав</h4>
+        <CodeBlock language="yaml">
+          {dedent`
+            - path: /etc/default/kubectl/download-script.sh
+              owner: root:root
+              permissions: '0755'
+              content: |
+                ${KUBECTL_DOWNLOAD_SCRIPT.data.value}
+          `}
+        </CodeBlock>
+
+        <h4>Сервис загрузки</h4>
+        <CodeBlock language="yaml">
+          {dedent`
+            - path: /usr/lib/systemd/system/kubectl-install.service
+              owner: root:root
+              permissions: '0644'
+              content: |
+                [Unit]
+                Description=Install and update kubectl
+                After=network.target
+                Wants=network-online.target
+
+                [Service]
+                Type=oneshot
+                EnvironmentFile=-/etc/default/kubectl/download.env
+                ExecStart=/bin/bash -c "/etc/default/kubectl/download-script.sh"
+                RemainAfterExit=yes
+
+                [Install]
+                WantedBy=multi-user.target
+          `}
+        </CodeBlock>
+
+
+        <h4>Загрузка</h4>
+        <CodeBlock language="bash">
+          {dedent`
+            - systemctl enable kubectl-install.service
+            - systemctl start kubectl-install.service
+          `}
+        </CodeBlock>
+
+    </TabItem>
+
+</Tabs>

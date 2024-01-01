@@ -1,0 +1,131 @@
+---
+id: backups
+toc_min_heading_level: 2
+toc_max_heading_level: 2
+---
+
+import TabItem                        from '@theme/TabItem'
+import Tabs                           from '@theme/Tabs'
+import dedent                         from 'ts-dedent'
+import CodeBlock                      from '@theme/CodeBlock'
+import { ETCD_ARGS }                  from '@site/src/constants/kubernetes/etcdArgs'
+import { CodeAndInputDownloadCreds }  from '@site/src/components/commonBlocks'
+
+
+# 5.1.5.5. Бекапы
+
+>Бекап - резервная копия обслуживаемой системы.
+
+## 5.1.5.5.1. Как работает
+
+Выделим два способа создания резервной копии: Создание снимка БД с использованием встроенных утилит и сохранение `data-dir` базы данных напрямую из файловой системы. Подробнее ниже.
+
+## 5.1.5.5.2. Предпосылки
+
+В ETCD кластере, используемом для работы Kube-API, часто могут содержаться важные данные, восстановить которые будет невозможно в случае потери данной БД. К примеру, в случае с in-cloud, это могут быть данные о проектах и инстансах в них.
+По этой причине, даже в случае аварийного восстановления кластера, необходимо попытаться восстановить данные и при возможности создать резервную копию.
+
+Таким образом бекап следует делать в следующих ситуациях:
+
+- Регулярно по расписанию с использованием специальных утилит или собственных скриптов.
+
+- Перед проведением технических работ с кластером. Чтобы иметь возможность восстановить прежнее состояние кластера в случае ошибок.
+
+- В случае инцидента, перед проведением восстановительных работ.
+
+## 5.1.5.5.3. Инструкция
+
+### 5.1.5.5.3.1. Создание мгновенных снимков
+
+<Tabs groupId="etcd-alias">
+  <TabItem value='etcdctl'>
+    Рекомендуемый метод. Позволяет сохранить дамп за пределами контейнера ETCD.
+
+    <CodeBlock language="bash">{`etcdctl --endpoints=\${ENDPOINTS} snapshot save PATH_TO_SAVE/backup.db`}</CodeBlock>
+
+  </TabItem>
+  <TabItem value='ectl'>
+    Рабочий вариант, когда под рукой нет исполняемого файла. Дамп будет сохранен внутри
+    файловой системы контейнера. Поэтому рекомендуется указывать путь в примонтированные области.
+
+    <CodeBlock language="bash">
+        {dedent`
+            ectl snapshot save ${ETCD_ARGS.dataDir.value}/backup.db
+        `}
+    </CodeBlock>
+
+    :::note
+    В кластерах in-cloud файлы ETCD по умолчанию хранятся на мастере по одноименному пути <code>{ETCD_ARGS.dataDir.value}</code>
+    :::
+
+    Теперь на хостовой машине вы можете скопировать файл <code>{ETCD_ARGS.dataDir.value}/backup.db</code>
+    в другое место, чтобы сохранить его. Например:
+
+    <CodeBlock language="bash">
+        {`
+            cp ${ETCD_ARGS.dataDir.value}/backup.db ${ETCD_ARGS.workDir.value}/backup.db
+        `}
+    </CodeBlock>
+
+  </TabItem>
+  <TabItem value='nectl'>
+    Рабочий вариант, когда под рукой нет исполняемого файла. Дамп будет сохранен внутри
+    файловой системы контейнера. Поэтому рекомендуется указывать путь в примонтированные области.
+
+    <CodeBlock language="bash">
+        {dedent`
+            nectl snapshot save ${ETCD_ARGS.dataDir.value}/backup.db
+        `}
+    </CodeBlock>
+
+    :::note
+    В кластерах in-cloud файлы ETCD по умолчанию хранятся на мастере по одноименному пути <code>{ETCD_ARGS.dataDir.value}</code>
+    :::
+
+    Теперь на хостовой машине вы можете скопировать файл <code>{ETCD_ARGS.dataDir.value}/backup.db</code>
+    в другое место, чтобы сохранить его. Например:
+
+    <CodeBlock language="bash">
+        {`
+            cp ${ETCD_ARGS.dataDir.value}/backup.db ${ETCD_ARGS.workDir.value}/backup.db
+        `}
+    </CodeBlock>
+
+  </TabItem>
+  <TabItem value='kectl'>
+    Вариант удаленного создания и сохранения резервной копии.
+
+    :::note Обратите внимание!
+    Для использования функции `dlbackupfile` необходимо задать переменные `SEARCH_NAMESPACE`, `SEARCH_POD_NAME`, `NODE_USERNAME` и `BACKUP_FILE`
+    А также alias-ы `kectlflagsearch`, `kgdatadirpath`, `kectl` и `dlbackupfile`
+    :::
+
+    <CodeAndInputDownloadCreds />
+
+    <CodeBlock language="bash">{`kectl snapshot save $(kgdatadirpath $SEARCH_NAMESPACE $SEARCH_POD_NAME )/$BACKUP_FILE`}</CodeBlock>
+
+    Теперь вы можете скопировать файл с хостовой машины в текущую директорию используя данную команду:
+
+    <CodeBlock language="bash">
+      {dedent`
+        dlbackupfile $SEARCH_NAMESPACE $SEARCH_POD_NAME $NODE_USERNAME $BACKUP_FILE
+      `}
+    </CodeBlock>
+  </TabItem>
+</Tabs>
+
+*****
+
+### 5.1.5.5.3.2. Создание резервной копии файлов БД
+
+Основной файл БД ETCD кластера расположен по пути <code>{ETCD_ARGS.dbPath.value}</code>
+
+В случае, если нет возможности для создания мгновенного снимка, можно создать резервную копию
+файла БД <code>{ETCD_ARGS.dbPath.value}</code> или целиком дериктории <code>{ETCD_ARGS.dataDir.value}</code>:
+
+<CodeBlock language="bash">
+    {dedent`
+        cp -r ${ETCD_ARGS.dbPath.value} ${ETCD_ARGS.workDir.value}/db
+        cp -r ${ETCD_ARGS.dataDir.value} ${ETCD_ARGS.workDir.value}/backup
+    `}
+</CodeBlock>

@@ -1,0 +1,28 @@
+import CodeBlock from '@theme/CodeBlock'
+import dedent from 'ts-dedent'
+
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+
+
+<details className="custom-blue-block">
+  <summary>Проверка готовности сертификата</summary>
+  :::warning Обратите ВНИМАНИЕ!
+    Данная команда не способна отображать статус конкретного сертификата, только список доступных.
+  :::
+
+  <CodeBlock language="bash">
+    {dedent`
+      kubeadm certs check-expiration
+    `}
+  </CodeBlock>
+
+  :::note Вывод команды
+  <CodeBlock language="bash">
+    {dedent`
+      CERTIFICATE                EXPIRES                  RESIDUAL TIME   CERTIFICATE AUTHORITY   EXTERNALLY MANAGED
+      etcd-healthcheck-client    Oct 22, 2025 22:06 UTC   364d            etcd-ca                 no
+    `}
+  </CodeBlock>
+  :::
+
+</details>

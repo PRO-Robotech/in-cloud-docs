@@ -1,0 +1,37 @@
+---
+id: process-exporter-setup
+---
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+import CodeBlock from '@theme/CodeBlock'
+import dedent from 'ts-dedent'
+
+# 5.5.3.3. Process Exporter
+
+### 5.5.3.3.1. Подключение к мониторингу
+:::info
+Для подключения данного компонента к системе мониторинга необходимо настроить сбор метрик с использованием агента кластера, соответствующего вашему технологическому стеку. Ниже приведены варианты настройки.
+:::
+<Tabs>
+    <TabItem value='VictoriaMetrics'>
+        <CodeBlock language="bash">
+          {dedent`
+            ---
+            apiVersion: operator.victoriametrics.com/v1beta1
+            kind: VMServiceScrape
+            metadata:
+              name: "process-exporter"
+              namespace: in-cloud-monitoring-nodes
+            spec:
+              selector:
+                matchLabels:
+                  app: "prometheus-process-exporter"
+              endpoints:
+                - port: metrics
+          `}
+        </CodeBlock>
+    </TabItem>
+</Tabs>
+
+### 5.5.3.3.2. Настройка сетевых политик
+

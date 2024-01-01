@@ -1,0 +1,34 @@
+---
+id: metrics-server-testing
+---
+
+# 5.5.2.1.5. Metrics Server
+
+## Проверьте установку
+
+Чтобы убедиться, что `Metrics Server` установлен и работает, выполните следующую команду:
+
+```bash
+kubectl get pods -l app.kubernetes.io/name=metrics-server --namespace in-cloud-monitoring-metrics
+```
+
+Вы должны увидеть запущенные поды `Metrics Server`.
+```
+NAME                              READY   STATUS    RESTARTS   AGE
+metrics-server-6c65f6987f-v6djh   1/1     Running   0          18d
+```
+## Доступ к метрикам
+
+Чтобы получить доступ к метрикам, вам нужно получить IP-адрес или имя вашего пода `Metrics Server` и порт, на котором он работает (по умолчанию 10250). Вы можете сделать это с помощью:
+
+```bash
+kubectl get endpoints/metrics-server --namespace in-cloud-monitoring-metrics  -o json
+
+```
+Выберите нужный под, к примеру `metrics-server-6c65f6987f-v6djh` и запустите:
+
+```bash
+kubectl port-forward pod/metrics-server-6c65f6987f-v6djh 10250:10250 --namespace in-cloud-monitoring-metrics
+```
+
+Теперь вы можете перейти по адресу [https://localhost:10250/metrics](https://localhost:10250/metrics) в вашем веб-браузере, чтобы видеть метрики, собираемые `Metrics Server`.

@@ -1,0 +1,37 @@
+
+import CodeBlock        from '@theme/CodeBlock'
+import dedent           from 'ts-dedent'
+
+> После настройки сертификатов рекомендуется проверить их корректность с помощью `Kubeadm`
+
+<CodeBlock language="bash">
+  {dedent`
+    kubeadm certs check-expiration
+  `}
+</CodeBlock>
+
+:::warning
+
+<CodeBlock language="bash">
+  {dedent`
+    CERTIFICATE                EXPIRES                  RESIDUAL TIME   CERTIFICATE AUTHORITY   EXTERNALLY MANAGED
+    admin.conf                 Oct 22, 2025 22:06 UTC   364d            ca                      no
+    apiserver                  Oct 22, 2025 22:06 UTC   364d            ca                      no
+    apiserver-etcd-client      Oct 22, 2025 22:06 UTC   364d            etcd-ca                 no
+    apiserver-kubelet-client   Oct 22, 2025 22:06 UTC   364d            ca                      no
+    controller-manager.conf    Oct 22, 2025 22:06 UTC   364d            ca                      no
+    etcd-healthcheck-client    Oct 22, 2025 22:06 UTC   364d            etcd-ca                 no
+    etcd-peer                  Oct 22, 2025 22:06 UTC   364d            etcd-ca                 no
+    etcd-server                Oct 22, 2025 22:06 UTC   364d            etcd-ca                 no
+    front-proxy-client         Oct 22, 2025 22:06 UTC   364d            front-proxy-ca          no
+    scheduler.conf             Oct 22, 2025 22:06 UTC   364d            ca                      no
+    super-admin.conf           Oct 22, 2025 22:06 UTC   364d            ca                      no
+
+    CERTIFICATE AUTHORITY   EXPIRES                  RESIDUAL TIME   EXTERNALLY MANAGED
+    ca                      Oct 20, 2034 22:04 UTC   9y              no
+    etcd-ca                 Oct 20, 2034 22:04 UTC   9y              no
+    front-proxy-ca          Oct 20, 2034 22:04 UTC   9y              no
+  `}
+</CodeBlock>
+
+:::

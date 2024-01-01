@@ -1,0 +1,24 @@
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+
+import CodeBlock        from '@theme/CodeBlock'
+import dedent           from 'ts-dedent'
+
+<h4>Генерация сертификатов</h4>
+<CodeBlock language="bash">
+  {dedent`
+    kubeadm init phase certs etcd-healthcheck-client \\
+      --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
+  `}
+</CodeBlock>
+
+:::note
+После выполнения команды мы получаем следующий вывод.
+
+<CodeBlock language="bash">
+  {dedent`
+    #### Генерация сертификатов
+    [certs] Generating "etcd/healthcheck-client" certificate and key
+  `}
+</CodeBlock>
+
+:::

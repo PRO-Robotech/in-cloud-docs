@@ -1,0 +1,21 @@
+import dedent from 'ts-dedent'
+import CodeBlock from '@theme/CodeBlock'
+
+<CodeBlock language="bash">
+  {dedent`
+        crictl ps -a
+    `}
+</CodeBlock>
+
+:::note
+Если в выводе нет ошибок, то crictl настроен корректно и смотрит на правильный endpoint.
+
+<CodeBlock language="bash">
+    {dedent`
+        root@compute:/home/user# crictl ps -a
+        CONTAINER           IMAGE               CREATED             STATE               NAME                ATTEMPT             POD ID              POD
+
+    `}
+
+</CodeBlock>
+:::

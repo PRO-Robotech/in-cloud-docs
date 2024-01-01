@@ -1,0 +1,33 @@
+---
+id: about
+---
+
+import BrowserOnly from '@docusaurus/BrowserOnly' // Импортируем компонент BrowserOnly
+import Link from '@docusaurus/Link'
+import { getBasePrefix } from '@site/src/utils/getBasePrefix'
+
+# 0. Введение
+
+<div className="headerContainer">
+  <div className="textContainer">
+    <p>
+      Данная документация предназначена для инженеров, занимающихся эксплуатацией, развертыванием и настройкой платформы
+      in-cloud, построенной на базе Kubernetes. Основной целью документации является предоставление детализированных
+      инструкций по созданию, настройке и управлению платформой in-cloud, а также описание ключевых компонентов и
+      механизмов работы контрольной плоскости (Control Plane), использующих Kubernetes как основу.
+    </p>
+    <p>
+      Платформа in-cloud является решением с открытым исходным кодом, предназначенным для автоматизации развертывания,
+      масштабирования и управления контейнеризованными приложениями в облачной инфраструктуре...
+    </p>
+  </div>
+  <div className="logoContainer">
+    <BrowserOnly>
+      {() => (
+        <Link to={`${getBasePrefix()}tech-docs/kubernetes/about`}>
+          <img src={`${getBasePrefix()}img/paws2.svg`} alt="Logo" className="logo" />
+        </Link>
+      )}
+    </BrowserOnly>
+  </div>
+</div>

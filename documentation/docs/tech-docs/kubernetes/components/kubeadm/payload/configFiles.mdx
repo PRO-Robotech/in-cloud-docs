@@ -1,0 +1,29 @@
+import JoinConfig from '@site/docs/tech-docs/kubernetes/components/kubeadm/configs/joinConfig.mdx'
+import InitConfig from '@site/docs/tech-docs/kubernetes/components/kubeadm/configs/initConfig.mdx'
+import InitMasterTabs from '@site/docs/tech-docs/kubernetes/setup-environments/initMaster.mdx'
+import SecondaryMasterTabs from '@site/docs/tech-docs/kubernetes/setup-environments/secondaryMasters.mdx'
+
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+
+<Tabs groupId="phase">
+
+  <TabItem value="init">
+    <details open className="custom-gray-block">
+      <summary>Конфигурация Kubeadm</summary>
+      <InitMasterTabs />
+      <InitConfig />
+    </details>
+  </TabItem>
+
+  <TabItem value="join">
+    <details open className="custom-gray-block">
+      <summary>Конфигурация Kubeadm</summary>
+      <SecondaryMasterTabs />
+      <JoinConfig />
+    </details>
+
+  </TabItem>
+
+</Tabs>

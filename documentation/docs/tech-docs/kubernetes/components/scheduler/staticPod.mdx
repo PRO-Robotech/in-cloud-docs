@@ -1,0 +1,137 @@
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+import { PORTS } from '@site/src/constants/kubernetes/ports'
+import { COMPONENTS_VERSION } from '@site/src/constants/kubernetes/componentsVersion'
+
+import CodeBlock from '@theme/CodeBlock'
+import dedent from 'ts-dedent'
+import {KUBE_SCHEDULER_ARGS} from '@site/src/constants/kubernetes/kubeSchedulerArgs'
+
+
+<h4>Рабочая директория</h4>
+<CodeBlock language="bash">
+  {dedent`
+    mkdir -p ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/manifests
+  `}
+</CodeBlock>
+
+<details className="custom-blue-block">
+<summary>Static Pod Kube-Schedulerr</summary>
+
+<h4>Генерация манифеста</h4>
+<CodeBlock language="bash">
+  {dedent`
+    cat <<EOF > ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/manifests/kube-scheduler.yaml
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      creationTimestamp: null
+      labels:
+        component: kube-scheduler
+        tier: control-plane
+      name: kube-scheduler
+      namespace: kube-system
+    spec:
+      containers:
+      - command:
+        - kube-scheduler
+        - --authentication-kubeconfig=${KUBE_SCHEDULER_ARGS.authenticationKubeconfig.value}
+        - --authentication-skip-lookup=${KUBE_SCHEDULER_ARGS.authenticationSkipLookup.value}
+        - --authentication-token-webhook-cache-ttl=${KUBE_SCHEDULER_ARGS.authenticationTokenWebhookCacheTtl.value}
+        - --authentication-tolerate-lookup-failure=${KUBE_SCHEDULER_ARGS.authenticationTolerateLookupFailure.value}
+        - --authorization-always-allow-paths=${KUBE_SCHEDULER_ARGS.authorizationAlwaysAllowPaths.value}
+        - --authorization-kubeconfig=${KUBE_SCHEDULER_ARGS.authorizationKubeconfig.value}
+        - --authorization-webhook-cache-authorized-ttl=${KUBE_SCHEDULER_ARGS.authorizationWebhookCacheAuthorizedTtl.value}
+        - --authorization-webhook-cache-unauthorized-ttl=${KUBE_SCHEDULER_ARGS.authorizationWebhookCacheUnauthorizedTtl.value}
+        - --bind-address=${KUBE_SCHEDULER_ARGS.bindAddress.value}
+        - --client-ca-file=${KUBE_SCHEDULER_ARGS.clientCaFile.value}
+        - --contention-profiling=${KUBE_SCHEDULER_ARGS.contentionProfiling.value}
+        - --help=${KUBE_SCHEDULER_ARGS.help.value}
+        - --http2-max-streams-per-connection=${KUBE_SCHEDULER_ARGS.http2MaxStreamsPerConnection.value}
+        - --kube-api-burst=${KUBE_SCHEDULER_ARGS.kubeApiBurst.value}
+        - --kube-api-content-type=${KUBE_SCHEDULER_ARGS.kubeApiContentType.value}
+        - --kube-api-qps=${KUBE_SCHEDULER_ARGS.kubeApiQps.value}
+        - --kubeconfig=${KUBE_SCHEDULER_ARGS.kubeconfig.value}
+        - --leader-elect=${KUBE_SCHEDULER_ARGS.leaderElect.value}
+        - --leader-elect-lease-duration=${KUBE_SCHEDULER_ARGS.leaderElectLeaseDuration.value}
+        - --leader-elect-renew-deadline=${KUBE_SCHEDULER_ARGS.leaderElectRenewDeadline.value}
+        - --leader-elect-resource-lock=${KUBE_SCHEDULER_ARGS.leaderElectResourceLock.value}
+        - --leader-elect-resource-name=${KUBE_SCHEDULER_ARGS.leaderElectResourceName.value}
+        - --leader-elect-resource-namespace=${KUBE_SCHEDULER_ARGS.leaderElectResourceNamespace.value}
+        - --leader-elect-retry-period=${KUBE_SCHEDULER_ARGS.leaderElectRetryPeriod.value}
+        - --log-flush-frequency=${KUBE_SCHEDULER_ARGS.logFlushFrequency.value}
+        - --log-json-info-buffer-size=${KUBE_SCHEDULER_ARGS.logJsonInfoBufferSize.value}
+        - --log-json-split-stream=${KUBE_SCHEDULER_ARGS.logJsonSplitStream.value}
+        - --log-text-info-buffer-size=${KUBE_SCHEDULER_ARGS.logTextInfoBufferSize.value}
+        - --log-text-split-stream=${KUBE_SCHEDULER_ARGS.logTextSplitStream.value}
+        - --logging-format=${KUBE_SCHEDULER_ARGS.loggingFormat.value}
+        - --permit-address-sharing=${KUBE_SCHEDULER_ARGS.permitAddressSharing.value}
+        - --permit-port-sharing=${KUBE_SCHEDULER_ARGS.permitPortSharing.value}
+        - --pod-max-in-unschedulable-pods-duration=${KUBE_SCHEDULER_ARGS.podMaxInUnschedulablePodsDuration.value}
+        - --profiling=${KUBE_SCHEDULER_ARGS.profiling.value}
+        - --requestheader-extra-headers-prefix=${KUBE_SCHEDULER_ARGS.requestheaderExtraHeadersPrefix.value}
+        - --requestheader-group-headers=${KUBE_SCHEDULER_ARGS.requestheaderGroupHeaders.value}
+        - --requestheader-username-headers=${KUBE_SCHEDULER_ARGS.requestheaderUsernameHeaders.value}
+        - --secure-port=${KUBE_SCHEDULER_ARGS.securePort.value}
+        - --v=${KUBE_SCHEDULER_ARGS.v.value}
+        - --version=${KUBE_SCHEDULER_ARGS.version.value}
+      # - --allow-metric-labels=${KUBE_SCHEDULER_ARGS.allowMetricLabels.value}
+      # - --allow-metric-labels-manifest=${KUBE_SCHEDULER_ARGS.allowMetricLabelsManifest.value}
+      # - --cert-dir=${KUBE_SCHEDULER_ARGS.certDir.value}
+      # - --config=${KUBE_SCHEDULER_ARGS.config.value}
+      # - --disabled-metrics=${KUBE_SCHEDULER_ARGS.disabledMetrics.value}
+      # - --feature-gates=${KUBE_SCHEDULER_ARGS.featureGates.value}
+      # - --master=${KUBE_SCHEDULER_ARGS.master.value}
+      # - --requestheader-allowed-names=${KUBE_SCHEDULER_ARGS.requestheaderAllowedNames.value}
+      # - --requestheader-client-ca-file=${KUBE_SCHEDULER_ARGS.requestheaderClientCaFile.value}
+      # - --show-hidden-metrics-for-version=${KUBE_SCHEDULER_ARGS.showHiddenMetricsForVersion.value}
+      # - --tls-cert-file=${KUBE_SCHEDULER_ARGS.tlsCertFile.value}
+      # - --tls-cipher-suites=${KUBE_SCHEDULER_ARGS.tlsCipherSuites.value}
+      # - --tls-min-version=${KUBE_SCHEDULER_ARGS.tlsMinVersion.value}
+      # - --tls-private-key-file=${KUBE_SCHEDULER_ARGS.tlsPrivateKeyFile.value}
+      # - --tls-sni-cert-key=${KUBE_SCHEDULER_ARGS.tlsSniCertKey.value}
+      # - --vmodule=${KUBE_SCHEDULER_ARGS.vmodule.value}
+      # - --write-config-to=${KUBE_SCHEDULER_ARGS.writeConfigTo.value}
+        image: ${CUSTOM_VALUE.baseDockerRegistry.value}/kube-scheduler:${COMPONENTS_VERSION.kubernetes.value}
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 8
+          httpGet:
+            path: /healthz
+            port: ${PORTS.kubeScheduler.portNumber}
+            scheme: HTTPS
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 15
+        name: kube-scheduler
+        resources:
+          requests:
+            cpu: 100m
+        startupProbe:
+          failureThreshold: 24
+          httpGet:
+            path: /healthz
+            port: ${PORTS.kubeScheduler.portNumber}
+            scheme: HTTPS
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 15
+        volumeMounts:
+        - mountPath: ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/scheduler.conf
+          name: kubeconfig
+          readOnly: true
+      hostNetwork: true
+      priority: 2000001000
+      priorityClassName: system-node-critical
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      volumes:
+      - hostPath:
+          path: ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/scheduler.conf
+          type: FileOrCreate
+        name: kubeconfig
+    status: {}
+    EOF
+  `}
+</CodeBlock>
+</details>

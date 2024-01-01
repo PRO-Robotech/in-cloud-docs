@@ -1,0 +1,57 @@
+import { FancyboxImage } from '@site/src/components/commonBlocks/FancyboxImage'
+
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+import { getBasePrefix } from '@site/src/utils/getBasePrefix'
+
+> В данном разделе рассматриваются правила использования сертификатов в кластере Kubernetes: какие компоненты задействуют сертификаты, кем они подписываются и как осуществляется проверка подлинности.
+
+<Tabs groupId="group">
+
+  <TabItem value="masters">
+    <figure style={{ textAlign: 'center', display: 'contents' }}>
+      <FancyboxImage
+        src={`${getBasePrefix()}img/certificates/certificates-masters.svg`}
+        style={{ width: '100%', maxWidth: 'none' }}
+      />
+      <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
+        Базовая структура сертификатов
+      </figcaption>
+    </figure>
+
+    <figure style={{ textAlign: 'center', display: 'contents' }}>
+      <FancyboxImage
+        src={`${getBasePrefix()}img/certificates/certificates-masters-transport.svg`}
+        style={{ width: '100%', maxWidth: 'none' }}
+      />
+      <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
+        Сетевое взаимодействие с использованием сертификатов
+      </figcaption>
+    </figure>
+
+  </TabItem>
+
+  <TabItem value="workers">
+    <figure style={{ textAlign: 'center', display: 'contents' }}>
+      <FancyboxImage
+        src={`${getBasePrefix()}img/certificates/certificates-workers.svg`}
+        style={{ width: '100%', maxWidth: 'none' }}
+      />
+      <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
+        Базовая структура сертификатов
+      </figcaption>
+    </figure>
+
+    <figure style={{ textAlign: 'center', display: 'contents' }}>
+      <FancyboxImage
+        src={`${getBasePrefix()}img/certificates/certificates-workers-transport.svg`}
+        style={{ width: '100%', maxWidth: 'none' }}
+      />
+      <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
+        Сетевое взаимодействие с использованием сертификатов
+      </figcaption>
+    </figure>
+
+  </TabItem>
+
+</Tabs>

@@ -1,0 +1,14 @@
+import SysctlsComponent from '@site/docs/tech-docs/kubernetes/setup-environments/sysctls/sysctlsComponent.mdx'
+
+> Этот раздел посвящён настройке параметров ядра с помощью sysctl, необходимых для сетевой работы Kubernetes.
+> Вносятся изменения, обеспечивающие маршрутизацию трафика между подами и корректную работу iptables для мостов. Эти параметры обязательны для включения пересылки IP-пакетов и фильтрации сетевых потоков в кластере.
+
+<details>
+  <summary>
+    <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+      <p style={{ marginBottom: 0 }}>Настройка параметров sysctl</p>
+      <p className="obligatory-note-orange">● Обязателен к применению</p>
+    </div>
+  </summary>
+  <SysctlsComponent />
+</details>

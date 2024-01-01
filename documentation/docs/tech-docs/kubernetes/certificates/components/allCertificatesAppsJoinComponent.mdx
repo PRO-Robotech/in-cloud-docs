@@ -1,0 +1,191 @@
+import KubeletServerOpenssl from '@site/docs/tech-docs/kubernetes/certificates/components/kubelet/kubeletServer/openssl.mdx'
+import KubeletServerOpensslStatus from '@site/docs/tech-docs/kubernetes/certificates/components/kubelet/kubeletServer/checks/statusOpenssl.mdx'
+import KubeletServerKubeadmStatus from '@site/docs/tech-docs/kubernetes/certificates/components/kubelet/kubeletServer/checks/statusKubeadm.mdx'
+
+import KubeAPIETCDClientOpenssl from '@site/docs/tech-docs/kubernetes/certificates/components/kubeAPI/etcdClient/openssl.mdx'
+import KubeAPIETCDClientOpensslStatus from '@site/docs/tech-docs/kubernetes/certificates/components/kubeAPI/etcdClient/checks/statusOpenssl.mdx'
+import KubeAPIETCDClientKubeadmStatus from '@site/docs/tech-docs/kubernetes/certificates/components/kubeAPI/etcdClient/checks/statusKubeadm.mdx'
+
+import KubeletClientOpenssl from '@site/docs/tech-docs/kubernetes/certificates/components/kubeAPI/kubeletClient/openssl.mdx'
+import KubeletClientOpensslStatus from '@site/docs/tech-docs/kubernetes/certificates/components/kubeAPI/kubeletClient/checks/statusOpenssl.mdx'
+import KubeletClientKubeadmStatus from '@site/docs/tech-docs/kubernetes/certificates/components/kubeAPI/kubeletClient/checks/statusKubeadm.mdx'
+
+import FrontProxyClientOpenssl from '@site/docs/tech-docs/kubernetes/certificates/components/kubeAPI/frontProxyClient/openssl.mdx'
+import FrontProxyClientOpensslStatus from '@site/docs/tech-docs/kubernetes/certificates/components/kubeAPI/frontProxyClient/checks/statusOpenssl.mdx'
+import FrontProxyClientKubeadmStatus from '@site/docs/tech-docs/kubernetes/certificates/components/kubeAPI/frontProxyClient/checks/statusKubeadm.mdx'
+
+import KubeAPIServerOpenssl from '@site/docs/tech-docs/kubernetes/certificates/components/kubeAPI/kubeAPIServer/openssl.mdx'
+import KubeAPIServerOpensslStatus from '@site/docs/tech-docs/kubernetes/certificates/components/kubeAPI/kubeAPIServer/checks/statusOpenssl.mdx'
+import KubeAPIServerKubeadmStatus from '@site/docs/tech-docs/kubernetes/certificates/components/kubeAPI/kubeAPIServer/checks/statusKubeadm.mdx'
+
+import ETCDClientETCDOpenssl from '@site/docs/tech-docs/etcd/certificates/components/etcd/etcdClient/openssl.mdx'
+import ETCDClientETCDOpensslStatus from '@site/docs/tech-docs/etcd/certificates/components/etcd/etcdClient/checks/statusOpenssl.mdx'
+import ETCDClientETCDKubeadmStatus from '@site/docs/tech-docs/etcd/certificates/components/etcd/etcdClient/checks/statusKubeadm.mdx'
+
+import ETCDServerOpenssl from '@site/docs/tech-docs/etcd/certificates/components/etcd/etcdServer/openssl.mdx'
+import ETCDServerOpensslStatus from '@site/docs/tech-docs/etcd/certificates/components/etcd/etcdServer/checks/statusOpenssl.mdx'
+import ETCDServerKubeadmStatus from '@site/docs/tech-docs/etcd/certificates/components/etcd/etcdServer/checks/statusKubeadm.mdx'
+
+import ETCDPeerOpenssl from '@site/docs/tech-docs/etcd/certificates/components/etcd/etcdPeer/openssl.mdx'
+import ETCDPeerOpensslStatus from '@site/docs/tech-docs/etcd/certificates/components/etcd/etcdPeer/checks/statusOpenssl.mdx'
+import ETCDPeerKubeadmStatus from '@site/docs/tech-docs/etcd/certificates/components/etcd/etcdPeer/checks/statusKubeadm.mdx'
+
+import JoinAllCertsGen from '@site/docs/tech-docs/kubernetes/certificates/components/_kubeadm/joinAllCertsGen.mdx'
+
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+<Tabs groupId="Certs-APPS">
+  <TabItem value="Kubelet Server">
+    <details open className="custom-gray-block">
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Kubelet server</p>
+        </div>
+      </summary>
+      <Tabs groupId="install-type">
+        <TabItem value="HardWay">
+          <KubeletServerOpenssl />
+          <KubeletServerOpensslStatus />
+        </TabItem>
+        <TabItem value="Kubeadm">
+          <JoinAllCertsGen />
+          <KubeletServerKubeadmStatus />
+        </TabItem>
+      </Tabs>
+    </details>
+  </TabItem>
+  <TabItem value="API -> Etcd">
+    <details open className="custom-gray-block">
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>K8S-API client > Etcd server</p>
+        </div>
+      </summary>
+      <Tabs groupId="install-type">
+        <TabItem value="HardWay">
+          <KubeAPIETCDClientOpenssl />
+          <KubeAPIETCDClientOpensslStatus />
+        </TabItem>
+        <TabItem value="Kubeadm">
+          <JoinAllCertsGen />
+          <KubeAPIETCDClientKubeadmStatus />
+        </TabItem>
+      </Tabs>
+    </details>
+  </TabItem>
+  <TabItem value="API -> Kubelet">
+    <details open className="custom-gray-block">
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>K8S-API client > Kubelet server</p>
+        </div>
+      </summary>
+      <Tabs groupId="install-type">
+        <TabItem value="HardWay">
+          <KubeletClientOpenssl />
+          <KubeletClientOpensslStatus />
+        </TabItem>
+        <TabItem value="Kubeadm">
+          <JoinAllCertsGen />
+          <KubeletClientKubeadmStatus />
+        </TabItem>
+      </Tabs>
+    </details>
+  </TabItem>
+  <TabItem value="API Server">
+    <details open className="custom-gray-block">
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>K8S-API server</p>
+        </div>
+      </summary>
+      <Tabs groupId="install-type">
+        <TabItem value="HardWay">
+          <KubeAPIServerOpenssl />
+          <KubeAPIServerOpensslStatus />
+        </TabItem>
+        <TabItem value="Kubeadm">
+          <JoinAllCertsGen />
+          <KubeAPIServerKubeadmStatus />
+        </TabItem>
+      </Tabs>
+    </details>
+  </TabItem>
+  <TabItem value="Proxy -> API">
+    <details open className="custom-gray-block">
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>FrontProxy client > K8S-API</p>
+        </div>
+      </summary>
+      <Tabs groupId="install-type">
+        <TabItem value="HardWay">
+          <FrontProxyClientOpenssl />
+          <FrontProxyClientOpensslStatus />
+        </TabItem>
+        <TabItem value="Kubeadm">
+          <JoinAllCertsGen />
+          <FrontProxyClientKubeadmStatus />
+        </TabItem>
+      </Tabs>
+    </details>
+  </TabItem>
+  <TabItem value="Etcd Client">
+    <details open className="custom-gray-block">
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Etcd client > Etcd</p>
+        </div>
+      </summary>
+      <Tabs groupId="install-type">
+        <TabItem value="HardWay">
+          <ETCDClientETCDOpenssl />
+          <ETCDClientETCDOpensslStatus />
+        </TabItem>
+        <TabItem value="Kubeadm">
+          <JoinAllCertsGen />
+          <ETCDClientETCDKubeadmStatus />
+        </TabItem>
+      </Tabs>
+    </details>
+  </TabItem>
+  <TabItem value="Etcd Server">
+    <details open className="custom-gray-block">
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Etcd server</p>
+        </div>
+      </summary>
+      <Tabs groupId="install-type">
+        <TabItem value="HardWay">
+          <ETCDServerOpenssl />
+          <ETCDServerOpensslStatus />
+        </TabItem>
+        <TabItem value="Kubeadm">
+          <JoinAllCertsGen />
+          <ETCDServerKubeadmStatus />
+        </TabItem>
+      </Tabs>
+    </details>
+  </TabItem>
+  <TabItem value="Etcd Peer">
+    <details open className="custom-gray-block">
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Etcd peer > Etcd</p>
+        </div>
+      </summary>
+      <Tabs groupId="install-type">
+        <TabItem value="HardWay">
+          <ETCDPeerOpenssl />
+          <ETCDPeerOpensslStatus />
+        </TabItem>
+        <TabItem value="Kubeadm">
+          <JoinAllCertsGen />
+          <ETCDPeerKubeadmStatus />
+        </TabItem>
+      </Tabs>
+    </details>
+  </TabItem>
+</Tabs>

@@ -1,0 +1,94 @@
+import { CERTIFICATES } from '@site/src/constants/kubernetes/certs'
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+
+import CodeBlock from '@theme/CodeBlock'
+import dedent from 'ts-dedent'
+
+<h4>Переменные окружения</h4>
+<CodeBlock language="bash">
+  {dedent`
+    export CLUSTER_NAME=${CUSTOM_VALUE.clusterName.value}
+    export BASE_DOMAIN=${CUSTOM_VALUE.kubernetesBaseDomain.value}
+    export FULL_HOST_NAME=${CUSTOM_VALUE.virtualMachineFullName.value}
+    export MACHINE_LOCAL_ADDRESS=${CUSTOM_VALUE.virtualMachineLocalAddress.value}
+`}
+</CodeBlock>
+
+<h4>Рабочая директория</h4>
+<CodeBlock language="bash">
+  {dedent`
+    mkdir -p ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/pki
+    mkdir -p ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/openssl/csr
+  `}
+</CodeBlock>
+
+<h4>Конфигурация</h4>
+<CodeBlock language="bash">
+  {dedent`
+    cat <<EOF > ${CERTIFICATES.etcdServer.crtConf}
+    [ req ]
+    default_bits        = ${CERTIFICATES.etcdServer.keySize}
+    prompt              = no
+    default_md          = sha256
+    distinguished_name  = dn
+    req_extensions      = req_ext
+
+    [ req_ext ]
+    subjectAltName = @alt_names
+
+    [ alt_names ]
+    DNS.1 = localhost
+    DNS.2 = $\{HOST_NAME}
+    DNS.3 = $\{FULL_HOST_NAME}
+    IP.1  = 127.0.0.1
+    IP.2  = 0:0:0:0:0:0:0:1
+    IP.3  = $\{MACHINE_LOCAL_ADDRESS}
+
+    [ dn ]
+    CN = $\{FULL_HOST_NAME}
+
+    [ v3_ext ]
+    authorityKeyIdentifier=keyid,issuer:always
+    basicConstraints=CA:FALSE
+    keyUsage=keyEncipherment,dataEncipherment
+    extendedKeyUsage=serverAuth,clientAuth
+    subjectAltName=@alt_names
+    EOF
+    `}
+</CodeBlock>
+
+<h4>Генерация приватного ключа</h4>
+<CodeBlock language="bash">
+  {dedent`
+    openssl genrsa \\
+      -out ${CERTIFICATES.etcdServer.keyPath} ${CERTIFICATES.etcdServer.keySize}
+    `}
+</CodeBlock>
+
+<h4>Генерация CSR</h4>
+<CodeBlock language="bash">
+  {dedent`
+    openssl req \\
+      -new \\
+      -key ${CERTIFICATES.etcdServer.keyPath} \\
+      -out ${CERTIFICATES.etcdServer.csrPath} \\
+      -config ${CERTIFICATES.etcdServer.crtConf}
+    `}
+</CodeBlock>
+
+<h4>Подпись CSR</h4>
+<CodeBlock language="bash">
+  {dedent`
+    openssl x509 \\
+      -req \\
+      -days 365 \\
+      -sha256 \\
+      -CA ${CERTIFICATES.etcdCA.crtPath} \\
+      -CAkey ${CERTIFICATES.etcdCA.keyPath} \\
+      -CAcreateserial \\
+      -in ${CERTIFICATES.etcdServer.csrPath} \\
+      -out ${CERTIFICATES.etcdServer.crtPath} \\
+      -extensions v3_ext \\
+      -extfile ${CERTIFICATES.etcdServer.crtConf}
+    `}
+</CodeBlock>

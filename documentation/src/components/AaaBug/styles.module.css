@@ -1,0 +1,34 @@
+.container {
+  position: relative;
+}
+
+.image {
+  width: 90%;
+  max-width: 330px;
+  filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.2));
+  transition: transform 0.3s ease-in-out;
+  transform: rotate(-5deg) scaleX(-1);
+  z-index: 10;
+}
+
+@media (min-width: 768px) {
+  .container {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+  }
+}
+
+@media (min-width: 997px) {
+  .container {
+    position: relative;
+  }
+}
+
+@media (min-width: 1440px) {
+  .container {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+  }
+}

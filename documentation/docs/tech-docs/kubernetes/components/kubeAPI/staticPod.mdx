@@ -1,0 +1,322 @@
+import { CUSTOM_VALUE }       from '@site/src/constants/kubernetes/customValue'
+import { COMPONENTS_VERSION } from '@site/src/constants/kubernetes/componentsVersion'
+import { KUBE_API_ARGS }      from '@site/src/constants/kubernetes/kubeAPIArgs'
+import { PORTS } from '@site/src/constants/kubernetes/ports'
+
+import CodeBlock              from '@theme/CodeBlock'
+import dedent                 from 'ts-dedent'
+
+
+<h4>Переменные окружения</h4>
+
+<CodeBlock language="bash">
+    {dedent`
+      export MACHINE_LOCAL_ADDRESS=${CUSTOM_VALUE.virtualMachineLocalAddress.value}
+    `}
+</CodeBlock>
+
+
+<h4>Рабочая директория</h4>
+
+<CodeBlock language="bash">
+    {dedent`
+        mkdir -p ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/manifests
+    `}
+</CodeBlock>
+
+<details className="custom-blue-block">
+<summary>Static Pod Kube-apiserver</summary>
+
+<h4>Генерация манифеста</h4>
+<CodeBlock language="bash">
+  {dedent`
+    cat <<EOF > ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/manifests/kube-apiserver.yaml
+    ---
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      annotations:
+        kubeadm.kubernetes.io/kube-apiserver.advertise-address.endpoint: $\{MACHINE_LOCAL_ADDRESS}:${KUBE_API_ARGS.securePort.value}
+      creationTimestamp: null
+      labels:
+        component: kube-apiserver
+        tier: control-plane
+      name: kube-apiserver
+      namespace: kube-system
+    spec:
+      containers:
+      - command:
+        - kube-apiserver
+        - --advertise-address=$\{MACHINE_LOCAL_ADDRESS}
+        - --aggregator-reject-forwarding-redirect=${KUBE_API_ARGS.aggregatorRejectForwardingRedirect.value}
+        - --allow-privileged=${KUBE_API_ARGS.allowPrivileged.value}
+        - --anonymous-auth=${KUBE_API_ARGS.anonymousAuth.value}
+        - --api-audiences=${KUBE_API_ARGS.apiAudiences.value}
+        - --apiserver-count=${KUBE_API_ARGS.apiserverCount.value}
+        - --audit-log-batch-buffer-size=${KUBE_API_ARGS.auditLogBatchBufferSize.value}
+        - --audit-log-batch-max-size=${KUBE_API_ARGS.auditLogBatchMaxSize.value}
+        - --audit-log-batch-max-wait=${KUBE_API_ARGS.auditLogBatchMaxWait.value}
+        - --audit-log-batch-throttle-burst=${KUBE_API_ARGS.auditLogBatchThrottleBurst.value}
+        - --audit-log-batch-throttle-enable=${KUBE_API_ARGS.auditLogBatchThrottleEnable.value}
+        - --audit-log-batch-throttle-qps=${KUBE_API_ARGS.auditLogBatchThrottleQps.value}
+        - --audit-log-compress=${KUBE_API_ARGS.auditLogCompress.value}
+        - --audit-log-format=${KUBE_API_ARGS.auditLogFormat.value}
+        - --audit-log-maxage=${KUBE_API_ARGS.auditLogMaxage.value}
+        - --audit-log-maxbackup=${KUBE_API_ARGS.auditLogMaxbackup.value}
+        - --audit-log-maxsize=${KUBE_API_ARGS.auditLogMaxsize.value}
+        - --audit-log-mode=${KUBE_API_ARGS.auditLogMode.value}
+        - --audit-log-truncate-enabled=${KUBE_API_ARGS.auditLogTruncateEnabled.value}
+        - --audit-log-truncate-max-batch-size=${KUBE_API_ARGS.auditLogTruncateMaxBatchSize.value}
+        - --audit-log-truncate-max-event-size=${KUBE_API_ARGS.auditLogTruncateMaxEventSize.value}
+        - --audit-log-version=${KUBE_API_ARGS.auditLogVersion.value}
+        - --audit-webhook-batch-buffer-size=${KUBE_API_ARGS.auditWebhookBatchBufferSize.value}
+        - --audit-webhook-batch-initial-backoff=${KUBE_API_ARGS.auditWebhookBatchInitialBackoff.value}
+        - --audit-webhook-batch-max-size=${KUBE_API_ARGS.auditWebhookBatchMaxSize.value}
+        - --audit-webhook-batch-max-wait=${KUBE_API_ARGS.auditWebhookBatchMaxWait.value}
+        - --audit-webhook-batch-throttle-burst=${KUBE_API_ARGS.auditWebhookBatchThrottleBurst.value}
+        - --audit-webhook-batch-throttle-enable=${KUBE_API_ARGS.auditWebhookBatchThrottleEnable.value}
+        - --audit-webhook-batch-throttle-qps=${KUBE_API_ARGS.auditWebhookBatchThrottleQps.value}
+        - --audit-webhook-initial-backoff=${KUBE_API_ARGS.auditWebhookInitialBackoff.value}
+        - --audit-webhook-mode=${KUBE_API_ARGS.auditWebhookMode.value}
+        - --audit-webhook-truncate-enabled=${KUBE_API_ARGS.auditWebhookTruncateEnabled.value}
+        - --audit-webhook-truncate-max-batch-size=${KUBE_API_ARGS.auditWebhookTruncateMaxBatchSize.value}
+        - --audit-webhook-truncate-max-event-size=${KUBE_API_ARGS.auditWebhookTruncateMaxEventSize.value}
+        - --audit-webhook-version=${KUBE_API_ARGS.auditWebhookVersion.value}
+        - --authentication-token-webhook-cache-ttl=${KUBE_API_ARGS.authenticationTokenWebhookCacheTtl.value}
+        - --authentication-token-webhook-version=${KUBE_API_ARGS.authenticationTokenWebhookVersion.value}
+        - --authorization-mode=${KUBE_API_ARGS.authorizationMode.value}
+        - --authorization-webhook-cache-authorized-ttl=${KUBE_API_ARGS.authorizationWebhookCacheAuthorizedTtl.value}
+        - --authorization-webhook-cache-unauthorized-ttl=${KUBE_API_ARGS.authorizationWebhookCacheUnauthorizedTtl.value}
+        - --authorization-webhook-version=${KUBE_API_ARGS.authorizationWebhookVersion.value}
+        - --bind-address=${KUBE_API_ARGS.bindAddress.value}
+        - --cert-dir=${KUBE_API_ARGS.certDir.value}
+        - --client-ca-file=${KUBE_API_ARGS.clientCaFile.value}
+        # -> Включить, если управляете состоянием через Cloud Controller Manager
+        # - --cloud-provider=${KUBE_API_ARGS.cloudProvider.value}
+        - --cloud-provider-gce-l7lb-src-cidrs=${KUBE_API_ARGS.cloudProviderGceL7lbSrcCidrs.value}
+        - --cloud-provider-gce-lb-src-cidrs=${KUBE_API_ARGS.cloudProviderGceLbSrcCidrs.value}
+        - --contention-profiling=${KUBE_API_ARGS.contentionProfiling.value}
+        - --default-not-ready-toleration-seconds=${KUBE_API_ARGS.defaultNotReadyTolerationSeconds.value}
+        - --default-unreachable-toleration-seconds=${KUBE_API_ARGS.defaultUnreachableTolerationSeconds.value}
+        - --default-watch-cache-size=${KUBE_API_ARGS.defaultWatchCacheSize.value}
+        - --delete-collection-workers=${KUBE_API_ARGS.deleteCollectionWorkers.value}
+        - --enable-admission-plugins=${KUBE_API_ARGS.enableAdmissionPlugins.value}
+        - --enable-aggregator-routing=${KUBE_API_ARGS.enableAggregatorRouting.value}
+        - --enable-bootstrap-token-auth=${KUBE_API_ARGS.enableBootstrapTokenAuth.value}
+        - --enable-garbage-collector=${KUBE_API_ARGS.enableGarbageCollector.value}
+        - --enable-logs-handler=${KUBE_API_ARGS.enableLogsHandler.value}
+        - --enable-priority-and-fairness=${KUBE_API_ARGS.enablePriorityAndFairness.value}
+        - --encryption-provider-config-automatic-reload=${KUBE_API_ARGS.encryptionProviderConfigAutomaticReload.value}
+        - --endpoint-reconciler-type=${KUBE_API_ARGS.endpointReconcilerType.value}
+        - --etcd-cafile=${KUBE_API_ARGS.etcdCafile.value}
+        - --etcd-certfile=${KUBE_API_ARGS.etcdCertfile.value}
+        - --etcd-compaction-interval=${KUBE_API_ARGS.etcdCompactionInterval.value}
+        - --etcd-count-metric-poll-period=${KUBE_API_ARGS.etcdCountMetricPollPeriod.value}
+        - --etcd-db-metric-poll-interval=${KUBE_API_ARGS.etcdDbMetricPollInterval.value}
+        - --etcd-healthcheck-timeout=${KUBE_API_ARGS.etcdHealthcheckTimeout.value}
+        - --etcd-keyfile=${KUBE_API_ARGS.etcdKeyfile.value}
+        - --etcd-prefix=${KUBE_API_ARGS.etcdPrefix.value}
+        - --etcd-readycheck-timeout=${KUBE_API_ARGS.etcdReadycheckTimeout.value}
+        - --etcd-servers=${KUBE_API_ARGS.etcdServers.value}
+        - --event-ttl=${KUBE_API_ARGS.eventTtl.value}
+        - --feature-gates=${KUBE_API_ARGS.featureGates.value}
+        - --goaway-chance=${KUBE_API_ARGS.goawayChance.value}
+        - --help=${KUBE_API_ARGS.help.value}
+        - --http2-max-streams-per-connection=${KUBE_API_ARGS.http2MaxStreamsPerConnection.value}
+        - --kubelet-client-certificate=${KUBE_API_ARGS.kubeletClientCertificate.value}
+        - --kubelet-client-key=${KUBE_API_ARGS.kubeletClientKey.value}
+        - --kubelet-port=${KUBE_API_ARGS.kubeletPort.value}
+        - --kubelet-preferred-address-types=${KUBE_API_ARGS.kubeletPreferredAddressTypes.value}
+        - --kubelet-read-only-port=${KUBE_API_ARGS.kubeletReadOnlyPort.value}
+        - --kubelet-timeout=${KUBE_API_ARGS.kubeletTimeout.value}
+        - --kubernetes-service-node-port=${KUBE_API_ARGS.kubernetesServiceNodePort.value}
+        - --lease-reuse-duration-seconds=${KUBE_API_ARGS.leaseReuseDurationSeconds.value}
+        - --livez-grace-period=${KUBE_API_ARGS.livezGracePeriod.value}
+        - --log-flush-frequency=${KUBE_API_ARGS.logFlushFrequency.value}
+        - --logging-format=${KUBE_API_ARGS.loggingFormat.value}
+        - --log-json-info-buffer-size=${KUBE_API_ARGS.logJsonInfoBufferSize.value}
+        - --log-json-split-stream=${KUBE_API_ARGS.logJsonSplitStream.value}
+        - --log-text-info-buffer-size=${KUBE_API_ARGS.logTextInfoBufferSize.value}
+        - --log-text-split-stream=${KUBE_API_ARGS.logTextSplitStream.value}
+        - --max-connection-bytes-per-sec=${KUBE_API_ARGS.maxConnectionBytesPerSec.value}
+        - --max-mutating-requests-inflight=${KUBE_API_ARGS.maxMutatingRequestsInflight.value}
+        - --max-requests-inflight=${KUBE_API_ARGS.maxRequestsInflight.value}
+        - --min-request-timeout=${KUBE_API_ARGS.minRequestTimeout.value}
+        - --permit-address-sharing=${KUBE_API_ARGS.permitAddressSharing.value}
+        - --permit-port-sharing=${KUBE_API_ARGS.permitPortSharing.value}
+        - --profiling=${KUBE_API_ARGS.profiling.value}
+        - --proxy-client-cert-file=${KUBE_API_ARGS.proxyClientCertFile.value}
+        - --proxy-client-key-file=${KUBE_API_ARGS.proxyClientKeyFile.value}
+        - --requestheader-allowed-names=${KUBE_API_ARGS.requestheaderAllowedNames.value}
+        - --requestheader-client-ca-file=${KUBE_API_ARGS.requestheaderClientCaFile.value}
+        - --requestheader-extra-headers-prefix=${KUBE_API_ARGS.requestheaderExtraHeadersPrefix.value}
+        - --requestheader-group-headers=${KUBE_API_ARGS.requestheaderGroupHeaders.value}
+        - --requestheader-username-headers=${KUBE_API_ARGS.requestheaderUsernameHeaders.value}
+        - --request-timeout=${KUBE_API_ARGS.requestTimeout.value}
+        - --runtime-config=${KUBE_API_ARGS.runtimeConfig.value}
+        - --secure-port=${KUBE_API_ARGS.securePort.value}
+        - --service-account-extend-token-expiration=${KUBE_API_ARGS.serviceAccountExtendTokenExpiration.value}
+        - --service-account-issuer=${KUBE_API_ARGS.serviceAccountIssuer.value}
+        - --service-account-key-file=${KUBE_API_ARGS.serviceAccountKeyFile.value}
+        - --service-account-lookup=${KUBE_API_ARGS.serviceAccountLookup.value}
+        - --service-account-max-token-expiration=${KUBE_API_ARGS.serviceAccountMaxTokenExpiration.value}
+        - --service-account-signing-key-file=${KUBE_API_ARGS.serviceAccountSigningKeyFile.value}
+        - --service-cluster-ip-range=${KUBE_API_ARGS.serviceClusterIpRange.value}
+        - --service-node-port-range=${KUBE_API_ARGS.serviceNodePortRange.value}
+        - --shutdown-delay-duration=${KUBE_API_ARGS.shutdownDelayDuration.value}
+        - --shutdown-send-retry-after=${KUBE_API_ARGS.shutdownSendRetryAfter.value}
+        - --shutdown-watch-termination-grace-period=${KUBE_API_ARGS.shutdownWatchTerminationGracePeriod.value}
+        - --storage-backend=${KUBE_API_ARGS.storageBackend.value}
+        - --storage-media-type=${KUBE_API_ARGS.storageMediaType.value}
+        - --tls-cert-file=${KUBE_API_ARGS.tlsCertFile.value}
+        - --tls-private-key-file=${KUBE_API_ARGS.tlsPrivateKeyFile.value}
+        - --v=${KUBE_API_ARGS.v.value}
+        - --version=${KUBE_API_ARGS.version.value}
+        - --watch-cache=${KUBE_API_ARGS.watchCache.value}
+        # ЕСЛИ НУЖНО ПОДКЛЮЧИТЬ CLOUD-CONTROLLER-MANAGER
+        # ТРЕБУЕТСЯ РАСКОМЕНТИРОВАТЬ
+        # ->
+        # - --cloud-provider: "${KUBE_API_ARGS.cloudProvider.value}"
+        # Не указывать если значение "" или undefined
+        # - --cloud-config=${KUBE_API_ARGS.cloudConfig.value}
+        # - --strict-transport-security-directives=${KUBE_API_ARGS.strictTransportSecurityDirectives.value}
+        # - --disable-admission-plugins=${KUBE_API_ARGS.disableAdmissionPlugins.value}
+        # - --disabled-metrics=${KUBE_API_ARGS.disabledMetrics.value}
+        # - --egress-selector-config-file=${KUBE_API_ARGS.egressSelectorConfigFile.value}
+        # - --encryption-provider-config=${KUBE_API_ARGS.encryptionProviderConfig.value}
+        # - --etcd-servers-overrides=${KUBE_API_ARGS.etcdServersOverrides.value}
+        # - --external-hostname=${KUBE_API_ARGS.externalHostname.value}
+        # - --kubelet-certificate-authority=${KUBE_API_ARGS.kubeletCertificateAuthority.value}
+        # - --oidc-ca-file=${KUBE_API_ARGS.oidcCaFile.value}
+        # - --oidc-client-id=${KUBE_API_ARGS.oidcClientId.value}
+        # - --oidc-groups-claim=${KUBE_API_ARGS.oidcGroupsClaim.value}
+        # - --oidc-groups-prefix=${KUBE_API_ARGS.oidcGroupsPrefix.value}
+        # - --oidc-issuer-url=${KUBE_API_ARGS.oidcIssuerUrl.value}
+        # - --oidc-required-claim=${KUBE_API_ARGS.oidcRequiredClaim.value}
+        # - --oidc-signing-algs=${KUBE_API_ARGS.oidcSigningAlgs.value}
+        # - --oidc-username-claim=${KUBE_API_ARGS.oidcUsernameClaim.value}
+        # - --oidc-username-prefix=${KUBE_API_ARGS.oidcUsernamePrefix.value}
+        # - --peer-advertise-ip=${KUBE_API_ARGS.peerAdvertiseIp.value}
+        # - --peer-advertise-port=${KUBE_API_ARGS.peerAdvertisePort.value}
+        # - --peer-ca-file=${KUBE_API_ARGS.peerCaFile.value}
+        # - --service-account-jwks-uri=${KUBE_API_ARGS.serviceAccountJwksUri.value}
+        # - --show-hidden-metrics-for-version=${KUBE_API_ARGS.showHiddenMetricsForVersion.value}
+        # - --tls-cipher-suites=${KUBE_API_ARGS.tlsCipherSuites.value}
+        # - --tls-min-version=${KUBE_API_ARGS.tlsMinVersion.value}
+        # - --tls-sni-cert-key=${KUBE_API_ARGS.tlsSniCertKey.value}
+        # - --token-auth-file=${KUBE_API_ARGS.tokenAuthFile.value}
+        # - --tracing-config-file=${KUBE_API_ARGS.tracingConfigFile.value}
+        # - --vmodule=${KUBE_API_ARGS.vmodule.value}
+        # - --watch-cache-sizes=${KUBE_API_ARGS.watchCacheSizes.value}
+        # - --authorization-webhook-config-file=${KUBE_API_ARGS.authorizationWebhookConfigFile.value}
+        # - --cors-allowed-origins=${KUBE_API_ARGS.corsAllowedOrigins.value}
+        # - --debug-socket-path=${KUBE_API_ARGS.debugSocketPath.value}
+        # - --authorization-policy-file=${KUBE_API_ARGS.authorizationPolicyFile.value}
+        # - --authorization-config=${KUBE_API_ARGS.authorizationConfig.value}
+        # - --authentication-token-webhook-config-file=${KUBE_API_ARGS.authenticationTokenWebhookConfigFile.value}
+        # - --authentication-config=${KUBE_API_ARGS.authenticationConfig.value}
+        # - --audit-webhook-config-file=${KUBE_API_ARGS.auditWebhookConfigFile.value}
+        # - --audit-policy-file=${KUBE_API_ARGS.auditPolicyFile.value}
+        # - --audit-log-path=${KUBE_API_ARGS.auditLogPath.value}
+        # - --allow-metric-labels=${KUBE_API_ARGS.allowMetricLabels.value}
+        # - --allow-metric-labels-manifest=${KUBE_API_ARGS.allowMetricLabelsManifest.value}
+        # - --admission-control=${KUBE_API_ARGS.admissionControl.value}
+        # - --admission-control-config-file=${KUBE_API_ARGS.admissionControlConfigFile.value}
+        # - --advertise-address=${KUBE_API_ARGS.advertiseAddress.value}
+        image: ${CUSTOM_VALUE.baseDockerRegistry.value}/kube-apiserver:${COMPONENTS_VERSION.kubernetes.value}
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 8
+          httpGet:
+            host: $\{MACHINE_LOCAL_ADDRESS}
+            path: /livez
+            port: ${PORTS.kubeAPIServer.portNumber}
+            scheme: HTTPS
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 15
+        name: kube-apiserver
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            host: $\{MACHINE_LOCAL_ADDRESS}
+            path: /readyz
+            port: ${PORTS.kubeAPIServer.portNumber}
+            scheme: HTTPS
+          periodSeconds: 1
+          timeoutSeconds: 15
+        resources:
+          requests:
+            cpu: 250m
+        startupProbe:
+          failureThreshold: 24
+          httpGet:
+            host: $\{MACHINE_LOCAL_ADDRESS}
+            path: /livez
+            port: ${PORTS.kubeAPIServer.portNumber}
+            scheme: HTTPS
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 15
+        volumeMounts:
+        - mountPath: /etc/ssl/certs
+          name: ca-certs
+          readOnly: true
+        - mountPath: /etc/ca-certificates
+          name: etc-ca-certificates
+          readOnly: true
+        - mountPath: /etc/pki
+          name: etc-pki
+          readOnly: true
+        - mountPath: /var/log/kubernetes/audit/
+          name: k8s-audit
+        - mountPath: ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/pki
+          name: k8s-certs
+          readOnly: true
+        - mountPath: /usr/local/share/ca-certificates
+          name: usr-local-share-ca-certificates
+          readOnly: true
+        - mountPath: /usr/share/ca-certificates
+          name: usr-share-ca-certificates
+          readOnly: true
+      hostNetwork: true
+      priority: 2000001000
+      priorityClassName: system-node-critical
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      volumes:
+      - hostPath:
+          path: /etc/ssl/certs
+          type: DirectoryOrCreate
+        name: ca-certs
+      - hostPath:
+          path: /etc/ca-certificates
+          type: DirectoryOrCreate
+        name: etc-ca-certificates
+      - hostPath:
+          path: /etc/pki
+          type: DirectoryOrCreate
+        name: etc-pki
+      - hostPath:
+          path: /var/log/kubernetes/audit/
+          type: DirectoryOrCreate
+        name: k8s-audit
+      - hostPath:
+          path: ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/pki
+          type: DirectoryOrCreate
+        name: k8s-certs
+      - hostPath:
+          path: /usr/local/share/ca-certificates
+          type: DirectoryOrCreate
+        name: usr-local-share-ca-certificates
+      - hostPath:
+          path: /usr/share/ca-certificates
+          type: DirectoryOrCreate
+        name: usr-share-ca-certificates
+    status: {}
+    EOF
+  `}
+</CodeBlock>
+
+</details>

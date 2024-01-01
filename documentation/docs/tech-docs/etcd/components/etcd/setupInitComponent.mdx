@@ -1,0 +1,25 @@
+---
+id: etcd-settings
+---
+
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+import StaticPodHW from '@site/docs/tech-docs/kubernetes/components/etcd/staticPodInitComponent.mdx'
+import StaticPodKubeadm from '@site/docs/tech-docs/kubernetes/components/etcd/kubeadmInit.mdx'
+
+:::warning Обратите внимание!
+Данный раздел является опциональным и предназначен только для случаев, когда необходимо настроить данный ресурс отдельно от остальных.
+:::
+
+<Tabs groupId="install-type">
+
+    <TabItem value='HardWay'>
+        <StaticPodHW />
+    </TabItem>
+
+    <TabItem value='Kubeadm'>
+        <StaticPodKubeadm />
+    </TabItem>
+
+</Tabs>

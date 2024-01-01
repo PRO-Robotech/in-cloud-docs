@@ -1,0 +1,22 @@
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+
+import CodeBlock        from '@theme/CodeBlock'
+import dedent           from 'ts-dedent'
+
+<h4>Генерация сертификатов</h4>
+<CodeBlock language="bash">
+  {dedent`
+    kubeadm init phase certs front-proxy-ca \\
+      --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
+  `}
+</CodeBlock>
+
+:::note
+После выполнения команд получаем следующий вывод.
+<CodeBlock language="bash">
+  {dedent`
+    #### Create Front Proxy CA
+    [certs] Generating "front-proxy-ca" certificate and key
+  `}
+</CodeBlock>
+:::

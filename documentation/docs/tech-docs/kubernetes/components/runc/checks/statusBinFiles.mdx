@@ -1,0 +1,42 @@
+import dedent from 'ts-dedent'
+import CodeBlock from '@theme/CodeBlock'
+import { COMPONENTS_VERSION } from '@site/src/constants/kubernetes/componentsVersion'
+
+<CodeBlock language="bash">
+  {dedent`
+    journalctl -t runc-installer
+  `}
+</CodeBlock>
+
+:::note Вывод команды
+
+<CodeBlock language="text">
+  {dedent`
+    ***** [INFO] Checking current runc version...
+    ***** [INFO] Current: none, Target: ${COMPONENTS_VERSION.runc.value}
+    ***** [INFO] Download URL: https://*******
+    ***** [INFO] Updating runc to version ${COMPONENTS_VERSION.runc.value}...
+    ***** [INFO] Working directory: /tmp/tmp.*****
+    ***** [INFO] Downloading runc...
+    ***** [INFO] Downloading checksum file...
+    ***** [INFO] Verifying checksum...
+    ***** [INFO] Installing runc...
+    ***** [INFO] runc successfully updated to ${COMPONENTS_VERSION.runc.value}.
+  `}
+</CodeBlock>
+:::
+
+<CodeBlock language="bash">
+  {dedent`
+    ls -la /usr/local/bin/ | grep 'runc$'
+  `}
+</CodeBlock>
+
+:::note Вывод команды
+
+<CodeBlock language="text">
+  {dedent`
+    -rwxr-xr-x  1 root root  10709696 Jan 23  2024 runc
+  `}
+</CodeBlock>
+:::

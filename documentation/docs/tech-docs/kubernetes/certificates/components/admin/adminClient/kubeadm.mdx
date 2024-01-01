@@ -1,0 +1,23 @@
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+
+import CodeBlock from '@theme/CodeBlock'
+import dedent from 'ts-dedent'
+
+<h4>Генерация сертификатов</h4>
+<CodeBlock language="bash">
+  {dedent`
+    kubeadm init phase kubeconfig admin \\
+      --config=${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/kubeadm.yaml
+    `}
+</CodeBlock>
+
+:::note
+После выполнения команд получаем следующий вывод.
+
+<CodeBlock language="bash">
+  {dedent`
+    #### Генерация сертификатов
+    [kubeconfig] Writing "admin.conf" kubeconfig file
+    `}
+</CodeBlock>
+:::

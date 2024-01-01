@@ -1,0 +1,41 @@
+import dedent                     from 'ts-dedent'
+import CodeBlock                  from '@theme/CodeBlock'
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+
+<h4>Генерация сертификатов</h4>
+<CodeBlock language="bash">
+  {dedent`
+    kubeadm init phase kubeconfig kubelet \\
+      --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
+  `}
+</CodeBlock>
+
+:::note
+После выполнения команд получаем следующий вывод.
+
+<CodeBlock language="bash">
+  {dedent`
+    #### Генерация сертификатов
+    [kubeconfig] Writing "kubelet.conf" kubeconfig file
+  `}
+</CodeBlock>
+:::
+
+<h4>Ротация сертификатов</h4>
+<CodeBlock language="bash">
+  {dedent`
+    kubeadm init phase kubelet-finalize experimental-cert-rotation \\
+      --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
+  `}
+</CodeBlock>
+
+:::note
+После выполнения команд получаем следующий вывод.
+
+<CodeBlock language="bash">
+  {dedent`
+    #### Ротация сертификатов
+    [kubelet-finalize] Updating "/etc/kubernetes/kubelet.conf" to point to a rotatable kubelet client certificate and key
+  `}
+</CodeBlock>
+:::

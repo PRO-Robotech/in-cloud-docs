@@ -1,0 +1,37 @@
+import dedent from 'ts-dedent'
+import CodeBlock from '@theme/CodeBlock'
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+<Tabs groupId="install-type">
+
+  <TabItem value='Bash'>
+
+    <h4>Шаблон кастомного конфигурационно файла</h4>
+    <CodeBlock language="bash">
+      {dedent`
+        cat <<"EOF" > /etc/crictl.yaml
+        runtime-endpoint: unix://${CUSTOM_VALUE.criEndpoint.value}
+        EOF
+      `}
+    </CodeBlock>
+
+  </TabItem>
+
+  <TabItem value='Cloud-init'>
+
+    <h4>Шаблон кастомного конфигурационно файла</h4>
+    <CodeBlock language="bash">
+      {dedent`
+        - path: /etc/crictl.yaml
+          owner: root:root
+          permissions: '0644'
+          content: |
+            runtime-endpoint: unix://${CUSTOM_VALUE.criEndpoint.value}
+      `}
+    </CodeBlock>
+
+  </TabItem>
+
+</Tabs>

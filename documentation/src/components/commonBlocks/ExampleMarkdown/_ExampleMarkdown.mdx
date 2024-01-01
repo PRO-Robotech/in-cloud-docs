@@ -1,0 +1,25 @@
+# I am example markdown
+
+## Woo
+
+Underscore in name is must
+
+To import
+
+```js
+import Example from "@site/src/components/commonBlocks/ExampleMarkdown/_ExampleMarkdown.mdx";
+```
+
+To use:
+
+```jsx
+<Example />
+```
+
+Also supports props via jsx inside mdx snippet
+
+```jsx
+{props.name}
+```
+
+Imports can be relative for docs: only underscore is must. Just change path to relative, delete `@site` alias

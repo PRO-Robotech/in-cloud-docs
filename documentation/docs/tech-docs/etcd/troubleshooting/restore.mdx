@@ -1,0 +1,38 @@
+---
+id: restore
+---
+
+import CodeBlock                from '@theme/CodeBlock'
+import { CERTIFICATES }         from '@site/src/constants/kubernetes/certs'
+import { PORTS }                from '@site/src/constants/kubernetes/ports'
+import { CUSTOM_VALUE }         from '@site/src/constants/kubernetes/customValue'
+import TabItem                  from '@theme/TabItem'
+import Tabs                     from '@theme/Tabs'
+import dedent                   from 'ts-dedent'
+import { COMPONENTS_VERSION }   from '@site/src/constants/kubernetes/componentsVersion'
+import { ETCD_ARGS }            from '@site/src/constants/kubernetes/etcdArgs'
+import RestoreEtcdK8s           from './restoreEtcdK8s.mdx'
+import RestoreEtcdKubeApi       from './restoreEtcdKupeApi.mdx'
+
+
+# 5.1.5.8. Восстановление
+
+В данной главе, рассмотрим два варианта ETCD:
+
+I. ETCD, развернутый внутри K8s кластера.
+
+II. ETCD, используемый KubeAPI текущего k8s кластера.
+
+## 5.1.5.8.1. ETCD in k8s cluster
+
+<RestoreEtcdK8s />
+
+## 5.1.5.8.2. ETCD Kube API current k8s cluster
+
+<RestoreEtcdKubeApi />
+
+*****
+
+TODO опиши как работает gardener etcd-backup (в режиме снапшотов)
+
+*****

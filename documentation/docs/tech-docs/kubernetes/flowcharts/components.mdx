@@ -1,0 +1,68 @@
+
+import { FancyboxDiagram }      from '@site/src/components/commonBlocks/FancyboxDiagram'
+
+
+<div className="center">
+**Список компонентов с разбивкой по узлам управляющего контура**
+  <FancyboxDiagram>
+```mermaid
+---
+config:
+  look: handDrawn
+  theme: dark  
+---
+
+flowchart TD
+
+  subgraph Control-Plane
+   subgraph Master-1
+      newLines["`
+         ctr
+         runc
+         crictl
+         kubeadm
+         kubectl
+         kubelet
+         containerd
+         containerd-shim
+         containerd-stress
+         containerd-shim-runc-v1
+         containerd-shim-runc-v2
+      `"]
+   end
+   subgraph Master-2
+      newLines2["`
+         ctr
+         runc
+         crictl
+         kubeadm
+         kubectl
+         kubelet
+         containerd
+         containerd-shim
+         containerd-stress
+         containerd-shim-runc-v1
+         containerd-shim-runc-v2
+      `"]
+   end
+
+   subgraph Master-3
+      newLines3["`
+         ctr
+         runc
+         crictl
+         kubeadm
+         kubectl
+         kubelet
+         containerd
+         containerd-shim
+         containerd-stress
+         containerd-shim-runc-v1
+         containerd-shim-runc-v2
+      `"]
+   end
+  end
+
+```
+    </FancyboxDiagram>
+</div>

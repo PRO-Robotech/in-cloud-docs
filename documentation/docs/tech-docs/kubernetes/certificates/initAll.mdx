@@ -1,0 +1,19 @@
+---
+id: init-all
+---
+
+import InitKubeconfigGen from '@site/docs/tech-docs/kubernetes/certificates/components/_kubeadm/initAllKubeconfigGen.mdx'
+import InitCertsGen from '@site/docs/tech-docs/kubernetes/certificates/components/_kubeadm/initAllCertsGen.mdx'
+
+# 5.2.2.0.1. Инициализация  серт-ов
+
+:::warning Обратите внимание!
+Данная команда генерирует все сертификаты для управляющего контура, в том числе и корневые сертификаты.
+:::
+
+
+## 5.2.2.0.1.1. Генерация сертификатов
+<InitCertsGen/>
+
+## 5.2.2.0.1.2. Генерация Kubeconfigs
+<InitKubeconfigGen/>

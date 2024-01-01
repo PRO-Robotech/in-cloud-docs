@@ -1,0 +1,94 @@
+import KubeletServer from '@site/docs/tech-docs/kubernetes/certificates/components/kubelet/kubeletServer/main.mdx'
+import KubeAPIETCDClientMain from '@site/docs/tech-docs/kubernetes/certificates/components/kubeAPI/etcdClient/main.mdx'
+import KubeletClientMain from '@site/docs/tech-docs/kubernetes/certificates/components/kubeAPI/kubeletClient/main.mdx'
+import FrontProxyClientMain from '@site/docs/tech-docs/kubernetes/certificates/components/kubeAPI/frontProxyClient/main.mdx'
+import KubeAPIServerMain from '@site/docs/tech-docs/kubernetes/certificates/components/kubeAPI/kubeAPIServer/main.mdx'
+import ETCDClientETCDMain from '@site/docs/tech-docs/etcd/certificates/components/etcd/etcdClient/main.mdx'
+import ETCDServerMain from '@site/docs/tech-docs/etcd/certificates/components/etcd/etcdServer/main.mdx'
+import ETCDPeerMain from '@site/docs/tech-docs/etcd/certificates/components/etcd/etcdPeer/main.mdx'
+
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+<Tabs groupId="Certs-APPS">
+  <TabItem value="Kubelet Server">
+    <details open className="custom-gray-block">
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Kubelet server</p>
+        </div>
+      </summary>
+      <KubeletServer />
+    </details>
+  </TabItem>
+  <TabItem value="API -> Etcd">
+    <details open className="custom-gray-block">
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>K8S-API client > Etcd server</p>
+        </div>
+      </summary>
+      <KubeAPIETCDClientMain />
+    </details>
+  </TabItem>
+  <TabItem value="API -> Kubelet">
+    <details open className="custom-gray-block">
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>K8S-API client > Kubelet server</p>
+        </div>
+      </summary>
+      <KubeletClientMain />
+    </details>
+  </TabItem>
+  <TabItem value="API Server">
+    <details open className="custom-gray-block">
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>K8S-API server</p>
+        </div>
+      </summary>
+      <KubeAPIServerMain />
+    </details>
+  </TabItem>
+  <TabItem value="Proxy -> API">
+    <details open className="custom-gray-block">
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>FrontProxy client > K8S-API</p>
+        </div>
+      </summary>
+      <FrontProxyClientMain />
+    </details>
+  </TabItem>
+  <TabItem value="Etcd Client">
+    <details open className="custom-gray-block">
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Etcd client > Etcd</p>
+        </div>
+      </summary>
+      <ETCDClientETCDMain />
+    </details>
+  </TabItem>
+  <TabItem value="Etcd Server">
+    <details open className="custom-gray-block">
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Etcd server</p>
+        </div>
+      </summary>
+      <ETCDServerMain />
+    </details>
+  </TabItem>
+  <TabItem value="Etcd Peer">
+    <details open className="custom-gray-block">
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Etcd peer > Etcd</p>
+        </div>
+      </summary>
+      <ETCDPeerMain />
+    </details>
+  </TabItem>
+</Tabs>

@@ -1,0 +1,85 @@
+import dedent from 'ts-dedent'
+import CodeBlock from '@theme/CodeBlock'
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+<Tabs groupId="install-type">
+
+  <TabItem value='Bash'>
+    <h4>Создание рабочих директорий</h4>
+    <CodeBlock language="bash">
+      {dedent`
+        mkdir -p /etc/containerd/
+        mkdir -p /etc/containerd/conf.d
+        mkdir -p /etc/containerd/certs.d
+      `}
+    </CodeBlock>
+
+    <h4>Базовый конфигурационный файл</h4>
+    <CodeBlock language="bash">
+      {dedent`
+        cat <<"EOF" > /etc/containerd/config.toml
+        version = 2
+        imports = ["/etc/containerd/conf.d/*.toml"]
+        EOF
+      `}
+    </CodeBlock>
+
+    <h4>Шаблон кастомного конфигурационного файла</h4>
+    <CodeBlock language="bash">
+      {dedent`
+        cat <<"EOF" > /etc/containerd/conf.d/in-cloud.toml
+        version = 2
+        [plugins]
+          [plugins."io.containerd.grpc.v1.cri"]
+            sandbox_image = "${CUSTOM_VALUE.baseDockerRegistry.value}/${CUSTOM_VALUE.pausedImage.value}"
+          [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
+            runtime_type = "io.containerd.runc.v2"
+          [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
+            SystemdCgroup = true
+          [plugins."io.containerd.grpc.v1.cri".registry]
+            config_path = "/etc/containerd/certs.d/"
+        EOF
+      `}
+    </CodeBlock>
+
+  </TabItem>
+
+  <TabItem value='Cloud-init'>
+
+    <h4>Базовый конфигурационный файл</h4>
+    <CodeBlock language="yaml">
+      {dedent`
+        - path: /etc/containerd/config.toml
+          owner: root:root
+          permissions: '0644'
+          content: |
+            version = 2
+            imports = ["/etc/containerd/conf.d/*.toml"]
+      `}
+    </CodeBlock>
+
+    <h4>Шаблон кастомного конфигурационного файла</h4>
+    <CodeBlock language="yaml">
+      {dedent`
+        - path: /etc/containerd/conf.d/in-cloud.toml
+          owner: root:root
+          permissions: '0644'
+          content: |
+            version = 2
+            [plugins]
+              [plugins."io.containerd.grpc.v1.cri"]
+                sandbox_image = "${CUSTOM_VALUE.baseDockerRegistry.value}/${CUSTOM_VALUE.pausedImage.value}"
+              [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
+                runtime_type = "io.containerd.runc.v2"
+              [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
+                SystemdCgroup = true
+              [plugins."io.containerd.grpc.v1.cri".registry]
+                config_path = "/etc/containerd/certs.d/"
+      `}
+    </CodeBlock>
+
+  </TabItem>
+
+</Tabs>

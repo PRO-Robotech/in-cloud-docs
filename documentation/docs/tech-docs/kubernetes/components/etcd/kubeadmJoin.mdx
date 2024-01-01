@@ -1,0 +1,22 @@
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+
+import CodeBlock from '@theme/CodeBlock'
+import dedent from 'ts-dedent'
+
+<h4>Генерация манифеста</h4>
+<CodeBlock language="bash">
+  {dedent`
+    kubeadm join phase control-plane-join etcd \\
+      --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
+  `}
+</CodeBlock>
+
+:::note
+
+<CodeBlock language="bash">
+  {dedent`
+    #### Kube API
+    [etcd] Creating static Pod manifest for local etcd in "${CUSTOM_VALUE.kubernetesBaseFolderPath.value}"
+  `}
+</CodeBlock>
+:::

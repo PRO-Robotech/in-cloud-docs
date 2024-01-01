@@ -1,0 +1,44 @@
+import dedent from 'ts-dedent'
+import CodeBlock from '@theme/CodeBlock'
+import { COMPONENTS_VERSION } from '@site/src/constants/kubernetes/componentsVersion'
+
+<CodeBlock language="bash">
+  {dedent`
+    journalctl -t etcd-installer
+  `}
+</CodeBlock>
+
+:::note Вывод команды
+
+<CodeBlock language="text">
+  {dedent`
+    ***** [INFO] Checking current etcd version...
+    ***** [INFO] Current: none, Target: ${COMPONENTS_VERSION.etcd.value}
+    ***** [INFO] Download URL: https://*******
+    ***** [INFO] Updating etcd to version ${COMPONENTS_VERSION.etcd.value}...
+    ***** [INFO] Working directory: /tmp/tmp.*****
+    ***** [INFO] Downloading etcd...
+    ***** [INFO] Downloading checksum file...
+    ***** [INFO] Verifying checksum...
+    ***** [INFO] Installing etcd...
+    ***** [INFO] etcd successfully updated to ${COMPONENTS_VERSION.etcd.value}.
+  `}
+</CodeBlock>
+:::
+
+<CodeBlock language="bash">
+  {dedent`
+    ls -la /usr/local/bin/ | grep 'etcd'
+  `}
+</CodeBlock>
+
+:::note Вывод команды
+
+<CodeBlock language="text">
+  {dedent`
+    -rwxr-xr-x  1 root root  23760896 Mar 29 16:21 etcd
+    -rwxr-xr-x  1 root root  17960960 Mar 29 16:21 etcdctl
+    -rwxr-xr-x  1 root root  16031744 Mar 29 16:21 etcdutl
+  `}
+</CodeBlock>
+:::

@@ -1,0 +1,106 @@
+import { CERTIFICATES } from '@site/src/constants/kubernetes/certs'
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+
+import CodeBlock        from '@theme/CodeBlock'
+import dedent           from 'ts-dedent'
+
+<h4>Переменные окружения</h4>
+<CodeBlock language="bash">
+    {dedent`
+        export CLUSTER_NAME=${CUSTOM_VALUE.clusterName.value}
+        export BASE_DOMAIN=${CUSTOM_VALUE.kubernetesBaseDomain.value}
+        export CLUSTER_DOMAIN=${CUSTOM_VALUE.kubernetesClusterDomain.value}
+        export FULL_HOST_NAME=${CUSTOM_VALUE.virtualMachineFullName.value}
+        export MACHINE_LOCAL_ADDRESS=${CUSTOM_VALUE.virtualMachineLocalAddress.value}
+    `}
+</CodeBlock>
+
+<h4>Рабочая директория</h4>
+<CodeBlock language="bash">
+    {dedent`
+        mkdir -p ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/pki
+        mkdir -p ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/openssl/csr
+        mkdir -p ${CUSTOM_VALUE.kuberneteKubeletFolderPath.value}/pki
+    `}
+</CodeBlock>
+
+<h4>Конфигурация</h4>
+<CodeBlock language="bash">
+  {dedent`
+    cat <<EOF > ${CERTIFICATES.kubeletServer.crtConf}
+    [ req ]
+    default_bits        = ${CERTIFICATES.kubeletServer.keySize}
+    prompt              = no
+    default_md          = sha256
+    distinguished_name  = dn
+    req_extensions      = req_ext
+
+    [ req_ext ]
+    subjectAltName = @alt_names
+
+    [ alt_names ]
+    DNS.1 = localhost
+    DNS.2 = $\{HOST_NAME}
+    DNS.3 = $\{FULL_HOST_NAME}
+    IP.1  = 127.0.0.1
+    IP.2  = 0:0:0:0:0:0:0:1
+    IP.3  = $\{MACHINE_LOCAL_ADDRESS}
+
+    [ dn ]
+    CN = "system:node:$\{FULL_HOST_NAME}
+    O  = "system:nodes"
+
+    [ v3_ext ]
+    authorityKeyIdentifier=keyid,issuer:always
+    basicConstraints=CA:FALSE
+    keyUsage=keyEncipherment,dataEncipherment
+    extendedKeyUsage=serverAuth
+    subjectAltName=@alt_names
+    EOF
+  `}
+</CodeBlock>
+
+<h4>Генерация приватного ключа</h4>
+<CodeBlock language="bash">
+  {dedent`
+    openssl genrsa \\
+      -out ${CERTIFICATES.kubeletServer.keyPath} ${CERTIFICATES.kubeletServer.keySize}
+  `}
+</CodeBlock>
+
+<h4>Генерация CSR</h4>
+<CodeBlock language="bash">
+  {dedent`
+    openssl req \\
+    -new \\
+    -key ${CERTIFICATES.kubeletServer.keyPath} \\
+    -out ${CERTIFICATES.kubeletServer.csrPath} \\
+    -config ${CERTIFICATES.kubeletServer.crtConf}
+  `}
+</CodeBlock>
+
+<h4>Подпись CSR</h4>
+<CodeBlock language="bash">
+  {dedent`
+    openssl x509 \\
+      -req \\
+      -days 365 \\
+      -sha256 \\
+      -outform PEM \\
+      -CA ${CERTIFICATES.kubernetesCA.crtPath} \\
+      -CAkey ${CERTIFICATES.kubernetesCA.keyPath} \\
+      -CAcreateserial \\
+      -in ${CERTIFICATES.kubeletServer.csrPath} \\
+      -out ${CERTIFICATES.kubeletServer.crtPath} \\
+      -extensions v3_ext \\
+      -extfile ${CERTIFICATES.kubeletServer.crtConf}
+  `}
+</CodeBlock>
+
+
+<CodeBlock language="bash">
+  {dedent`
+    cat ${CERTIFICATES.kubeletServer.crtPath} ${CERTIFICATES.kubeletServer.keyPath} >> ${CERTIFICATES.kubeletNowServer.crtPath}
+    ln -s ${CERTIFICATES.kubeletNowServer.crtPath} ${CERTIFICATES.kubeletCurrentServer.crtPath}
+  `}
+</CodeBlock>

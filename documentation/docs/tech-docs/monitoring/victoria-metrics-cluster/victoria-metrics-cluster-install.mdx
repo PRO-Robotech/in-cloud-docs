@@ -1,0 +1,278 @@
+---
+id: victoria-metrics-cluster-install
+title: Установка VictoriaMetrics Cluster
+---
+
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+import CodeBlock from '@theme/CodeBlock'
+import dedent from 'ts-dedent'
+import { COMPONENTS_VERSION } from '@site/src/constants/monitoring/componentsVersion'
+
+
+# 5.5.1.2.7. VictoriaMetrics Cluster
+
+`VictoriaMetrics Cluster` устанавливается как обычное Kubernetes-приложение, описанное с помощью Helm Chart, которое можно установить либо из in-cloud manifests либо через helm.
+
+<Tabs>
+    <TabItem value='helm'>
+## Установка с помощью helm
+### Установите Helm
+
+TODO: Разделить пользовательскую и инфраструктурную установку
+Если у вас еще нет Helm, сначала установите его. Вы можете скачать Helm с [официального сайта](https://helm.sh/docs/intro/install/). Следуйте инструкциям для вашей операционной системы.
+
+### Добавьте репозиторий с Helm chart
+
+Вам нужно добавить репозиторий с charts, в котором находится `VictoriaMetrics Cluster`. Например, можно использовать официальный репозиторий VictoriaMetrics:
+
+```bash
+helm repo add helm repo add victoriametrics https://victoriametrics.github.io/helm-charts/
+```
+
+Обновите список charts:
+
+```bash
+helm repo update
+```
+
+### Установите VictoriaMetrics Cluster
+
+Теперь вы можете установить `VictoriaMetrics Cluster` с помощью Helm. Для этого выполните следующую команду:
+
+```bash
+helm install --name vmcluster victoriametrics/victoria-metrics-k8s-stack --namespace in-cloud-vmcluster --create-namespace -f values.yaml
+```
+
+Команда создаст релиз с именем `vmcluster` и развернет `VictoriaMetrics Cluster` на вашем кластере Kubernetes в неймспейсе `in-cloud-vmcluster`.
+
+      <div className="parent-div" style={{ minHeight: '420px' }}>
+
+        <div className="child-block">
+          <h4 className="center">Enivironments</h4>
+        </div>
+
+        <div className="child-block">
+          <h4 className="center">Values</h4>
+            <CodeBlock language="yaml">
+              {dedent`
+                enabled: true
+                createCRD: true
+                replicaCount: 1
+                rbac:
+                  create: true
+                  pspEnabled: true
+                operator:
+                  disable_prometheus_converter: true
+                  psp_auto_creation_enabled: false
+                  enable_converter_ownership: false
+                  useCustomConfigReloader: true
+                env:
+                  - name: GOMAXPROCS
+                    value: '1'
+                  - name: VM_VMAGENTDEFAULT_CONFIGRELOADERMEMORY
+                    value: '100Mi'
+                  - name: VM_VMALERTMANAGER_CONFIGRELOADERMEMORY
+                    value: '100Mi'
+                  - name: VM_VMALERTDEFAULT_CONFIGRELOADERMEMORY
+                    value: '100Mi'
+                resources:
+                  requests:
+                    cpu: 100m
+                    memory: 128Mi
+                  limits:
+                    cpu: 250m
+                    memory: 256Mi
+                admissionWebhooks:
+                  enabled: false
+                  policy: Fail
+                  caBundle: ""
+                  certManager:
+                    enabled: false
+                    issuer: {}
+                serviceMonitor:
+                  enabled: true
+                tolerations:
+                  - key: node-role.kubernetes.io/master
+                    effect: NoSchedule
+                  - key: node-role.kubernetes.io/control-plane
+                    effect: NoSchedule
+                  - key: node-role.kubernetes.io/data-plane
+                    effect: NoSchedule
+                  - key: node-role.kubernetes.io/in-cloud-infra
+                    effect: NoSchedule
+                  - key: node-role.kubernetes.io/vmcluster
+                    effect: NoSchedule
+              `}
+            </CodeBlock>
+        </div>
+      </div>
+    </TabItem>
+
+
+
+    <TabItem value='in-cloud/manifests'>
+## Установка с помощью in-cloud manifests
+    `VictoriaMetrics Cluster` устанавливается как обычное Kubernetes-приложение, описанное с помощью Helm Chart.
+      <div className="parent-div" style={{ minHeight: '420px' }}>
+
+        <div className="child-block">
+          <h4 className="center">Enivironments</h4>
+            <CodeBlock language="bash">
+              {dedent`
+                export VM_CLUSTER_VERSION="${COMPONENTS_VERSION.kubeStateMetrics.value}"
+              `}
+            </CodeBlock>
+        </div>
+
+        <div className="child-block">
+          <h4 className="center">Values</h4>
+            <CodeBlock language="yaml">
+              {dedent`
+              vmcluster:
+                enabled: enabled
+                spec:
+                  retentionPeriod: "10d"
+                  replicationFactor: 2
+                  vmstorage:
+                    replicaCount: 10
+                    storageDataPath: "/vm-data"
+                    storage:
+                      volumeClaimTemplate:
+                        spec:
+                          storageClassName: default
+                          resources:
+                            requests:
+                              storage: 110Gi
+                    extraArgs:
+                      dedup.minScrapeInterval: "30s"
+                      search.maxUniqueTimeseries: "300000000"
+                      search.maxConcurrentRequests: "128"
+                    resources:
+                      limits:
+                        cpu: "5"
+                        memory: 12Gi
+                      requests:
+                        cpu: "2"
+                        memory: "5Gi"
+                    priorityClassName: system-node-critical
+                    nodeSelector:
+                      "node-role.kubernetes.io/vmcluster": ""
+                    tolerations:
+                      - effect: NoSchedule
+                        key: node-role.kubernetes.io/data-plane
+                      - key: node-role.kubernetes.io/in-cloud-infra
+                        effect: NoSchedule
+                      - effect: NoSchedule
+                        key: node-role.kubernetes.io/vmcluster
+                    affinity:
+                      podAntiAffinity:
+                        preferredDuringSchedulingIgnoredDuringExecution:
+                          - weight: 100
+                            podAffinityTerm:
+                              labelSelector:
+                                matchExpressions:
+                                  - key: "app.kubernetes.io/name"
+                                    operator: In
+                                    values:
+                                      - "vmstorage"
+                              topologyKey: "kubernetes.io/hostname"
+                  vmselect:
+                    extraArgs:
+                      dedup.minScrapeInterval: 30s
+                      search.maxQueryDuration: 60s
+                      search.maxQueryLen: "20971520"
+                      search.maxSeries: "300000000"
+                      search.maxSamplesPerQuery: "2000000000"
+                      search.maxSamplesPerSeries: "2000000000"
+                      search.maxUniqueTimeseries: "300000000"
+                      search.maxSeriesPerAggrFunc: "600000000"
+                      search.maxConcurrentRequests: "128"
+                      search.maxLabelsAPIDuration: 60s
+                      search.logSlowQueryDuration: 60s
+                    replicaCount: 10
+                    cacheMountPath: "/select-cache"
+                    storage:
+                      volumeClaimTemplate:
+                        spec:
+                          storageClassName: default
+                    resources:
+                      limits:
+                        cpu: "3"
+                        memory: "5Gi"
+                      requests:
+                        cpu: "1"
+                        memory: "2Gi"
+                    priorityClassName: system-node-critical
+                    nodeSelector:
+                      "node-role.kubernetes.io/vmcluster": ""
+                    tolerations:
+                      - effect: NoSchedule
+                        key: node-role.kubernetes.io/data-plane
+                      - key: node-role.kubernetes.io/in-cloud-infra
+                        effect: NoSchedule
+                      - effect: NoSchedule
+                        key: node-role.kubernetes.io/vmcluster
+                    affinity:
+                      podAntiAffinity:
+                        preferredDuringSchedulingIgnoredDuringExecution:
+                          - weight: 100
+                            podAffinityTerm:
+                              labelSelector:
+                                matchExpressions:
+                                  - key: "app.kubernetes.io/name"
+                                    operator: In
+                                    values:
+                                      - "vmselect"
+                              topologyKey: "kubernetes.io/hostname"
+                  vminsert:
+                    replicaCount: 10
+                    priorityClassName: system-cluster-critical
+                    resources:
+                      limits:
+                        cpu: "2"
+                        memory: 4Gi
+                      requests:
+                        cpu: "1"
+                        memory: "2Gi"
+                    extraArgs:
+                      maxLabelValueLen: "8192"
+                      maxLabelsPerTimeseries: "80"
+                      insert.maxQueueDuration: 60s
+                      maxConcurrentInserts: "2048"
+                    nodeSelector:
+                      "node-role.kubernetes.io/vmcluster": ""
+                    tolerations:
+                      - effect: NoSchedule
+                        key: node-role.kubernetes.io/data-plane
+                      - key: node-role.kubernetes.io/in-cloud-infra
+                        effect: NoSchedule
+                      - effect: NoSchedule
+                        key: node-role.kubernetes.io/vmcluster
+                    affinity:
+                      podAntiAffinity:
+                        preferredDuringSchedulingIgnoredDuringExecution:
+                          - weight: 100
+                            podAffinityTerm:
+                              labelSelector:
+                                matchExpressions:
+                                  - key: "app.kubernetes.io/name"
+                                    operator: In
+                                    values:
+                                      - "vminsert"
+                              topologyKey: "kubernetes.io/hostname"
+              `}
+            </CodeBlock>
+        </div>
+      </div>
+После этого выполните команду установки с указанием вашего конфигурационного файла:
+
+    <CodeBlock language="bash">
+      {dedent`helmfile -e $\{VM_CLUSTER_VERSION} -l in-cloud-collections=vmcluster in-cloud-monitoring-stack=infra | kubectl apply -f - `}
+    </CodeBlock>
+
+    </TabItem>
+</Tabs>
+
+
+7

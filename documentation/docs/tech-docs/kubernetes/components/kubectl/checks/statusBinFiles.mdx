@@ -1,0 +1,42 @@
+import dedent from 'ts-dedent'
+import CodeBlock from '@theme/CodeBlock'
+import { COMPONENTS_VERSION } from '@site/src/constants/kubernetes/componentsVersion'
+
+<CodeBlock language="bash">
+  {dedent`
+    journalctl -t kubectl-installer
+  `}
+</CodeBlock>
+
+:::note Вывод команды
+
+<CodeBlock language="text">
+  {dedent`
+    ***** [INFO] Checking current kubectl version...
+    ***** [INFO] Current: none, Target: ${COMPONENTS_VERSION.kubernetes.value}
+    ***** [INFO] Download URL: https://*******
+    ***** [INFO] Updating kubectl to version ${COMPONENTS_VERSION.kubernetes.value}...
+    ***** [INFO] Working directory: /tmp/tmp.*****
+    ***** [INFO] Downloading kubectl...
+    ***** [INFO] Downloading checksum file...
+    ***** [INFO] Verifying checksum...
+    ***** [INFO] Installing kubectl...
+    ***** [INFO] kubectl successfully updated to ${COMPONENTS_VERSION.kubernetes.value}.
+  `}
+</CodeBlock>
+:::
+
+<CodeBlock language="bash">
+  {dedent`
+    ls -la /usr/local/bin/ | grep 'kubectl$'
+  `}
+</CodeBlock>
+
+:::note Вывод команды
+
+<CodeBlock language="bash">
+  {dedent`
+    -rwxr-xr-x  1 root root  51454104 Aug 14  2024 kubectl
+  `}
+</CodeBlock>
+:::

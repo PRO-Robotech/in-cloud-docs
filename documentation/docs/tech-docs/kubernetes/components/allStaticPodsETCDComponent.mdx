@@ -1,0 +1,32 @@
+import SetupInitComponent from '@site/docs/tech-docs/etcd/components/etcd/setupInitComponent.mdx'
+import SetupJoinComponent from '@site/docs/tech-docs/etcd/components/etcd/setupJoinComponent.mdx'
+
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+> В данном разделе описывается ручное создание static pod-манифестов для ETCD.
+
+<Tabs groupId="phase">
+  <TabItem value="init">
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Настройка Static Pods</p>
+          <p className="obligatory-note-orange">● Обязателен к применению</p>
+        </div>
+      </summary>
+      <SetupInitComponent />
+    </details>
+  </TabItem>
+  <TabItem value="join">
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Настройка Static Pods</p>
+          <p className="obligatory-note-orange">● Обязателен к применению</p>
+        </div>
+      </summary>
+      <SetupJoinComponent />
+    </details>
+  </TabItem>
+</Tabs>

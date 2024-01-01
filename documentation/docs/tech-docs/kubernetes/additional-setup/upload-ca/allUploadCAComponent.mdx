@@ -1,0 +1,22 @@
+import UploadCAInit from '@site/docs/tech-docs/kubernetes/additional-setup/upload-ca/uploadCAComponent.mdx'
+
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+> Этот раздел посвящён загрузке корневых сертификатов в кластер Kubernetes.
+> Секрет kubeadm-certs создаётся вручную и содержит ключи и сертификаты, необходимые при добавлении новых управляющих узлов (`kubeadm join`).
+> Такой подход позволяет безопасно передавать чувствительные данные между узлами управляющего контура.
+
+<Tabs groupId="phase">
+  <TabItem value="init">
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Загрузка корневых сертификатов в Kubernetes</p>
+          <p className="obligatory-note-orange">● Обязателен к применению</p>
+        </div>
+      </summary>
+      <UploadCAInit />
+    </details>
+  </TabItem>
+</Tabs>

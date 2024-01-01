@@ -1,0 +1,287 @@
+
+import { CUSTOM_VALUE }       from '@site/src/constants/kubernetes/customValue'
+import { CERTIFICATES }       from '@site/src/constants/kubernetes/certs'
+import { PORTS }              from '@site/src/constants/kubernetes/ports'
+import { COMPONENTS_VERSION } from '@site/src/constants/kubernetes/componentsVersion'
+import {KUBE_CONTROLLER_MANAGER_ARGS} from '@site/src/constants/kubernetes/kubeControllerManagerArgs'
+
+import dedent                     from 'ts-dedent'
+import CodeBlock                  from '@theme/CodeBlock'
+
+<h4>Переменные окружения</h4>
+<CodeBlock language="bash">
+  {dedent`
+    export CLUSTER_NAME=${CUSTOM_VALUE.clusterName.value}
+  `}
+</CodeBlock>
+
+<h4>Рабочая директория</h4>
+<CodeBlock language="bash">
+  {dedent`
+    mkdir -p ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/manifests
+  `}
+</CodeBlock>
+
+<details className="custom-blue-block">
+<summary>Static Pod Kube-Controller-Manager</summary>
+
+<h4>Генерация манифеста</h4>
+<CodeBlock language="bash">
+  {dedent`
+    cat <<EOF > ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/manifests/kube-controller-manager.yaml
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      creationTimestamp: null
+      labels:
+        component: kube-controller-manager
+        tier: control-plane
+      name: kube-controller-manager
+      namespace: kube-system
+    spec:
+      containers:
+      - command:
+        - kube-controller-manager
+        - --allocate-node-cidrs=${KUBE_CONTROLLER_MANAGER_ARGS.allocateNodeCidrs.value}
+        - --allow-untagged-cloud=${KUBE_CONTROLLER_MANAGER_ARGS.allowUntaggedCloud.value}
+        - --attach-detach-reconcile-sync-period=${KUBE_CONTROLLER_MANAGER_ARGS.attachDetachReconcileSyncPeriod.value}
+        - --authentication-kubeconfig=${KUBE_CONTROLLER_MANAGER_ARGS.authenticationKubeconfig.value}
+        - --authentication-skip-lookup=${KUBE_CONTROLLER_MANAGER_ARGS.authenticationSkipLookup.value}
+        - --authentication-token-webhook-cache-ttl=${KUBE_CONTROLLER_MANAGER_ARGS.authenticationTokenWebhookCacheTtl.value}
+        - --authentication-tolerate-lookup-failure=${KUBE_CONTROLLER_MANAGER_ARGS.authenticationTolerateLookupFailure.value}
+        - --authorization-always-allow-paths=${KUBE_CONTROLLER_MANAGER_ARGS.authorizationAlwaysAllowPaths.value}
+        - --authorization-kubeconfig=${KUBE_CONTROLLER_MANAGER_ARGS.authorizationKubeconfig.value}
+        - --authorization-webhook-cache-authorized-ttl=${KUBE_CONTROLLER_MANAGER_ARGS.authorizationWebhookCacheAuthorizedTtl.value}
+        - --authorization-webhook-cache-unauthorized-ttl=${KUBE_CONTROLLER_MANAGER_ARGS.authorizationWebhookCacheUnauthorizedTtl.value}
+        - --bind-address=${KUBE_CONTROLLER_MANAGER_ARGS.bindAddress.value}
+        - --cidr-allocator-type=${KUBE_CONTROLLER_MANAGER_ARGS.cidrAllocatorType.value}
+        - --client-ca-file=${KUBE_CONTROLLER_MANAGER_ARGS.clientCaFile.value}
+        - --cluster-name=${KUBE_CONTROLLER_MANAGER_ARGS.clusterName.value}
+        - --cloud-provider-gce-lb-src-cidrs=${KUBE_CONTROLLER_MANAGER_ARGS.cloudProviderGceLbSrcCidrs.value}
+        - --cluster-signing-cert-file=${KUBE_CONTROLLER_MANAGER_ARGS.clusterSigningCertFile.value}
+        - --cluster-signing-duration=${KUBE_CONTROLLER_MANAGER_ARGS.clusterSigningDuration.value}
+        - --cluster-signing-key-file=${KUBE_CONTROLLER_MANAGER_ARGS.clusterSigningKeyFile.value}
+        - --concurrent-cron-job-syncs=${KUBE_CONTROLLER_MANAGER_ARGS.concurrentCronJobSyncs.value}
+        - --concurrent-deployment-syncs=${KUBE_CONTROLLER_MANAGER_ARGS.concurrentDeploymentSyncs.value}
+        - --concurrent-endpoint-syncs=${KUBE_CONTROLLER_MANAGER_ARGS.concurrentEndpointSyncs.value}
+        - --concurrent-ephemeralvolume-syncs=${KUBE_CONTROLLER_MANAGER_ARGS.concurrentEphemeralvolumeSyncs.value}
+        - --concurrent-gc-syncs=${KUBE_CONTROLLER_MANAGER_ARGS.concurrentGcSyncs.value}
+        - --concurrent-horizontal-pod-autoscaler-syncs=${KUBE_CONTROLLER_MANAGER_ARGS.concurrentHorizontalPodAutoscalerSyncs.value}
+        - --concurrent-job-syncs=${KUBE_CONTROLLER_MANAGER_ARGS.concurrentJobSyncs.value}
+        - --concurrent-namespace-syncs=${KUBE_CONTROLLER_MANAGER_ARGS.concurrentNamespaceSyncs.value}
+        - --concurrent-rc-syncs=${KUBE_CONTROLLER_MANAGER_ARGS.concurrentRcSyncs.value}
+        - --concurrent-replicaset-syncs=${KUBE_CONTROLLER_MANAGER_ARGS.concurrentReplicasetSyncs.value}
+        - --concurrent-resource-quota-syncs=${KUBE_CONTROLLER_MANAGER_ARGS.concurrentResourceQuotaSyncs.value}
+        - --concurrent-service-endpoint-syncs=${KUBE_CONTROLLER_MANAGER_ARGS.concurrentServiceEndpointSyncs.value}
+        - --concurrent-service-syncs=${KUBE_CONTROLLER_MANAGER_ARGS.concurrentServiceSyncs.value}
+        - --concurrent-serviceaccount-token-syncs=${KUBE_CONTROLLER_MANAGER_ARGS.concurrentServiceaccountTokenSyncs.value}
+        - --concurrent-statefulset-syncs=${KUBE_CONTROLLER_MANAGER_ARGS.concurrentStatefulsetSyncs.value}
+        - --concurrent-ttl-after-finished-syncs=${KUBE_CONTROLLER_MANAGER_ARGS.concurrentTtlAfterFinishedSyncs.value}
+        - --concurrent-validating-admission-policy-status-syncs=${KUBE_CONTROLLER_MANAGER_ARGS.concurrentValidatingAdmissionPolicyStatusSyncs.value}
+        - --configure-cloud-routes=${KUBE_CONTROLLER_MANAGER_ARGS.configureCloudRoutes.value}
+        - --contention-profiling=${KUBE_CONTROLLER_MANAGER_ARGS.contentionProfiling.value}
+        - --controller-start-interval=${KUBE_CONTROLLER_MANAGER_ARGS.controllerStartInterval.value}
+        - --controllers=${KUBE_CONTROLLER_MANAGER_ARGS.controllers.value}
+        - --disable-attach-detach-reconcile-sync=${KUBE_CONTROLLER_MANAGER_ARGS.disableAttachDetachReconcileSync.value}
+        - --disable-force-detach-on-timeout=${KUBE_CONTROLLER_MANAGER_ARGS.disableForceDetachOnTimeout.value}
+        - --enable-dynamic-provisioning=${KUBE_CONTROLLER_MANAGER_ARGS.enableDynamicProvisioning.value}
+        - --enable-garbage-collector=${KUBE_CONTROLLER_MANAGER_ARGS.enableGarbageCollector.value}
+        - --enable-hostpath-provisioner=${KUBE_CONTROLLER_MANAGER_ARGS.enableHostpathProvisioner.value}
+        - --enable-leader-migration=${KUBE_CONTROLLER_MANAGER_ARGS.enableLeaderMigration.value}
+        - --endpoint-updates-batch-period=${KUBE_CONTROLLER_MANAGER_ARGS.endpointUpdatesBatchPeriod.value}
+        - --endpointslice-updates-batch-period=${KUBE_CONTROLLER_MANAGER_ARGS.endpointsliceUpdatesBatchPeriod.value}
+        - --feature-gates=${KUBE_CONTROLLER_MANAGER_ARGS.featureGates.value}
+        - --flex-volume-plugin-dir=${KUBE_CONTROLLER_MANAGER_ARGS.flexVolumePluginDir.value}
+        - --help=${KUBE_CONTROLLER_MANAGER_ARGS.help.value}
+        - --horizontal-pod-autoscaler-cpu-initialization-period=${KUBE_CONTROLLER_MANAGER_ARGS.horizontalPodAutoscalerCpuInitializationPeriod.value}
+        - --horizontal-pod-autoscaler-downscale-delay=${KUBE_CONTROLLER_MANAGER_ARGS.horizontalPodAutoscalerDownscaleDelay.value}
+        - --horizontal-pod-autoscaler-downscale-stabilization=${KUBE_CONTROLLER_MANAGER_ARGS.horizontalPodAutoscalerDownscaleStabilization.value}
+        - --horizontal-pod-autoscaler-initial-readiness-delay=${KUBE_CONTROLLER_MANAGER_ARGS.horizontalPodAutoscalerInitialReadinessDelay.value}
+        - --horizontal-pod-autoscaler-sync-period=${KUBE_CONTROLLER_MANAGER_ARGS.horizontalPodAutoscalerSyncPeriod.value}
+        - --horizontal-pod-autoscaler-tolerance=${KUBE_CONTROLLER_MANAGER_ARGS.horizontalPodAutoscalerTolerance.value}
+        - --horizontal-pod-autoscaler-upscale-delay=${KUBE_CONTROLLER_MANAGER_ARGS.horizontalPodAutoscalerUpscaleDelay.value}
+        - --http2-max-streams-per-connection=${KUBE_CONTROLLER_MANAGER_ARGS.http2MaxStreamsPerConnection.value}
+        - --kube-api-burst=${KUBE_CONTROLLER_MANAGER_ARGS.kubeApiBurst.value}
+        - --kube-api-content-type=${KUBE_CONTROLLER_MANAGER_ARGS.kubeApiContentType.value}
+        - --kube-api-qps=${KUBE_CONTROLLER_MANAGER_ARGS.kubeApiQps.value}
+        - --kubeconfig=${KUBE_CONTROLLER_MANAGER_ARGS.kubeconfig.value}
+        - --large-cluster-size-threshold=${KUBE_CONTROLLER_MANAGER_ARGS.largeClusterSizeThreshold.value}
+        - --leader-elect=${KUBE_CONTROLLER_MANAGER_ARGS.leaderElect.value}
+        - --leader-elect-lease-duration=${KUBE_CONTROLLER_MANAGER_ARGS.leaderElectLeaseDuration.value}
+        - --leader-elect-renew-deadline=${KUBE_CONTROLLER_MANAGER_ARGS.leaderElectRenewDeadline.value}
+        - --leader-elect-resource-lock=${KUBE_CONTROLLER_MANAGER_ARGS.leaderElectResourceLock.value}
+        - --leader-elect-resource-name=${KUBE_CONTROLLER_MANAGER_ARGS.leaderElectResourceName.value}
+        - --leader-elect-resource-namespace=${KUBE_CONTROLLER_MANAGER_ARGS.leaderElectResourceNamespace.value}
+        - --leader-elect-retry-period=${KUBE_CONTROLLER_MANAGER_ARGS.leaderElectRetryPeriod.value}
+        - --legacy-service-account-token-clean-up-period=${KUBE_CONTROLLER_MANAGER_ARGS.legacyServiceAccountTokenCleanUpPeriod.value}
+        - --log-flush-frequency=${KUBE_CONTROLLER_MANAGER_ARGS.logFlushFrequency.value}
+        - --log-json-info-buffer-size=${KUBE_CONTROLLER_MANAGER_ARGS.logJsonInfoBufferSize.value}
+        - --log-json-split-stream=${KUBE_CONTROLLER_MANAGER_ARGS.logJsonSplitStream.value}
+        - --log-text-info-buffer-size=${KUBE_CONTROLLER_MANAGER_ARGS.logTextInfoBufferSize.value}
+        - --log-text-split-stream=${KUBE_CONTROLLER_MANAGER_ARGS.logTextSplitStream.value}
+        - --logging-format=${KUBE_CONTROLLER_MANAGER_ARGS.loggingFormat.value}
+        - --max-endpoints-per-slice=${KUBE_CONTROLLER_MANAGER_ARGS.maxEndpointsPerSlice.value}
+        - --min-resync-period=${KUBE_CONTROLLER_MANAGER_ARGS.minResyncPeriod.value}
+        - --mirroring-concurrent-service-endpoint-syncs=${KUBE_CONTROLLER_MANAGER_ARGS.mirroringConcurrentServiceEndpointSyncs.value}
+        - --mirroring-endpointslice-updates-batch-period=${KUBE_CONTROLLER_MANAGER_ARGS.mirroringEndpointsliceUpdatesBatchPeriod.value}
+        - --mirroring-max-endpoints-per-subset=${KUBE_CONTROLLER_MANAGER_ARGS.mirroringMaxEndpointsPerSubset.value}
+        - --namespace-sync-period=${KUBE_CONTROLLER_MANAGER_ARGS.namespaceSyncPeriod.value}
+        - --node-cidr-mask-size=${KUBE_CONTROLLER_MANAGER_ARGS.nodeCidrMaskSize.value}
+        - --node-cidr-mask-size-ipv4=${KUBE_CONTROLLER_MANAGER_ARGS.nodeCidrMaskSizeIpv4.value}
+        - --node-cidr-mask-size-ipv6=${KUBE_CONTROLLER_MANAGER_ARGS.nodeCidrMaskSizeIpv6.value}
+        - --node-eviction-rate=${KUBE_CONTROLLER_MANAGER_ARGS.nodeEvictionRate.value}
+        - --node-monitor-grace-period=${KUBE_CONTROLLER_MANAGER_ARGS.nodeMonitorGracePeriod.value}
+        - --node-monitor-period=${KUBE_CONTROLLER_MANAGER_ARGS.nodeMonitorPeriod.value}
+        - --node-startup-grace-period=${KUBE_CONTROLLER_MANAGER_ARGS.nodeStartupGracePeriod.value}
+        - --node-sync-period=${KUBE_CONTROLLER_MANAGER_ARGS.nodeSyncPeriod.value}
+        - --permit-address-sharing=${KUBE_CONTROLLER_MANAGER_ARGS.permitAddressSharing.value}
+        - --permit-port-sharing=${KUBE_CONTROLLER_MANAGER_ARGS.permitPortSharing.value}
+        - --profiling=${KUBE_CONTROLLER_MANAGER_ARGS.profiling.value}
+        - --pv-recycler-increment-timeout-nfs=${KUBE_CONTROLLER_MANAGER_ARGS.pvRecyclerIncrementTimeoutNfs.value}
+        - --pv-recycler-minimum-timeout-hostpath=${KUBE_CONTROLLER_MANAGER_ARGS.pvRecyclerMinimumTimeoutHostpath.value}
+        - --pv-recycler-minimum-timeout-nfs=${KUBE_CONTROLLER_MANAGER_ARGS.pvRecyclerMinimumTimeoutNfs.value}
+        - --pv-recycler-timeout-increment-hostpath=${KUBE_CONTROLLER_MANAGER_ARGS.pvRecyclerTimeoutIncrementHostpath.value}
+        - --pvclaimbinder-sync-period=${KUBE_CONTROLLER_MANAGER_ARGS.pvclaimbinderSyncPeriod.value}
+        - --requestheader-client-ca-file=${KUBE_CONTROLLER_MANAGER_ARGS.requestheaderClientCaFile.value}
+        - --requestheader-extra-headers-prefix=${KUBE_CONTROLLER_MANAGER_ARGS.requestheaderExtraHeadersPrefix.value}
+        - --requestheader-group-headers=${KUBE_CONTROLLER_MANAGER_ARGS.requestheaderGroupHeaders.value}
+        - --requestheader-username-headers=${KUBE_CONTROLLER_MANAGER_ARGS.requestheaderUsernameHeaders.value}
+        - --resource-quota-sync-period=${KUBE_CONTROLLER_MANAGER_ARGS.resourceQuotaSyncPeriod.value}
+        - --root-ca-file=${KUBE_CONTROLLER_MANAGER_ARGS.rootCaFile.value}
+        - --route-reconciliation-period=${KUBE_CONTROLLER_MANAGER_ARGS.routeReconciliationPeriod.value}
+        - --secondary-node-eviction-rate=${KUBE_CONTROLLER_MANAGER_ARGS.secondaryNodeEvictionRate.value}
+        - --secure-port=${KUBE_CONTROLLER_MANAGER_ARGS.securePort.value}
+        - --service-account-private-key-file=${KUBE_CONTROLLER_MANAGER_ARGS.serviceAccountPrivateKeyFile.value}
+        - --terminated-pod-gc-threshold=${KUBE_CONTROLLER_MANAGER_ARGS.terminatedPodGcThreshold.value}
+        - --unhealthy-zone-threshold=${KUBE_CONTROLLER_MANAGER_ARGS.unhealthyZoneThreshold.value}
+        - --use-service-account-credentials=${KUBE_CONTROLLER_MANAGER_ARGS.useServiceAccountCredentials.value}
+        - --v=${KUBE_CONTROLLER_MANAGER_ARGS.v.value}
+        - --version=${KUBE_CONTROLLER_MANAGER_ARGS.version.value}
+        - --volume-host-allow-local-loopback=${KUBE_CONTROLLER_MANAGER_ARGS.volumeHostAllowLocalLoopback.value}
+        # ЕСЛИ НУЖНО ПОДКЛЮЧИТЬ CLOUD-CONTROLLER-MANAGER
+        # ТРЕБУЕТСЯ РАСКОМЕНТИРОВАТЬ
+        # ->
+        # - --cloud-provider: "${KUBE_CONTROLLER_MANAGER_ARGS.cloudProvider.value}"
+        # Не указывать если значение "" или undefined
+        # - --cluster-signing-kube-apiserver-client-cert-file=${KUBE_CONTROLLER_MANAGER_ARGS.clusterSigningKubeApiserverClientCertFile.value}
+        # - --cluster-signing-kube-apiserver-client-key-file=${KUBE_CONTROLLER_MANAGER_ARGS.clusterSigningKubeApiserverClientKeyFile.value}
+        # - --cluster-signing-kubelet-client-cert-file=${KUBE_CONTROLLER_MANAGER_ARGS.clusterSigningKubeletClientCertFile.value}
+        # - --cluster-signing-kubelet-client-key-file=${KUBE_CONTROLLER_MANAGER_ARGS.clusterSigningKubeletClientKeyFile.value}
+        # - --cluster-signing-kubelet-serving-cert-file=${KUBE_CONTROLLER_MANAGER_ARGS.clusterSigningKubeletServingCertFile.value}
+        # - --cluster-signing-kubelet-serving-key-file=${KUBE_CONTROLLER_MANAGER_ARGS.clusterSigningKubeletServingKeyFile.value}
+        # - --cluster-signing-legacy-unknown-cert-file=${KUBE_CONTROLLER_MANAGER_ARGS.clusterSigningLegacyUnknownCertFile.value}
+        # - --cluster-signing-legacy-unknown-key-file=${KUBE_CONTROLLER_MANAGER_ARGS.clusterSigningLegacyUnknownKeyFile.value}
+        # - --cluster-cidr=${KUBE_CONTROLLER_MANAGER_ARGS.clusterCidr.value}
+        # - --cloud-config=${KUBE_CONTROLLER_MANAGER_ARGS.cloudConfig.value}
+        # - --cert-dir=${KUBE_CONTROLLER_MANAGER_ARGS.certDir.value}
+        # - --allow-metric-labels-manifest=${KUBE_CONTROLLER_MANAGER_ARGS.allowMetricLabelsManifest.value}
+        # - --allow-metric-labels=${KUBE_CONTROLLER_MANAGER_ARGS.allowMetricLabels.value}
+        # - --disabled-metrics=${KUBE_CONTROLLER_MANAGER_ARGS.disabledMetrics.value}
+        # - --leader-migration-config=${KUBE_CONTROLLER_MANAGER_ARGS.leaderMigrationConfig.value}
+        # - --master=${KUBE_CONTROLLER_MANAGER_ARGS.master.value}
+        # - --pv-recycler-pod-template-filepath-hostpath=${KUBE_CONTROLLER_MANAGER_ARGS.pvRecyclerPodTemplateFilepathHostpath.value}
+        # - --pv-recycler-pod-template-filepath-nfs=${KUBE_CONTROLLER_MANAGER_ARGS.pvRecyclerPodTemplateFilepathNfs.value}
+        # - --service-cluster-ip-range=${KUBE_CONTROLLER_MANAGER_ARGS.serviceClusterIpRange.value}
+        # - --show-hidden-metrics-for-version=${KUBE_CONTROLLER_MANAGER_ARGS.showHiddenMetricsForVersion.value}
+        # - --tls-cert-file=${KUBE_CONTROLLER_MANAGER_ARGS.tlsCertFile.value}
+        # - --tls-cipher-suites=${KUBE_CONTROLLER_MANAGER_ARGS.tlsCipherSuites.value}
+        # - --tls-min-version=${KUBE_CONTROLLER_MANAGER_ARGS.tlsMinVersion.value}
+        # - --tls-private-key-file=${KUBE_CONTROLLER_MANAGER_ARGS.tlsPrivateKeyFile.value}
+        # - --tls-sni-cert-key=${KUBE_CONTROLLER_MANAGER_ARGS.tlsSniCertKey.value}
+        # - --vmodule=${KUBE_CONTROLLER_MANAGER_ARGS.vmodule.value}
+        # - --volume-host-cidr-denylist=${KUBE_CONTROLLER_MANAGER_ARGS.volumeHostCidrDenylist.value}
+        # - --external-cloud-volume-plugin=${KUBE_CONTROLLER_MANAGER_ARGS.externalCloudVolumePlugin.value}
+        # - --requestheader-allowed-names=${KUBE_CONTROLLER_MANAGER_ARGS.requestheaderAllowedNames.value}
+        image: ${CUSTOM_VALUE.baseDockerRegistry.value}/kube-controller-manager:${COMPONENTS_VERSION.kubernetes.value}
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 8
+          httpGet:
+            path: /healthz
+            port: ${PORTS.kubeControllerManager.portNumber}
+            scheme: HTTPS
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 15
+        name: kube-controller-manager
+        resources:
+          requests:
+            cpu: 200m
+        startupProbe:
+          failureThreshold: 24
+          httpGet:
+            path: /healthz
+            port: ${PORTS.kubeControllerManager.portNumber}
+            scheme: HTTPS
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 15
+        volumeMounts:
+        - mountPath: /etc/ssl/certs
+          name: ca-certs
+          readOnly: true
+        - mountPath: /etc/ca-certificates
+          name: etc-ca-certificates
+          readOnly: true
+        - mountPath: /etc/pki
+          name: etc-pki
+          readOnly: true
+        - mountPath: /usr/libexec/kubernetes/kubelet-plugins/volume/exec/
+          name: flexvolume-dir
+        - mountPath: ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/pki
+          name: k8s-certs
+          readOnly: true
+        - mountPath: ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/controller-manager.conf
+          name: kubeconfig
+          readOnly: true
+        - mountPath: /usr/local/share/ca-certificates
+          name: usr-local-share-ca-certificates
+          readOnly: true
+        - mountPath: /usr/share/ca-certificates
+          name: usr-share-ca-certificates
+          readOnly: true
+      hostNetwork: true
+      priority: 2000001000
+      priorityClassName: system-node-critical
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      volumes:
+      - hostPath:
+          path: /etc/ssl/certs
+          type: DirectoryOrCreate
+        name: ca-certs
+      - hostPath:
+          path: /etc/ca-certificates
+          type: DirectoryOrCreate
+        name: etc-ca-certificates
+      - hostPath:
+          path: /etc/pki
+          type: DirectoryOrCreate
+        name: etc-pki
+      - hostPath:
+          path: /usr/libexec/kubernetes/kubelet-plugins/volume/exec/
+          type: DirectoryOrCreate
+        name: flexvolume-dir
+      - hostPath:
+          path: ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/pki
+          type: DirectoryOrCreate
+        name: k8s-certs
+      - hostPath:
+          path: ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/controller-manager.conf
+          type: FileOrCreate
+        name: kubeconfig
+      - hostPath:
+          path: /usr/local/share/ca-certificates
+          type: DirectoryOrCreate
+        name: usr-local-share-ca-certificates
+      - hostPath:
+          path: /usr/share/ca-certificates
+          type: DirectoryOrCreate
+        name: usr-share-ca-certificates
+    status: {}
+    EOF
+  `}
+</CodeBlock>
+
+</details>

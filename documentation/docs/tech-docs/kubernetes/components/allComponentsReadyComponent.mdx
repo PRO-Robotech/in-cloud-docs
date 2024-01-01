@@ -1,0 +1,32 @@
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
+import ComponentsReadyInitComponent from '@site/docs/tech-docs/kubernetes/components/componentsReadyInitComponent.mdx'
+import ComponentsReadyJoinComponent from '@site/docs/tech-docs/kubernetes/components/componentsReadyJoinComponent.mdx'
+
+> Этот раздел описывает процесс проверки готовности компонентов Kubernetes до инициализации кластера или присоединения новых узлов.
+
+<Tabs groupId="current-master">
+  <TabItem value='Init'>
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Проверка готовности компонентов</p>
+          <p className="obligatory-note-green">● Не обязателен к применению</p>
+        </div>
+      </summary>
+      <ComponentsReadyInitComponent />
+    </details>
+  </TabItem>
+
+  <TabItem value='Join'>
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Проверка готовности компонентов</p>
+          <p className="obligatory-note-green">● Не обязателен к применению</p>
+        </div>
+      </summary>
+      <ComponentsReadyJoinComponent />
+    </details>
+  </TabItem>
+</Tabs>

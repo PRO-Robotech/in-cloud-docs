@@ -1,0 +1,147 @@
+/* .navbar {
+  transition: height 0.1s ease-out;transition
+}
+
+@media (min-width: 997px) {
+  .navbar__brand {margin-left
+    transition: all 0.1s ease-out;transition
+  }
+
+  .navbar__items--right {margin-top
+    transition: all 0.1s ease-out;transition
+  }
+
+  .navbar__title {font-size
+    transition: all 0.1s ease-out;transition
+  }
+
+  .navbar__item {margin-top
+    transition: all 0.1s ease-out;transition
+
+    &:nth-child(3) {
+      margin-left: -160px;margin-left
+    }
+  }
+}
+
+:root:has(body.header-not-at-top) {
+  --ifm-navbar-height: 3.25rem;--ifm-navbar-height
+}
+
+body.header-not-at-top {
+  .navbar__brand {margin-top
+    margin-left: initial;margin-left
+  }
+
+  .navbar__items--right {
+    margin-top: initial;margin-top
+  }
+
+  .navbar__title {
+    font-size: 16px;font-size
+  }
+
+  .navbar__item {
+    margin-top: initial;margin-top
+
+    &:nth-child(3) {
+      margin-left: initial;margin-left
+    }
+  }
+} */
+
+.header-github-link {
+  position: relative;
+  margin-left: 35px;
+
+  @media (min-width: 997px) {
+    margin-left: auto;
+  }
+
+  &:hover {
+    opacity: 0.6;
+  }
+}
+
+.header-github-link:before {
+  position: absolute;
+  left: -30px;
+  display: flex;
+  width: 24px;
+  height: 24px;
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12'/%3E%3C/svg%3E")
+    no-repeat;
+  content: '';
+
+  @media (min-width: 997px) {
+    top: 10px;
+    left: -25px;
+  }
+}
+
+html[data-theme='dark'] .header-github-link:before {
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='white' d='M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12'/%3E%3C/svg%3E")
+    no-repeat;
+}
+
+.header-github-link-mob {
+  margin-top: 15px;
+}
+
+.github-facts {
+  display: flex;
+  gap: 0.4rem;
+  width: 100%;
+  margin: 0.1rem 0 0;
+  padding: 0;
+  overflow: hidden;
+  font-size: 12px;
+  list-style-type: none;
+}
+
+.github-fact:before {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin-right: 4px;
+  vertical-align: text-top;
+  background-color: currentcolor;
+  content: '';
+  mask-position: center;
+  mask-repeat: no-repeat;
+  mask-size: contain;
+}
+
+.github-facts-mob {
+  margin-left: 40px;
+}
+
+.github-fact--version:before {
+  mask-image: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M1 7.775V2.75C1 1.784 1.784 1 2.75 1h5.025c.464 0 .91.184 1.238.513l6.25 6.25a1.75 1.75 0 0 1 0 2.474l-5.026 5.026a1.75 1.75 0 0 1-2.474 0l-6.25-6.25A1.752 1.752 0 0 1 1 7.775Zm1.5 0c0 .066.026.13.073.177l6.25 6.25a.25.25 0 0 0 .354 0l5.025-5.025a.25.25 0 0 0 0-.354l-6.25-6.25a.25.25 0 0 0-.177-.073H2.75a.25.25 0 0 0-.25.25ZM6 5a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z"/></svg>');
+}
+
+.github-fact--stars:before {
+  mask-image: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.751.751 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Zm0 2.445L6.615 5.5a.75.75 0 0 1-.564.41l-3.097.45 2.24 2.184a.75.75 0 0 1 .216.664l-.528 3.084 2.769-1.456a.75.75 0 0 1 .698 0l2.77 1.456-.53-3.084a.75.75 0 0 1 .216-.664l2.24-2.183-3.096-.45a.75.75 0 0 1-.564-.41L8 2.694Z"/></svg>');
+}
+
+.github-fact--forks:before {
+  mask-image: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M5 5.372v.878c0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75v-.878a2.25 2.25 0 1 1 1.5 0v.878a2.25 2.25 0 0 1-2.25 2.25h-1.5v2.128a2.251 2.251 0 1 1-1.5 0V8.5h-1.5A2.25 2.25 0 0 1 3.5 6.25v-.878a2.25 2.25 0 1 1 1.5 0ZM5 3.25a.75.75 0 1 0-1.5 0 .75.75 0 0 0 1.5 0Zm6.75.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm-3 8.75a.75.75 0 1 0-1.5 0 .75.75 0 0 0 1.5 0Z"/></svg>');
+}
+
+/* body.header-not-at-top {
+  .github-facts {
+    display: none;displaydisplay
+  }
+
+  .github-facts-mob {
+    display: flex;displaydisplay
+  }
+} */
+
+.navbar__item.dropdown {
+  margin-right: 35px;
+}
+
+.navbar__items--right .navbar__item {
+  margin-right: 35px;
+}

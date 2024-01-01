@@ -1,0 +1,22 @@
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+
+import CodeBlock from '@theme/CodeBlock'
+import dedent from 'ts-dedent'
+
+
+<h4>Генерация манифеста</h4>
+<CodeBlock language="bash">
+  {dedent`
+    kubeadm init phase  control-plane scheduler \\
+      --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
+  `}
+</CodeBlock>
+
+:::note
+<CodeBlock language="bash">
+  {dedent`
+    #### Kube API
+    [control-plane] Creating static Pod manifest for "kube-scheduler"
+  `}
+</CodeBlock>
+:::

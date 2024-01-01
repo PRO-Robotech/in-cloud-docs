@@ -1,0 +1,18 @@
+import dedent from 'ts-dedent'
+import CodeBlock from '@theme/CodeBlock'
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+
+<CodeBlock language="bash">
+  {dedent`
+    ls -al ${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
+  `}
+</CodeBlock>
+
+:::note Вывод команды
+
+<CodeBlock language="bash">
+  {dedent`
+    -rw-r--r-- 1 root root 6463 Feb 18 15:20 ${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
+  `}
+</CodeBlock>
+:::

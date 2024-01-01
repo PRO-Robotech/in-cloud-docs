@@ -1,0 +1,22 @@
+import dedent                     from 'ts-dedent'
+import CodeBlock                  from '@theme/CodeBlock'
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+
+<h4>Генерация сертификатов</h4>
+<CodeBlock language="bash">
+  {dedent`
+    kubeadm init phase kubeconfig scheduler \\
+      --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
+  `}
+</CodeBlock>
+
+:::note
+После выполнения команд получаем следующий вывод.
+
+<CodeBlock language="bash">
+  {dedent`
+    #### Генерация Kube Scheduler сертификатов
+    [kubeconfig] Writing "scheduler.conf" kubeconfig file
+  `}
+</CodeBlock>
+:::

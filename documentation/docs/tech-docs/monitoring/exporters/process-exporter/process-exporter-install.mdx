@@ -1,0 +1,182 @@
+---
+id: process-exporter-install
+title: Установка Process Exporter
+---
+
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+import CodeBlock from '@theme/CodeBlock'
+import dedent from 'ts-dedent'
+import { COMPONENTS_VERSION } from '@site/src/constants/monitoring/componentsVersion'
+
+# 5.5.1.2.3. Process Exporter
+
+`Process Exporter` устанавливается как обычное Kubernetes-приложение, описанное с помощью Helm Chart, которое можно установить либо из in-cloud manifests либо через helm.
+
+<Tabs>
+    <TabItem value='helm'>
+## Установка с помощью helm
+### Установите Helm
+
+Если у вас еще нет Helm, сначала установите его. Вы можете скачать Helm с [официального сайта](https://helm.sh/docs/intro/install/). Следуйте инструкциям для вашей операционной системы.
+
+### Добавьте репозиторий с Helm chart
+
+Вам нужно добавить репозиторий с charts, в котором находится Process Exporter. Например, можно использовать официальный репозиторий Prometheus Community:
+
+```bash
+helm repo add prometheus-process-exporter-charts https://mumoshu.github.io/prometheus-process-exporter
+```
+
+Обновите список charts:
+
+```bash
+helm repo update
+```
+
+### Установите Process Exporter
+
+Теперь вы можете установить `Process Exporter` с помощью Helm. Для этого выполните следующую команду:
+
+```bash
+helm install --name process-exporter prometheus-process-exporter-charts/prometheus-process-exporter --namespace in-cloud-monitoring-nodes --create-namespace -f values.yaml
+```
+
+Команда создаст релиз с именем `prometheus-process-exporter` и развернет `Process Exporter` на вашем кластере Kubernetes в неймспейсе `in-cloud-monitoring-nodes`.
+
+      <div className="parent-div" style={{ minHeight: '420px' }}>
+
+        <div className="child-block">
+          <h4 className="center">Enivironments</h4>
+        </div>
+
+        <div className="child-block">
+          <h4 className="center">Values</h4>
+            <CodeBlock language="yaml">
+              {dedent`
+                service:
+                  type: ClusterIP
+                  port: 9101
+                  targetPort: 9101
+                  nodePort:
+                  annotations:
+                    prometheus.io/scrape: "true"
+                tolerations:
+                  - key: node-role.kubernetes.io/master
+                    effect: NoSchedule
+                  - key: node-role.kubernetes.io/control-plane
+                    effect: NoSchedule
+                  - key: node-role.kubernetes.io/data-plane
+                    effect: NoSchedule
+                  - key: node-role.kubernetes.io/in-cloud-infra
+                    effect: NoSchedule
+                  - key: node-role.kubernetes.io/in-cloud-client
+                    effect: NoSchedule
+                  - key: node-role.kubernetes.io/vmcluster
+                    effect: NoSchedule
+                  - key: node-role.kubernetes.io/runner
+                    effect: NoSchedule
+                  - key: node-role.kubernetes.io/argocd
+                    effect: NoSchedule
+                priorityClassName: system-cluster-critical
+                resources:
+                  limits:
+                    memory: 128Mi
+                    cpu: 700m
+                  requests:
+                    memory: 32Mi
+                    cpu: 100m
+                rbac:
+                  create: true
+                  pspEnabled: false
+                templates:
+                  config.yml: |
+                    process_names:
+                      - name: "{{.Comm}}"
+                        cmdline:
+                        - '.+'
+              `}
+            </CodeBlock>
+
+        </div>
+      </div>
+
+    </TabItem>
+
+
+
+    <TabItem value='in-cloud/manifests'>
+## Установка с помощью in-cloud manifests
+    `Process Exporter` устанавливается как обычное Kubernetes-приложение, описанное с помощью Helm Chart.
+      <div className="parent-div" style={{ minHeight: '420px' }}>
+
+        <div className="child-block">
+          <h4 className="center">Enivironments</h4>
+            <CodeBlock language="bash">
+              {dedent`
+                export PROMETHEUS_PROCESS_EXPORTER_VERSION="${COMPONENTS_VERSION.processExporter.value}"
+              `}
+            </CodeBlock>
+        </div>
+
+        <div className="child-block">
+          <h4 className="center">Values</h4>
+            <CodeBlock language="yaml">
+              {dedent`
+                service:
+                  type: ClusterIP
+                  port: 9101
+                  targetPort: 9101
+                  nodePort:
+                  annotations:
+                    prometheus.io/scrape: "true"
+                tolerations:
+                  - key: node-role.kubernetes.io/master
+                    effect: NoSchedule
+                  - key: node-role.kubernetes.io/control-plane
+                    effect: NoSchedule
+                  - key: node-role.kubernetes.io/data-plane
+                    effect: NoSchedule
+                  - key: node-role.kubernetes.io/in-cloud-infra
+                    effect: NoSchedule
+                  - key: node-role.kubernetes.io/in-cloud-client
+                    effect: NoSchedule
+                  - key: node-role.kubernetes.io/vmcluster
+                    effect: NoSchedule
+                  - key: node-role.kubernetes.io/runner
+                    effect: NoSchedule
+                  - key: node-role.kubernetes.io/argocd
+                    effect: NoSchedule
+                priorityClassName: system-cluster-critical
+                resources:
+                  limits:
+                    memory: 128Mi
+                    cpu: 700m
+                  requests:
+                    memory: 32Mi
+                    cpu: 100m
+                rbac:
+                  create: true
+                  pspEnabled: false
+                templates:
+                  config.yml: |
+                    process_names:
+                      - name: "{{.Comm}}"
+                        cmdline:
+                        - '.+'
+              `}
+            </CodeBlock>
+
+
+        </div>
+      </div>
+После этого выполните команду установки с указанием вашего конфигурационного файла:
+
+    <CodeBlock language="bash">
+      {dedent`helmfile -e $\{PROMETHEUS_PROCESS_EXPORTER_VERSION} -l in-cloud-collections=prometheus-process-exporter in-cloud-monitoring-stack=client | kubectl apply -f - `}
+    </CodeBlock>
+
+    </TabItem>
+</Tabs>
+
+

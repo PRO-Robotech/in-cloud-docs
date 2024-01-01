@@ -1,0 +1,29 @@
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+
+import CodeBlock from '@theme/CodeBlock'
+import dedent from 'ts-dedent'
+
+:::danger ВНИМАНИЕ!
+Имейте в виду: на этапе Join нельзя выбрать, какие манифесты генерировать — kubeadm создаёт их все сразу, в полном объёме.
+:::
+
+<h4>Генерация манифеста</h4>
+<CodeBlock language="bash">
+  {dedent`
+    kubeadm join phase control-plane-prepare control-plane \\
+      --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
+  `}
+</CodeBlock>
+
+:::note
+<CodeBlock language="bash">
+  {dedent`
+    [preflight] Reading configuration from the cluster...
+    [preflight] FYI: You can look at this config file with 'kubectl -n kube-system get cm kubeadm-config -o yaml'
+    [control-plane] Using manifest folder "/etc/kubernetes/manifests"
+    [control-plane] Creating static Pod manifest for "kube-apiserver"
+    [control-plane] Creating static Pod manifest for "kube-controller-manager"
+    [control-plane] Creating static Pod manifest for "kube-scheduler"
+  `}
+</CodeBlock>
+:::

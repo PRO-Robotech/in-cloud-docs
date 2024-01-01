@@ -1,0 +1,83 @@
+import { CERTIFICATES } from '@site/src/constants/kubernetes/certs'
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+
+import CodeBlock        from '@theme/CodeBlock'
+import dedent           from 'ts-dedent'
+
+<h4>Рабочая директория</h4>
+<CodeBlock language="bash">
+  {dedent`
+    mkdir -p ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/openssl
+    mkdir -p ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/pki
+  `}
+</CodeBlock>
+
+<h4>Конфигурация</h4>
+<CodeBlock language="bash">
+  {dedent`
+    cat <<EOF > ${CERTIFICATES.kubernetesCA.crtConf}
+    [req]
+    distinguished_name = req_distinguished_name
+    x509_extensions    = v3_ca
+    prompt             = no
+
+    [req_distinguished_name]
+    CN = ${CERTIFICATES.kubernetesCA.cname}
+
+    [v3_ca]
+    keyUsage = critical, keyCertSign, keyEncipherment, digitalSignature
+    basicConstraints = critical,CA:TRUE
+    EOF
+  `}
+</CodeBlock>
+
+<h4>Генерация приватного ключа</h4>
+<CodeBlock language="bash">
+  {dedent`
+    openssl genrsa \\
+      -out ${CERTIFICATES.kubernetesCA.keyPath} ${CERTIFICATES.kubernetesCA.keySize}
+  `}
+</CodeBlock>
+
+<h4>Генерация публичного ключа</h4>
+<CodeBlock language="bash">
+  {dedent`
+    openssl req \\
+      -x509 \\
+      -new \\
+      -nodes \\
+      -key ${CERTIFICATES.kubernetesCA.keyPath} \\
+      -sha256 \\
+      -days 3650 \\
+      -out ${CERTIFICATES.kubernetesCA.crtPath} \\
+      -config ${CERTIFICATES.kubernetesCA.crtConf}
+  `}
+</CodeBlock>
+
+
+<details className="custom-blue-block">
+  <summary>Проверка готовности сертификата</summary>
+  :::warning Обратите ВНИМАНИЕ!
+
+  Данный раздел зависит от следующих разделов:
+  - [SSL Certificate Check](/docs/tech-docs/kubernetes/certificates/examination/examinationOpensslComponent.mdx).
+  :::
+
+  <CodeBlock language="bash">
+    {dedent`
+      ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/openssl/cert-report.sh ${CERTIFICATES.kubernetesCA.crtPath}
+    `}
+  </CodeBlock>
+
+  :::note Вывод команды
+  <CodeBlock language="bash">
+    {dedent`
+      CERTIFICATE AUTHORITY   EXPIRES                  RESIDUAL TIME   EXTERNALLY MANAGED
+      ca                      Oct 20, 2034 22:04 UTC   9y              no
+    `}
+  </CodeBlock>
+  :::
+
+</details>
+
+
