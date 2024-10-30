@@ -1,0 +1,111 @@
+* {
+  font-family: 'Roboto';
+}
+
+pre span {
+  font-family: 'Source Code Pro', monospace;
+}
+
+footer {
+  z-index: 2;
+}
+
+/*
+  Выравнивание текста по ширине
+*/
+
+.text-justify {
+  text-align: justify;
+  text-justify: inter-word;
+}
+
+/*
+  Выравнивание текста по ширине и добавление красной строки
+*/
+
+.paragraph {
+  text-align: justify;
+  text-indent: 20px;
+  text-justify: inter-word;
+}
+
+.custom-heading {
+  margin-top: 40px;
+  margin-bottom: 10px;
+}
+
+.green {
+  color: green;
+}
+
+table {
+  display: table;
+  width: 100%;
+}
+
+.center {
+  text-align: center;
+}
+
+.parent-div {
+  display: flex;
+  flex-flow: column;
+  overflow-x: auto;
+
+  @media (min-width: 1024px) {
+    flex-flow: row;
+  }
+}
+
+.child-block {
+  flex: 1;
+  max-width: 50%;
+  padding: 10px;
+  border: 1px solid #000;
+}
+
+/* others */
+
+.paragraph {
+  text-indent: 0;
+}
+
+.bold {
+  font-weight: 700;
+}
+
+.scrollable-x {
+  overflow-x: auto;
+}
+
+.react-transform-component .docusaurus-mermaid-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.markdown li > p {
+  margin-bottom: 0;
+}
+
+.p-without-margin {
+  margin: 0;
+}
+
+/* medusa */
+
+#medusa-stage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  width: 98vw;
+  height: 100vh;
+}
+
+.medusa-container {
+  position: absolute;
+  top: 0;
+  width: 98vw;
+  height: 100vh;
+}

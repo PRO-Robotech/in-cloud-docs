@@ -1,0 +1,372 @@
+---
+title: Сертификаты Kubernetes
+description: This is my first post on Docusaurus.
+slug: k8s-cp-certificates
+authors:
+  - name: Путилин Дмитрий
+    title: Dobry_kot
+    url: https://github.com/JoelMarcey
+    image_url: https://avatars.githubusercontent.com/u/107264732?v=4
+    socials:
+      github: FR-Solution
+tags: [certs, kubernetes]
+image: https://avatars.githubusercontent.com/u/107264732?v=4
+hide_table_of_contents: false
+toc_max_heading_level: 6
+toc_min_heading_level: 6
+---
+
+import ETCDCACert from '@site/docs/tech-docs/etcd/certificates/centerAuthority/etcdCA/openssl.mdx'
+import FrontProxyCACert from '@site/docs/tech-docs/kubernetes/certificates/centerAuthority/frontProxyCA/openssl.mdx'
+import KubernetesCACert from '@site/docs/tech-docs/kubernetes/certificates/centerAuthority/kubernetesCA/openssl.mdx'
+import { CERTIFICATES } from '@site/src/constants/kubernetes/certs'
+import KubeletCerts from '@site/docs/tech-docs/kubernetes/certificates/components/kubelet/main.mdx'
+import KubeAPICerts from '@site/docs/tech-docs/kubernetes/certificates/components/kubeAPI/main.mdx'
+import KubeControllersCerts from '@site/docs/tech-docs/kubernetes/certificates/components/kubeControllerManager/main.mdx'
+import KubeSchedulerCerts from '@site/docs/tech-docs/kubernetes/certificates/components/kubeScheduler/main.mdx'
+import AdminK8SCerts from '@site/docs/tech-docs/kubernetes/certificates/components/admin/main.mdx'
+import ETCDCerts  from '@site/docs/tech-docs/etcd/certificates/components/etcd/main.mdx'
+
+import CertificatesAbout  from '@site/docs/tech-docs/certificates/about.mdx'
+import CertificatesHowItWork  from '@site/docs/tech-docs/certificates/howItWork.mdx'
+import CertificatesWorkflow  from '@site/docs/tech-docs/certificates/workflow.mdx'
+import CertificatesStructure  from '@site/docs/tech-docs/certificates/structure.mdx'
+import CertificatesTypes  from '@site/docs/tech-docs/certificates/types.mdx'
+
+import CodeBlock from '@theme/CodeBlock'
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+import dedent from 'dedent'
+
+
+🔥 **Всем привет!** Сегодня разберём **одну из важнейших тем в Kubernetes** – работу с **сертификатами**!  
+
+Без них кластер просто **не сможет безопасно функционировать**: ни один компонент не будет доверять друг другу, API-сервер закроет доступ, а ETCD откажется отдавать данные. Давайте разберёмся, как всё устроено и как **управлять сертификатами** правильно! 🚀  
+
+---
+
+## 📌 О чём поговорим?
+- ✅ Что такое сертификаты?
+- ✅ Как работают TLS Сертификаты?
+- ✅ Структура сертификата
+- ✅ Типы сертификатов
+- ✅ Процесс создания сертификата
+- ✅ Категории cертификатов в K8S?
+- ✅ Иерархия сертификатов K8S (CP)
+- ✅ Используемые инструменты
+- ✅ Полезные команды
+- ✅ Созданию Root CA 
+- ✅ Созданию Сертификатов K8S (CP)
+- ✅ Перевыпуск Сертификатов K8S (CP)
+- ✅ Итоги
+
+Разберём **теорию**, а затем **погрузимся в практику**: научимся **выпускать сертификаты через OpenSSL (The Hard Way) и kubeadm (The Easy Way)**.  
+
+🛠️ **Будет много практики, схем и реальных примеров!** **Поехали! 🚀**
+
+
+<!-- truncate -->
+
+---
+
+## Немного теории
+
+<details close>
+  <summary>Что такое сертификаты?</summary>
+  <CertificatesAbout/>
+</details>
+
+<details close>
+  <summary>Как работают TLS Сертификаты?</summary>
+  <CertificatesHowItWork/>
+</details>
+
+<details close>
+  <summary>Структура сертификата</summary>
+  <CertificatesStructure/>
+</details>
+
+<details close>
+  <summary>Типы сертификатов</summary>
+  <CertificatesTypes/>
+</details>
+
+<details close>
+  <summary>Процесс создания сертификата</summary>
+  <CertificatesWorkflow/>
+</details>
+
+---
+
+## 🛡️ Категории cертификатов в K8S?
+
+Сертификаты в Kubernetes обеспечивают **шифрование, аутентификацию и безопасность** при взаимодействии компонентов кластера. Они делятся на несколько категорий:
+
+<Tabs groupId="cert-types">
+  <TabItem value="root-ca" label="🔑 Root CA">
+    <p>Корневые сертификаты подписывают сертификаты внутри кластера и обеспечивают доверенную инфраструктуру.</p>
+    <ul>
+      <li>🏛️ <strong>Kubernetes CA</strong> – подписывает все сертификаты Kubernetes.</li>
+      <li>🛢️ <strong>ETCD CA</strong> – подписывает все сертификаты кластера ETCD.</li>
+      <li>📡 <strong>Front Proxy CA</strong> – подписывает все сертификаты Agregation Layer API.</li>
+    </ul>
+  </TabItem>
+
+  <TabItem value="components" label="⚙️ Управляющий контур">
+    <p>**Client/Server** Сертификаты компонентов Kubernetes необходимые для безопасной работы ключевых сервисов кластера.</p>
+    <ul>
+      <li>🔐 <strong>API Server</strong> – является центральной точкой взаимодействия.</li>
+      <li>🖥️ <strong>Kubelet</strong> – отвечает за размещение контейнеров на узлах.</li>
+      <li>⚙️ <strong>Controller Manager</strong> – управляет состоянием кластера.</li>
+      <li>📌 <strong>Scheduler</strong> – отвечает за распределение подов на узлы.</li>
+      <li>💾 <strong>ETCD</strong> – отвечает за хранение данных кластера.</li>
+    </ul>
+  </TabItem>
+
+  <TabItem value="users" label="👤 Сертификаты пользователей">
+    <p>**Client/Server** Сертификаты для аутентификации пользователей и сервисов при взаимодействии с кластером.</p>
+    <ul>
+      <li>🖥️ <strong>Kubectl</strong> – CLI-для взаимодействия с API-сервером.</li>
+      <li>🔄 <strong>Сервисы</strong> – Приложение запущенное в Kubernetes-кластере.</li>
+    </ul>
+  </TabItem>
+</Tabs>
+
+📌 **Сертификаты – основа безопасности Kubernetes, обеспечивающая доверенное взаимодействие между компонентами, узлами и пользователями.**
+
+---
+
+## 🛡️ Иерархия сертификатов K8S (CP)
+
+:::info
+⚡ **Как связаны компоненты, сертификаты и корневые сертификаты (Root CA)?**  
+Посмотрим на наглядную схему:
+:::
+
+<div className="center">
+  ![Описание изображения](@site/static/img/certificates/certificates-base.drawio.svg)
+</div>
+
+---
+
+## 🛡️ Используемые инструменты
+
+Для работы с сертификатами будем использовать два ключевых инструмента:
+
+- **`openssl`** – универсальный инструмент для работы с криптографией. Позволяет **генерировать ключи и сертификаты**, управлять цепочками доверия, проверять их подлинность.  
+- **`kubeadm`** – утилита для автоматического управления сертификатами при инициализации **Kubernetes-кластера**.
+
+---
+
+### 🔧 Полезные команды  
+
+<Tabs groupId="cert-tools">
+  <TabItem value="openssl" label="🔐 OpenSSL">
+    <table>
+      <thead>
+        <tr>
+          <th>Команда</th>
+          <th>Описание</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <CodeBlock language="bash">
+              {`openssl genrsa -out "keyPath" "keySize"`}
+            </CodeBlock>
+          </td>
+          <td>Создать приватный ключ</td>
+        </tr>
+        <tr>
+          <td>
+            <CodeBlock language="bash">
+              {`openssl req \\
+    -x509 \\
+    -new \\
+    -nodes \\
+    -sha256 \\
+    -days 3650 \\
+    -key "keyPath" \\
+    -out "crtPath" \\
+    -config "csrConfPath"`}
+            </CodeBlock>
+          </td>
+          <td>Создать самоподписной сертификат</td>
+        </tr>
+        <tr>
+          <td>
+            <CodeBlock language="bash">
+              {`openssl req \\
+    -new \\
+    -key "keyPath" \\
+    -out "csrPath" \\
+    -config "csrConfPath"`}
+            </CodeBlock>
+          </td>
+          <td>Создать запрос на подпись сертификата (CSR)</td>
+        </tr>
+        <tr>
+          <td>
+            <CodeBlock language="bash">
+              {`openssl x509 \\
+    -req \\
+    -days 365 \\
+    -sha256 \\
+    -extensions v3_ext \\
+    -CAcreateserial \\
+    -CA "caCrtPath" \\
+    -CAkey "caKeyPath" \\
+    -in "csrPath" \\
+    -out "crtPath" \\
+    -extfile "crtConf"`}
+            </CodeBlock>
+          </td>
+          <td>Подписать запрос сертификата</td>
+        </tr>
+        <tr>
+          <td>
+            <CodeBlock language="bash">
+              {`openssl x509 \\
+    -noout \\
+    -text \\
+    -in "crtPath"`}
+            </CodeBlock>
+          </td>
+          <td>Просмотреть информацию о сертификате</td>
+        </tr>
+      </tbody>
+    </table>
+  </TabItem>
+
+  <TabItem value="kubeadm" label="🚀 Kubeadm">
+    <table>
+      <thead>
+        <tr>
+          <th>Команда</th>
+          <th>Описание</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <CodeBlock language="bash">
+              {`kubeadm certs generate-csr`}
+            </CodeBlock>
+          </td>
+          <td>Сгенерировать CSR для всех компонентов</td>
+        </tr>
+        <tr>
+          <td>
+            <CodeBlock language="bash">
+              {`kubeadm certs renew all`}
+            </CodeBlock>
+          </td>
+          <td>Обновить все сертификаты кластера</td>
+        </tr>
+        <tr>
+          <td>
+            <CodeBlock language="bash">
+              {`kubeadm certs check-expiration`}
+            </CodeBlock>
+          </td>
+          <td>Проверить срок действия сертификатов</td>
+        </tr>
+        <tr>
+          <td>
+            <CodeBlock language="bash">
+              {`kubeadm init phase certs all`}
+            </CodeBlock>
+          </td>
+          <td>Создать все необходимые сертификаты при инициализации</td>
+        </tr>
+        <tr>
+          <td>
+            <CodeBlock language="bash">
+              {`kubeadm reset`}
+            </CodeBlock>
+          </td>
+          <td>Сбросить кластер и удалить сертификаты</td>
+        </tr>
+      </tbody>
+    </table>
+  </TabItem>
+</Tabs>
+
+
+---
+
+
+## 📜 Создание Root CA  
+
+<Tabs groupId="ca">
+  <TabItem value='📂 ETCD'>
+    <details open>
+      <summary>ETCD Root CA</summary>
+      <ETCDCACert />
+    </details>
+  </TabItem>
+  <TabItem value='🛡️ Kubernetes'>
+    <details open>
+      <summary>Kubernetes Root CA</summary>
+      <KubernetesCACert />
+    </details>
+  </TabItem>
+  <TabItem value='🔗 Front Proxy'>
+    <details open>
+      <summary>Front Proxy Root CA</summary>
+      <FrontProxyCACert />
+    </details>
+  </TabItem>
+</Tabs>
+
+:::warning
+⚠️ **Root CA – это критически важный элемент безопасности! Если его ключи скомпрометированы, весь кластер будет под угрозой.**  
+:::
+
+---
+
+## 🛡️ Создание Сертификатов K8S (CP)
+> **Разберёмся, как правильно генерировать сертификаты: вручную или через `kubeadm`.**
+
+Вы можете выбрать **Hard Way (OpenSSL)** или **Easy Way (kubeadm)**:
+
+<Tabs groupId="certs">
+  <TabItem value='📂 ETCD'>
+    <ETCDCerts />
+  </TabItem>
+
+  <TabItem value='💻 Kubelet'>
+    <KubeletCerts />
+  </TabItem>
+
+  <TabItem value='🔐 API'>
+    <KubeAPICerts />
+  </TabItem>
+
+  <TabItem value='👤 Admin'>
+    <AdminK8SCerts />
+  </TabItem>
+
+  <TabItem value='⚙️ Controllers'>
+    <KubeControllersCerts />
+  </TabItem>
+
+  <TabItem value='📅 Scheduler'>
+    <KubeSchedulerCerts />
+  </TabItem>
+</Tabs>
+
+---
+
+## 🛡️ Инструкция по перевыпуск Сертификатов K8S (CP)
+
+
+### 🏆 Итоги:
+✅ Разобрали **какие компоненты** используют сертификаты.  
+✅ Узнали, какие **удостоверяющие центры (CA)** их подписывают.  
+✅ Изучили, **как заказать сертификаты** – вручную и через `kubeadm`.  
+
+📌 В следующем материале **разберём управление сертификатами**, автоматическое обновление и безопасность хранения.  
+
+🚀 **Если статья была полезна – ставь ⭐ и делись с коллегами!**  

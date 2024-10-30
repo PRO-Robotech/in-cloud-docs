@@ -1,0 +1,19 @@
+
+import TabItem                    from '@theme/TabItem'
+import Tabs                       from '@theme/Tabs'
+import SuperAdminClientCert       from '@site/docs/tech-docs/kubernetes/certificates/components/admin/superAdminClient/openssl.mdx'
+import SuperAdminClientKubeadm    from '@site/docs/tech-docs/kubernetes/certificates/components/admin/superAdminClient/kubeadm.mdx'
+import SuperAdminClientKubeconfig from '@site/docs/tech-docs/kubernetes/certificates/components/admin/superAdminClient/kubeconfig.mdx'
+
+<details open>
+  <summary>Super Admin Client > Kubernetes API</summary>
+  <Tabs groupId="install-type">
+    <TabItem value='HardWay'>
+      <SuperAdminClientCert />
+      <SuperAdminClientKubeconfig />
+    </TabItem>
+    <TabItem value='Kubeadm'>
+      <SuperAdminClientKubeadm />
+    </TabItem>
+  </Tabs>
+</details>

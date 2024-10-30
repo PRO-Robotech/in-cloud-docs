@@ -1,0 +1,24 @@
+import CodeBlock from '@theme/CodeBlock'
+import dedent     from 'dedent'
+
+<CodeBlock language="yaml">
+  {dedent`
+    ---
+    apiVersion: b-cloud.io/v1alpha
+    kind: Instance
+    metadata:
+      name: bcloud-sandbox-instance
+      namespace: bcloud-sandbox
+    spec:
+      description: Тестовый Instance в Project: bcloud-sandbox
+      quotas:
+        k8s:
+          limits:
+            cpu: "1.5"
+            memory: 2G
+          requests:
+            cpu: "0.5"
+            memory: 1G
+            storage: 1G
+  `}
+</CodeBlock>

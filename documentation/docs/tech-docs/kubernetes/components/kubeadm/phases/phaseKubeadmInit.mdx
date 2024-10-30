@@ -1,0 +1,181 @@
+
+```
+root@compute:/home/user# kubeadm init phase
+
+*****
+Available Commands:
+  addon              Install required addons for passing conformance tests
+  bootstrap-token    Generates bootstrap tokens used to join a node to a cluster
+  certs              Certificate generation
+  control-plane      Generate all static Pod manifest files necessary to establish the control plane
+  etcd               Generate static Pod manifest file for local etcd
+  kubeconfig         Generate all kubeconfig files necessary to establish the control plane and the admin kubeconfig file
+  kubelet-finalize   Updates settings relevant to the kubelet after TLS bootstrap
+  kubelet-start      Write kubelet settings and (re)start the kubelet
+  mark-control-plane Mark a node as a control-plane
+  preflight          Run pre-flight checks
+  show-join-command  Show the join command for control-plane and worker node
+  upload-certs       Upload certificates to kubeadm-certs
+  upload-config      Upload the kubeadm and kubelet configuration to a ConfigMap
+```
+
+<div className="scrollable-x">
+  <table>
+    <thead>
+      <tr>
+        <th>Путь</th>
+        <th>Комментарий</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>`$addon.all`</td>
+        <td>Установливает все дополнения</td>
+      </tr>
+      <tr>
+        <td>`$addon.coredns`</td>
+        <td>Установливает CoreDNS</td>
+      </tr>
+      <tr>
+        <td>`$addon.kube-proxy`</td>
+        <td>Установливает kube-proxy</td>
+      </tr>
+      <tr>
+        <td>`$certs.all`</td>
+        <td>Генерирует все сертификаты</td>
+      </tr>
+      <tr>
+        <td>`$certs.apiserver`</td>
+        <td>Генерирует сертификат для Kubernetes API</td>
+      </tr>
+      <tr>
+        <td>`$certs.apiserver-etcd-client`</td>
+        <td>Генерирует сертификат apiserver для доступа к etcd</td>
+      </tr>
+      <tr>
+        <td>`$certs.apiserver-kubelet-client`</td>
+        <td>Генерирует сертификат apiserver для подключения к kubelet</td>
+      </tr>
+      <tr>
+        <td>`ca`</td>
+        <td>Генерирует самоподписанный Kubernetes ЦА</td>
+      </tr>
+      <tr>
+        <td>`etcd-ca` </td>
+        <td>Генерирует самоподписанный ETCD ЦА</td>
+      </tr>
+      <tr>
+        <td>`front-proxy-ca`</td>
+        <td>Генерирует самоподписанный Front Proxy ЦА</td>
+      </tr>
+      <tr>
+        <td>`etcd-healthcheck-client`</td>
+        <td>Генерирует сертификат для liveness probes etcd</td>
+      </tr>
+      <tr>
+        <td>`etcd-peer`</td>
+        <td>Генерирует сертификат для связи узлов etcd</td>
+      </tr>
+      <tr>
+        <td>`etcd-server`</td>
+        <td>Генерирует сертификат etcd-сервера</td>
+      </tr>
+      <tr>
+        <td>`front-proxy-client`</td>
+        <td>Генерирует сертификат front-proxy клиента</td>
+      </tr>
+      <tr>
+        <td>`sa`</td>
+        <td>Генерирует ключи подписи токенов сервисных аккаунтов</td>
+      </tr>
+      <tr>
+        <td>`bootstrap-token`</td>
+        <td>Генерирует bootstrap-токены</td>
+      </tr>
+      <tr>
+        <td>`$control-plane.all`</td>
+        <td>Генерирует все статические Pod манифесты</td>
+      </tr>
+      <tr>
+        <td>`$control-plane.apiserver`</td>
+        <td>Генерирует манифест Pod для kube-apiserver</td>
+      </tr>
+      <tr>
+        <td>`$control-plane.controller-manager`</td>
+        <td>Генерирует манифест Pod для kube-controller-manager</td>
+      </tr>
+      <tr>
+        <td>`$control-plane.scheduler`</td>
+        <td>Генерирует манифест Pod для kube-scheduler</td>
+      </tr>
+      <tr>
+        <td>`$etcd.local`</td>
+        <td>Генерирует манифест Pod для локального etcd</td>
+      </tr>
+      <tr>
+        <td>`$kubeconfig.all`</td>
+        <td>Генерирует все файлы kubeconfig</td>
+      </tr>
+      <tr>
+        <td>`$kubeconfig.controller-manager`</td>
+        <td>Генерирует kubeconfig для kube-controller-manager</td>
+      </tr>
+      <tr>
+        <td>`$kubeconfig.kubelet`</td>
+        <td>Генерирует kubeconfig для kubelet (инициализация кластера)</td>
+      </tr>
+      <tr>
+        <td>`$kubeconfig.scheduler`</td>
+        <td>Генерирует kubeconfig для планировщика</td>
+      </tr>
+      <tr>
+        <td>`$kubeconfig.admin`</td>
+        <td>Генерирует kubeconfig для администратора и kubeadm</td>
+      </tr>
+      <tr>
+        <td>`$kubeconfig.super-admin`</td>
+        <td>Генерирует kubeconfig для супер-администратора</td>
+      </tr>
+      <tr>
+        <td>`$kubelet-finalize.all`</td>
+        <td>Запускает все этапы kubelet-finalize</td>
+      </tr>
+      <tr>
+        <td>`$kubelet-finalize.experimental-cert-rotation`</td>
+        <td>Включает ротацию сертификатов kubelet</td>
+      </tr>
+      <tr>
+        <td>`kubelet-start`</td>
+        <td>Настраивает и запускает kubelet</td>
+      </tr>
+      <tr>
+        <td>`mark-control-plane`</td>
+        <td>Помечает узел как control plane</td>
+      </tr>
+      <tr>
+        <td>`preflight`</td>
+        <td>Выполняет предварительные проверки</td>
+      </tr>
+      <tr>
+        <td>`show-join-command`</td>
+        <td>Показывает команду для присоединения узлов</td>
+      </tr>
+      <tr>
+        <td>`upload-certs`</td>
+        <td>Загружает сертификаты в kubeadm-certs</td>
+      </tr>
+      <tr>
+        <td>`$upload-config.all`</td>
+        <td>Загружает всю конфигурацию в ConfigMap</td>
+      </tr>
+      <tr>
+        <td>`$upload-config.kubeadm`</td>
+        <td>Загружает kubeadm ClusterConfiguration в ConfigMap</td>
+      </tr>
+      <tr>
+        <td>`$upload-config.kubelet`</td>
+        <td>Загружает конфигурацию kubelet в ConfigMap</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

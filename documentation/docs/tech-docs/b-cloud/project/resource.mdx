@@ -1,0 +1,47 @@
+---
+id: resource
+---
+
+import TabItem                      from '@theme/TabItem'
+import Tabs                         from '@theme/Tabs'
+import ResourceFieldsDescription    from '@site/docs/tech-docs/b-cloud/project/resource-field-descriptions.mdx'
+import ResourceFieldsLimitation     from '@site/docs/tech-docs/b-cloud/project/resource-field-limitation.mdx'
+import ResourceStructure            from '@site/docs/tech-docs/b-cloud/project/resource-structure.mdx'
+import ResourceExampleSpec          from '@site/docs/tech-docs/b-cloud/project/resource-example-spec.mdx'
+import ResourceExampleStatus        from '@site/docs/tech-docs/b-cloud/project/resource-example-status.mdx'
+import ResourceSpecValidation       from '@site/docs/tech-docs/b-cloud/project/resource-spec-validation.mdx'
+
+# Ресурс Project
+
+`Project` — представляет собой введенную абстракцию, созданную для обеспечения команды отдельным пространством имен, предназначенным для управления и развертывания необходимых инфраструктурных ресурсов. Основная цель проекта — предоставить клиенту выделенную область для управления информационными системами, где можно организовать доступ разработчиков и администраторов, гибко контролировать выделенные ресурсы и квоты, отслеживать состояние развернутых систем и интегрироваться с инструментами DevOps для эффективного управления инфраструктурой.
+
+## Поля ресурса
+
+<Tabs>
+    <TabItem value='Описание'>
+        <ResourceFieldsDescription />
+    </TabItem>
+
+    <TabItem value='Структура'>
+        <ResourceStructure />
+    </TabItem>
+
+    <TabItem value='Ограничения'>
+        <ResourceFieldsLimitation />
+    </TabItem>
+
+    <TabItem value='Валидация'>
+        <ResourceSpecValidation />
+    </TabItem>
+</Tabs>
+
+## Пример ресурса
+<Tabs>
+    <TabItem value='Спецификация'>
+        <ResourceExampleSpec />
+    </TabItem>
+
+    <TabItem value='Статус'>
+        <ResourceExampleStatus />
+    </TabItem>
+</Tabs>

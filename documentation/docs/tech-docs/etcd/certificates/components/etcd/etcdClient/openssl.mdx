@@ -1,0 +1,79 @@
+import { CERTIFICATES } from '@site/src/constants/kubernetes/certs'
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+
+import CodeBlock        from '@theme/CodeBlock'
+import dedent           from 'dedent'
+
+<h4>Переменные окружения</h4>
+<CodeBlock language="bash">
+    {dedent`
+        export BASE_K8S_PATH="${CUSTOM_VALUE.kuberneteBaseFolderPath.value}"
+        export ETCD_CLIENT_CN="${CERTIFICATES.etcdClient.cname}"
+        export ETCD_CLIENT_CRT_CONF="${CERTIFICATES.etcdClient.crtConf}"
+        export ETCD_CLIENT_CRT_PATH="${CERTIFICATES.etcdClient.crtPath}"
+        export ETCD_CLIENT_CSR_PATH="${CERTIFICATES.etcdClient.csrPath}"
+        export ETCD_CLIENT_KEY_PATH="${CERTIFICATES.etcdClient.keyPath}"
+        export ETCD_CLIENT_KEY_SIZE=${CERTIFICATES.etcdClient.keySize}
+        export ETCD_CA_CRT_PATH="${CERTIFICATES.etcdCA.crtPath}"
+        export ETCD_CA_KEY_PATH="${CERTIFICATES.etcdCA.keyPath}"
+    `}
+</CodeBlock>
+
+<h4>Рабочая директория</h4>
+<CodeBlock language="bash">
+    {dedent`
+        mkdir -p $\{BASE_K8S_PATH}/pki/etcd
+        mkdir -p $\{BASE_K8S_PATH}/openssl/csr
+    `}
+</CodeBlock>
+
+
+<h4>Конфигурация</h4>
+```bash
+cat <<EOF > ${ETCD_CLIENT_CRT_CONF}
+[ req ]
+default_bits        = ${ETCD_CLIENT_KEY_SIZE}
+prompt              = no
+default_md          = sha256
+distinguished_name  = dn
+
+[ dn ]
+CN = ${ETCD_CLIENT_CN}
+
+[ v3_ext ]
+authorityKeyIdentifier=keyid,issuer:always
+basicConstraints=CA:FALSE
+keyUsage=keyEncipherment,dataEncipherment
+extendedKeyUsage=clientAuth
+EOF
+```
+
+<h4>Генерация приватного ключа</h4>
+```bash
+openssl genrsa \
+    -out "${ETCD_CLIENT_KEY_PATH}" ${ETCD_CLIENT_KEY_SIZE}
+```
+
+<h4>Генерация CSR</h4>
+```bash
+openssl req \
+    -new \
+    -key "${ETCD_CLIENT_KEY_PATH}" \
+    -out "${ETCD_CLIENT_CSR_PATH}" \
+    -config "${ETCD_CLIENT_CRT_CONF}"
+```
+
+<h4>Подпись CSR</h4>
+```bash
+openssl x509 \
+    -req \
+    -days 365 \
+    -sha256 \
+    -CA "${ETCD_CA_CRT_PATH}" \
+    -CAkey "${ETCD_CA_KEY_PATH}" \
+    -CAcreateserial \
+    -in "${ETCD_CLIENT_CSR_PATH}" \
+    -out "${ETCD_CLIENT_CRT_PATH}" \
+    -extensions v3_ext \
+    -extfile "${ETCD_CLIENT_CRT_CONF}"
+```

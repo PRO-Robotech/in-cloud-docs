@@ -1,0 +1,22 @@
+<ul>
+    <li>`spec`                                      - контент, определяющий проект.</li>
+    <li>`spec.quotas`                               - квоты на ресурсы проекта, разделенные на лимиты и запросы для CPU, RAM и DISK.</li>
+    <li>`spec.quotas.k8s`                           - квоты на ресурсы проекта, разделенные на лимиты и запросы для CPU, RAM и DISK для K8S.</li>
+    <li>`spec.quotas.k8s.limits`                    - лимиты для CPU, RAM в проекте.</li>
+    <li>`spec.quotas.k8s.limits.cpu`                - лимиты запросов на CPU.</li>
+    <li>`spec.quotas.k8s.limits.memory`             - лимиты запросов на RAM.</li>
+    <li>`spec.quotas.k8s.requests`                  - запросы для CPU, RAM в проекте.</li>
+    <li>`spec.quotas.k8s.requests.cpu`              - запросы ресурсов на CPU.</li>
+    <li>`spec.quotas.k8s.requests.memory`           - запросы ресурсов на RAM.</li>
+    <li>`spec.quotas.k8s.requests.storage`          - запросы ресурсов на DISK.</li>
+    <li>`status`                                    - структура, определяющая текущее состояние проекта.</li>
+    <li>`status.quotasLeft`                         - остаток квоты на ресурсы проекта, на лимиты и запросы после пересчета квоты.</li>
+    <li>`status.quotasLeft.k8s`                     - остаток квоты на ресурсы проекта, на лимиты и запросы для K8S после пересчета квоты.</li>
+    <li>`status.quotasLeft.k8s.limits`              - остаток лимитов для CPU, RAM в проекте после пересчета квоты.</li>
+    <li>`status.quotasLeft.k8s.limits.cpu`          - остаток лимитов по CPU после пересчета квоты.</li>
+    <li>`status.quotasLeft.k8s.limits.memory`       - остаток лимитов по RAM после пересчета квоты.</li>
+    <li>`status.quotasLeft.k8s.requests`            - остаток запросов для CPU, RAM в проекте после пересчета квоты.</li>
+    <li>`status.quotasLeft.k8s.requests.cpu`        - остаток запросов на CPU после пересчета квоты.</li>
+    <li>`status.quotasLeft.k8s.requests.memory`     - остаток запросов на RAM после пересчета квоты.</li>
+    <li>`status.quotasLeft.k8s.requests.storage`    - остаток запросов на DISK после пересчета квоты.</li>
+</ul>

@@ -1,0 +1,22 @@
+import dedent                   from 'dedent'
+import CodeBlock                from '@theme/CodeBlock'
+
+import { DOWNLOAD_VERSION }     from '@site/src/constants/kubernetes/downloads'
+import { COMPONENTS_VERSION }   from '@site/src/constants/kubernetes/componentsVersion'
+
+<h4>Перменные окружения</h4>
+<CodeBlock language="bash">
+    {dedent`
+        export ETCD_TOOL_VERSION="${COMPONENTS_VERSION.etcdctl.value}"
+    `}
+</CodeBlock>
+
+<h4>Инструкция загрузки</h4>
+<CodeBlock language="bash">
+    {dedent`
+        mkdir -p /tmp/etcd
+        wget  -O ${DOWNLOAD_VERSION.etcdctl.path} ${DOWNLOAD_VERSION.etcdctl.templateUrl}
+        tar   -C "/tmp/etcd" -xvf /tmp/etcd.tar.gz
+        cp /tmp/etcd/etcd*/etcd* /usr/local/bin/
+    `}
+</CodeBlock>

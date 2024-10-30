@@ -1,0 +1,26 @@
+import dedent                   from 'dedent'
+import CodeBlock                from '@theme/CodeBlock'
+
+
+<CodeBlock language="bash">
+    {dedent`
+        systemctl status containerd
+    `}
+</CodeBlock>
+
+:::info 
+<CodeBlock language="bash">
+    {dedent`
+        ● containerd.service - containerd container runtime
+             Loaded: loaded (/usr/lib/systemd/system/containerd.service; enabled; preset: enabled)
+             Active: active (running) since Tue 2024-12-31 17:26:21 UTC; 2min 30s ago
+               Docs: https://containerd.io
+           Main PID: 839 (containerd)
+              Tasks: 7 (limit: 2274)
+             Memory: 62.0M (peak: 62.5M)
+                CPU: 375ms
+             CGroup: /system.slice/containerd.service
+                     └─839 /usr/local/bin/containerd
+    `}
+</CodeBlock>
+:::

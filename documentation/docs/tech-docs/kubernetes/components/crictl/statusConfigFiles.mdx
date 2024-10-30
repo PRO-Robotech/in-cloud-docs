@@ -1,0 +1,16 @@
+import dedent                   from 'dedent'
+import CodeBlock                from '@theme/CodeBlock'
+
+<CodeBlock language="bash">
+    {dedent`
+        ls -la /etc/crictl.yaml
+    `}
+</CodeBlock>
+
+:::info 
+<CodeBlock language="bash">
+    {dedent`
+        -rw-r--r-- 1 root root 61 Feb 18 15:18 /etc/crictl.yaml
+    `}
+</CodeBlock>
+:::

@@ -1,0 +1,22 @@
+import CodeBlock  from '@theme/CodeBlock'
+import dedent     from 'dedent'
+
+:::warning
+Важно: При создании ресурса IPAddressPool необходимо так же указывать L2Advertisement для уведомления Speaker что и как нужно публиковать в сеть:
+
+1. `spec.ipAddressPools`: список IP-пулов, которые будут назначены пространству имен клиента.
+
+:::
+<CodeBlock language="yaml">
+  {dedent`
+    ---
+    apiVersion: metallb.io/v1beta1
+    kind: L2Advertisement
+    metadata:
+      name: bcloud-sandbox-instance
+      namespace: bcloud-metallb
+    spec:
+      ipAddressPools:
+        - bcloud-sandbox-instance
+  `}
+</CodeBlock>

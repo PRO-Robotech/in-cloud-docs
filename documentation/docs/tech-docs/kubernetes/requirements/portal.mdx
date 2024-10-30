@@ -1,0 +1,427 @@
+---
+id: portal
+---
+
+# 2.7. Портал
+
+## 2.7.1. Общие требования к интерфейсу
+
+<table>
+  <thead>
+    <tr>
+      <th>№</th>
+      <th>Требование</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>Портал должен быть реализован через графический web-интерфейс.</td>
+      <td>int +</td>
+      <td>out +</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>Портал должен быть доступен к использованию в различных браузерах (Google Chrome, Edge, Firefox).</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>Портал должен иметь адаптивный интерфейс под различные размеры экранов для работы на различных устройствах.</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>Портал должен поддерживать мультиязычный интерфейс.</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>Портал должен реализовывать функционал уведомления пользователей в интерфейсе платформы.</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>Портал должен поддерживать функционал мультитенантности и обеспечивать управление видимостью объектов на основе RBAC.</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>Портал должен обеспечивать интерфейс доступа к управлению выделенными ресурсами, в том числе консолям виртуальных машин.</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>Портал должен иметь возможность настройки стиля под корпоративный шаблон заказчика.</td>
+    </tr>
+  </tbody>
+</table>
+
+
+## 2.7.2. Требования к каталогу сервисов
+### 2.7.2.1. Список предоставляемых сервисов
+<table>
+  <thead>
+    <tr>
+      <th rowSpan="2">№</th>
+      <th rowSpan="2">Сервис</th>
+      <th colSpan="3">Действия</th>
+      <th rowSpan="2">Выделенный</th>
+      <th rowSpan="2">Область</th>
+    </tr>
+    <tr>
+      <th>Создание</th>
+      <th>Удаление</th>
+      <th>Изменение</th>
+    </tr>
+  </thead>
+  <tbody>
+    {/* <tr>
+      <td>1</td>
+      <td>Виртуальная машина</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center"></td>
+    </tr> */}
+    <tr>
+      <td>2</td>
+      <td>Заказ S3 бакета</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center"></td>
+      <td className="green center">✔</td>
+    </tr>
+
+    <tr>
+      <td>3</td>
+      <td>Заказ RDB</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center"></td>
+      <td className="green center">✔</td>
+    </tr>
+    {/* <tr>
+      <td>4</td>
+      <td>Подсеть</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+    </tr> */}
+    <tr>
+      <td>5</td>
+      <td>Точка балансировки</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center"></td>
+    </tr>
+    {/* <tr>
+      <td>6</td>
+      <td>Частный IP-адрес</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center"></td>
+    </tr> */}
+    {/* <tr>
+      <td>7</td>
+      <td>Сетевая группа безопасности (NAG)</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center"></td>
+    </tr> */}
+    <tr>
+      <td>8</td>
+      <td>KeyCloak интеграция</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center"></td>
+    </tr>
+    {/* <tr>
+      <td>8</td>
+      <td>KeyCloak продукт</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center"></td>
+    </tr> */}
+    {/* <tr>
+      <td>9</td>
+      <td>Vault</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+    </tr> */}
+    <tr>
+      <td>9</td>
+      <td>Vault интеграция</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+    </tr>
+    {/* <tr>
+      <td>10</td>
+      <td>Microsoft SQL Server</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+    </tr> */}
+    {/* <tr>
+      <td>11</td>
+      <td>Postgres продукт</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+    </tr> */}
+    {/* <tr>
+      <td>12</td>
+      <td>Redis продукт</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td>MongoDB продукт</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+    </tr>
+    <tr>
+      <td>14</td>
+      <td>Kafka продукт</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+    </tr> */}
+    {/* <tr>
+      <td>15</td>
+      <td>Veeam B&R</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+    </tr> */}
+    <tr>
+      <td>16</td>
+      <td>Gitlab Docker-Registry интеграция</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+    </tr>
+    <tr>
+      <td>17</td>
+      <td>OpenSearch интеграция</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+    </tr>
+  </tbody>
+</table>
+
+### 2.7.2.2. Общие требования к каталогу сервисов
+<table>
+  <thead>
+    <tr>
+      <th>№</th>
+      <th>Требование</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>Каталог сервисов должен поддерживать создание услуг на основе подготовленных образов ВМ.</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>Каталог сервисов должен поддерживать создание услуг по предоставлению ПО, развернутого в контейнерах k8s.</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>Каталог сервисов должен поддерживать создание услуг на основе образов контейнеров k8s или ВМ с возможностью последующего добавления и настройки необходимого ПО с помощью технологий автоматизации (Ansible, Terraform).</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>Каталог сервисов должен поддерживать возможность предоставления SaaS-приложений.</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>Каталог сервисов должен поддерживать публикацию услуг/перенос услуг в архив.</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>Каталог сервисов при заказе услуги должен поддерживать управление версиями ПО, входящих в услугу.</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>Платформа должна поддерживать заказ услуг из каталога сервисов.</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>Платформа должна поддерживать возможность интеграции с системами workflow для реализации процесса согласования услуги внутри платформы.</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>Платформа должна поддерживать возможность интеграции с системами workflow для реализации процесса развертывания услуги внутри платформы.</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>Каталог сервисов должен поддерживать функционал поиска и фильтрации услуг по атрибутам/тегам.</td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td>Каталог сервисов должен поддерживать функционал категоризации услуг.</td>
+    </tr>
+  </tbody>
+</table>
+
+## 2.7.3. Требования к разделу администрирования
+<table>
+  <thead>
+    <tr>
+      <th>№</th>
+      <th>Требование</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>Портал администрирования должен предоставлять интерфейс для отображения информации об объектах облачной инфраструктуры.</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>Портал администрирования должен предоставлять интерфейс для отображения отчетов об использовании объектов облачной инфраструктуры: текущей и исторической утилизации.</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>Портал администрирования должен предоставлять интерфейс для управления ролями и доступом к платформе/проектам (в том числе на основе RBAC).</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>Портал администрирования должен предоставлять интерфейс для управления жизненным циклом внутренних учетных записей пользователей облака.</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>Портал администрирования должен предоставлять интерфейс для управления проектами (создание, изменение, архивирование).</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>Портал администрирования должен предоставлять интерфейс для управления ресурсными квотами.</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>Портал администрирования должен предоставлять интерфейс для управления тарификацией для проектов.</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>Портал администрирования должен предоставлять интерфейс для отображения информации о проекте (ресурсы, квоты, тарифы, баланс и пр.).</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>Портал администрирования должен предоставлять интерфейс для отображения статусов услуг из каталога.</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>Портал администрирования должен предоставлять интерфейс для управления каталогом сервисов.</td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td>Портал администрирования должен поддерживать функционал управления шаблонами и образами ОС, IaaS, PaaS, SaaS сервисами и пр.</td>
+    </tr>
+  </tbody>
+</table>
+
+## 2.7.4. Требования к интерфейсу и обучению
+
+<table>
+  <thead>
+    <tr>
+      <th>№</th>
+      <th>Требование</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>Поддерживает локализацию пользовательского интерфейса (русский, казахский, английский).</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>Наличие демонстрационного стенда для обучения.</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>Имеются обучающие курсы/видео по работе с продуктом.</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>Ожидаемая продолжительность изучения системы пользователем не превышает 10 часов.</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>Имеется пользовательский интерфейс для администрирования.</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>Имеется функционал по проверке корректности вводимых пользователем данных (валидация).</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>Возможно настроить отображение пользовательского интерфейса в соответствии с дизайн-системой банка.</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>Имеется встроенная справочная система/система подсказок, облегчающая работу начинающего пользователя.</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>Элементы интерфейса, предусматривающие взаимодействие с пользователем, должны визуально выделяться относительно неактивных.</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>Система позволяет настраивать всплывающие подсказки, возникающие при наведении фокуса на элемент интерфейса.</td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td>Система должна корректно обрабатывать конфликт одновременных изменений одного объекта несколькими пользователями.</td>
+    </tr>
+    <tr>
+      <td>12</td>
+      <td>Все произведённые пользователем настройки должны сохраняться индивидуально для каждого авторизованного пользователя.</td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td>Административные настройки пользователей и ролей должны быть централизованы (собраны в едином интерфейсе системы).</td>
+    </tr>
+    <tr>
+      <td>14</td>
+      <td>Схожие по функциональности элементы интерфейса, предусматривающие взаимодействие с пользователем, должны выглядеть единообразно по всей Системе.</td>
+    </tr>
+  </tbody>
+</table>

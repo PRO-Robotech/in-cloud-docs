@@ -1,0 +1,103 @@
+{
+  "root": true,
+  "extends": [
+    "airbnb",
+    "airbnb/hooks",
+    "plugin:prettier/recommended",
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "prettier"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true,
+      "modules": true,
+      "experimentalObjectRestSpread": true
+    },
+    "project": ["./tsconfig.json"],
+    "extraFileExtensions": [".mdx", ".md"]
+  },
+  "plugins": ["prettier", "react", "@typescript-eslint", "import"],
+  "ignorePatterns": ["build/**", "node_modules/**", "static/**", "src/theme/**"],
+  "overrides": [
+    {
+      "files": ["pages/**/*"],
+      "rules": {
+        "import/no-default-export": 0
+      }
+    },
+    {
+      "files": ["src/constants/**/*"],
+      "rules": {
+        "no-useless-escape": 0,
+        "react/jsx-key": 0
+      }
+    },
+    {
+      "files": ["*.ts", "*.tsx"],
+      "rules": {
+        "@typescript-eslint/explicit-module-boundary-types": ["warn"]
+      }
+    },
+    {
+      "files": ["*.mdx" , "*.md"],
+      "extends": ["plugin:mdx/recommended"],
+      "rules": {
+        "jsx-a11y/control-has-associated-label": ["off"],
+        "react/self-closing-comp": ["off"],
+        "react/no-unescaped-entities": ["off"],
+        "prettier/prettier": ["off"],
+        "no-unused-expressions": ["off"],
+        "@typescript-eslint/no-unused-expressions": ["off"],
+        "no-undef": ["off"],
+        "no-irregular-whitespace": ["warn"]
+      }
+    }
+  ],
+  "rules": {
+    "quotes": ["off", "single"],
+    "semi": ["error", "never"],
+    "prefer-template": "off",
+    "jsx-a11y/control-has-associated-label": "off",
+    "jsx-a11y/alt-text": "off",
+    "jsx-a11y/click-events-have-key-events": "off",
+    "jsx-a11y/no-static-element-interactions": "off",
+    "jsx-a11y/anchor-is-valid": "off",
+    "react/react-in-jsx-scope": 0,
+    "react/display-name": 0,
+    "react/function-component-definition": [2, { "namedComponents": "arrow-function" }],
+    "no-alert": "error",
+    "no-else-return": 1,
+    "no-cond-assign": "error",
+    "no-lonely-if": "warn",
+    "no-dupe-else-if": "warn",
+    "no-duplicate-case": "warn",
+    "react/jsx-filename-extension": "off",
+    "react/jsx-props-no-spreading": "off",
+    "react/jsx-key": ["warn", { "checkFragmentShorthand": true }],
+    "react/jsx-no-duplicate-props": "warn",
+    "react/no-unescaped-entities": "warn",
+    "react/require-default-props": "off",
+    "prettier/prettier": "error",
+    "import/prefer-default-export": "off",
+    "import/no-unresolved": "off",
+    "import/extensions": "off",
+    "import/no-extraneous-dependencies": "off",
+    "no-shadow": "off",
+    "max-lines-per-function": ["warn", 250],
+    "import/no-default-export": "warn",
+    "react/jsx-handler-names": ["warn"],
+    "no-unused-expressions": "off",
+    "no-unused-vars": "off",
+    "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }],
+    "@typescript-eslint/no-unused-expressions": ["error"],
+    "@typescript-eslint/no-unused-vars": "error",
+    "@typescript-eslint/explicit-module-boundary-types": "off"
+  },
+  "settings": {
+    "mdx/code-blocks": true
+  }
+}

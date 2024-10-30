@@ -1,0 +1,79 @@
+---
+id: install
+title: Установка Project Controller
+description: Руководство по установке Project Controller в Kubernetes с помощью Helm
+---
+
+import TabItem                      from '@theme/TabItem'
+import Tabs                         from '@theme/Tabs'
+import CodeBlock                    from '@theme/CodeBlock'
+import dedent                       from 'dedent'
+
+# Установка
+
+`Project controller` устанавливается как обычное Kubernetes-приложение, описанное с помощью Helm Chart.
+
+<Tabs>
+    <TabItem value='b-cloud/manifests'>
+      <div className="parent-div" style={{ minHeight: '420px' }}>
+
+        <div className="child-block">
+          <h4 className="center">Enivironments</h4>
+            <CodeBlock language="bash">
+              {dedent`
+                export CLUSTER_NAME="bcloud-k8s-infra"
+                export CLUSTER_ENV="prod"
+                export CLUSTER_AREA="csko"
+                export CLUSTER_INDEX="1"
+                export ISTIO_VERSION="1.22.2"
+                export DASHBOARD_METRIC_VERSION="0.1.0"
+                export PAAS_VERSION="1.0.1"
+                export TERMINAL_SERVER_VERSION="1.0.0"
+              `}
+            </CodeBlock>
+        </div>
+
+        <div className="child-block">
+          <h4 className="center">Values</h4>
+            <CodeBlock language="yaml">
+              {dedent`
+                ---
+                appSpec:
+                  applications:
+                    projects:
+                      # Включает компонент для рендера
+                      enabled: true
+                    gatekeeper:
+                      # Отключает компонент для рендера
+                      enabled: false
+                    web:
+                      # Отключает компонент для рендера
+                      enabled: false
+                    projectquotas:
+                      # Отключает компонент для рендера
+                      enabled: false
+                    projectlegacies:
+                      # Отключает компонент для рендера
+                      enabled: false
+                    instances:
+                      # Отключает компонент для рендера
+                      enabled: false
+              `}
+            </CodeBlock>
+
+        </div>
+      </div>
+
+
+    </TabItem>
+</Tabs>
+
+<Tabs>
+    <TabItem value='b-cloud/manifests'>
+
+        <CodeBlock language="bash">
+          {dedent`helmfile -e $\{CLUSTER_ENV\} -l bcloud-collections=bcloud-paas template | kubectl apply -f - `}
+        </CodeBlock>
+
+    </TabItem>
+</Tabs>

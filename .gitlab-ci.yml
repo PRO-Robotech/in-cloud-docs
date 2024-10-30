@@ -1,0 +1,36 @@
+image: node:18.19.1-alpine3.19
+
+
+stages:
+  - test
+  - deploy
+
+test:
+  tags:
+    - experimental
+  stage: test
+  script:
+  - cd documentation
+  - npm install dedent --registry=https://nexus.berekebank.kz/repository/SberbankTechProxy/ --strict-ssl=false
+  - npm install --registry=https://nexus.berekebank.kz/repository/SberbankTechProxy/ --strict-ssl=false
+  - export DOC_INCLUDE_CURRENT_VERSION=false
+  - npm run build
+  rules:
+    - if: $CI_COMMIT_REF_NAME != $CI_DEFAULT_BRANCH
+
+pages:
+  tags:
+    - experimental
+  stage: deploy
+  script:
+  - cd documentation
+  - npm install dedent --registry=https://nexus.berekebank.kz/repository/SberbankTechProxy/ --strict-ssl=false
+  - npm install --registry=https://nexus.berekebank.kz/repository/SberbankTechProxy/ --strict-ssl=false
+  - export DOC_INCLUDE_CURRENT_VERSION=false
+  - npm run build
+  - mv ./build ../public
+  artifacts:
+    paths:
+    - public
+  rules:
+    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH

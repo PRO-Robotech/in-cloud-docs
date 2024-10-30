@@ -1,0 +1,28 @@
+---
+id: component-ready
+---
+
+import StatusSystemdUnit from '@site/docs/tech-docs/kubernetes/components/kubelet/statusSystemdUnit.mdx'
+import StatusConfigFiles from '@site/docs/tech-docs/kubernetes/components/kubelet/statusConfigFiles.mdx'
+import StatusBinFiles from '@site/docs/tech-docs/kubernetes/components/kubelet/statusBinFiles.mdx'
+import StatusBinVersion from '@site/docs/tech-docs/kubernetes/components/kubelet/statusBinVersion.mdx'
+
+# 5.2.1.4.6. Kubelet
+
+## 5.2.1.4.6.1. Этапы проверки
+- Исполняемые файлы существуют.
+- Конфигурационные файлы существуют.
+- Статус Systemd Unit.
+
+
+## 5.2.1.4.6.2. Исполняемые файлы
+<StatusBinFiles />
+
+## 5.2.1.4.6.3. Версия исполняемого файла
+<StatusBinVersion />
+
+## 5.2.1.4.6.4. Конфигурационные файлы
+<StatusConfigFiles />
+
+## 5.2.1.4.6.5. Статус Systemd Unit
+<StatusSystemdUnit />

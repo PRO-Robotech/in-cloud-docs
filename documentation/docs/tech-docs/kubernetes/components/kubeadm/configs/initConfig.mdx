@@ -1,0 +1,82 @@
+
+import dedent                   from 'dedent'
+
+import CodeBlock                from '@theme/CodeBlock'
+import {ETCD_ARGS}              from '@site/src/constants/kubernetes/etcdArgs'
+import {KUBE_API_ARGS}          from '@site/src/constants/kubernetes/kubeAPIArgs'
+import { PORTS }                from '@site/src/constants/kubernetes/ports'
+import { CUSTOM_VALUE }         from '@site/src/constants/kubernetes/customValue'
+import { COMPONENTS_VERSION }   from '@site/src/constants/kubernetes/componentsVersion'
+import { CERTIFICATES }         from '@site/src/constants/kubernetes/certs'
+import { KUBELET_COFNIG_DATA } from '@site/src/constants/kubernetes/kubeletConfigData'
+import { KUBEADM_COFNIG_DATA } from '@site/src/constants/kubernetes/kubeadmConfigData'
+
+<details>
+<summary>Конфигурация Kubeadm для инициализации кластера</summary>
+
+  <h4>Переменные окружния для шаблона конфигурационного файла</h4>
+
+  <CodeBlock language="bash">
+      {dedent`
+        export KUBELET_SERVER_PORT=${PORTS.kubeletServer.portNumber}
+        export KUBELET_READ_ONLY_PORT=${PORTS.kubeletReadOnlyPort.portNumber}
+        export KUBE_APISERVER_PORT=${PORTS.kubeAPIServer.portNumber}
+        export ETCD_SERVER_PORT=${PORTS.etcdServer.portNumber}
+        export KUBELET_HEALTHZ_PORT=${PORTS.kubeletHealthz.portNumber}
+      `}
+  </CodeBlock>
+
+  <CodeBlock language="bash">
+      {dedent`
+        export BASE_K8S_PATH="${CUSTOM_VALUE.kuberneteBaseFolderPath.value}"
+        export BASE_KUBELET_PATH="${CUSTOM_VALUE.kuberneteKubeletFolderPath.value}"
+        export SERVICE_DNS="${CUSTOM_VALUE.kubernetesDNSAddress.value}"
+        export SERVICE_CIDR="${CUSTOM_VALUE.kubernetesServiceCIDR.value}"
+        export MACHINE_LOCAL_ADDRESS=${CUSTOM_VALUE.virtualMachineLocalAddress.value}
+        export BASE_DOCKER_REGISTRY="${CUSTOM_VALUE.baseDockerRegistry.value}"
+        export CLUSTER_NAME="${CUSTOM_VALUE.clusterName.value}"
+        export BASE_DOMAIN="${CUSTOM_VALUE.kubernetesBaseDomain.value}"
+        export CLUSTER_DOMAIN="${CUSTOM_VALUE.kubernetesClusterDomain.value}"
+        export FULL_HOST_NAME="${CUSTOM_VALUE.virtualMachineFullName.value}"
+        export KUBERNETES_VERSION="${COMPONENTS_VERSION.kubernetes.value}"
+        export ETCD_SERVERS="https://127.0.0.1:$\{ETCD_SERVER_PORT}"
+      `}
+  </CodeBlock>
+
+  <CodeBlock language="bash">
+      {dedent`
+        export KUBELET_CURRENT_SERVER_CRT_PATH="${CERTIFICATES.kubeletCurrentServer.crtPath}"
+        export KUBERNETES_CA_KEY_PATH="${CERTIFICATES.kubernetesCA.keyPath}"
+        export KUBERNETES_CA_CRT_PATH="${CERTIFICATES.kubernetesCA.crtPath}"
+        export KUBERNETES_SERVICE_ACCOUNT_KEY_PATH="${CERTIFICATES.kubernetesSA.keyPath}"
+        export KUBERNETES_SERVICE_ACCOUNT_CRT_PATH="${CERTIFICATES.kubernetesSA.crtPath}"
+        export KUBERNETES_SERVER_KEY_PATH="${CERTIFICATES.kubernetesServer.keyPath}"
+        export KUBERNETES_SERVER_CRT_PATH="${CERTIFICATES.kubernetesServer.crtPath}"
+        export KUBERNETES_KUBELET_CLIENT_KEY_PATH="${CERTIFICATES.kubernetesKubeletClient.keyPath}"
+        export KUBERNETES_KUBELET_CLIENT_CRT_PATH="${CERTIFICATES.kubernetesKubeletClient.crtPath}"
+        export KUBERNETES_FRONT_PROXY_CLIENT_KEY_PATH="${CERTIFICATES.kubernetesFrontProxyClient.keyPath}"
+        export KUBERNETES_FRONT_PROXY_CLIENT_CRT_PATH="${CERTIFICATES.kubernetesFrontProxyClient.crtPath}"
+        export KUBERNETES_FRONT_PROXY_CLIENT_CN="${CERTIFICATES.kubernetesFrontProxyClient.cname}"
+        export KUBERNETES_ETCD_CLIENT_KEY_PATH="${CERTIFICATES.kubernetesEtcdClient.keyPath}"
+        export KUBERNETES_ETCD_CLIENT_CRT_PATH="${CERTIFICATES.kubernetesEtcdClient.crtPath}"
+        export FRONT_PROXY_CA_CRT_PATH="${CERTIFICATES.frontProxyCA.crtPath}"
+        export ETCD_SERVER_KEY_PATH="${CERTIFICATES.etcdServer.keyPath}"
+        export ETCD_SERVER_CRT_PATH="${CERTIFICATES.etcdServer.crtPath}"
+        export ETCD_PEER_KEY_PATH="${CERTIFICATES.etcdPeer.keyPath}"
+        export ETCD_PEER_CRT_PATH="${CERTIFICATES.etcdPeer.crtPath}"
+        export ETCD_CA_CRT_PATH="${CERTIFICATES.etcdCA.crtPath}"
+      `}
+  </CodeBlock>
+
+  <h4>Конфигурационный файл kubeadm для инициализации кластера</h4>
+  :::warning
+  Обратите внимание, что в данном конфигурационном файле этап установки ```addons``` игнорируется.
+  :::
+  <CodeBlock>
+{`cat <<EOF > $\{BASE_K8S_PATH}/kubeadm.conf
+${KUBEADM_COFNIG_DATA.data.value}
+---
+${KUBELET_COFNIG_DATA.data.value}
+EOF`}
+  </CodeBlock>
+</details>

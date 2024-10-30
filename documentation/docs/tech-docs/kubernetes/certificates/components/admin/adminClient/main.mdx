@@ -1,0 +1,19 @@
+
+import TabItem               from '@theme/TabItem'
+import Tabs                  from '@theme/Tabs'
+import AdminClientCert       from '@site/docs/tech-docs/kubernetes/certificates/components/admin/adminClient/openssl.mdx'
+import AdminClientKubeadm    from '@site/docs/tech-docs/kubernetes/certificates/components/admin/adminClient/kubeadm.mdx'
+import AdminClientKubeconfig from '@site/docs/tech-docs/kubernetes/certificates/components/admin/adminClient/kubeconfig.mdx'
+
+<details open>
+  <summary>Admin Client > Kubernetes API</summary>
+  <Tabs groupId="install-type">
+    <TabItem value='HardWay'>
+      <AdminClientCert />
+      <AdminClientKubeconfig />
+    </TabItem>
+    <TabItem value='Kubeadm'>
+      <AdminClientKubeadm />
+    </TabItem>
+  </Tabs>
+</details>

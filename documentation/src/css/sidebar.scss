@@ -1,0 +1,70 @@
+.docSidebarContainer_node_modules-\@docusaurus-theme-classic-lib-theme-DocRoot-Layout-Sidebar-styles-module {
+  @media (min-width: 997px) {
+    border-right: none !important;
+  }
+}
+
+nav[aria-label='Docs sidebar'] {
+  padding: 24px;
+  font-size: 1rem;
+  line-height: 1.3;
+}
+
+li.theme-doc-sidebar-item-category-level-1:not(:first-child) {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+li.theme-doc-sidebar-item-link-level-1:not(:first-child) {
+  margin-top: 0.6rem;
+}
+
+.menu__link:hover {
+  color: var(--ifm-menu-color-active);
+  background-color: initial;
+}
+
+.menu__link--active:not(.menu__link--sublist) {
+  color: var(--ifm-menu-color-active);
+  background-color: initial;
+}
+
+.menu__list-item-collapsible:hover {
+  background: initial;
+}
+
+.menu__list-item-collapsible--active {
+  background: initial;
+}
+
+.theme-doc-sidebar-item-category-level-1 > div:has(.menu__link--sublist-caret) {
+  pointer-events: none;
+
+  .menu__link--sublist {
+    color: #959595;
+  }
+}
+
+.menu__link--active {
+  color: initial;
+}
+
+.menu__link--sublist {
+  font-weight: 700;
+}
+
+.menu__link--sublist-caret:after {
+  display: none;
+}
+
+.theme-doc-sidebar-item-category-level-2 .menu__link--sublist-caret:after {
+  display: block;
+}
+
+.theme-doc-sidebar-item-category-level-1 > div > button {
+  display: none;
+}
+
+.menu__list .menu__list {
+  padding-left: 6px;
+}

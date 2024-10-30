@@ -1,0 +1,39 @@
+import dedent                   from 'dedent'
+import CodeBlock                from '@theme/CodeBlock'
+import { CUSTOM_VALUE }         from '@site/src/constants/kubernetes/customValue'
+
+<h4>Переменные окружния</h4>
+<CodeBlock language="bash">
+    {dedent`
+        export BASE_DOCKER_REGISTRY="${CUSTOM_VALUE.baseDockerRegistry.value}"
+        export PAUSED_IMAGE="${CUSTOM_VALUE.pausedImage.value}"
+    `}
+</CodeBlock>
+
+<h4>Базовый конфигурационный файл</h4>
+<CodeBlock language="bash">
+    {dedent`
+        cat <<EOF > /etc/containerd/config.toml
+        version = 2
+        imports = ["/etc/containerd/conf.d/*.toml"]
+        EOF
+    `}
+</CodeBlock>
+
+<h4>Кастомный конфигурационный файл</h4>
+<CodeBlock language="bash">
+    {dedent`
+        cat <<EOF > /etc/containerd/conf.d/cloud.toml
+        version = 2
+        [plugins]
+        [plugins."io.containerd.grpc.v1.cri"]
+            sandbox_image = "$\{BASE_DOCKER_REGISTRY}/$\{PAUSED_IMAGE}"
+        [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
+            runtime_type = "io.containerd.runc.v2"
+        [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
+            SystemdCgroup = true
+        [plugins."io.containerd.grpc.v1.cri".registry]
+            config_path = "/etc/containerd/certs.d/"
+        EOF
+    `}
+</CodeBlock>

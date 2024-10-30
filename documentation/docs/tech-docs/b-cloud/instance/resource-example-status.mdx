@@ -1,0 +1,42 @@
+import CodeBlock from '@theme/CodeBlock'
+import dedent    from 'dedent'
+
+<CodeBlock language="yaml">
+  {dedent`
+    ---
+    apiVersion: b-cloud.io/v1alpha
+    kind: Instance
+    metadata:
+      name: bcloud-sandbox-instance
+      namespace: bcloud-sandbox
+    ****
+    status:
+      conditions:
+      - lastTransitionTime: "2024-11-02T11:46:25Z"
+        message: Reconciliation completed successfully
+        reason: Available
+        status: "True"
+        type: ReconcileStatus
+      - lastTransitionTime: "2024-11-02T11:46:23Z"
+        message: handling completed successfully
+        reason: Available
+        status: "True"
+        type: NamespaceProcessing
+      - lastTransitionTime: "2024-11-02T11:46:23Z"
+        message: handling completed successfully
+        reason: Available
+        status: "True"
+        type: ApplicationSetProcessing
+      - lastTransitionTime: "2024-11-02T11:46:24Z"
+        message: handling completed successfully
+        reason: Available
+        status: "True"
+        type: ResourceQuotaProcessing
+      - lastTransitionTime: "2024-11-02T11:46:25Z"
+        message: handling completed successfully
+        reason: Available
+        status: "True"
+        type: RoleBindingProcessing
+    status: Available
+  `}
+</CodeBlock>

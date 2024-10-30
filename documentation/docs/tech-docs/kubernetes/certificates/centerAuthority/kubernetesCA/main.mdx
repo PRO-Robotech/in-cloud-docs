@@ -1,0 +1,21 @@
+
+import TabItem              from '@theme/TabItem'
+import Tabs                 from '@theme/Tabs'
+import KubernetesCACert     from '@site/docs/tech-docs/kubernetes/certificates/centerAuthority/kubernetesCA/openssl.mdx'
+import KubernetesCAKubeadm  from '@site/docs/tech-docs/kubernetes/certificates/centerAuthority/kubernetesCA/kubeadm.mdx'
+
+
+:::warning  
+**Обратите внимание:** данный блок описывает только процесс создания корневых сертификатов ```Kubernetes CA```.  
+:::
+
+
+<Tabs groupId="install-type">
+  <TabItem value='HardWay'>
+    <KubernetesCACert />
+  </TabItem>
+  <TabItem value='Kubeadm'>
+    <KubernetesCAKubeadm />
+  </TabItem>
+</Tabs>
+

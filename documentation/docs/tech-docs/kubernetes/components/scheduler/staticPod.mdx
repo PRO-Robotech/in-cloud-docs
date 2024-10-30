@@ -1,0 +1,89 @@
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+import { PORTS } from '@site/src/constants/kubernetes/ports'
+import { COMPONENTS_VERSION } from '@site/src/constants/kubernetes/componentsVersion'
+
+import CodeBlock from '@theme/CodeBlock'
+import dedent from 'dedent'
+
+<h4>Переменные окружния</h4>
+
+<CodeBlock language="bash">
+    {dedent`
+      export BASE_K8S_PATH="${CUSTOM_VALUE.kuberneteBaseFolderPath.value}"
+      export KUBERNETES_VERSION="${COMPONENTS_VERSION.kubernetes.value}"
+      export KUBE_SCHEDULER_PORT=${PORTS.kubeScheduler.portNumber}
+    `}
+</CodeBlock>
+
+<h4>Рабочая директория</h4>
+
+<CodeBlock language="bash">
+    {dedent`
+        mkdir -p $\{BASE_K8S_PATH}/manifests
+    `}
+</CodeBlock>
+
+<h4>Генерация манифеста</h4>
+
+```bash
+cat <<EOF > ${BASE_K8S_PATH}/manifests/kube-scheduler.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    component: kube-scheduler
+    tier: control-plane
+  name: kube-scheduler
+  namespace: kube-system
+spec:
+  containers:
+  - command:
+    - kube-scheduler
+    - --authentication-kubeconfig=${BASE_K8S_PATH}/scheduler.conf
+    - --authorization-kubeconfig=${BASE_K8S_PATH}/scheduler.conf
+    - --bind-address=0.0.0.0
+    - --kubeconfig=${BASE_K8S_PATH}/scheduler.conf
+    - --leader-elect=true
+    image: registry.k8s.io/kube-scheduler:${KUBERNETES_VERSION}
+    imagePullPolicy: IfNotPresent
+    livenessProbe:
+      failureThreshold: 8
+      httpGet:
+        path: /healthz
+        port: ${KUBE_SCHEDULER_PORT}
+        scheme: HTTPS
+      initialDelaySeconds: 10
+      periodSeconds: 10
+      timeoutSeconds: 15
+    name: kube-scheduler
+    resources:
+      requests:
+        cpu: 100m
+    startupProbe:
+      failureThreshold: 24
+      httpGet:
+        path: /healthz
+        port: ${KUBE_SCHEDULER_PORT}
+        scheme: HTTPS
+      initialDelaySeconds: 10
+      periodSeconds: 10
+      timeoutSeconds: 15
+    volumeMounts:
+    - mountPath: ${BASE_K8S_PATH}/scheduler.conf
+      name: kubeconfig
+      readOnly: true
+  hostNetwork: true
+  priority: 2000001000
+  priorityClassName: system-node-critical
+  securityContext:
+    seccompProfile:
+      type: RuntimeDefault
+  volumes:
+  - hostPath:
+      path: ${BASE_K8S_PATH}/scheduler.conf
+      type: FileOrCreate
+    name: kubeconfig
+status: {}
+EOF
+```

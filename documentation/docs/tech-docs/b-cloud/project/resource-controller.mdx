@@ -1,0 +1,227 @@
+---
+id: resource-controller
+---
+
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+import CodeBlock from '@theme/CodeBlock'
+import dedent from 'dedent'
+import {getBasePrefix} from '@site/src/utils/getBasePrefix'
+
+# Контроллер
+
+`Project controller` — это контроллер, разработанный для реализации ряда функций, связанных с ресурсом Project. Основные задачи, которые он выполняет, включают создание базовых ресурсов K8S, необходимых пользователю для взаимодействия с системой.
+
+## Архитектура
+
+<div className="center">
+  <img src={`${getBasePrefix()}/in-cloud/img/controllers/project-cotroller.drawio.svg`} />
+</div>
+
+## Функционал
+
+- **Создание пространств имен**: предоставляет возможность создавать и настраивать пространства имен для организации и изоляции ресурсов в системе.
+
+- **Создание ролевой модели**: создает заранее определенные роли для каждого пространства имен.
+
+- **Установка связи `Group` с ролевой моделью**: обеспечивает управление доступом пользователей к определенным пространствам имен путем добавления их в соответствующие группы (Member Of Group).
+
+- **Управление квотами**: предоставляет инструменты для установки и контроля квот на использование ресурсов, таких как вычислительная мощность, память и диски.
+
+- **Инициализация сред в интеграционных компонентах**: позволяет автоматически создавать и настраивать окружения в интеграционных компонентах для упрощения процессов разработки и развертывания.
+
+## Функциональные требования
+
+1. Публикация событий при изменении ресурса `Project`:
+
+   - При создании, изменении или удалении ресурса типа `Project` должно автоматически публиковаться событие, на которое реагирует контроллер.
+
+2. Публикация событий при изменении контролируемых ресурсов:
+
+   - При создании, изменении или удалении ресурсов, созданных контроллером, также должно публиковаться событие, на которое контроллер реагирует.
+
+3. Подписка контроллера на изменения созданных ресурсов:
+
+   - Контроллер обязан подписываться на изменения всех ресурсов, которые он создает, чтобы отслеживать их состояние.
+
+4. Запуск процесса реконсиляции при получении событий:
+
+   - При получении любого из указанных событий должен запускаться процесс реконсиляции ресурсов.
+
+5. Действия процесса реконсиляции при создании и изменении:
+
+   - В ответ на события создания или изменения процесс реконсиляции должен создавать новые или обновлять существующие ресурсы следующих типов, приводя их к требуемому состоянию:
+     - Namespace
+     - Role
+     - RoleBinding
+     - ProjectQuota
+     - ProjectLegacy
+
+6. Действия процесса реконсиляции при удалении:
+   - В ответ на события удаления процесс реконсиляции должен удалять все ресурсы, созданные контроллером, связанные с удаленным ресурсом Project.
+
+## Дочерние ресурсы
+
+<Tabs>
+  <TabItem value="RESOURCE_PROJECT">
+    <CodeBlock language="yaml">
+      {dedent`
+            ---
+            apiVersion: b-cloud.io/v1alpha
+            kind: Project
+            metadata:
+              name: bcloud-sandbox
+            spec:
+              businessName: B-Cloud
+              description: Тестовый проект для B-Cloud Sandbox
+              prefix: bcsn
+              quotas:
+                k8s:
+                  limits:
+                    cpu: "2"
+                    memory: 4000M
+                  requests:
+                    cpu: "1"
+                    memory: 2000M
+                    storage: 1G
+              state: pilot
+          `}
+    </CodeBlock>
+  </TabItem>
+</Tabs>
+
+При создании, изменении или удалении ресурса типа `Project`, контроллер должен создавать новые или обновлять существующие ресурсы следующих типов:
+
+<Tabs>
+    <TabItem value='Namespace'>
+        При создании ресурса `Project` автоматически создаётся специальное пространство имён с таким же названием. Это пространство предназначено для управления, развёртывания необходимых инфраструктурных ресурсов и распределения прав доступа.
+        <CodeBlock language="yaml">
+          {dedent`
+            ---
+            apiVersion: v1
+            kind: Namespace
+            metadata:
+              labels:
+                kubernetes.io/metadata.name: '$\{RESOURCE_PROJECT.metadata.name}'
+              name: '$\{RESOURCE_PROJECT.metadata.name}'
+            spec: {}
+          `}
+        </CodeBlock>
+    </TabItem>
+
+    <TabItem value='RoleBinding'>
+        При создании ресурса `Project` автоматически устанавливается ряд связей между группами пользователей и заранее подготовленными ролевыми моделями.
+
+        `g-developer` - права доступа для разрабочиков проекта.
+        <CodeBlock language="yaml">
+          {dedent`
+            ---
+            apiVersion: rbac.authorization.k8s.io/v1
+            kind: RoleBinding
+            metadata:
+              name: developer-instances-edit
+              namespace: '$\{RESOURCE_PROJECT.metadata.name}'
+            roleRef:
+              apiGroup: rbac.authorization.k8s.io
+              kind: ClusterRole
+              name: paas:instances-edit
+            subjects:
+            - apiGroup: rbac.authorization.k8s.io
+              kind: Group
+              name: 'g-developer-$\{RESOURCE_PROJECT.metadata.name}'
+          `}
+        </CodeBlock>
+
+        `g-devops` - права доступа для devops инженеров проекта.
+        <CodeBlock language="yaml">
+          {dedent`
+            ---
+            apiVersion: rbac.authorization.k8s.io/v1
+            kind: RoleBinding
+            metadata:
+              name: devops-instances-edit
+              namespace: '$\{RESOURCE_PROJECT.metadata.name}'
+            roleRef:
+              apiGroup: rbac.authorization.k8s.io
+              kind: ClusterRole
+              name: paas:instances-edit
+            subjects:
+            - apiGroup: rbac.authorization.k8s.io
+              kind: Group
+              name: 'g-devops-$\{RESOURCE_PROJECT.metadata.name}'
+          `}
+        </CodeBlock>
+
+        `g-qa` - права доступа для тестировщиков проекта.
+        <CodeBlock language="yaml">
+          {dedent`
+            ---
+            apiVersion: rbac.authorization.k8s.io/v1
+            kind: RoleBinding
+            metadata:
+              name: qa-instances-edit
+              namespace: '$\{RESOURCE_PROJECT.metadata.name}'
+            roleRef:
+              apiGroup: rbac.authorization.k8s.io
+              kind: ClusterRole
+              name: paas:instances-edit
+            subjects:
+            - apiGroup: rbac.authorization.k8s.io
+              kind: Group
+              name: 'g-qa-$\{RESOURCE_PROJECT.metadata.name}'
+          `}
+        </CodeBlock>
+
+    </TabItem>
+
+    <TabItem value='ProjectQuota'>
+        При создании ресурса `Project` автоматически генерируется ресурс `ProjectQuota`, который впоследствии будет отвечать за квотирование проекта.
+        <CodeBlock language="yaml">
+          {dedent`
+            ---
+            apiVersion: b-cloud.io/v1alpha
+            kind: ProjectQuota
+            metadata:
+              name: '$\{RESOURCE_PROJECT.metadata.name}'
+            spec:
+              quotas:
+                k8s:
+                  limits:
+                    cpu: '$\{RESOURCE_PROJECT.spec.quotas.k8s.limits.cpu}'
+                    memory: '$\{RESOURCE_PROJECT.spec.quotas.k8s.limits.memory}'
+                  requests:
+                    cpu: '$\{RESOURCE_PROJECT.spec.quotas.k8s.requests.cpu}'
+                    memory: '$\{RESOURCE_PROJECT.spec.quotas.k8s.requests.memory}'
+                    storage: '$\{RESOURCE_PROJECT.spec.quotas.k8s.requests.storage}'
+            status:
+              quotasLeft:
+                k8s:
+                  limits:
+                    cpu: '$\{RESOURCE_PROJECT.spec.quotas.k8s.limits.cpu}'
+                    memory: '$\{RESOURCE_PROJECT.spec.quotas.k8s.limits.memory}'
+                  requests:
+                    cpu: '$\{RESOURCE_PROJECT.spec.quotas.k8s.requests.cpu}'
+                    memory: '$\{RESOURCE_PROJECT.spec.quotas.k8s.requests.memory}'
+                    storage: '$\{RESOURCE_PROJECT.spec.quotas.k8s.requests.storage}'
+          `}
+        </CodeBlock>
+    </TabItem>
+
+    <TabItem value='ProjectLegacy'>
+        При создании ресурса `Project` автоматически генерируется ресурс `ProjectLegacy`, который впоследствии будет отвечать интеграцию с внешними системами.
+        <CodeBlock language="yaml">
+          {dedent`
+            ---
+            apiVersion: b-cloud.io/v1alpha
+            kind: ProjectLegacy
+            metadata:
+              name: '$\{RESOURCE_PROJECT.metadata.name}'
+            spec:
+              businessName: '$\{RESOURCE_PROJECT.spec.businessName}'
+              description: '$\{RESOURCE_PROJECT.spec.description}'
+              prefix: '$\{RESOURCE_PROJECT.spec.prefix}'
+              state: '$\{RESOURCE_PROJECT.spec.state}'
+          `}
+        </CodeBlock>
+    </TabItem>
+</Tabs>

@@ -1,0 +1,50 @@
+
+- `spec.prefix`:
+    - Длина значения поля не должна превышать 7 символов.
+    - Значение поля должно начинаться и заканчиваться символами без пробелов.
+
+- `spec.quotas.k8s.limits.cpu`:
+    - [документации Kubernetes](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-cpu).
+    - Значение поля должно начинаться и заканчиваться символами без пробелов.
+
+- `spec.quotas.k8s.requests.cpu`:
+    - [документации Kubernetes](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-cpu).
+    - Значение поля должно начинаться и заканчиваться символами без пробелов.
+
+- `spec.quotas.k8s.limits.memory`:
+    - [документации Kubernetes](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-cpu).
+    - Значение поля должно начинаться и заканчиваться символами без пробелов.
+
+- `spec.quotas.k8s.requests.memory`:
+    - [документации Kubernetes](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-cpu).
+    - Значение поля должно начинаться и заканчиваться символами без пробелов.
+
+- `spec.quotas.k8s.requests.storage`:
+    - [документации Kubernetes](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-cpu).
+    - Значение поля должно начинаться и заканчиваться символами без пробелов.
+
+- `state`:
+    - Значение поля должно начинаться и заканчиваться символами без пробелов.
+    - Значение поля должно удовлетворять требованиям ENUM.
+
+- `status.conditions[].lastTransitionTime`:
+    - Значение поля должно начинаться и заканчиваться символами без пробелов.
+    - Значение поля должно иметь формат `date-time`. (`2024-11-01T20:07:28Z`).
+
+- `status.conditions[].message`:
+    - Длина значения поля не должна превышать 32768 символов.
+
+- `status.conditions[].reason`:
+    - Длина значения поля не должна превышать 1024 символа.
+    - Значение поля должно иметь формат записи `CamelCase` (`Available`).
+
+- `status.conditions[].status`
+    - Значение поля должно удовлетворять требованиям ENUM.
+
+- `status.conditions[].type`:
+    - Длина значения поля не должна превышать 316 символа.
+    - Значение поля должно иметь формат записи `CamelCase` (`RoleBindingProcessing`).
+
+- `status.status`:
+    - Значение поля должно удовлетворять требованиям ENUM.
+    - Значение поля должно иметь формат записи `CamelCase` (`RoleBindingProcessing`).

@@ -1,0 +1,28 @@
+import dedent                   from 'dedent'
+import CodeBlock                from '@theme/CodeBlock'
+
+<CodeBlock language="bash">
+    {dedent`
+        cat <<EOF > /usr/lib/systemd/system/containerd.service
+        [Unit]
+        Description=containerd container runtime
+        Documentation=https://containerd.io
+        After=network.target
+
+        [Service]
+        ExecStartPre=/sbin/modprobe overlay
+        ExecStart=/usr/local/bin/containerd
+        Restart=always
+        RestartSec=5
+        Delegate=yes
+        KillMode=process
+        OOMScoreAdjust=-999
+        LimitNOFILE=1048576
+        LimitNPROC=infinity
+        LimitCORE=infinity
+
+        [Install]
+        WantedBy=multi-user.target
+        EOF
+    `}
+</CodeBlock>

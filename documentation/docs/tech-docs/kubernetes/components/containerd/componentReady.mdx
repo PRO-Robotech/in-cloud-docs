@@ -1,0 +1,28 @@
+---
+id: component-ready
+---
+
+import StatusSystemdUnit from '@site/docs/tech-docs/kubernetes/components/containerd/statusSystemdUnit.mdx'
+import StatusConfigFiles from '@site/docs/tech-docs/kubernetes/components/containerd/statusConfigFiles.mdx'
+import StatusBinFiles from '@site/docs/tech-docs/kubernetes/components/containerd/statusBinFiles.mdx'
+import StatusBinVersion from '@site/docs/tech-docs/kubernetes/components/containerd/statusBinVersion.mdx'
+
+# 5.2.1.4.1. Containerd
+
+## 5.2.1.4.1.1. Этапы проверки
+- Исполняемые файлы существуют.
+- Конфигурационные файлы существуют.
+- Версия исполняемого файла корректна.
+- Статус Systemd Unit.
+
+## 5.2.1.4.1.2. Исполняемые файлы
+<StatusBinFiles />
+
+## 5.2.1.4.1.3. Конфигурационные файлы
+<StatusConfigFiles />
+
+## 5.2.1.4.1.4. Версия исполняемого файла
+<StatusBinVersion />
+
+## 5.2.1.4.1.5. Статус Systemd Unit
+<StatusSystemdUnit />

@@ -1,0 +1,9 @@
+import dedent                   from 'dedent'
+import CodeBlock                from '@theme/CodeBlock'
+
+<CodeBlock language="bash">
+    {dedent`
+        mkdir -p /usr/lib/systemd/system/kubelet.service.d
+        mkdir -p /var/lib/kubelet/
+    `}
+</CodeBlock>

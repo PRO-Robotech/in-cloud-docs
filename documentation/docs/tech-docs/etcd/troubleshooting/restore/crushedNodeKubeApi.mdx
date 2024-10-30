@@ -1,0 +1,95 @@
+---
+id: CrushedNodeKubeApi
+---
+
+import CodeBlock                    from '@theme/CodeBlock'
+import dedent                       from 'dedent'
+import { CUSTOM_VALUE }             from '@site/src/constants/kubernetes/customValue'
+import TabItem                      from '@theme/TabItem'
+import Tabs                         from '@theme/Tabs'
+import { ETCD_ARGS }                from '@site/src/constants/kubernetes/etcdArgs'
+import { CodeAndInputExportPods }   from '@site/src/components/commonBlocks'
+import { CrushedNodeFunctionsKubeApi }  from './blocks'
+
+import { CERTIFICATES }             from '@site/src/constants/kubernetes/certs'
+import { PORTS }                    from '@site/src/constants/kubernetes/ports'
+
+export const ETCD_endpoints           = 'https://10.10.10.3:2379,https://10.10.10.4:2379,https://10.10.10.5:2379'
+export const ETCD_endpoint_1          = 'https://10.10.10.3:2379'
+export const ETCD_endpoint_2          = 'https://10.10.10.4:2379'
+export const ETCD_endpoint_3          = 'https://10.10.10.5:2379'
+export const ETCD_etcd_pod_1          = 'etcd-bcloud-k8s-sandbox-dev-csko-1-tcgzn-7plhz'
+export const ETCD_etcd_pod_2          = 'etcd-bcloud-k8s-sandbox-dev-csko-1-tcgzn-h9g49'
+export const ETCD_etcd_pod_3          = 'etcd-bcloud-k8s-sandbox-dev-csko-1-tcgzn-wps6k'
+export const ETCD_k8s_node_1          = 'bcloud-k8s-sandbox-dev-csko-1-tcgzn-7plhz'
+export const ETCD_k8s_node_2          = 'bcloud-k8s-sandbox-dev-csko-1-tcgzn-h9g49'
+export const ETCD_k8s_node_3          = 'bcloud-k8s-sandbox-dev-csko-1-tcgzn-wps6k'
+export const ETCD_k8s_node_address_1  = '10.10.10.3'
+export const ETCD_k8s_node_address_2  = '10.10.10.4'
+export const ETCD_k8s_node_address_3  = '10.10.10.5'
+export const ETCD_api_address         = '10.10.10.2'
+export const ETCD_k8s_cluster_name    = 'bcloud-k8s-sandbox-test-csko-1'
+
+<CrushedNodeFunctionsKubeApi.Master />
+
+  1. Определите текущее количество узлов ETCD кластера.
+
+  <Tabs groupId="etcd-kubeapi">
+    <TabItem value='KubeAPI восстанавливаемого кластера'>
+      Если  KubeAPI восстанавливаемого  кластера доступно, тогда используйте этот вариант.
+
+      2. Подключитесь к KubeAPI и введите команду:
+      <CodeBlock language="bash">{`kubectl get pod -n kube-system -l component=etcd -o wide`}</CodeBlock>
+
+      3. Выберите под узла ETCD кластера из полученной таблицы, на основе которого вы будете восстанавливать кластер.
+
+    </TabItem>
+    <TabItem value='kubeAPI инфра кластера'>
+      2. Подключитесь к KubeAPI инфраструктурного кластера и введите команду:
+
+      <CodeBlock language="bash">
+  {`kubectl get machine -n bcloud-k8s-sandbox-test-csko-1
+    -l cluster.x-k8s.io/control-plane=
+    -o custom-columns=NAME:.metadata.name,ADDRESSES:status.addresses\[0\].address
+  `}
+      </CodeBlock>
+      3. Выберите узел k8s кластера, с которого вы будете восстанавливать кластер.
+    </TabItem>
+  </Tabs>
+
+  4. Подключитесь к выбранному вами узлу K8s кластера или узлу K8s кластера выбранного вами пода.
+
+  5. Cоберите все возможные [пререквизиты](#подготовка-окружения) для подключения к ETCD и K8s кластеру.
+
+  <Tabs groupId="etcd-status">
+    <TabItem value='ETCD кластер работает'>
+      6. Если удается подключиться к ETCD кластеру, тогда создайте [резервную копию](#создание-резервных-копий)
+      и [выполните восстановление кластера](#восстановление-с-одного-узла-из-мгновенного-снимка) с дальнейшим подключением
+      остальных узлов ETCD кластера.
+    </TabItem>
+    <TabItem value='ETCD кластер не работает'>
+      6. Если подключение к ETCD кластеру невозможно, сделайте [резервную копию файлов БД](#создание-резервной-копии-файлов-бд).
+
+      7. Откройте на редактирование файл <code>${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/manifests/etcd.yaml</code>.
+      8. В параметрах запуска ETCD указанных в разделе `spec.containers[0].command`
+      добавьте ключ:
+      <CodeBlock language="bash">{`--force-new-cluster`}</CodeBlock>
+      Здесь же измените параметр `initial-cluster` так, чтобы в нем остался только текущий узел ETCD кластера.
+      <CodeBlock language="bash">{`\--initial-cluster=${ETCD_k8s_node_1}=https://${ETCD_k8s_node_address_1}:${PORTS.etcdPeer.portNumber} `}</CodeBlock>
+      Таким образом, при следущем запуске ETCD будут удалены все текущие метаданные из файлов БД,
+      и туда будут записаны новые, указанные в разделе `spec.containers[0].command` с суффиксом initial.
+
+      9. Дождитесь, когда пересоздастся под ETCD узла и проверьте его состояние.
+
+      10. В файле <code>${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/manifests/etcd.yaml</code>
+      в параметрах запуска ETCD указанных в разделе `spec.containers[0].command`
+      удалите ключ:
+      <CodeBlock language="bash">{`--force-new-cluster`}</CodeBlock>
+      В противном случае, при каждом перезапуске пода/контейнера будут удаляться все метаданные из БД.
+
+      10. Добавьте 2й и 3й узлы кластера ETCD как это указано в инструкции к
+      [восстановлению с одного узла](#восстановление-с-одного-узла-из-мгновенного-снимка) для `Master-2` и `Master-3`.
+    </TabItem>
+  </Tabs>
+
+  На этом восстановление кластера завершено.

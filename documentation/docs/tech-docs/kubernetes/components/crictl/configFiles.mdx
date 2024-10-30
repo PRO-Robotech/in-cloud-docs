@@ -1,0 +1,19 @@
+import dedent                   from 'dedent'
+import CodeBlock                from '@theme/CodeBlock'
+import { CUSTOM_VALUE }         from '@site/src/constants/kubernetes/customValue'
+
+<h4>Переменные окружния</h4>
+<CodeBlock language="bash">
+    {dedent`
+        export CRI_ENDPOINT="${CUSTOM_VALUE.criEndpoint.value}"
+    `}
+</CodeBlock>
+
+<h4>Базовый конфигурационный файл</h4>
+<CodeBlock language="bash">
+    {dedent`
+        cat <<EOF > /etc/crictl.yaml
+        runtime-endpoint: unix://$\{CRI_ENDPOINT}
+        EOF
+    `}
+</CodeBlock>

@@ -1,0 +1,17 @@
+import dedent                   from 'dedent'
+import CodeBlock                from '@theme/CodeBlock'
+
+
+<CodeBlock language="bash">
+    {dedent`
+        ls -la /usr/local/bin/ | grep 'runc$'
+    `}
+</CodeBlock>
+
+:::info 
+<CodeBlock language="bash">
+    {dedent`
+        -rwxr-xr-x  1 root root  10709696 Jan 23  2024 runc
+    `}
+</CodeBlock>
+:::

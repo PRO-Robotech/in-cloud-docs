@@ -1,0 +1,129 @@
+---
+id: k8s-init
+---
+
+import TabItem  from '@theme/TabItem'
+import Tabs     from '@theme/Tabs'
+import CodeBlock from '@theme/CodeBlock'
+import dedent from 'dedent'
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+
+
+# 5.2.3.1. Инициализация
+
+Для запуска кластера достаточно запустить `kubelet` и дождаться, когда запустятся контейнеры управляющего контура.
+
+> Данная команда выполняет инициализацию кластера Kubernetes, включая создание необходимых манифестов, сертификатов, конфигурационных файлов, запуск сервисов, а также мониторинг состояния кластера и его постобработку.
+
+:::warning
+Обратите внимание, что для инициализации кластера используется заранее подготовленный конфигурационный файл ```kubeadm``` с предуказанным токеном для будущих мастер-нод, что упрощает установку. В промышленной эксплуатации рекомендуется генерировать уникальный токен для каждого узла с ограниченным временем жизни для повышения безопасности.
+:::
+
+Данная команда впитывает в себя разделы:
+- [Проверка готовности узла](./components/componentsReady.mdx).
+- [Генерация ЦА](./certificates/centerAuthority/init.mdx).
+- [Генерация Сертификатов/Kubeconfigs](./certificates/components/initCerts.mdx).
+- [Генерация манифеста для ETCD](./components/etcd/setup.mdx).
+- [Генерация манифеста для Kube-API](./components/kubeAPI/setup.mdx).
+- [Генерация манифеста для Kube-Controller-Manager](./components/controllerManager/setup.mdx).
+- [Генерация манифеста для Kube-Scheduler](./components/scheduler/setup.mdx).
+- [Kubelet Start](./components/kubelet/serviceInitStart.mdx).
+- [Загрузка конфигурационных файлов в kubernetes](./additionalSetup/uploadConfigsInit.mdx).
+- [Загрузка корневых сертификатов в kubernetes](./additionalSetup/uploadCA.mdx).
+- [Маркировка узлов](./additionalSetup/markingInit.mdx).
+- [Создание токенов для подключения и ролевой модели](./additionalSetup/rbac.mdx).
+
+
+<CodeBlock language="bash">
+    {dedent`
+        kubeadm init --config=$\{BASE_K8S_PATH}/kubeadm.conf --upload-certs
+    `}
+</CodeBlock>
+
+:::note
+<CodeBlock language="bash">
+    {dedent`
+      [init] Using Kubernetes version: v1.30.4
+      [preflight] Running pre-flight checks
+      [preflight] Pulling images required for setting up a Kubernetes cluster
+      [preflight] This might take a minute or two, depending on the speed of your internet connection
+      [preflight] You can also perform this action in beforehand using 'kubeadm config images pull'
+      [certs] Using certificateDir folder "/etc/kubernetes/pki"
+      [certs] Generating "ca" certificate and key
+      [certs] Generating "apiserver" certificate and key
+      [certs] apiserver serving cert is signed for DNS names [api.example.example.com kubernetes kubernetes.default kubernetes.default.svc kubernetes.default.svc.example.example.com master-1.example.example.com] and IPs [29.64.0.1 212.67.15.21 127.0.0.1]
+      [certs] Generating "apiserver-kubelet-client" certificate and key
+      [certs] Generating "front-proxy-ca" certificate and key
+      [certs] Generating "front-proxy-client" certificate and key
+      [certs] Generating "etcd/ca" certificate and key
+      [certs] Generating "etcd/server" certificate and key
+      [certs] etcd/server serving cert is signed for DNS names [localhost master-1.example.example.com] and IPs [212.67.15.21 127.0.0.1 ::1]
+      [certs] Generating "etcd/peer" certificate and key
+      [certs] etcd/peer serving cert is signed for DNS names [localhost master-1.example.example.com] and IPs [212.67.15.21 127.0.0.1 ::1]
+      [certs] Generating "etcd/healthcheck-client" certificate and key
+      [certs] Generating "apiserver-etcd-client" certificate and key
+      [certs] Generating "sa" key and public key
+      [kubeconfig] Using kubeconfig folder "/etc/kubernetes"
+      [kubeconfig] Writing "admin.conf" kubeconfig file
+      [kubeconfig] Writing "super-admin.conf" kubeconfig file
+      [kubeconfig] Writing "kubelet.conf" kubeconfig file
+      [kubeconfig] Writing "controller-manager.conf" kubeconfig file
+      [kubeconfig] Writing "scheduler.conf" kubeconfig file
+      [etcd] Creating static Pod manifest for local etcd in "/etc/kubernetes/manifests"
+      [control-plane] Using manifest folder "/etc/kubernetes/manifests"
+      [control-plane] Creating static Pod manifest for "kube-apiserver"
+      [control-plane] Creating static Pod manifest for "kube-controller-manager"
+      [control-plane] Creating static Pod manifest for "kube-scheduler"
+      [kubelet-start] Writing kubelet environment file with flags to file "/var/lib/kubelet/kubeadm-flags.env"
+      [kubelet-start] Writing kubelet configuration to file "/var/lib/kubelet/config.yaml"
+      [kubelet-start] Starting the kubelet
+      [wait-control-plane] Waiting for the kubelet to boot up the control plane as static Pods from directory "/etc/kubernetes/manifests"
+      [kubelet-check] Waiting for a healthy kubelet at http://127.0.0.1:10248/healthz. This can take up to 4m0s
+      [kubelet-check] The kubelet is healthy after 502.403608ms
+      [api-check] Waiting for a healthy API server. This can take up to 4m0s
+      [api-check] The API server is healthy after 4.502395295s
+      [upload-config] Storing the configuration used in ConfigMap "kubeadm-config" in the "kube-system" Namespace
+      [kubelet] Creating a ConfigMap "kubelet-config" in namespace kube-system with the configuration for the kubelets in the cluster
+      [upload-certs] Storing the ./certificates in Secret "kubeadm-certs" in the "kube-system" Namespace
+      [upload-certs] Using certificate key: 0c00c2fd5c67c37656c00d78a9d7e1f2eb794ef8e4fc3e2a4b532eb14323cd59
+      [mark-control-plane] Marking the node master-1.example.example.com as control-plane by adding the labels: [node-role.kubernetes.io/control-plane node.kubernetes.io/exclude-from-external-load-balancers]
+      [mark-control-plane] Marking the node master-1.example.example.com as control-plane by adding the taints [node-role.kubernetes.io/control-plane:NoSchedule]
+      [bootstrap-token] Using token: fjt9ex.lwzqgdlvoxtqk4yw
+      [bootstrap-token] Configuring bootstrap tokens, cluster-info ConfigMap, RBAC Roles
+      [bootstrap-token] Configured RBAC rules to allow Node Bootstrap tokens to get nodes
+      [bootstrap-token] Configured RBAC rules to allow Node Bootstrap tokens to post CSRs in order for nodes to get long term certificate credentials
+      [bootstrap-token] Configured RBAC rules to allow the csrapprover controller automatically approve CSRs from a Node Bootstrap Token
+      [bootstrap-token] Configured RBAC rules to allow certificate rotation for all node client ./certificates in the cluster
+      [bootstrap-token] Creating the "cluster-info" ConfigMap in the "kube-public" namespace
+      [kubelet-finalize] Updating "/etc/kubernetes/kubelet.conf" to point to a rotatable kubelet client certificate and key
+
+      Your Kubernetes control-plane has initialized successfully!
+
+      To start using your cluster, you need to run the following as a regular user:
+
+        mkdir -p $HOME/.kube
+        sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+        sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+      Alternatively, if you are the root user, you can run:
+
+        export KUBECONFIG=/etc/kubernetes/admin.conf
+
+      You should now deploy a pod network to the cluster.
+      Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+        https://kubernetes.io/docs/concepts/cluster-administration/addons/
+
+      You can now join any number of control-plane nodes by copying certificate authorities
+      and service account keys on each node and then running the following as root:
+
+        kubeadm join api.example.example.com:6443 --token fjt9ex.lwzqgdlvoxtqk4yw \
+        --discovery-token-ca-cert-hash sha256:d0a2cf44fc8c8f4e5b9b021243434d303e1dc690b51a23efed0ba056647c87f6 \
+        --control-plane --certificate-key 0c00c2fd5c67c37656c00d78a9d7e1f2eb794ef8e4fc3e2a4b532eb14323cd59
+
+      Then you can join any number of worker nodes by running the following on each as root:
+
+      kubeadm join api.example.example.com:6443 --token fjt9ex.lwzqgdlvoxtqk4yw \
+        --discovery-token-ca-cert-hash sha256:d0a2cf44fc8c8f4e5b9b021243434d303e1dc690b51a23efed0ba056647c87f6 
+    `}
+</CodeBlock>
+:::

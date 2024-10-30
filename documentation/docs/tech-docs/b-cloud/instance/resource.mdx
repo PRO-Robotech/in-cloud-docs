@@ -1,0 +1,48 @@
+---
+id: resource
+---
+
+import TabItem                      from '@theme/TabItem'
+import Tabs                         from '@theme/Tabs'
+import ResourceFieldsDescription    from '@site/docs/tech-docs/b-cloud/instance/resource-field-descriptions.mdx'
+import ResourceFieldsLimitation     from '@site/docs/tech-docs/b-cloud/instance/resource-field-limitation.mdx'
+import ResourceStructure            from '@site/docs/tech-docs/b-cloud/instance/resource-structure.mdx'
+import ResourceExampleSpec          from '@site/docs/tech-docs/b-cloud/instance/resource-example-spec.mdx'
+import ResourceExampleStatus        from '@site/docs/tech-docs/b-cloud/instance/resource-example-status.mdx'
+import ResourceSpecValidation       from '@site/docs/tech-docs/b-cloud/instance/resource-spec-validation.mdx'
+
+# Ресурс Instance
+
+`Instance` — представляет собой введенную абстракцию, созданную для обеспечения изолированного вычислительного окружения, предназначенного для развертывания и выполнения приложений или сервисов. Основная цель `instance` — предоставить клиенту управляемый экземпляр ресурсов, где можно настраивать конфигурацию рабочих нагрузок, контролировать использование ресурсов и квоты, отслеживать состояние запущенных процессов и интегрироваться с инструментами DevOps для эффективного управления и масштабирования приложений.
+
+
+## Поля ресурса
+
+<Tabs>
+    <TabItem value='Описание'>
+        <ResourceFieldsDescription />
+    </TabItem>
+
+    <TabItem value='Структура'>
+        <ResourceStructure />
+    </TabItem>
+
+    <TabItem value='Ограничения'>
+        <ResourceFieldsLimitation />
+    </TabItem>
+
+    <TabItem value='Валидация'>
+        <ResourceSpecValidation />
+    </TabItem>
+</Tabs>
+
+## Пример ресурса
+<Tabs>
+    <TabItem value='Спецификация'>
+        <ResourceExampleSpec />
+    </TabItem>
+
+    <TabItem value='Статус'>
+        <ResourceExampleStatus />
+    </TabItem>
+</Tabs>

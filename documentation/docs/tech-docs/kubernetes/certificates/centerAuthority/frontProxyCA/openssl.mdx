@@ -1,0 +1,61 @@
+import { CERTIFICATES } from '@site/src/constants/kubernetes/certs'
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+
+import CodeBlock        from '@theme/CodeBlock'
+import dedent           from 'dedent'
+
+<h4>Переменные окружения</h4>
+<CodeBlock language="bash">
+    {dedent`
+        export BASE_K8S_PATH="${CUSTOM_VALUE.kuberneteBaseFolderPath.value}"
+        export FRONT_PROXY_CA_CSR_CONF="${CERTIFICATES.frontProxyCA.crtConf}"
+        export FRONT_PROXY_CA_CN="${CERTIFICATES.frontProxyCA.cname}"
+        export FRONT_PROXY_CA_KEY_PATH="${CERTIFICATES.frontProxyCA.keyPath}"
+        export FRONT_PROXY_CA_KEY_SIZE=${CERTIFICATES.frontProxyCA.keySize}
+        export FRONT_PROXY_CA_CRT_PATH="${CERTIFICATES.frontProxyCA.crtPath}"
+    `}
+</CodeBlock>
+
+<h4>Рабочая директория</h4>
+<CodeBlock language="bash">
+    {dedent`
+        mkdir -p $\{BASE_K8S_PATH}/openssl
+        mkdir -p $\{BASE_K8S_PATH}/pki
+    `}
+</CodeBlock>
+
+<h4>Конфигурация</h4>
+```bash
+cat <<EOF > ${FRONT_PROXY_CA_CSR_CONF}
+[req]
+distinguished_name = req_distinguished_name
+x509_extensions    = v3_ca
+prompt             = no
+
+[req_distinguished_name]
+CN = "${FRONT_PROXY_CA_CN}"
+
+[v3_ca]
+keyUsage = critical, keyCertSign, keyEncipherment, digitalSignature
+basicConstraints = critical,CA:TRUE
+EOF
+```
+
+<h4>Генерация приватного ключа</h4>
+```bash
+openssl genrsa \
+    -out "${FRONT_PROXY_CA_KEY_PATH}" ${FRONT_PROXY_CA_KEY_SIZE}
+```
+
+<h4>Генерация публичного ключа</h4>
+```bash
+openssl req \
+    -x509 \
+    -new \
+    -nodes \
+    -key "${FRONT_PROXY_CA_KEY_PATH}" \
+    -sha256 \
+    -days 3650 \
+    -out "${FRONT_PROXY_CA_CRT_PATH}" \
+    -config "${FRONT_PROXY_CA_CSR_CONF}"
+```

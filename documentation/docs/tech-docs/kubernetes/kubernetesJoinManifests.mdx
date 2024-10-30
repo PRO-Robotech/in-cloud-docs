@@ -1,0 +1,53 @@
+---
+id: k8s-join-manifests
+---
+
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+
+import CodeBlock from '@theme/CodeBlock'
+import dedent from 'dedent'
+
+# 5.2.1.3.5.2. Join Manifests
+
+:::warning  
+Обратите внимание, что данный раздел зависит от следующих документов:
+- [Загрузка ЦА](certificates//centerAuthority/join.mdx).
+- [Заказ Сертификатов](certificates/components/joinCerts.mdx).
+:::
+
+## 5.2.1.3.5.2.1. Этапы
+
+> Отличительной особенностью команды ```kubeadm init``` по сравнению с ```kubeadm join``` является меньшая степень разграничения при создании ресурсов. Поэтому в этом разделе, манифесты управляющего контура будем генерить одной командой:  
+- Генерация манифестов для управляющего контура.
+
+
+## 5.2.1.3.5.2.2. Генерация манифестов для УП
+
+<h4>Переменные окружния</h4>
+<CodeBlock language="bash">
+    {dedent`
+        export BASE_K8S_PATH="${CUSTOM_VALUE.kuberneteBaseFolderPath.value}"
+    `}
+</CodeBlock>
+
+<h4>Генерация манифеста</h4>
+<CodeBlock language="bash">
+    {dedent`
+        kubeadm join phase control-plane-prepare control-plane \
+          --config=$\{BASE_K8S_PATH}/kubeadm.conf
+    `}
+</CodeBlock>
+
+
+:::note
+<CodeBlock language="bash">
+    {dedent`
+      [preflight] Reading configuration from the cluster...
+      [preflight] FYI: You can look at this config file with 'kubectl -n kube-system get cm kubeadm-config -o yaml'
+      [control-plane] Using manifest folder "/etc/kubernetes/manifests"
+      [control-plane] Creating static Pod manifest for "kube-apiserver"
+      [control-plane] Creating static Pod manifest for "kube-controller-manager"
+      [control-plane] Creating static Pod manifest for "kube-scheduler"
+    `}
+</CodeBlock>
+:::

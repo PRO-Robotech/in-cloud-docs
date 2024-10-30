@@ -1,0 +1,18 @@
+
+import TabItem                  from '@theme/TabItem'
+import Tabs                     from '@theme/Tabs'
+
+<details open>
+  <summary>All INIT Certificates</summary>
+    <Tabs groupId="install-type">
+        <TabItem value='Kubeadm'>
+            Если требуется создать сразу все сертификаты, то воспользуйтесь следующими командами
+            ```bash
+            kubeadm init phase certs all \
+                --config=${BASE_K8S_PATH}/kubeadm.conf
+            kubeadm init phase kubeconfig all \
+                --config=${BASE_K8S_PATH}/kubeadm.conf
+            ```
+        </TabItem>
+    </Tabs>
+</details>

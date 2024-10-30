@@ -1,0 +1,23 @@
+---
+id: init-ca
+---
+
+import KubernetesCA from '@site/docs/tech-docs/kubernetes/certificates/centerAuthority/kubernetesCA/main.mdx'
+import FrontProxyCA from '@site/docs/tech-docs/kubernetes/certificates/centerAuthority/frontProxyCA/main.mdx'
+import ETCDCA   from '@site/docs/tech-docs/etcd/certificates/centerAuthority/etcdCA/main.mdx'
+
+# 5.2.2.1.1. Инициализация ЦА
+
+> Центр аутентификации — это удостоверяющий центр (Certificate Authority, CA), который выпускает и управляет корневыми сертификатами. Корневые сертификаты служат доверенным источником для установления защищённых соединений между компонентами кластера Kubernetes. Они обеспечивают аутентификацию и шифрование коммуникаций между узлами, сервисами и клиентами, гарантируя целостность и конфиденциальность передаваемых данных.
+
+## 5.2.2.1.1.1. Kubernetes ЦА
+
+<KubernetesCA />
+
+## 5.2.2.1.1.2. FrontProxy ЦА
+
+<FrontProxyCA />
+
+## 5.2.2.1.1.3. ETCD ЦА
+
+<ETCDCA />

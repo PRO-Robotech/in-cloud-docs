@@ -1,0 +1,43 @@
+---
+id: RestoreEtcdK8s
+---
+
+import SingleNodeK8s            from '@site/docs/tech-docs/etcd/troubleshooting/restore/singleNodeK8s.mdx'
+import ThreeNodeK8s             from '@site/docs/tech-docs/etcd/troubleshooting/restore/threeNodeK8s.mdx'
+import CrushedNodeK8s           from '@site/docs/tech-docs/etcd/troubleshooting/restore/crushedNodeK8s.mdx'
+
+### 5.1.5.8.1.1. Восстановление с одного узла из мгновенного снимка
+
+Данный вариант подразумевает, что бэкап разворачивается на первом узле и кластер запускается в режиме одного узла.
+Далее поочередно будут добавляться другие узлы кластера.
+
+<details close>
+  <summary>Инструкция</summary>
+  <SingleNodeK8s />
+</details>
+
+*****
+
+### 5.1.5.8.1.2. Восстановление всех трех узлов из мгновенного снимка
+
+Данный вариант подразумевает, восстановление БД и ее метаданных на всех трех узлах одновременно.
+
+<details close>
+  <summary>Инструкция</summary>
+  <ThreeNodeK8s />
+</details>
+
+******
+
+### 5.1.5.8.1.3. Восстановление кластера при конфликтах или проблемах с кворумом
+
+Данная необходимость может возникнуть в случаях:
+
+I. При обновлении кластера появилось больше или меньше 3х управляющих узлов K8s кластера.
+II. Распался кворум ETCD кластера.
+III. Повреждены метаданные БД на одном или нескольких узлах ETCD кластера.
+
+<details close>
+  <summary>Инструкция</summary>
+  <CrushedNodeK8s />
+</details>

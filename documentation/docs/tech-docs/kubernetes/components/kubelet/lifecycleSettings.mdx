@@ -1,0 +1,37 @@
+---
+id: lifecycle-settings
+---
+
+import DownloadBIN from '@site/docs/tech-docs/kubernetes/components/kubelet/downloadBIN.mdx'
+import DIR from '@site/docs/tech-docs/kubernetes/components/kubelet/dir.mdx'
+import EnableSystemdUnit from '@site/docs/tech-docs/kubernetes/components/kubelet/systemdUnit/systemdUnitEnable.mdx'
+import SetupSystemdUnit from '@site/docs/tech-docs/kubernetes/components/kubelet/setupSystemdUnit.mdx'
+import ConfigFiles from '@site/docs/tech-docs/kubernetes/components/kubelet/configFiles.mdx'
+
+
+# 5.2.1.3.4. Kubelet
+
+## 5.2.1.3.4.1. Этапы установки компонента
+- Создание рабочих директорий.
+- Настройка Systemd Unit (сервис).
+- Настройка компонента через Конфигурационные файлы существуют.
+- Запуск компонента и добавление сервиса в автозапуск.
+
+## 5.2.1.3.4.2. Рабочие директории компонента
+<DIR />
+
+## 5.2.1.3.4.3. Настройка Systemd Unit компонента
+<SetupSystemdUnit />
+
+## 5.2.1.3.4.4. Старт Systemd Unit
+<EnableSystemdUnit />
+
+## 5.2.1.3.4.5. Конфигурация компонента
+:::warning
+Просьба обратить внимание, что данный конфигурационный файл нужно применять только, если установка производится не через Kubeadm, в противном случае дубль конфигурации уже находится в ***kubeadm config***
+:::
+
+<details close>
+  <summary>Kubelet config</summary>
+  <ConfigFiles />
+</details>

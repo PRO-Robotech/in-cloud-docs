@@ -1,0 +1,25 @@
+<ul>
+    <li>`spec`                                      - контент, определяющий проект.</li>
+    <li>`spec.businessName`                         - полное бизнес-имя проекта.</li>
+    <li>`spec.description`                          - краткое описание проекта.</li>
+    <li>`spec.prefix`                               - короткий идентификатор проекта.</li>
+    <li>`spec.quotas`                               - квоты на ресурсы проекта, разделенные на лимиты и запросы для CPU, RAM и DISK.</li>
+    <li>`spec.quotas.k8s`                           - квоты на ресурсы проекта, разделенные на лимиты и запросы для CPU, RAM и DISK для K8S.</li>
+    <li>`spec.quotas.k8s.limits`                    - лимиты для CPU, RAM в проекте.</li>
+    <li>`spec.quotas.k8s.limits.cpu`                - лимит по CPU.</li>
+    <li>`spec.quotas.k8s.limits.memory`             - лимит по RAM.</li>
+    <li>`spec.quotas.k8s.requests`                  - запросы для CPU, RAM в проекте.</li>
+    <li>`spec.quotas.k8s.requests.cpu`              - запросы на CPU.</li>
+    <li>`spec.quotas.k8s.requests.memory`           - запросы на RAM.</li>
+    <li>`spec.quotas.k8s.requests.storage`          - запросы на DISK.</li>
+    <li>`state`                                     - тип проекта (DEPRECATED).</li>
+    <li>`status`                                    - структура, определяющая текущее состояние проекта.</li>
+    <li>`status.conditions[]`                       - массив, содержащий условия текущего состояния проекта.</li>
+    <li>`status.conditions[].lastTransitionTime`    - время последнего изменения состояния.</li>
+    <li>`status.conditions[].message`               - сообщение с деталями о переходе состояния.</li>
+    <li>`status.conditions[].observedGeneration`    - наблюдаемая версия объекта.</li>
+    <li>`status.conditions[].reason`                - идентификатор причины перехода состояния.</li>
+    <li>`status.conditions[].status`                - итоговое состояние.</li>
+    <li>`status.conditions[].type`                  - тип условия.</li>
+    <li>`status.status`                             - текущее состояние проекта.</li>
+</ul>

@@ -1,0 +1,18 @@
+import dedent from 'dedent'
+import CodeBlock from '@theme/CodeBlock'
+
+<CodeBlock language="bash">
+  {dedent`
+        kubeadm version
+    `}
+</CodeBlock>
+
+:::note
+Если компонент корректно установился, то при выводе команды получим аналогичный результат.
+
+<CodeBlock language="bash">
+  {dedent`
+        kubeadm version: &version.Info{Major:"1", Minor:"30", GitVersion:"v1.30.4", GitCommit:"a51b3b711150f57ffc1f526a640ec058514ed596", GitTreeState:"clean", BuildDate:"2024-08-14T19:02:46Z", GoVersion:"go1.22.5", Compiler:"gc", Platform:"linux/amd64"}
+    `}
+</CodeBlock>
+:::

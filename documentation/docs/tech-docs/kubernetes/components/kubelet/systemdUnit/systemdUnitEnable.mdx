@@ -1,0 +1,16 @@
+import dedent                   from 'dedent'
+import CodeBlock                from '@theme/CodeBlock'
+
+<CodeBlock language="bash">
+    {dedent`
+        systemctl enable kubelet
+    `}
+</CodeBlock>
+
+:::note
+<CodeBlock language="bash">
+    {dedent`
+        Created symlink /etc/systemd/system/multi-user.target.wants/kubelet.service → /usr/lib/systemd/system/kubelet.service.
+    `}
+</CodeBlock>
+:::

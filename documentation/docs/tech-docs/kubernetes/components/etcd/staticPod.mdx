@@ -1,0 +1,145 @@
+import { CUSTOM_VALUE }           from '@site/src/constants/kubernetes/customValue'
+import { CERTIFICATES }           from '@site/src/constants/kubernetes/certs'
+import { PORTS }                  from '@site/src/constants/kubernetes/ports'
+import { COMPONENTS_VERSION }     from '@site/src/constants/kubernetes/componentsVersion'
+import {ETCD_ARGS}                from '@site/src/constants/kubernetes/etcdArgs'
+
+import dedent                     from 'dedent'
+import CodeBlock                  from '@theme/CodeBlock'
+
+<h4>Переменные окружния</h4>
+
+<CodeBlock language="bash">
+    {dedent`
+        export ETCD_METRICS_PORT=${PORTS.etcdMetricServer.portNumber}
+        export ETCD_PEER_PORT=${PORTS.etcdPeer.portNumber}
+        export ETCD_SERVER_PORT=${PORTS.etcdServer.portNumber}
+    `}
+</CodeBlock>
+
+<CodeBlock language="bash">
+    {dedent`
+        export BASE_K8S_PATH="${CUSTOM_VALUE.kuberneteBaseFolderPath.value}"
+        export MACHINE_LOCAL_ADDRESS=${CUSTOM_VALUE.virtualMachineLocalAddress.value}
+        export FULL_HOST_NAME="${CUSTOM_VALUE.virtualMachineFullName.value}"
+        export BASE_DOCKER_REGISTRY="${CUSTOM_VALUE.baseDockerRegistry.value}"
+        export ETCD_VERSION="${COMPONENTS_VERSION.etcd.value}"
+        export ETCD_INITIAL_CLUSTER="$\{FULL_HOST_NAME}=https://$\{MACHINE_LOCAL_ADDRESS}:$\{ETCD_PEER_PORT}"
+    `}
+</CodeBlock>
+
+<CodeBlock language="bash">
+    {dedent`
+        export ETCD_SERVER_KEY_PATH="${CERTIFICATES.etcdServer.keyPath}"
+        export ETCD_SERVER_CRT_PATH="${CERTIFICATES.etcdServer.crtPath}"
+        export ETCD_PEER_KEY_PATH="${CERTIFICATES.etcdPeer.keyPath}"
+        export ETCD_PEER_CRT_PATH="${CERTIFICATES.etcdPeer.crtPath}"
+        export ETCD_CA_CRT_PATH="${CERTIFICATES.etcdCA.crtPath}"
+    `}
+</CodeBlock>
+
+<h4>Рабочая директория</h4>
+
+<CodeBlock language="bash">
+    {dedent`
+        mkdir -p $\{BASE_K8S_PATH}/manifests
+    `}
+</CodeBlock>
+
+<h4>Генерация манифеста</h4>
+
+<CodeBlock language="bash">
+  {dedent`
+    cat <<EOF > $\{BASE_K8S_PATH}/manifests/etcd.yaml
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      annotations:
+        kubeadm.kubernetes.io/etcd.advertise-client-urls: https://$\{MACHINE_LOCAL_ADDRESS}:$\{ETCD_SERVER_PORT}
+      creationTimestamp: null
+      labels:
+        component: etcd
+        tier: control-plane
+      name: etcd
+      namespace: kube-system
+    spec:
+      containers:
+      - command:
+        - etcd
+        - --advertise-client-urls=${ETCD_ARGS.advertiseClientUrls.value}
+        - --auto-compaction-retention=${ETCD_ARGS.autoCompactionRetention.value}
+        - --cert-file=${ETCD_ARGS.certFile.value}
+        - --client-cert-auth=${ETCD_ARGS.clientCertAuth.value}
+        - --data-dir=${ETCD_ARGS.dataDir.value}
+        - --election-timeout=${ETCD_ARGS.electionTimeout.value}
+        - --experimental-initial-corrupt-check=true
+        - --experimental-watch-progress-notify-interval=5s
+        - --heartbeat-interval=${ETCD_ARGS.heartbeatInterval.value}
+        - --initial-advertise-peer-urls=${ETCD_ARGS.initialAdvertisePeerUrls.value}
+        - --initial-cluster=${ETCD_ARGS.initialCluster.value}
+        - --key-file=${ETCD_ARGS.keyFile.value}
+        - --listen-client-urls=${ETCD_ARGS.listenClientUrls.value}
+        - --listen-metrics-urls=${ETCD_ARGS.listenMetricsUrls.value}
+        - --listen-peer-urls=${ETCD_ARGS.listenPeerUrls.value}
+        - --logger=${ETCD_ARGS.logger.value}
+        - --max-snapshots=${ETCD_ARGS.maxSnapshots.value}
+        - --max-wals=${ETCD_ARGS.maxWals.value}
+        - --metrics=${ETCD_ARGS.metrics.value}
+        - --name=${ETCD_ARGS.name.value}
+        - --peer-cert-file=${ETCD_ARGS.peerCertFile.value}
+        - --peer-client-cert-auth=${ETCD_ARGS.peerClientCertAuth.value}
+        - --peer-key-file=${ETCD_ARGS.peerKeyFile.value}
+        - --peer-trusted-ca-file=${ETCD_ARGS.peerTrustedCAFile.value}
+        - --snapshot-count=10000
+        - --trusted-ca-file=${ETCD_ARGS.trustedCAFile.value}
+        image: $\{BASE_DOCKER_REGISTRY}/etcd:$\{ETCD_VERSION}
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 8
+          httpGet:
+            host: 127.0.0.1
+            path: /health?exclude=NOSPACE&serializable=true
+            port: $\{ETCD_METRICS_PORT}
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 15
+        name: etcd
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        startupProbe:
+          failureThreshold: 24
+          httpGet:
+            host: 127.0.0.1
+            path: /health?serializable=false
+            port: $\{ETCD_METRICS_PORT}
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 15
+        volumeMounts:
+        - mountPath: /var/lib/etcd
+          name: etcd-data
+        - mountPath: $\{BASE_K8S_PATH}/pki/etcd
+          name: etcd-certs
+      hostNetwork: true
+      priority: 2000001000
+      priorityClassName: system-node-critical
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      volumes:
+      - hostPath:
+          path: $\{BASE_K8S_PATH}/pki/etcd
+          type: DirectoryOrCreate
+        name: etcd-certs
+      - hostPath:
+          path: /var/lib/etcd
+          type: DirectoryOrCreate
+        name: etcd-data
+    status: {}
+    EOF
+  `}
+</CodeBlock>

@@ -1,0 +1,16 @@
+@use './infima';
+@use './layout';
+@use './header';
+@use './sidebar';
+@use './table-of-contents';
+@use './global';
+
+/* TODO dobry_kot для увеличения ширины боковой навигационной панели по заголовкам */
+
+.tableOfContents_bqdL {
+  position: sticky;
+  top: calc(var(--ifm-navbar-height) + 1rem);
+  max-height: calc(100vh - (var(--ifm-navbar-height) + 2rem));
+  margin-right: -30px;
+  overflow-y: auto; /* этот параметр исправляет в нужную сторону */
+}

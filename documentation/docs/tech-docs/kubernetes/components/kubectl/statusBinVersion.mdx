@@ -1,0 +1,19 @@
+import dedent                   from 'dedent'
+import CodeBlock                from '@theme/CodeBlock'
+
+
+<CodeBlock language="bash">
+    {dedent`
+        kubectl  version
+    `}
+</CodeBlock>
+
+:::info 
+<CodeBlock language="bash">
+    {dedent`
+        Client Version: v1.30.4
+        Kustomize Version: v5.0.4-0.20230601165947-6ce0bf390ce3
+        Server Version: v1.30.4
+    `}
+</CodeBlock>
+:::

@@ -1,0 +1,20 @@
+import dedent                   from 'dedent'
+import CodeBlock                from '@theme/CodeBlock'
+
+import { DOWNLOAD_VERSION }     from '@site/src/constants/kubernetes/downloads'
+import { COMPONENTS_VERSION }   from '@site/src/constants/kubernetes/componentsVersion'
+
+<h4>Перменные окружения</h4>
+<CodeBlock language="bash">
+    {dedent`
+        export KUBERNETES_VERSION="${COMPONENTS_VERSION.kubernetes.value}"
+    `}
+</CodeBlock>
+
+<h4>Инструкция загрузки</h4>
+<CodeBlock language="bash">
+    {dedent`
+        wget -O ${DOWNLOAD_VERSION.kubectl.path} ${DOWNLOAD_VERSION.kubectl.templateUrl}
+        chmod +x ${DOWNLOAD_VERSION.kubectl.path}
+    `}
+</CodeBlock>

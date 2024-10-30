@@ -1,0 +1,88 @@
+---
+id: marking-init
+---
+
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+import CodeBlock from '@theme/CodeBlock'
+import dedent from 'dedent'
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+import MastersTabs from '@site/docs/tech-docs/kubernetes/setupEnvironments/initMaster.mdx'
+
+
+
+# 5.2.4.1.1. Маркировка узлов
+
+:::warning
+Этот раздел описывает конфигурацию кластера, позволяющую заранее задать политику планирования контейнеров и обеспечить изоляцию управляющего контура от незапланированных нагрузок.
+:::
+
+
+## 5.2.4.1.1.1. Labels и Taints
+
+<MastersTabs />
+
+<h4>Переменные окружения</h4>
+<CodeBlock language="bash">
+    {dedent`
+        export BASE_K8S_PATH="${CUSTOM_VALUE.kuberneteBaseFolderPath.value}"
+        export FULL_HOST_NAME="${CUSTOM_VALUE.virtualMachineFullName.value}"
+    `}
+</CodeBlock>
+
+
+<Tabs groupId="install-type">
+
+  <TabItem value='HardWay'>
+
+    <h4>Маркировка узла</h4>
+    <CodeBlock language="bash">
+      {dedent`
+        kubectl label node $\{FULL_HOST_NAME} node-role.kubernetes.io/control-plane="" --kubeconfig=$\{BASE_K8S_PATH}/super-admin.conf
+      `}
+    </CodeBlock>
+
+    :::note
+    <CodeBlock language="bash">
+        {dedent`
+          node/master-1.example.example.com labeled
+        `}
+    </CodeBlock>
+    :::
+
+    <h4>Ограничение узла</h4>
+    <CodeBlock language="bash">
+      {dedent`
+        kubectl taint node $\{FULL_HOST_NAME} node-role.kubernetes.io/control-plane="":NoSchedule --overwrite --kubeconfig=$\{BASE_K8S_PATH}/super-admin.conf
+      `}
+    </CodeBlock>
+
+    :::note
+    <CodeBlock language="bash">
+        {dedent`
+          node/master-1.example.example.com modified
+        `}
+    </CodeBlock>
+    :::
+
+  </TabItem>
+
+  <TabItem value='Kubeadm'>
+
+    <CodeBlock language="bash">
+        {dedent`
+            kubeadm init phase mark-control-plane --config=$\{BASE_K8S_PATH}/kubeadm.conf
+        `}
+    </CodeBlock>
+
+    :::note
+    <CodeBlock language="bash">
+        {dedent`
+          [mark-control-plane] Marking the node master-1.example.example.com as control-plane by adding the labels: [node-role.kubernetes.io/control-plane node.kubernetes.io/exclude-from-external-load-balancers]
+          [mark-control-plane] Marking the node master-1.example.example.com as control-plane by adding the taints [node-role.kubernetes.io/control-plane:NoSchedule]
+        `}
+    </CodeBlock>
+    :::
+
+  </TabItem>
+</Tabs>

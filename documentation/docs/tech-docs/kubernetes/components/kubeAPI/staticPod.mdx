@@ -1,0 +1,204 @@
+import { CUSTOM_VALUE }       from '@site/src/constants/kubernetes/customValue'
+import { CERTIFICATES }       from '@site/src/constants/kubernetes/certs'
+import { PORTS }              from '@site/src/constants/kubernetes/ports'
+import { COMPONENTS_VERSION } from '@site/src/constants/kubernetes/componentsVersion'
+import { KUBE_API_ARGS }      from '@site/src/constants/kubernetes/kubeAPIArgs'
+
+import CodeBlock              from '@theme/CodeBlock'
+import dedent                 from 'dedent'
+
+<h4>Переменные окружния</h4>
+
+<CodeBlock language="bash">
+    {dedent`
+      export KUBELET_SERVER_PORT=${PORTS.kubeletServer.portNumber}
+      export KUBELET_READ_ONLY_PORT=${PORTS.kubeletReadOnlyPort.portNumber}
+      export KUBE_APISERVER_PORT=${PORTS.kubeAPIServer.portNumber}
+      export ETCD_SERVER_PORT=${PORTS.etcdServer.portNumber}
+      export ETCD_SERVERS="https://127.0.0.1:$\{ETCD_SERVER_PORT}"
+      export SERVICE_CIDR="${CUSTOM_VALUE.kubernetesServiceCIDR.value}"
+      export MACHINE_LOCAL_ADDRESS="${CUSTOM_VALUE.virtualMachineLocalAddress.value}"
+    `}
+</CodeBlock>
+
+<CodeBlock language="bash">
+    {dedent`
+      export BASE_K8S_PATH="${CUSTOM_VALUE.kuberneteBaseFolderPath.value}"
+      export BASE_DOMAIN="${CUSTOM_VALUE.kubernetesBaseDomain.value}"
+      export CLUSTER_NAME="${CUSTOM_VALUE.clusterName.value}"
+      export KUBERNETES_VERSION="${COMPONENTS_VERSION.kubernetes.value}"
+      export CLUSTER_DOMAIN="${CUSTOM_VALUE.kubernetesClusterDomain.value}"
+      export BASE_DOCKER_REGISTRY="${CUSTOM_VALUE.baseDockerRegistry.value}"
+    `}
+</CodeBlock>
+
+<CodeBlock language="bash">
+    {dedent`
+      export KUBERNETES_SERVICE_ACCOUNT_KEY_PATH="${CERTIFICATES.kubernetesSA.keyPath}"
+      export KUBERNETES_SERVICE_ACCOUNT_CRT_PATH="${CERTIFICATES.kubernetesSA.crtPath}"
+      export KUBERNETES_SERVER_KEY_PATH="${CERTIFICATES.kubernetesServer.keyPath}"
+      export KUBERNETES_SERVER_CRT_PATH="${CERTIFICATES.kubernetesServer.crtPath}"
+      export KUBERNETES_KUBELET_CLIENT_KEY_PATH="${CERTIFICATES.kubernetesKubeletClient.keyPath}"
+      export KUBERNETES_KUBELET_CLIENT_CRT_PATH="${CERTIFICATES.kubernetesKubeletClient.crtPath}"
+      export KUBERNETES_FRONT_PROXY_CLIENT_KEY_PATH="${CERTIFICATES.kubernetesFrontProxyClient.keyPath}"
+      export KUBERNETES_FRONT_PROXY_CLIENT_CRT_PATH="${CERTIFICATES.kubernetesFrontProxyClient.crtPath}"
+      export KUBERNETES_FRONT_PROXY_CLIENT_CN="${CERTIFICATES.kubernetesFrontProxyClient.cname}"
+      export KUBERNETES_ETCD_CLIENT_KEY_PATH="${CERTIFICATES.kubernetesEtcdClient.keyPath}"
+      export KUBERNETES_ETCD_CLIENT_CRT_PATH="${CERTIFICATES.kubernetesEtcdClient.crtPath}"
+      export KUBERNETES_CA_CRT_PATH="${CERTIFICATES.kubernetesCA.crtPath}"
+      export FRONT_PROXY_CA_CRT_PATH="${CERTIFICATES.frontProxyCA.crtPath}"
+      export ETCD_CA_CRT_PATH="${CERTIFICATES.etcdCA.crtPath}"
+    `}
+</CodeBlock>
+
+<h4>Рабочая директория</h4>
+
+<CodeBlock language="bash">
+    {dedent`
+        mkdir -p $\{BASE_K8S_PATH}/manifests
+    `}
+</CodeBlock>
+
+<h4>Генерация манифеста</h4>
+
+<CodeBlock language="bash">
+  {dedent
+    `cat <<EOF > $\{BASE_K8S_PATH}/manifests/kube-apiserver.yaml
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      annotations:
+        kubeadm.kubernetes.io/kube-apiserver.advertise-address.endpoint: $\{MACHINE_LOCAL_ADDRESS}:$\{KUBE_APISERVER_PORT}
+      creationTimestamp: null
+      labels:
+        component: kube-apiserver
+        tier: control-plane
+      name: kube-apiserver
+      namespace: kube-system
+    spec:
+      containers:
+      - command:
+        - kube-apiserver
+        - --advertise-address=${KUBE_API_ARGS.advertiseAddress.value}
+        - --allow-privileged=${KUBE_API_ARGS.allowPrivileged.value}
+        - --anonymous-auth=${KUBE_API_ARGS.anonymousAuth.value}
+        - --authorization-mode=${KUBE_API_ARGS.authorizationMode.value}
+        - --client-ca-file=${KUBE_API_ARGS.clientCAFile.value}
+        - --enable-admission-plugins=${KUBE_API_ARGS.enableAdmissionPlugins.value}
+        - --enable-bootstrap-token-auth=${KUBE_API_ARGS.enableBootstrapTokenAuth.value}
+        - --etcd-cafile=${KUBE_API_ARGS.etcdCAFile.value}
+        - --etcd-certfile=${KUBE_API_ARGS.etcdCertfile.value}
+        - --etcd-keyfile=${KUBE_API_ARGS.etcdKeyfile.value}
+        - --etcd-servers=${KUBE_API_ARGS.etcdServers.value}
+        - --kubelet-client-certificate=${KUBE_API_ARGS.kubeletClientCertificate.value}
+        - --kubelet-client-key=${KUBE_API_ARGS.kubeletClientKey.value}
+        - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
+        - --proxy-client-cert-file=${KUBE_API_ARGS.proxyClientCertFile.value}
+        - --proxy-client-key-file=${KUBE_API_ARGS.proxyClientKeyFile.value}
+        - --requestheader-allowed-names=${KUBE_API_ARGS.requestheaderAllowedNames.value}
+        - --requestheader-client-ca-file=${KUBE_API_ARGS.requestheaderClientCAFile.value}
+        - --requestheader-extra-headers-prefix=${KUBE_API_ARGS.requestheaderExtraHeadersPrefix.value}
+        - --requestheader-group-headers=${KUBE_API_ARGS.requestheaderGroupHeaders.value}
+        - --requestheader-username-headers=${KUBE_API_ARGS.requestheaderUsernameHeaders.value}
+        - --secure-port=${KUBE_API_ARGS.securePort.value}
+        - --service-account-issuer=${KUBE_API_ARGS.serviceAccountIssuer.value}
+        - --service-account-key-file=${KUBE_API_ARGS.serviceAccountKeyFile.value}
+        - --service-account-signing-key-file=${KUBE_API_ARGS.serviceAccountSigningKeyFile.value}
+        - --service-cluster-ip-range=${KUBE_API_ARGS.serviceClusterIPRange.value}
+        - --tls-cert-file=${KUBE_API_ARGS.tlsCertFile.value}
+        - --tls-private-key-file=${KUBE_API_ARGS.tlsPrivateKeyFile.value}
+        image: $\{BASE_DOCKER_REGISTRY}/kube-apiserver:$\{KUBERNETES_VERSION}
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 8
+          httpGet:
+            host: $\{MACHINE_LOCAL_ADDRESS}
+            path: /livez
+            port: $\{KUBE_APISERVER_PORT}
+            scheme: HTTPS
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 15
+        name: kube-apiserver
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            host: $\{MACHINE_LOCAL_ADDRESS}
+            path: /readyz
+            port: $\{KUBE_APISERVER_PORT}
+            scheme: HTTPS
+          periodSeconds: 1
+          timeoutSeconds: 15
+        resources:
+          requests:
+            cpu: 250m
+        startupProbe:
+          failureThreshold: 24
+          httpGet:
+            host: $\{MACHINE_LOCAL_ADDRESS}
+            path: /livez
+            port: $\{KUBE_APISERVER_PORT}
+            scheme: HTTPS
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 15
+        volumeMounts:
+        - mountPath: /etc/ssl/certs
+          name: ca-certs
+          readOnly: true
+        - mountPath: /etc/ca-certificates
+          name: etc-ca-certificates
+          readOnly: true
+        - mountPath: /etc/pki
+          name: etc-pki
+          readOnly: true
+        - mountPath: /var/log/kubernetes/audit/
+          name: k8s-audit
+        - mountPath: $\{BASE_K8S_PATH}/pki
+          name: k8s-certs
+          readOnly: true
+        - mountPath: /usr/local/share/ca-certificates
+          name: usr-local-share-ca-certificates
+          readOnly: true
+        - mountPath: /usr/share/ca-certificates
+          name: usr-share-ca-certificates
+          readOnly: true
+      hostNetwork: true
+      priority: 2000001000
+      priorityClassName: system-node-critical
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      volumes:
+      - hostPath:
+          path: /etc/ssl/certs
+          type: DirectoryOrCreate
+        name: ca-certs
+      - hostPath:
+          path: /etc/ca-certificates
+          type: DirectoryOrCreate
+        name: etc-ca-certificates
+      - hostPath:
+          path: /etc/pki
+          type: DirectoryOrCreate
+        name: etc-pki
+      - hostPath:
+          path: /var/log/kubernetes/audit/
+          type: DirectoryOrCreate
+        name: k8s-audit
+      - hostPath:
+          path: $\{BASE_K8S_PATH}/pki
+          type: DirectoryOrCreate
+        name: k8s-certs
+      - hostPath:
+          path: /usr/local/share/ca-certificates
+          type: DirectoryOrCreate
+        name: usr-local-share-ca-certificates
+      - hostPath:
+          path: /usr/share/ca-certificates
+          type: DirectoryOrCreate
+        name: usr-share-ca-certificates
+    status: {}
+  EOF
+  `}
+</CodeBlock>

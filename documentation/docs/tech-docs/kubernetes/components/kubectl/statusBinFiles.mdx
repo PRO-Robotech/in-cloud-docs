@@ -1,0 +1,17 @@
+import dedent                   from 'dedent'
+import CodeBlock                from '@theme/CodeBlock'
+
+
+<CodeBlock language="bash">
+    {dedent`
+        ls -la /usr/local/bin/ | grep 'kubectl$'
+    `}
+</CodeBlock>
+
+:::info 
+<CodeBlock language="bash">
+    {dedent`
+        -rwxr-xr-x  1 root root  51454104 Aug 14  2024 kubectl
+    `}
+</CodeBlock>
+:::

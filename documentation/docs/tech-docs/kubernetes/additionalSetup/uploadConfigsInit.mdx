@@ -1,0 +1,51 @@
+---
+id: upload-configs-all-init
+---
+
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+import CodeBlock from '@theme/CodeBlock'
+import dedent from 'dedent'
+
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+
+# 5.2.4.1.1. Загрузка конфигурации
+
+:::warning
+В этом разделе описана инструкция по загрузке актуальной конфигурации `Kubeadm` и `Kubelet` в управляющий контур Kubernetes в виде ресура `ConfigMap`. Этот подход упрощает управление изменениями в конфигурации узлов Kubernetes, охватывая как рабочие (`worker`), так и управляющие (`master`) узлы.
+:::
+
+<Tabs groupId="install-type">
+
+  <TabItem value='HardWay'>
+    TODO
+  </TabItem>
+
+  <TabItem value='Kubeadm'>
+
+    <h4>Переменные окружения</h4>
+    <CodeBlock language="bash">
+        {dedent`
+            export BASE_K8S_PATH="${CUSTOM_VALUE.kuberneteBaseFolderPath.value}"
+        `}
+    </CodeBlock>
+
+    <h4>Обновление конфигурации</h4>
+    <CodeBlock language="bash">
+        {dedent`
+            kubeadm init phase upload-config all --config=$\{BASE_K8S_PATH}/kubeadm.conf
+        `}
+    </CodeBlock>
+
+    :::note
+    <CodeBlock language="bash">
+        {dedent`
+          [upload-config] Storing the configuration used in ConfigMap "kubeadm-config" in the "kube-system" Namespace
+          [kubelet] Creating a ConfigMap "kubelet-config" in namespace kube-system with the configuration for the kubelets in the cluster
+        `}
+    </CodeBlock>
+    :::
+
+  </TabItem>
+</Tabs>

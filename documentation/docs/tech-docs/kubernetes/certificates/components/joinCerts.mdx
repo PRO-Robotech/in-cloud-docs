@@ -1,0 +1,33 @@
+---
+id: join-certificates
+
+---
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+
+import CodeBlock from '@theme/CodeBlock'
+import dedent from 'dedent'
+
+import JoinCertsGen from '@site/docs/tech-docs/kubernetes/certificates/components/_kubeadm/joinAllCertsGen.mdx'
+import JoinKubeconfigGen from '@site/docs/tech-docs/kubernetes/certificates/components/_kubeadm/joinAllKubeconfigGen.mdx'
+
+# 5.2.2.2.2. Сертификаты
+> Сертификаты (Certificates) — это цифровые документы, которые подтверждают подлинность и надёжность участников взаимодействия в системе. В Kubernetes сертификаты используются для установления защищённых соединений между компонентами кластера, узлами и клиентами. Они основаны на инфраструктуре открытых ключей (PKI) и обеспечивают аутентификацию, авторизацию и шифрование данных. Каждый сертификат связан с закрытым ключом и содержит информацию о его владельце, сроке действия и удостоверяющем центре, выпустившем сертификат.
+
+:::info
+Обратите внимание, что процесс заказа сертификатов состоит из двух этапов:
+
+- Заказ сертификатов.
+- Заказ сертификатов для использования в ```Kubeconfig```.
+:::
+
+:::warning  
+Обратите внимание, что данный раздел зависит от следующих документов:
+- [Загрузка ЦА](../centerAuthority/join.mdx).
+:::
+
+
+## 5.2.2.2.2.1. Заказ сертификатов
+<JoinCertsGen/>
+
+## 5.2.2.2.2.1. Заказ kubeconfigs
+<JoinKubeconfigGen/>

@@ -1,0 +1,395 @@
+---
+id: resource-controller
+---
+
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+import CodeBlock from '@theme/CodeBlock'
+import dedent from 'dedent'
+import {getBasePrefix} from '@site/src/utils/getBasePrefix'
+
+# Контроллер
+
+`Instance controller` — это контроллер, разработанный для реализации ряда функций, связанных с ресурсом `Instance`. Основные задачи, которые он выполняет, включают создание базовых ресурсов K8S, необходимых пользователю для взаимодействия с системой.
+
+## Архитектура
+
+<div className="center">
+  <img src={`${getBasePrefix()}/in-cloud/img/controllers/instance-cotroller.drawio.svg`} />
+</div>
+
+## Функционал
+
+- **Создание пространств имен**: предоставляет возможность создавать и настраивать пространства имен для организации и изоляции ресурсов в системе.
+
+- **Создание ролевой модели**: создает заранее определенные роли для каждого пространства имен.
+
+- **Установка связи `Group` с ролевой моделью**: обеспечивает управление доступом пользователей к определенным пространствам имен путем добавления их в соответствующие группы (Member Of Group).
+
+- **Управление квотами**: предоставляет инструменты для установки и контроля квот на использование ресурсов, таких как вычислительная мощность, память и диски.
+
+- **Управление развертыванием**: позволяет настраивать базовые конфигурации для автоматического развертывания клиентского компонента.
+
+## Функциональные требования
+
+1. Публикация событий при изменении ресурса `Instance`:
+
+   - При создании, изменении или удалении ресурса типа `Instance` должно автоматически публиковаться событие, на которое реагирует контроллер.
+
+2. Публикация событий при изменении контролируемых ресурсов:
+
+   - При создании, изменении или удалении ресурсов, созданных контроллером, также должно публиковаться событие, на которое контроллер реагирует.
+
+3. Подписка контроллера на изменения созданных ресурсов:
+
+   - Контроллер обязан подписываться на изменения всех ресурсов, которые он создает, чтобы отслеживать их состояние.
+
+4. Запуск процесса реконсиляции при получении событий:
+
+   - При получении любого из указанных событий должен запускаться процесс реконсиляции ресурсов.
+
+5. Действия процесса реконсиляции при создании и изменении:
+
+   - В ответ на события создания или изменения процесс реконсиляции должен создавать новые или обновлять существующие ресурсы следующих типов, приводя их к требуемому состоянию:
+     - Namespace
+     - RoleBinding
+     - ResourceQuota
+     - ApplicationSet
+     - InstanceLegacy
+     - Secret
+
+6. Действия процесса реконсиляции при удалении:
+   - В ответ на события удаления процесс реконсиляции должен удалять все ресурсы, созданные контроллером, связанные с удаленным ресурсом Project.
+
+## Дочерние ресурсы
+
+<Tabs>
+  <TabItem value="RESOURCE_PROJECT">
+    <CodeBlock language="yaml">
+      {dedent`
+            ---
+            apiVersion: b-cloud.io/v1alpha
+            kind: Project
+            metadata:
+              name: bcloud-sandbox
+            spec:
+              businessName: B-Cloud
+              description: Тестовый проект для B-Cloud Sandbox
+              prefix: bcsn
+              quotas:
+                k8s:
+                  limits:
+                    cpu: "2"
+                    memory: 4000M
+                  requests:
+                    cpu: "1"
+                    memory: 2000M
+                    storage: 1G
+              state: pilot
+          `}
+    </CodeBlock>
+  </TabItem>
+  <TabItem value="RESOURCE_INSTANCE">
+    <CodeBlock language="yaml">
+      {dedent`
+            ---
+            apiVersion: b-cloud.io/v1alpha
+            kind: Instance
+            metadata:
+              name: bcloud-sandbox-instance
+              namespace: '$\{RESOURCE_PROJECT.metadata.name}'
+            spec:
+              description: Тестовый Instance в Project bcloud-sandbox
+              quotas:
+                k8s:
+                  limits:
+                    cpu: "1.5"
+                    memory: 2G
+                  requests:
+                    cpu: "0.5"
+                    memory: 1G
+                    storage: 1G
+          `}
+    </CodeBlock>
+  </TabItem>
+</Tabs>
+
+При создании, изменении или удалении ресурса типа `Instance`, контроллер должен создавать новые или обновлять существующие ресурсы следующих типов:
+
+<Tabs>
+    <TabItem value='Namespace'>
+        При создании ресурса `Instance` автоматически создаётся специальное пространство имён с таким же названием. Это пространство предназначено для управления, развёртывания необходимых инфраструктурных ресурсов и распределения прав доступа.
+        <CodeBlock language="yaml">
+          {dedent`
+            ---
+            apiVersion: v1
+            kind: Namespace
+            metadata:
+              labels:
+                kubernetes.io/metadata.name: '$\{RESOURCE_PROJECT.metadata.name}'
+                chat_id: ""
+                instance: '$\{RESOURCE_INSTANCE.metadata.name}' # BUG
+                project: '$\{RESOURCE_PROJECT.metadata.name}'
+                team_name: '$\{RESOURCE_INSTANCE.metadata.name}'
+                tenant: '$\{HELM_VALUES.tenant}'
+              name: '$\{RESOURCE_INSTANCE.metadata.name}'
+            spec: {}
+          `}
+        </CodeBlock>
+    </TabItem>
+
+    <TabItem value='RoleBinding'>
+        При создании ресурса `Instance` автоматически устанавливается ряд связей между группами пользователей и заранее подготовленными ролевыми моделями.
+
+        `all-architect-namespacescope-view` - базовые права групповые права для `архитекторов` в рамках instance namespaces.
+        <CodeBlock language="yaml">
+          {dedent`
+            ---
+            apiVersion: rbac.authorization.k8s.io/v1
+            kind: RoleBinding
+            metadata:
+              name: all-architect-namespacescope-view
+              namespace: '$\{RESOURCE_INSTANCE.metadata.name}'
+            roleRef:
+              apiGroup: rbac.authorization.k8s.io
+              kind: ClusterRole
+              name: view
+            subjects:
+            - apiGroup: rbac.authorization.k8s.io
+              kind: Group
+              name: g-all-architect
+          `}
+        </CodeBlock>
+
+        `all-namespacescope-view` - базовые права групповые права `для всех` в рамках instance namespaces.
+        <CodeBlock language="yaml">
+          {dedent`
+            ---
+            apiVersion: rbac.authorization.k8s.io/v1
+            kind: RoleBinding
+            metadata:
+              name: all-namespacescope-view
+              namespace: '$\{RESOURCE_INSTANCE.metadata.name}'
+            roleRef:
+              apiGroup: rbac.authorization.k8s.io
+              kind: ClusterRole
+              name: view
+            subjects:
+            - apiGroup: rbac.authorization.k8s.io
+              kind: Group
+              name: 'g-all-$\{RESOURCE_PROJECT.metadata.name}'
+          `}
+        </CodeBlock>
+
+        `analyst-namespacescope-edit` - базовые права групповые права `аналитика` в рамках instance namespaces.
+        <CodeBlock language="yaml">
+          {dedent`
+            ---
+            apiVersion: rbac.authorization.k8s.io/v1
+            kind: RoleBinding
+            metadata:
+              name: analyst-namespacescope-edit
+              namespace: '$\{RESOURCE_INSTANCE.metadata.name}'
+            roleRef:
+              apiGroup: rbac.authorization.k8s.io
+              kind: ClusterRole
+              name: edit
+            subjects:
+            - apiGroup: rbac.authorization.k8s.io
+              kind: Group
+              name: 'g-analyst-$\{RESOURCE_PROJECT.metadata.name}'
+          `}
+        </CodeBlock>
+
+        `default-namespacescope-edit` - базовые права `serviceAccount` в рамках instance namespaces.
+        <CodeBlock language="yaml">
+          {dedent`
+            ---
+            apiVersion: rbac.authorization.k8s.io/v1
+            kind: RoleBinding
+            metadata:
+              name: default-namespacescope-edit
+              namespace: '$\{RESOURCE_INSTANCE.metadata.name}'
+            roleRef:
+              apiGroup: rbac.authorization.k8s.io
+              kind: ClusterRole
+              name: edit
+            subjects:
+              - kind: ServiceAccount
+                name: default
+                namespace: '$\{RESOURCE_INSTANCE.metadata.name}'
+          `}
+        </CodeBlock>
+
+        `developer-namespacescope-edit` - базовые права групповые права `разработчиков` в рамках instance namespaces.
+        <CodeBlock language="yaml">
+          {dedent`
+            ---
+            apiVersion: rbac.authorization.k8s.io/v1
+            kind: RoleBinding
+            metadata:
+              name: developer-namespacescope-edit
+              namespace: '$\{RESOURCE_INSTANCE.metadata.name}'
+            roleRef:
+              apiGroup: rbac.authorization.k8s.io
+              kind: ClusterRole
+              name: edit
+            subjects:
+            - apiGroup: rbac.authorization.k8s.io
+              kind: Group
+              name: 'g-developer-$\{RESOURCE_PROJECT.metadata.name}'
+          `}
+        </CodeBlock>
+
+        `devops-namespacescope-edit` - базовые права групповые права `devops инженеров` в рамках instance namespaces.
+        <CodeBlock language="yaml">
+          {dedent`
+            ---
+            apiVersion: rbac.authorization.k8s.io/v1
+            kind: RoleBinding
+            metadata:
+              name: devops-namespacescope-edit
+              namespace: '$\{RESOURCE_INSTANCE.metadata.name}'
+            roleRef:
+              apiGroup: rbac.authorization.k8s.io
+              kind: ClusterRole
+              name: edit
+            subjects:
+            - apiGroup: rbac.authorization.k8s.io
+              kind: Group
+              name: 'g-devops-$\{RESOURCE_PROJECT.metadata.name}'
+          `}
+        </CodeBlock>
+
+        `qa-namespacescope-edit` - базовые права групповые права `тестировщиков` в рамках instance namespaces.
+        <CodeBlock language="yaml">
+          {dedent`
+            ---
+            apiVersion: rbac.authorization.k8s.io/v1
+            kind: RoleBinding
+            metadata:
+              name: qa-namespacescope-edit
+              namespace: '$\{RESOURCE_INSTANCE.metadata.name}'
+            roleRef:
+              apiGroup: rbac.authorization.k8s.io
+              kind: ClusterRole
+              name: edit
+            subjects:
+            - apiGroup: rbac.authorization.k8s.io
+              kind: Group
+              name: 'g-qa-$\{RESOURCE_PROJECT.metadata.name}'
+          `}
+        </CodeBlock>
+    </TabItem>
+
+    <TabItem value='ResourceQuota'>
+        При создании ресурса `Instance` автоматически генерируется ресурс `ResourceQuota`, который впоследствии будет отвечать за квотирование проекта.
+        <CodeBlock language="yaml">
+          {dedent`
+            ---
+            apiVersion: v1
+            kind: ResourceQuota
+            metadata:
+              name: '$\{RESOURCE_INSTANCE.metadata.name}-quotas'
+              namespace: '$\{RESOURCE_INSTANCE.metadata.name}'
+            spec:
+              hard:
+                limits.cpu: '$\{RESOURCE_INSTANCE.spec.quotas.k8s.limits.cpu}'
+                limits.memory: '$\{RESOURCE_INSTANCE.spec.quotas.k8s.limits.memory}'
+                requests.cpu: '$\{RESOURCE_INSTANCE.spec.quotas.k8s.requests.cpu}'
+                requests.memory: '$\{RESOURCE_INSTANCE.spec.quotas.k8s.requests.memory}'
+                requests.storage: '$\{RESOURCE_INSTANCE.spec.quotas.k8s.requests.storage}'
+          `}
+        </CodeBlock>
+    </TabItem>
+
+    <TabItem value='ApplicationSET'>
+        При создании ресурса `Instance` автоматически генерируется ресурс `ApplicationSET`, который впоследствии будет отвечать за развертование клиентского компонента в кластере.
+        <CodeBlock language="yaml">
+          {dedent`
+            ---
+            apiVersion: argoproj.io/v1alpha1
+            kind: ApplicationSet
+            metadata:
+              name: '$\{RESOURCE_INSTANCE.metadata.name}'
+              namespace: '$\{RESOURCE_INSTANCE.metadata.name}'
+            spec:
+              generators:
+              - git:
+                  directories:
+                  - path: '**'
+                  repoURL: 'https://gitlab.example.com/$\{RESOURCE_PROJECT.metadata.name}/infrastructure.git'
+                  revision: HEAD
+                  template:
+                    metadata: {}
+                    spec:
+                      destination: {}
+                      project: ""
+                      source:
+                        helm:
+                          parameters:
+                          - name: appName
+                            value: '{{path.basename}}'
+                          valueFiles:
+                          - 'tenant-$\{HELM_VALUES.tenant}/env-$\{RESOURCE_INSTANCE.metadata.name}.yaml'
+                        path: '{{path}}'
+                        repoURL: 'https://gitlab.example.com/$\{RESOURCE_PROJECT.metadata.name}/infrastructure.git'
+                        targetRevision: HEAD
+              template:
+                metadata:
+                  name: '{{path.basename}}-$\{RESOURCE_INSTANCE.metadata.name}'
+                spec:
+                  destination:
+                    namespace: '$\{RESOURCE_INSTANCE.metadata.name}'
+                    server: https://kubernetes.default.svc
+                  project: '$\{RESOURCE_INSTANCE.metadata.name}'
+                  source:
+                    helm:
+                      parameters:
+                      - name: appName
+                        value: '{{path.basename}}'
+                      valueFiles:
+                      - 'tenant-$\{HELM_VALUES.tenant}/env-$\{RESOURCE_INSTANCE.metadata.name}.yaml'
+                    path: '{{path}}'
+                    repoURL: 'https://gitlab.example.com/$\{RESOURCE_PROJECT.metadata.name}/infrastructure.git'
+                    targetRevision: HEAD
+                  syncPolicy:
+                    automated:
+                      prune: true
+                      selfHeal: true
+                    syncOptions:
+                    - CreateNamespace=true
+
+          `}
+        </CodeBlock>
+    </TabItem>
+    <TabItem value='InstanceLegacy'>
+      При создании ресурса `Instance` автоматически генерируется ресурс `InstanceLegacy`, который впоследствии будет отвечать интеграцию с внешними системами.
+      <CodeBlock language="yaml">
+        {dedent`
+              ---
+              apiVersion: v1
+              kind: InstanceLegacy
+              metadata:
+                name: '$\{RESOURCE_INSTANCE.metadata.name}-quotas'
+                namespace: '$\{RESOURCE_INSTANCE.metadata.name}'
+              spec:
+                description: '$\{RESOURCE_INSTANCE.spec.description}'
+            `}
+      </CodeBlock>
+    </TabItem>
+    <TabItem value='Secret'>
+      При создании ресурса `Instance` автоматически генерируется ресурс `Secret`, который
+      TODO @Колбин - проверить и ддописать!.
+      <CodeBlock language="yaml">
+        {dedent`
+                ---
+                apiVersion: v1
+                kind: Secret
+                metadata:
+                  name: '$\{RESOURCE_INSTANCE.metadata.name}-quotas'
+                  namespace: '$\{RESOURCE_INSTANCE.metadata.name}'
+              `}
+      </CodeBlock>
+    </TabItem>
+</Tabs>

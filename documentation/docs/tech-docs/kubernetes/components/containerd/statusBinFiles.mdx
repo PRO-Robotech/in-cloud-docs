@@ -1,0 +1,21 @@
+import dedent                   from 'dedent'
+import CodeBlock                from '@theme/CodeBlock'
+
+
+<CodeBlock language="bash">
+    {dedent`
+        ls -la /usr/local/bin/ | grep containerd
+    `}
+</CodeBlock>
+
+:::info 
+<CodeBlock language="bash">
+    {dedent`
+        -rwxr-xr-x  1 root root  54855296 Feb 18 09:30 containerd
+        -rwxr-xr-x  1 root root   7176192 Feb 18 15:12 containerd-shim
+        -rwxr-xr-x  1 root root   8884224 Feb 18 15:12 containerd-shim-runc-v1
+        -rwxr-xr-x  1 root root  12169216 Feb 18 15:12 containerd-shim-runc-v2
+        -rwxr-xr-x  1 root root  25932232 Feb 18 15:12 containerd-stress
+    `}
+</CodeBlock>
+:::
