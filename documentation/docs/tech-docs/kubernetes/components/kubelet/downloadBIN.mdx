@@ -3,19 +3,197 @@ import CodeBlock                from '@theme/CodeBlock'
 
 import { DOWNLOAD_VERSION }     from '@site/src/constants/kubernetes/downloads'
 import { COMPONENTS_VERSION }   from '@site/src/constants/kubernetes/componentsVersion'
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
 
+<Tabs groupId="install-type">
 
-<h4>Перменные окружения</h4>
-<CodeBlock language="bash">
-    {dedent`
-        export KUBERNETES_VERSION="${COMPONENTS_VERSION.kubernetes.value}"
-    `}
-</CodeBlock>
+    <TabItem value='Bash'>
+        <h4>Создание рабочих директорий</h4>
+        <CodeBlock language="bash">
+            {dedent`
+              mkdir -p /etc/default/kubelet
+            `}
+        </CodeBlock>
+        
+        <h4>Systemd Unit ENV</h4>
+        <CodeBlock language="bash">
+            {dedent`
+              cat <<EOF > /etc/default/kubelet/download.env
+              KUBERNETES_VERSION="${COMPONENTS_VERSION.kubernetes.value}"
+              BASE_URL="${DOWNLOAD_VERSION.kubelet.baseUrl}"
+              EOF
+            `}
+        </CodeBlock>
 
-<h4>Инструкция загрузки</h4>
-<CodeBlock language="bash">
-    {dedent`
-        wget -O ${DOWNLOAD_VERSION.kubelet.path} ${DOWNLOAD_VERSION.kubelet.templateUrl}
-        chmod +x ${DOWNLOAD_VERSION.kubelet.path}
-    `}
-</CodeBlock>
+        <h4>Инструкция загрузки</h4>
+        <CodeBlock language="bash">
+          {dedent`
+            cat <<"EOF" > /etc/default/kubelet/download-script.sh
+            #!/bin/bash
+            set -Eeuo pipefail
+          
+            KUBERNETES_VERSION="$\{KUBERNETES_VERSION:-${COMPONENTS_VERSION.kubernetes.value}}"
+            BASE_URL="$\{BASE_URL:-${DOWNLOAD_VERSION.kubelet.baseUrl}}"
+            KUBELET_URL="$\{BASE_URL}/${DOWNLOAD_VERSION.kubelet.templateUrlBin}"
+            CHECKSUM_URL="$\{BASE_URL}/${DOWNLOAD_VERSION.kubelet.templateUrlBinCheckSum}"
+            INSTALL_PATH="${DOWNLOAD_VERSION.kubelet.path}"
+          
+            LOG_TAG="kubelet-installer"
+            TMP_DIR="$(mktemp -d)"
+          
+            logger -t "$LOG_TAG" "[INFO] Checking current kubelet version..."
+            CURRENT_VERSION=$(kubelet version --client --short 2>/dev/null | awk '{print $3}' | sed 's/v//') || CURRENT_VERSION="none"
+          
+            logger -t "$LOG_TAG" "[INFO] Current: $CURRENT_VERSION, Target: $KUBERNETES_VERSION"
+            logger -t "$LOG_TAG" "[INFO] Download URL: $KUBELET_URL"
+          
+            if [[ "$CURRENT_VERSION" != "$KUBERNETES_VERSION" ]]; then
+              logger -t "$LOG_TAG" "[INFO] Updating kubelet to version $KUBERNETES_VERSION..."
+          
+              cd "$TMP_DIR"
+              logger -t "$LOG_TAG" "[INFO] Working directory: $PWD"
+          
+              logger -t "$LOG_TAG" "[INFO] Downloading kubelet..."
+              curl -fsSL -o kubelet "$KUBELET_URL" || { logger -t "$LOG_TAG" "[ERROR] Failed to download kubelet"; exit 1; }
+          
+              logger -t "$LOG_TAG" "[INFO] Downloading checksum file..."
+              curl -fsSL -o kubelet.sha256sum "$CHECKSUM_URL" || { logger -t "$LOG_TAG" "[ERROR] Failed to download checksum file"; exit 1; }
+          
+              logger -t "$LOG_TAG" "[INFO] Verifying checksum..."
+              awk '{print $1"  kubelet"}' kubelet.sha256sum | sha256sum -c - || { logger -t "$LOG_TAG" "[ERROR] Checksum verification failed!"; exit 1; }
+          
+              logger -t "$LOG_TAG" "[INFO] Installing kubelet..."
+              install -m 755 kubelet "$INSTALL_PATH"
+          
+              logger -t "$LOG_TAG" "[INFO] kubelet successfully updated to $KUBERNETES_VERSION."
+              rm -rf "$TMP_DIR"
+            else
+              logger -t "$LOG_TAG" "[INFO] kubelet is already up to date. Skipping installation."
+            fi
+            EOF
+          `}
+        </CodeBlock>
+
+        <h4>Настройка прав</h4>
+        <CodeBlock language="bash">
+          {dedent`
+            chmod +x /etc/default/kubelet/download-script.sh
+          `}
+        </CodeBlock>
+
+        <h4>Systemd Unit Download</h4>
+        <CodeBlock language="bash">
+          {dedent`
+            cat <<EOF > /usr/lib/systemd/system/kubelet-install.service
+            [Unit]
+            Description=Install and update kubelet
+            After=network.target
+            Wants=network-online.target
+            
+            [Service]
+            Type=oneshot
+            EnvironmentFile=-/etc/default/kubelet/download.env
+            ExecStart=/bin/bash -c "/etc/default/kubelet/download-script.sh"
+            RemainAfterExit=yes
+            
+            [Install]
+            WantedBy=multi-user.target
+            EOF
+          `}
+        </CodeBlock>
+
+    </TabItem>
+
+    <TabItem value='Cloud-init'>
+
+        <h4>Systemd Unit ENV</h4>
+        <CodeBlock language="yaml">
+          {dedent`
+            - path: /etc/default/kubelet/download.env
+              owner: root:root
+              permissions: '0644'
+              content: |
+                KUBERNETES_VERSION="${COMPONENTS_VERSION.kubernetes.value}"
+                BASE_URL="${DOWNLOAD_VERSION.kubelet.baseUrl}"
+          `}
+        </CodeBlock>
+
+        <h4>Инструкция загрузки</h4>
+        <CodeBlock language="yaml">
+          {dedent`
+            - path: /etc/default/kubelet/download-script.sh
+              owner: root:root
+              permissions: '0755'
+              content: |
+                #!/bin/bash
+                set -Eeuo pipefail
+                
+                KUBERNETES_VERSION="$\{KUBERNETES_VERSION:-${COMPONENTS_VERSION.kubernetes.value}}"
+                BASE_URL="$\{BASE_URL:-${DOWNLOAD_VERSION.kubelet.baseUrl}}"
+                KUBELET_URL="$\{BASE_URL}/${DOWNLOAD_VERSION.kubelet.templateUrlBin}"
+                CHECKSUM_URL="$\{BASE_URL}/${DOWNLOAD_VERSION.kubelet.templateUrlBinCheckSum}"
+                INSTALL_PATH="${DOWNLOAD_VERSION.kubelet.path}"
+                
+                LOG_TAG="kubelet-installer"
+                TMP_DIR="$(mktemp -d)"
+                
+                logger -t "$LOG_TAG" "[INFO] Checking current kubelet version..."
+                
+                CURRENT_VERSION=$(kubelet version --client --short 2>/dev/null | awk '{print $3}' | sed 's/v//') || CURRENT_VERSION="none"
+                
+                logger -t "$LOG_TAG" "[INFO] Current: $CURRENT_VERSION, Target: $KUBERNETES_VERSION"
+                logger -t "$LOG_TAG" "[INFO] Download URL: $KUBELET_URL"
+                
+                if [[ "$CURRENT_VERSION" != "$KUBERNETES_VERSION" ]]; then
+                  logger -t "$LOG_TAG" "[INFO] Updating kubelet to version $KUBERNETES_VERSION..."
+                  
+                  cd "$TMP_DIR"
+                  logger -t "$LOG_TAG" "[INFO] Working directory: $PWD"
+                  
+                  logger -t "$LOG_TAG" "[INFO] Downloading kubelet..."
+                  curl -fsSL -o kubelet "$KUBELET_URL" || { logger -t "$LOG_TAG" "[ERROR] Failed to download kubelet"; exit 1; }
+                  
+                  logger -t "$LOG_TAG" "[INFO] Downloading checksum file..."
+                  curl -fsSL -o kubelet.sha256sum "$CHECKSUM_URL" || { logger -t "$LOG_TAG" "[ERROR] Failed to download checksum file"; exit 1; }
+                  
+                  logger -t "$LOG_TAG" "[INFO] Verifying checksum..."
+                  awk '{print $1"  kubelet"}' kubelet.sha256sum | sha256sum -c - || { logger -t "$LOG_TAG" "[ERROR] Checksum verification failed!"; exit 1; }
+                  
+                  logger -t "$LOG_TAG" "[INFO] Installing kubelet..."
+                  install -m 755 kubelet "$INSTALL_PATH"
+                  
+                  logger -t "$LOG_TAG" "[INFO] kubelet successfully updated to $KUBERNETES_VERSION."
+                  rm -rf "$TMP_DIR"
+                else
+                  logger -t "$LOG_TAG" "[INFO] kubelet is already up to date. Skipping installation."
+                fi
+          `}
+        </CodeBlock>
+
+        <h4>Systemd Unit Download</h4>
+        <CodeBlock language="yaml">
+          {dedent`
+            - path: /usr/lib/systemd/system/kubelet-install.service
+              owner: root:root
+              permissions: '0644'
+              content: |
+                [Unit]
+                Description=Install and update kubelet
+                After=network.target
+                Wants=network-online.target
+                
+                [Service]
+                Type=oneshot
+                EnvironmentFile=-/etc/default/kubelet/download.env
+                ExecStart=/bin/bash -c "/etc/default/kubelet/download-script.sh"
+                RemainAfterExit=yes
+                
+                [Install]
+                WantedBy=multi-user.target
+          `}
+        </CodeBlock>
+
+    </TabItem>
+
+</Tabs>

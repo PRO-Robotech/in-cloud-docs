@@ -3,20 +3,207 @@ import CodeBlock                from '@theme/CodeBlock'
 
 import { DOWNLOAD_VERSION }     from '@site/src/constants/kubernetes/downloads'
 import { COMPONENTS_VERSION }   from '@site/src/constants/kubernetes/componentsVersion'
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
 
-<h4>Перменные окружения</h4>
-<CodeBlock language="bash">
-    {dedent`
-        export ETCD_TOOL_VERSION="${COMPONENTS_VERSION.etcdctl.value}"
-    `}
-</CodeBlock>
 
-<h4>Инструкция загрузки</h4>
-<CodeBlock language="bash">
-    {dedent`
-        mkdir -p /tmp/etcd
-        wget  -O ${DOWNLOAD_VERSION.etcdctl.path} ${DOWNLOAD_VERSION.etcdctl.templateUrl}
-        tar   -C "/tmp/etcd" -xvf /tmp/etcd.tar.gz
-        cp /tmp/etcd/etcd*/etcd* /usr/local/bin/
-    `}
-</CodeBlock>
+<Tabs groupId="install-type">
+
+    <TabItem value='Bash'>
+        <h4>Создание рабочих директорий</h4>
+        <CodeBlock language="bash">
+            {dedent`
+              mkdir -p /etc/default/etcd
+            `}
+        </CodeBlock>
+
+        <h4>Systemd Unit ENV</h4>
+        <CodeBlock language="bash">
+            {dedent`
+              cat <<EOF > /etc/default/etcd/download.env
+              ETCD_VERSION="${COMPONENTS_VERSION.etcdctl.value}"
+              BASE_URL="${DOWNLOAD_VERSION.etcdctl.baseUrl}"
+              EOF
+            `}
+        </CodeBlock>
+
+        <h4>Инструкция загрузки</h4>
+        <CodeBlock language="bash">
+            {dedent`
+              cat <<"EOF" > /etc/default/etcd/download-script.sh
+              #!/bin/bash
+              set -Eeuo pipefail
+              
+              ETCD_VERSION="$\{ETCD_VERSION:-${COMPONENTS_VERSION.etcdctl.value}}"
+              BASE_URL="$\{BASE_URL:-${DOWNLOAD_VERSION.etcdctl.baseUrl}}"
+              ETCD_URL="$\{BASE_URL}/${DOWNLOAD_VERSION.etcdctl.templateUrlBin}"
+              CHECKSUM_URL="$\{BASE_URL}/${DOWNLOAD_VERSION.etcdctl.templateUrlBinCheckSum}"
+              INSTALL_PATH="${DOWNLOAD_VERSION.etcdctl.path}"
+              
+              LOG_TAG="etcd-installer"
+              TMP_DIR="$(mktemp -d)"
+              
+              logger -t "$LOG_TAG" "[INFO] Checking current etcd version..."
+              CURRENT_VERSION=$(etcd --version 2>/dev/null | awk '{print $3}' | sed 's/v//') || CURRENT_VERSION="none"
+              
+              logger -t "$LOG_TAG" "[INFO] Current: $CURRENT_VERSION, Target: $ETCD_VERSION"
+              logger -t "$LOG_TAG" "[INFO] Download URL: $ETCD_URL"
+              
+              if [[ "$CURRENT_VERSION" != "$ETCD_VERSION" ]]; then
+                logger -t "$LOG_TAG" "[INFO] Updating etcd to version $ETCD_VERSION..."
+              
+                cd "$TMP_DIR"
+                logger -t "$LOG_TAG" "[INFO] Working directory: $PWD"
+              
+                logger -t "$LOG_TAG" "[INFO] Downloading etcd..."
+                curl -fsSL -o "etcd-$\{ETCD_VERSION}-linux-amd64.tar.gz" "$ETCD_URL" || { logger -t "$LOG_TAG" "[ERROR] Failed to download etcd"; exit 1; }
+              
+                logger -t "$LOG_TAG" "[INFO] Downloading checksum file..."
+                curl -fsSL -o "etcd.sha256sum" "$CHECKSUM_URL" || { logger -t "$LOG_TAG" "[ERROR] Failed to download checksum file"; exit 1; }
+              
+                logger -t "$LOG_TAG" "[INFO] Verifying checksum..."
+                grep "etcd-$\{ETCD_VERSION}-linux-amd64.tar.gz" etcd.sha256sum | sha256sum -c - || { logger -t "$LOG_TAG" "[ERROR] Checksum verification failed!"; exit 1; }
+              
+                logger -t "$LOG_TAG" "[INFO] Extracting files..."
+                tar -C "$TMP_DIR" -xvf "etcd-$\{ETCD_VERSION}-linux-amd64.tar.gz"
+              
+                logger -t "$LOG_TAG" "[INFO] Installing binaries..."
+                install -m 755 "$TMP_DIR/etcd-$\{ETCD_VERSION}-linux-amd64/etcd" $INSTALL_PATH
+                install -m 755 "$TMP_DIR/etcd-$\{ETCD_VERSION}-linux-amd64/etcdctl" $INSTALL_PATH
+                install -m 755 "$TMP_DIR/etcd-$\{ETCD_VERSION}-linux-amd64/etcdutl" $INSTALL_PATH
+                
+                logger -t "$LOG_TAG" "[INFO] etcd successfully updated to $ETCD_VERSION."
+                rm -rf "$TMP_DIR"
+              else
+                logger -t "$LOG_TAG" "[INFO] etcd is already up to date. Skipping installation."
+              fi
+              EOF
+            `}
+        </CodeBlock>
+
+        <h4>Настройка прав</h4>
+        <CodeBlock language="yaml">
+            {dedent`
+              chmod +x /etc/default/etcd/download-script.sh
+            `}
+        </CodeBlock>
+    
+        <h4>Systemd Unit Download</h4>
+        <CodeBlock language="bash">
+            {dedent`
+              cat <<EOF > /usr/lib/systemd/system/etcd-install.service
+              [Unit]
+              Description=Install and update b-cloud component etcd
+              After=network.target
+              Wants=network-online.target
+              
+              [Service]
+              Type=oneshot
+              EnvironmentFile=-/etc/default/etcd/download.env
+              ExecStart=/bin/bash -c "/etc/default/etcd/download-script.sh"
+              RemainAfterExit=yes
+              
+              [Install]
+              WantedBy=multi-user.target
+              EOF
+            `}
+        </CodeBlock>
+
+    </TabItem>
+
+    <TabItem value='Cloud-init'>
+
+        <h4>Systemd Unit ENV</h4>
+        <CodeBlock language="yaml">
+            {dedent`
+              - path: /etc/default/etcd/download.env
+                owner: root:root
+                permissions: '0644'
+                content: |
+                  ETCD_VERSION="${COMPONENTS_VERSION.etcdctl.value}"
+                  BASE_URL="${DOWNLOAD_VERSION.etcdctl.baseUrl}"
+            `}
+        </CodeBlock>
+
+        <h4>Инструкция загрузки</h4>
+        <CodeBlock language="yaml">
+            {dedent`
+              - path: /etc/default/etcd/download-script.sh
+                owner: root:root
+                permissions: '0755'
+                content: |
+                  #!/bin/bash
+                  set -Eeuo pipefail
+                  
+                  ETCD_VERSION="$\{ETCD_VERSION:-${COMPONENTS_VERSION.etcdctl.value}}"
+                  BASE_URL="$\{BASE_URL:-${DOWNLOAD_VERSION.etcdctl.baseUrl}}"
+                  ETCD_URL="$\{BASE_URL}/${DOWNLOAD_VERSION.etcdctl.templateUrlBin}"
+                  CHECKSUM_URL="$\{BASE_URL}/${DOWNLOAD_VERSION.etcdctl.templateUrlBinCheckSum}"
+                  INSTALL_PATH="${DOWNLOAD_VERSION.etcdctl.path}"
+                  
+                  LOG_TAG="etcd-installer"
+                  TMP_DIR="$(mktemp -d)"
+                  
+                  logger -t "$LOG_TAG" "[INFO] Checking current etcd version..."
+                  CURRENT_VERSION=$(etcd --version 2>/dev/null | awk '{print $3}' | sed 's/v//') || CURRENT_VERSION="none"
+                  
+                  logger -t "$LOG_TAG" "[INFO] Current: $CURRENT_VERSION, Target: $ETCD_VERSION"
+                  logger -t "$LOG_TAG" "[INFO] Download URL: $ETCD_URL"
+                  
+                  if [[ "$CURRENT_VERSION" != "$ETCD_VERSION" ]]; then
+                    logger -t "$LOG_TAG" "[INFO] Updating etcd to version $ETCD_VERSION..."
+                  
+                    cd "$TMP_DIR"
+                    logger -t "$LOG_TAG" "[INFO] Working directory: $PWD"
+                  
+                    logger -t "$LOG_TAG" "[INFO] Downloading etcd..."
+                    curl -fsSL -o "etcd-$\{ETCD_VERSION}-linux-amd64.tar.gz" "$ETCD_URL" || { logger -t "$LOG_TAG" "[ERROR] Failed to download etcd"; exit 1; }
+                  
+                    logger -t "$LOG_TAG" "[INFO] Downloading checksum file..."
+                    curl -fsSL -o "etcd.sha256sum" "$CHECKSUM_URL" || { logger -t "$LOG_TAG" "[ERROR] Failed to download checksum file"; exit 1; }
+                  
+                    logger -t "$LOG_TAG" "[INFO] Verifying checksum..."
+                    grep "etcd-$\{ETCD_VERSION}-linux-amd64.tar.gz" etcd.sha256sum | sha256sum -c - || { logger -t "$LOG_TAG" "[ERROR] Checksum verification failed!"; exit 1; }
+                  
+                    logger -t "$LOG_TAG" "[INFO] Extracting files..."
+                    tar -C "$TMP_DIR" -xvf "etcd-$\{ETCD_VERSION}-linux-amd64.tar.gz"
+                  
+                    logger -t "$LOG_TAG" "[INFO] Installing binaries..."
+                    install -m 755 "$TMP_DIR/etcd-$\{ETCD_VERSION}-linux-amd64/etcd" $INSTALL_PATH
+                    install -m 755 "$TMP_DIR/etcd-$\{ETCD_VERSION}-linux-amd64/etcdctl" $INSTALL_PATH
+                    install -m 755 "$TMP_DIR/etcd-$\{ETCD_VERSION}-linux-amd64/etcdutl" $INSTALL_PATH
+                    
+                    logger -t "$LOG_TAG" "[INFO] etcd successfully updated to $ETCD_VERSION."
+                    rm -rf "$TMP_DIR"
+                  else
+                    logger -t "$LOG_TAG" "[INFO] etcd is already up to date. Skipping installation."
+                  fi
+            `}
+        </CodeBlock>
+ 
+        <h4>Systemd Unit Download</h4>
+        <CodeBlock language="yaml">
+            {dedent`
+              - path: /usr/lib/systemd/system/etcd-install.service
+                owner: root:root
+                permissions: '0644'
+                content: |
+                  [Unit]
+                  Description=Install and update b-cloud component etcd
+                  After=network.target
+                  Wants=network-online.target
+                  
+                  [Service]
+                  Type=oneshot
+                  EnvironmentFile=-/etc/default/etcd/download.env
+                  ExecStart=/bin/bash -c "/etc/default/etcd/download-script.sh"
+                  RemainAfterExit=yes
+                  
+                  [Install]
+                  WantedBy=multi-user.target
+            `}
+        </CodeBlock>
+
+    </TabItem>
+
+</Tabs>

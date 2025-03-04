@@ -3,19 +3,205 @@ import CodeBlock                from '@theme/CodeBlock'
 
 import { DOWNLOAD_VERSION }     from '@site/src/constants/kubernetes/downloads'
 import { COMPONENTS_VERSION }   from '@site/src/constants/kubernetes/componentsVersion'
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
 
-<h4>Перменные окружения</h4>
-<CodeBlock language="bash">
-    {dedent`
-        export CRICTL_VERSION="${COMPONENTS_VERSION.crictl.value}"
-    `}
-</CodeBlock>
+<Tabs groupId="install-type">
 
-<h4>Инструкция загрузки</h4>
-<CodeBlock language="bash">
-    {dedent`
-        wget  -O ${DOWNLOAD_VERSION.crictl.path} ${DOWNLOAD_VERSION.crictl.templateUrl}
-        chmod +x ${DOWNLOAD_VERSION.crictl.path}
-        tar   -C "/usr/local/bin"  -xvf /tmp/crictl.tar.gz
-    `}
-</CodeBlock>
+    <TabItem value='Bash'>
+
+        <h4>Создание рабочих директорий</h4>
+        <CodeBlock language="bash">
+            {dedent`
+              mkdir -p /etc/default/crictl
+            `}
+        </CodeBlock>
+
+        <h4>Systemd Unit ENV</h4>
+        <CodeBlock language="bash">
+            {dedent`
+              cat <<EOF > /etc/default/crictl/download.env
+              CRICTL_VERSION="${COMPONENTS_VERSION.crictl.value}"
+              BASE_URL="${DOWNLOAD_VERSION.crictl.baseUrl}"
+              EOF
+            `}
+        </CodeBlock>
+
+        <h4>Инструкция загрузки</h4>
+        <CodeBlock language="bash">
+            {dedent`
+              cat <<"EOF" > /etc/default/crictl/download-script.sh
+              #!/bin/bash
+              set -Eeuo pipefail
+              
+              CRICTL_VERSION="$\{CRICTL_VERSION:-${COMPONENTS_VERSION.crictl.value}}"
+              BASE_URL="$\{BASE_URL:-${DOWNLOAD_VERSION.crictl.baseUrl}}"
+              CRICTL_URL="$\{BASE_URL}/${DOWNLOAD_VERSION.crictl.templateUrlBin}"
+              CHECKSUM_URL="$\{BASE_URL}/${DOWNLOAD_VERSION.crictl.templateUrlBinCheckSum}"
+              INSTALL_PATH="${DOWNLOAD_VERSION.crictl.path}"
+              
+              LOG_TAG="crictl-installer"
+              TMP_DIR="$(mktemp -d)"
+              
+              logger -t "$LOG_TAG" "[INFO] Checking current crictl version..."
+              CURRENT_VERSION=$(crictl --version 2>/dev/null | awk '{print $3}') || CURRENT_VERSION="none"
+              
+              logger -t "$LOG_TAG" "[INFO] Current: $CURRENT_VERSION, Target: $CRICTL_VERSION"
+              logger -t "$LOG_TAG" "[INFO] Download URL: $CRICTL_URL"
+              
+              if [[ "$CURRENT_VERSION" != "$CRICTL_VERSION" ]]; then
+                logger -t "$LOG_TAG" "[INFO] Updating crictl to version $CRICTL_VERSION..."
+              
+              cd "$TMP_DIR"
+              logger -t "$LOG_TAG" "[INFO] Working directory: $PWD"
+              
+              logger -t "$LOG_TAG" "[INFO] Downloading crictl..."
+              curl -fsSL -o crictl.tar.gz "$CRICTL_URL" || { logger -t "$LOG_TAG" "[ERROR] Failed to download crictl"; exit 1; }
+              
+              logger -t "$LOG_TAG" "[INFO] Downloading checksum file..."
+              curl -fsSL -o crictl.sha256sum "$CHECKSUM_URL" || { logger -t "$LOG_TAG" "[ERROR] Failed to download checksum file"; exit 1; }
+              
+              logger -t "$LOG_TAG" "[INFO] Verifying checksum..."
+              awk '{print $1"  crictl.tar.gz"}' crictl.sha256sum | sha256sum -c - || { logger -t "$LOG_TAG" "[ERROR] Checksum verification failed!"; exit 1; }
+              
+              logger -t "$LOG_TAG" "[INFO] Extracting files..."
+              tar -C "$TMP_DIR" -xvf crictl.tar.gz
+              
+              logger -t "$LOG_TAG" "[INFO] Installing crictl..."
+              install -m 755 "$TMP_DIR/crictl" "$INSTALL_PATH"
+              
+              logger -t "$LOG_TAG" "[INFO] crictl successfully updated to $CRICTL_VERSION."
+              rm -rf "$TMP_DIR"
+              
+              else
+                logger -t "$LOG_TAG" "[INFO] crictl is already up to date. Skipping installation."
+              fi
+              EOF
+            `}
+        </CodeBlock>
+
+        <h4>Настройка прав</h4>
+        <CodeBlock language="bash">
+            {dedent`
+              chmod +x /etc/default/crictl/download-script.sh
+            `}
+        </CodeBlock>
+
+        <h4>Systemd Unit Download</h4>
+        <CodeBlock language="bash">
+            {dedent`
+              cat <<EOF > /usr/lib/systemd/system/crictl-install.service
+              [Unit]
+              Description=Install and update b-cloud component crictl
+              After=network.target
+              Wants=network-online.target
+              
+              [Service]
+              Type=oneshot
+              EnvironmentFile=-/etc/default/crictl/download.env
+              ExecStart=/bin/bash -c "/etc/default/crictl/download-script.sh"
+              RemainAfterExit=yes
+              
+              [Install]
+              WantedBy=multi-user.target
+              EOF
+            `}
+        </CodeBlock>
+
+    </TabItem>
+
+    <TabItem value='Cloud-init'>
+
+        <h4>Systemd Unit ENV</h4>
+        <CodeBlock language="yaml">
+            {dedent`
+              - path: /etc/default/crictl/download.env
+                owner: root:root
+                permissions: '0644'
+                content: |
+                  CRICTL_VERSION="${COMPONENTS_VERSION.crictl.value}"
+                  BASE_URL="${DOWNLOAD_VERSION.crictl.baseUrl}"
+            `}
+        </CodeBlock>
+
+        <h4>Инструкция загрузки</h4>
+        <CodeBlock language="yaml">
+            {dedent`
+              - path: /etc/default/crictl/download-script.sh
+                owner: root:root
+                permissions: '0755'
+                content: |
+                  #!/bin/bash
+                  set -Eeuo pipefail
+                  
+                  CRICTL_VERSION="$\{CRICTL_VERSION:-${COMPONENTS_VERSION.crictl.value}}"
+                  BASE_URL="$\{BASE_URL:-${DOWNLOAD_VERSION.crictl.baseUrl}}"
+                  CRICTL_URL="$\{BASE_URL}/${DOWNLOAD_VERSION.crictl.templateUrlBin}"
+                  CHECKSUM_URL="$\{BASE_URL}/${DOWNLOAD_VERSION.crictl.templateUrlBinCheckSum}"
+                  INSTALL_PATH="${DOWNLOAD_VERSION.crictl.path}"
+                  
+                  LOG_TAG="crictl-installer"
+                  TMP_DIR="$(mktemp -d)"
+                  
+                  logger -t "$LOG_TAG" "[INFO] Checking current crictl version..."
+                  CURRENT_VERSION=$(crictl --version 2>/dev/null | awk '{print $3}') || CURRENT_VERSION="none"
+                  
+                  logger -t "$LOG_TAG" "[INFO] Current: $CURRENT_VERSION, Target: $CRICTL_VERSION"
+                  logger -t "$LOG_TAG" "[INFO] Download URL: $CRICTL_URL"
+                  
+                  if [[ "$CURRENT_VERSION" != "$CRICTL_VERSION" ]]; then
+                    logger -t "$LOG_TAG" "[INFO] Updating crictl to version $CRICTL_VERSION..."
+                  
+                  cd "$TMP_DIR"
+                  logger -t "$LOG_TAG" "[INFO] Working directory: $PWD"
+                  
+                  logger -t "$LOG_TAG" "[INFO] Downloading crictl..."
+                  curl -fsSL -o crictl.tar.gz "$CRICTL_URL" || { logger -t "$LOG_TAG" "[ERROR] Failed to download crictl"; exit 1; }
+                  
+                  logger -t "$LOG_TAG" "[INFO] Downloading checksum file..."
+                  curl -fsSL -o crictl.sha256sum "$CHECKSUM_URL" || { logger -t "$LOG_TAG" "[ERROR] Failed to download checksum file"; exit 1; }
+                  
+                  logger -t "$LOG_TAG" "[INFO] Verifying checksum..."
+                  awk '{print $1"  crictl.tar.gz"}' crictl.sha256sum | sha256sum -c - || { logger -t "$LOG_TAG" "[ERROR] Checksum verification failed!"; exit 1; }
+                  
+                  logger -t "$LOG_TAG" "[INFO] Extracting files..."
+                  tar -C "$TMP_DIR" -xvf crictl.tar.gz
+                  
+                  logger -t "$LOG_TAG" "[INFO] Installing crictl..."
+                  install -m 755 "$TMP_DIR/crictl" "$INSTALL_PATH"
+                  
+                  logger -t "$LOG_TAG" "[INFO] crictl successfully updated to $CRICTL_VERSION."
+                  rm -rf "$TMP_DIR"
+                  
+                  else
+                    logger -t "$LOG_TAG" "[INFO] crictl is already up to date. Skipping installation."
+                  fi
+            `}
+        </CodeBlock>
+
+        <h4>Systemd Unit Download</h4>
+        <CodeBlock language="yaml">
+            {dedent`   
+              - path: /usr/lib/systemd/system/crictl-install.service
+                owner: root:root
+                permissions: '0644'
+                content: |
+                  [Unit]
+                  Description=Install and update b-cloud component crictl
+                  After=network.target
+                  Wants=network-online.target
+                  
+                  [Service]
+                  Type=oneshot
+                  EnvironmentFile=-/etc/default/crictl/download.env
+                  ExecStart=/bin/bash -c "/etc/default/crictl/download-script.sh"
+                  RemainAfterExit=yes
+                  
+                  [Install]
+                  WantedBy=multi-user.target
+            `}
+        </CodeBlock>
+
+    </TabItem>
+
+</Tabs>

@@ -3,20 +3,207 @@ import CodeBlock                from '@theme/CodeBlock'
 
 import { DOWNLOAD_VERSION }     from '@site/src/constants/kubernetes/downloads'
 import { COMPONENTS_VERSION }   from '@site/src/constants/kubernetes/componentsVersion'
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
 
-<h4>Перменные окружения</h4>
-<CodeBlock language="bash">
-    {dedent`
-        export CONTAINERD_VERSION="${COMPONENTS_VERSION.containerd.value}"
-    `}
-</CodeBlock>
 
-<h4>Инструкция загрузки</h4>
-<CodeBlock language="bash">
-    {dedent`
-        wget  -O ${DOWNLOAD_VERSION.containerd.path}  ${DOWNLOAD_VERSION.containerd.templateUrl}
-        mkdir -p /tmp/containerd/bin/
-        tar   -C "/tmp/containerd" -xvf /tmp/containerd.tar.gz
-        cp /tmp/containerd/bin/* /usr/local/bin/
-    `}
-</CodeBlock>
+<Tabs groupId="install-type">
+
+    <TabItem value='Bash'>
+        <h4>Создание рабочих директорий</h4>
+        <CodeBlock language="bash">
+            {dedent`
+              mkdir -p /etc/default/containerd
+            `}
+        </CodeBlock>
+
+        <h4>Systemd Unit ENV</h4>
+        <CodeBlock language="bash">
+            {dedent`
+              cat <<EOF > /etc/default/containerd/download.env
+              CONTAINERD_VERSION="${COMPONENTS_VERSION.containerd.value}"
+              BASE_URL="${DOWNLOAD_VERSION.containerd.baseUrl}"
+              EOF
+            `}
+        </CodeBlock>
+
+        <h4>Инструкция загрузки</h4>
+        <CodeBlock language="bash">
+            {dedent`
+              cat <<"EOF" > /etc/default/containerd/download-script.sh
+              #!/bin/bash
+              set -Eeuo pipefail
+              
+              CONTAINERD_VERSION="$\{CONTAINERD_VERSION:-${COMPONENTS_VERSION.containerd.value}}"
+              BASE_URL="$\{BASE_URL:-${DOWNLOAD_VERSION.containerd.baseUrl}}"
+              CONTAINERD_URL="$\{BASE_URL}/${DOWNLOAD_VERSION.containerd.templateUrlBin}"
+              CHECKSUM_URL="$\{BASE_URL}/${DOWNLOAD_VERSION.containerd.templateUrlBinCheckSum}"
+              INSTALL_PATH="${DOWNLOAD_VERSION.containerd.path}"
+              
+              LOG_TAG="containerd-installer"
+              TMP_DIR="$(mktemp -d)"
+              
+              logger -t "$LOG_TAG" "[INFO] Checking current containerd version..."
+              CURRENT_VERSION=$(containerd --version 2>/dev/null | awk '{print $3}' | sed 's/v//') || CURRENT_VERSION="none"
+              
+              logger -t "$LOG_TAG" "[INFO] Current: $CURRENT_VERSION, Target: $CONTAINERD_VERSION"
+              logger -t "$LOG_TAG" "[INFO] Download URL: $CONTAINERD_URL"
+              
+              if [[ "$CURRENT_VERSION" != "$CONTAINERD_VERSION" ]]; then
+                logger -t "$LOG_TAG" "[INFO] Updating containerd to version $CONTAINERD_VERSION..."
+              
+                cd "$TMP_DIR"
+                logger -t "$LOG_TAG" "[INFO] Working directory: $PWD"
+              
+                logger -t "$LOG_TAG" "[INFO] Downloading containerd..."
+                curl -fsSL -o "containerd-$\{CONTAINERD_VERSION}-linux-amd64.tar.gz" "$CONTAINERD_URL" || { logger -t "$LOG_TAG" "[ERROR] Failed to download containerd"; exit 1; }
+              
+                logger -t "$LOG_TAG" "[INFO] Downloading checksum file..."
+                curl -fsSL -o "containerd.sha256sum" "$CHECKSUM_URL" || { logger -t "$LOG_TAG" "[ERROR] Failed to download checksum file"; exit 1; }
+              
+                logger -t "$LOG_TAG" "[INFO] Verifying checksum..."
+                sha256sum -c containerd.sha256sum | grep 'OK' || { logger -t "$LOG_TAG" "[ERROR] Checksum verification failed!"; exit 1; }
+              
+                logger -t "$LOG_TAG" "[INFO] Extracting files..."
+                tar -C "$TMP_DIR" -xvf "containerd-$\{CONTAINERD_VERSION}-linux-amd64.tar.gz"
+              
+                logger -t "$LOG_TAG" "[INFO] Installing binaries..."
+                install -m 755 "$TMP_DIR/bin/containerd" $INSTALL_PATH
+                install -m 755 "$TMP_DIR/bin/containerd-shim"* $INSTALL_PATH
+                install -m 755 "$TMP_DIR/bin/ctr" $INSTALL_PATH
+              
+                logger -t "$LOG_TAG" "[INFO] Containerd successfully updated to $CONTAINERD_VERSION."
+                rm -rf "$TMP_DIR"
+              else
+                logger -t "$LOG_TAG" "[INFO] Containerd is already up to date. Skipping installation."
+              fi
+              EOF
+            `}
+        </CodeBlock>
+
+        <h4>Настройка прав</h4>
+        <CodeBlock language="yaml">
+            {dedent`
+              chmod +x /etc/default/containerd/download-script.sh
+            `}
+        </CodeBlock>
+    
+        <h4>Systemd Unit Download</h4>
+        <CodeBlock language="bash">
+            {dedent`
+              cat <<EOF > /usr/lib/systemd/system/containerd-install.service
+              [Unit]
+              Description=Install and update b-cloud component containerd
+              After=network.target
+              Wants=network-online.target
+              
+              [Service]
+              Type=oneshot
+              EnvironmentFile=-/etc/default/containerd/download.env
+              ExecStart=/bin/bash -c "/etc/default/containerd/download-script.sh"
+              RemainAfterExit=yes
+              
+              [Install]
+              WantedBy=multi-user.target
+              EOF
+            `}
+        </CodeBlock>
+
+    </TabItem>
+
+    <TabItem value='Cloud-init'>
+
+        <h4>Systemd Unit ENV</h4>
+        <CodeBlock language="yaml">
+            {dedent`
+              - path: /etc/default/containerd/download.env
+                owner: root:root
+                permissions: '0644'
+                content: |
+                  CONTAINERD_VERSION="${COMPONENTS_VERSION.containerd.value}"
+                  BASE_URL="${DOWNLOAD_VERSION.containerd.baseUrl}"
+            `}
+        </CodeBlock>
+
+        <h4>Инструкция загрузки</h4>
+        <CodeBlock language="yaml">
+            {dedent`
+              - path: /etc/default/containerd/download-script.sh
+                owner: root:root
+                permissions: '0755'
+                content: |
+                  #!/bin/bash
+                  set -Eeuo pipefail
+                  
+                  CONTAINERD_VERSION="$\{CONTAINERD_VERSION:-${COMPONENTS_VERSION.containerd.value}}"
+                  BASE_URL="$\{BASE_URL:-${DOWNLOAD_VERSION.containerd.baseUrl}}"
+                  CONTAINERD_URL="$\{BASE_URL}/${DOWNLOAD_VERSION.containerd.templateUrlBin}"
+                  CHECKSUM_URL="$\{BASE_URL}/${DOWNLOAD_VERSION.containerd.templateUrlBinCheckSum}"
+                  INSTALL_PATH="${DOWNLOAD_VERSION.containerd.path}"
+                  
+                  LOG_TAG="containerd-installer"
+                  TMP_DIR="$(mktemp -d)"
+                  
+                  logger -t "$LOG_TAG" "[INFO] Checking current containerd version..."
+                  CURRENT_VERSION=$(containerd --version 2>/dev/null | awk '{print $3}' | sed 's/v//') || CURRENT_VERSION="none"
+                  
+                  logger -t "$LOG_TAG" "[INFO] Current: $CURRENT_VERSION, Target: $CONTAINERD_VERSION"
+                  logger -t "$LOG_TAG" "[INFO] Download URL: $CONTAINERD_URL"
+                  
+                  if [[ "$CURRENT_VERSION" != "$CONTAINERD_VERSION" ]]; then
+                    logger -t "$LOG_TAG" "[INFO] Updating containerd to version $CONTAINERD_VERSION..."
+                  
+                    cd "$TMP_DIR"
+                    logger -t "$LOG_TAG" "[INFO] Working directory: $PWD"
+                  
+                    logger -t "$LOG_TAG" "[INFO] Downloading containerd..."
+                    curl -fsSL -o "containerd-$\{CONTAINERD_VERSION}-linux-amd64.tar.gz" "$CONTAINERD_URL" || { logger -t "$LOG_TAG" "[ERROR] Failed to download containerd"; exit 1; }
+                  
+                    logger -t "$LOG_TAG" "[INFO] Downloading checksum file..."
+                    curl -fsSL -o "containerd.sha256sum" "$CHECKSUM_URL" || { logger -t "$LOG_TAG" "[ERROR] Failed to download checksum file"; exit 1; }
+                  
+                    logger -t "$LOG_TAG" "[INFO] Verifying checksum..."
+                    sha256sum -c containerd.sha256sum | grep 'OK' || { logger -t "$LOG_TAG" "[ERROR] Checksum verification failed!"; exit 1; }
+                  
+                    logger -t "$LOG_TAG" "[INFO] Extracting files..."
+                    tar -C "$TMP_DIR" -xvf "containerd-$\{CONTAINERD_VERSION}-linux-amd64.tar.gz"
+                  
+                    logger -t "$LOG_TAG" "[INFO] Installing binaries..."
+                    install -m 755 "$TMP_DIR/bin/containerd" $INSTALL_PATH
+                    install -m 755 "$TMP_DIR/bin/containerd-shim"* $INSTALL_PATH
+                    install -m 755 "$TMP_DIR/bin/ctr" $INSTALL_PATH
+                  
+                    logger -t "$LOG_TAG" "[INFO] Containerd successfully updated to $CONTAINERD_VERSION."
+                    rm -rf "$TMP_DIR"
+                  else
+                    logger -t "$LOG_TAG" "[INFO] Containerd is already up to date. Skipping installation."
+                  fi
+            `}
+        </CodeBlock>
+ 
+        <h4>Systemd Unit Download</h4>
+        <CodeBlock language="yaml">
+            {dedent`
+              - path: /usr/lib/systemd/system/containerd-install.service
+                owner: root:root
+                permissions: '0644'
+                content: |
+                  [Unit]
+                  Description=Install and update b-cloud component containerd
+                  After=network.target
+                  Wants=network-online.target
+                  
+                  [Service]
+                  Type=oneshot
+                  EnvironmentFile=-/etc/default/containerd/download.env
+                  ExecStart=/bin/bash -c "/etc/default/containerd/download-script.sh"
+                  RemainAfterExit=yes
+                  
+                  [Install]
+                  WantedBy=multi-user.target
+            `}
+        </CodeBlock>
+
+    </TabItem>
+
+</Tabs>

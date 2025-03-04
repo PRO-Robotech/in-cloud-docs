@@ -3,18 +3,200 @@ import CodeBlock                from '@theme/CodeBlock'
 
 import { DOWNLOAD_VERSION }     from '@site/src/constants/kubernetes/downloads'
 import { COMPONENTS_VERSION }   from '@site/src/constants/kubernetes/componentsVersion'
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
 
-<h4>Перменные окружения</h4>
-<CodeBlock language="bash">
-    {dedent`
-        export RUNC_VERSION="${COMPONENTS_VERSION.runc.value}"
-    `}
-</CodeBlock>
+<Tabs groupId="install-type">
 
-<h4>Инструкция загрузки</h4>
-<CodeBlock language="bash">
-    {dedent`
-        wget  -O ${DOWNLOAD_VERSION.runc.path} ${DOWNLOAD_VERSION.runc.templateUrl}
-        chmod +x ${DOWNLOAD_VERSION.runc.path}
-    `}
-</CodeBlock>
+    <TabItem value='Bash'>
+
+        <h4>Создание рабочих директорий</h4>
+        <CodeBlock language="bash">
+            {dedent`
+              mkdir -p /etc/default/runc
+            `}
+        </CodeBlock>
+
+        <h4>Systemd Unit ENV</h4>
+        <CodeBlock language="bash">
+            {dedent`
+              cat <<EOF > /etc/default/runc/download.env
+              RUNC_VERSION="${COMPONENTS_VERSION.runc.value}"
+              BASE_URL="${DOWNLOAD_VERSION.runc.baseUrl}"
+              EOF
+            `}
+        </CodeBlock>
+
+        <h4>Инструкция загрузки</h4>
+        <CodeBlock language="bash">
+            {dedent`
+              cat <<"EOF" > /etc/default/runc/download-script.sh
+              #!/bin/bash
+              set -Eeuo pipefail
+              
+              RUNC_VERSION="$\{RUNC_VERSION:-${COMPONENTS_VERSION.runc.value}}"
+              BASE_URL="$\{BASE_URL:-https://github.com/opencontainers/runc/releases/download}"
+              RUNC_URL="$\{BASE_URL}/${DOWNLOAD_VERSION.runc.templateUrlBin}"
+              CHECKSUM_URL="$\{BASE_URL}/${DOWNLOAD_VERSION.runc.templateUrlBinCheckSum}"
+              INSTALL_PATH="${DOWNLOAD_VERSION.runc.path}"
+              
+              LOG_TAG="runc-installer"
+              TMP_DIR="$(mktemp -d)"
+              
+              logger -t "$LOG_TAG" "[INFO] Checking current runc version..."
+              CURRENT_VERSION=$("$INSTALL_PATH" --version 2>/dev/null | head -n1 | awk '{print $NF}') || CURRENT_VERSION="none"
+              
+              logger -t "$LOG_TAG" "[INFO] Current: $CURRENT_VERSION, Target: $RUNC_VERSION"
+              logger -t "$LOG_TAG" "[INFO] Download URL: $RUNC_URL"
+              
+              if [[ "$CURRENT_VERSION" != "$\{RUNC_VERSION#v}" ]]; then
+                logger -t "$LOG_TAG" "[INFO] Updating runc to version $RUNC_VERSION..."
+              
+                cd "$TMP_DIR"
+                logger -t "$LOG_TAG" "[INFO] Working directory: $PWD"
+              
+                logger -t "$LOG_TAG" "[INFO] Downloading runc..."
+                curl -fsSL -o runc.amd64 "$RUNC_URL" || { logger -t "$LOG_TAG" "[ERROR] Failed to download runc"; exit 1; }
+              
+                logger -t "$LOG_TAG" "[INFO] Downloading checksum file..."
+                curl -fsSL -o runc.sha256sum "$CHECKSUM_URL" || { logger -t "$LOG_TAG" "[ERROR] Failed to download checksum file"; exit 1; }
+              
+                logger -t "$LOG_TAG" "[INFO] Verifying checksum..."
+                grep "runc.amd64" runc.sha256sum | sha256sum -c - || { logger -t "$LOG_TAG" "[ERROR] Checksum verification failed!"; exit 1; }
+              
+                logger -t "$LOG_TAG" "[INFO] Installing runc..."
+                install -m 755 runc.amd64 "$INSTALL_PATH"
+              
+                logger -t "$LOG_TAG" "[INFO] runc successfully updated to $RUNC_VERSION."
+                rm -rf "$TMP_DIR"
+              else
+                logger -t "$LOG_TAG" "[INFO] runc is already up to date. Skipping installation."
+              fi
+              EOF
+            `}
+        </CodeBlock>
+
+
+        <h4>Настройка прав</h4>
+        <CodeBlock language="bash">
+            {dedent`
+              chmod +x /etc/default/runc/download-script.sh
+            `}
+        </CodeBlock>
+
+        <h4>Systemd Unit Download</h4>
+        <CodeBlock language="bash">
+            {dedent`
+              cat <<EOF > /usr/lib/systemd/system/runc-install.service
+              [Unit]
+              Description=Install and update b-cloud component runc
+              After=network.target
+              Wants=network-online.target
+              
+              [Service]
+              Type=oneshot
+              EnvironmentFile=-/etc/default/runc/download.env
+              ExecStart=/bin/bash -c "/etc/default/runc/download-script.sh"
+              RemainAfterExit=yes
+              
+              [Install]
+              WantedBy=multi-user.target
+              EOF
+            `}
+        </CodeBlock>
+
+    </TabItem>
+
+    <TabItem value='Cloud-init'>
+
+        <h4>Systemd Unit ENV</h4>
+        <CodeBlock language="yaml">
+            {dedent`
+              - path: /etc/default/runc/download.env
+                owner: root:root
+                permissions: '0644'
+                content: |
+                  RUNC_VERSION="${COMPONENTS_VERSION.runc.value}"
+                  BASE_URL="${DOWNLOAD_VERSION.runc.baseUrl}"
+            `}
+        </CodeBlock>
+
+        <h4>Инструкция загрузки</h4>
+        <CodeBlock language="yaml">
+            {dedent`
+              - path: /etc/default/runc/download-script.sh
+                owner: root:root
+                permissions: '0755'
+                content: |
+                  #!/bin/bash
+                  set -Eeuo pipefail
+                  
+                  RUNC_VERSION="$\{RUNC_VERSION:-${COMPONENTS_VERSION.runc.value}}"
+                  BASE_URL="$\{BASE_URL:-https://github.com/opencontainers/runc/releases/download}"
+                  RUNC_URL="$\{BASE_URL}/${DOWNLOAD_VERSION.runc.templateUrlBin}"
+                  CHECKSUM_URL="$\{BASE_URL}/${DOWNLOAD_VERSION.runc.templateUrlBinCheckSum}"
+                  INSTALL_PATH="${DOWNLOAD_VERSION.runc.path}"
+                  
+                  LOG_TAG="runc-installer"
+                  TMP_DIR="$(mktemp -d)"
+                  
+                  logger -t "$LOG_TAG" "[INFO] Checking current runc version..."
+                  CURRENT_VERSION=$("$INSTALL_PATH" --version 2>/dev/null | head -n1 | awk '{print $NF}') || CURRENT_VERSION="none"
+                  
+                  logger -t "$LOG_TAG" "[INFO] Current: $CURRENT_VERSION, Target: $RUNC_VERSION"
+                  logger -t "$LOG_TAG" "[INFO] Download URL: $RUNC_URL"
+                  
+                  if [[ "$CURRENT_VERSION" != "$\{RUNC_VERSION#v}" ]]; then
+                    logger -t "$LOG_TAG" "[INFO] Updating runc to version $RUNC_VERSION..."
+                  
+                    cd "$TMP_DIR"
+                    logger -t "$LOG_TAG" "[INFO] Working directory: $PWD"
+                  
+                    logger -t "$LOG_TAG" "[INFO] Downloading runc..."
+                    curl -fsSL -o runc.amd64 "$RUNC_URL" || { logger -t "$LOG_TAG" "[ERROR] Failed to download runc"; exit 1; }
+                  
+                    logger -t "$LOG_TAG" "[INFO] Downloading checksum file..."
+                    curl -fsSL -o runc.sha256sum "$CHECKSUM_URL" || { logger -t "$LOG_TAG" "[ERROR] Failed to download checksum file"; exit 1; }
+                  
+                    logger -t "$LOG_TAG" "[INFO] Verifying checksum..."
+                    grep "runc.amd64" runc.sha256sum | sha256sum -c - || { logger -t "$LOG_TAG" "[ERROR] Checksum verification failed!"; exit 1; }
+                  
+                    logger -t "$LOG_TAG" "[INFO] Installing runc..."
+                    install -m 755 runc.amd64 "$INSTALL_PATH"
+                  
+                    logger -t "$LOG_TAG" "[INFO] runc successfully updated to $RUNC_VERSION."
+                    rm -rf "$TMP_DIR"
+                  else
+                    logger -t "$LOG_TAG" "[INFO] runc is already up to date. Skipping installation."
+                  fi
+            `}
+        </CodeBlock>
+
+
+        <h4>Systemd Unit Download</h4>
+        <CodeBlock language="yaml">
+            {dedent`   
+              - path: /usr/lib/systemd/system/runc-install.service
+                owner: root:root
+                permissions: '0644'
+                content: |
+                  [Unit]
+                  Description=Install and update b-cloud component runc
+                  After=network.target
+                  Wants=network-online.target
+                  
+                  [Service]
+                  Type=oneshot
+                  EnvironmentFile=-/etc/default/runc/download.env
+                  ExecStart=/bin/bash -c "/etc/default/runc/download-script.sh"
+                  RemainAfterExit=yes
+                  
+                  [Install]
+                  WantedBy=multi-user.target
+            `}
+        </CodeBlock>
+
+
+    </TabItem>
+
+</Tabs>

@@ -1,6 +1,8 @@
 export type TDownloadDefinitionItems = {
   path: string
-  templateUrl: string
+  templateUrlBin: string
+  templateUrlBinCheckSum: string
+  baseUrl: string
 }
 
 export type TDownloadItems = Record<string, TDownloadDefinitionItems>

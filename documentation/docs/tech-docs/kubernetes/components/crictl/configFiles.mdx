@@ -1,19 +1,117 @@
 import dedent                   from 'dedent'
 import CodeBlock                from '@theme/CodeBlock'
 import { CUSTOM_VALUE }         from '@site/src/constants/kubernetes/customValue'
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
 
-<h4>Переменные окружния</h4>
-<CodeBlock language="bash">
-    {dedent`
-        export CRI_ENDPOINT="${CUSTOM_VALUE.criEndpoint.value}"
-    `}
-</CodeBlock>
 
-<h4>Базовый конфигурационный файл</h4>
-<CodeBlock language="bash">
-    {dedent`
-        cat <<EOF > /etc/crictl.yaml
-        runtime-endpoint: unix://$\{CRI_ENDPOINT}
-        EOF
-    `}
-</CodeBlock>
+<Tabs groupId="install-type">
+
+    <TabItem value='Bash'>
+        <h4>Systemd Unit ENV</h4>
+        <CodeBlock language="bash">
+            {dedent`
+              cat <<"EOF" > /etc/default/crictl/config.env
+              CRI_ENDPOINT="${CUSTOM_VALUE.criEndpoint.value}"
+              EOF
+            `}
+        </CodeBlock>
+
+        <h4>Инструкция шаблонизации</h4>
+        <CodeBlock language="bash">
+            {dedent`
+              cat <<"EOF" > /etc/default/crictl/crictl.yaml.template.sh
+              #!/bin/bash
+              set -Eeuo pipefail
+              
+              export CRI_ENDPOINT="$\{CRI_ENDPOINT:-${CUSTOM_VALUE.criEndpoint.value}}"
+              
+              TEMPLATE_PATH="/etc/default/crictl/crictl.yaml.template"
+              CONFIG_PATH="/etc/crictl.yaml"
+              LOG_TAG="crictl-config"
+              
+              if [[ ! -f "$TEMPLATE_PATH" ]]; then
+                logger -t "$LOG_TAG" "[ERROR] Template file $TEMPLATE_PATH not found!"
+                exit 1
+              fi
+              
+              logger -t "$LOG_TAG" "[INFO] Generating crictl config..."
+              envsubst '$SANDBOX_IMAGE' < "$TEMPLATE_PATH" > "$CONFIG_PATH"
+              
+              if [[ -f "$CONFIG_PATH" && -s "$CONFIG_PATH" ]]; then
+                logger -t "$LOG_TAG" "[INFO] Configuration generated successfully at $CONFIG_PATH"
+              else
+                logger -t "$LOG_TAG" "[ERROR] Failed to generate configuration!"
+                exit 1
+              fi
+              EOF
+            `}
+        </CodeBlock>
+
+        <h4>Настройка прав</h4>
+        <CodeBlock language="bash">
+            {dedent`
+              chmod +x /etc/default/crictl/crictl.yaml.template.sh
+            `}
+        </CodeBlock>
+
+        <h4>Шаблон кастомного конфигурационно файла</h4>
+        <CodeBlock language="bash">
+            {dedent`
+              cat <<"EOF" > /etc/default/crictl/crictl.yaml.template
+              runtime-endpoint: unix://$\{CRI_ENDPOINT}
+              EOF
+            `}
+        </CodeBlock>
+
+        <h4>Systemd Unit Template</h4>
+        <CodeBlock language="bash">
+            {dedent`
+              cat <<"EOF" > /usr/lib/systemd/system/crictl-config-update.service
+              [Unit]
+              Description=Update crictl config
+              After=network.target
+              Wants=network-online.target
+              
+              [Service]
+              Type=oneshot
+              EnvironmentFile=-/etc/default/crictl/config.env
+              ExecStart=/bin/bash /etc/default/crictl/crictl.yaml.template.sh
+              RemainAfterExit=yes
+              
+              [Install]
+              WantedBy=multi-user.target
+              EOF
+            `}
+        </CodeBlock>
+    </TabItem>
+
+    <TabItem value='Cloud-init'>
+        <h4>Systemd Unit ENV</h4>
+        <CodeBlock language="yaml">
+            {dedent`
+            `}
+        </CodeBlock>
+
+        <h4>Инструкция шаблонизации</h4>
+        <CodeBlock language="yaml">
+            {dedent`
+            `}
+        </CodeBlock>
+
+        <h4>Шаблон кастомного конфигурационно файла</h4>
+        <CodeBlock language="yaml">
+            `}
+        </CodeBlock>
+
+        <h4>Systemd Unit Template</h4>
+        <CodeBlock language="yaml">
+            {dedent`
+            `}
+        </CodeBlock>
+
+
+    </TabItem>
+
+</Tabs>
+
