@@ -75,7 +75,7 @@ export const KUBE_API_ARGS: TCustomValueItems = {
     value: 'true',
   },
   enableAdmissionPlugins: {
-    value: '"NamespaceLifecycle,LimitRanger,ServiceAccount,DefaultStorageClass,DefaultTolerationSeconds,MutatingAdmissionWebhook,ValidatingAdmissionWebhook,ResourceQuota,AlwaysPullImages,NodeRestriction,PodSecurity"',
+    value: 'NamespaceLifecycle,LimitRanger,ServiceAccount,DefaultStorageClass,DefaultTolerationSeconds,MutatingAdmissionWebhook,ValidatingAdmissionWebhook,ResourceQuota,AlwaysPullImages,NodeRestriction,PodSecurity',
   },
   enableBootstrapTokenAuth: {
     value: 'true',

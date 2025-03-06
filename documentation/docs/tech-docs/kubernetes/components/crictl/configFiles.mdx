@@ -36,7 +36,7 @@ import Tabs from '@theme/Tabs'
               fi
               
               logger -t "$LOG_TAG" "[INFO] Generating crictl config..."
-              envsubst '$SANDBOX_IMAGE' < "$TEMPLATE_PATH" > "$CONFIG_PATH"
+              envsubst '$CRI_ENDPOINT' < "$TEMPLATE_PATH" > "$CONFIG_PATH"
               
               if [[ -f "$CONFIG_PATH" && -s "$CONFIG_PATH" ]]; then
                 logger -t "$LOG_TAG" "[INFO] Configuration generated successfully at $CONFIG_PATH"

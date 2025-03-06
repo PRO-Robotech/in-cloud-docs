@@ -8,6 +8,15 @@ import Tabs from '@theme/Tabs'
 <Tabs groupId="install-type">
 
     <TabItem value='Bash'>
+        <h4>Создание рабочих директорий</h4>
+        <CodeBlock language="bash">
+            {dedent`
+              mkdir -p /etc/containerd/
+              mkdir -p /etc/containerd/conf.d
+              mkdir -p /etc/containerd/certs.d
+            `}
+        </CodeBlock>
+
         <h4>Systemd Unit ENV</h4>
         <CodeBlock language="bash">
             {dedent`
