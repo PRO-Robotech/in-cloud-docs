@@ -1,4 +1,4 @@
-import dedent                   from 'dedent'
+import dedent                   from 'ts-dedent'
 import CodeBlock                from '@theme/CodeBlock'
 
 import { DOWNLOAD_VERSION }     from '@site/src/constants/kubernetes/downloads'
@@ -15,7 +15,7 @@ import Tabs from '@theme/Tabs'
               mkdir -p /etc/default/kubeadm
             `}
         </CodeBlock>
-        
+
         <h4>Systemd Unit ENV</h4>
         <CodeBlock language="bash">
             {dedent`
@@ -32,40 +32,40 @@ import Tabs from '@theme/Tabs'
             cat <<"EOF" > /etc/default/kubeadm/download-script.sh
             #!/bin/bash
             set -Eeuo pipefail
-          
+
             KUBERNETES_VERSION="$\{KUBERNETES_VERSION:-${COMPONENTS_VERSION.kubernetes.value}}"
             BASE_URL="$\{BASE_URL:-${DOWNLOAD_VERSION.kubeadm.baseUrl}}"
             kUBEADM_URL="$\{BASE_URL}/${DOWNLOAD_VERSION.kubeadm.templateUrlBin}"
             CHECKSUM_URL="$\{BASE_URL}/${DOWNLOAD_VERSION.kubeadm.templateUrlBinCheckSum}"
             INSTALL_PATH="${DOWNLOAD_VERSION.kubeadm.path}"
-          
+
             LOG_TAG="kubeadm-installer"
             TMP_DIR="$(mktemp -d)"
-          
+
             logger -t "$LOG_TAG" "[INFO] Checking current kubeadm version..."
             CURRENT_VERSION=$(kubeadm version --client --short 2>/dev/null | awk '{print $3}' | sed 's/v//') || CURRENT_VERSION="none"
-          
+
             logger -t "$LOG_TAG" "[INFO] Current: $CURRENT_VERSION, Target: $KUBERNETES_VERSION"
             logger -t "$LOG_TAG" "[INFO] Download URL: $kUBEADM_URL"
-          
+
             if [[ "$CURRENT_VERSION" != "$KUBERNETES_VERSION" ]]; then
               logger -t "$LOG_TAG" "[INFO] Updating kubeadm to version $KUBERNETES_VERSION..."
-          
+
               cd "$TMP_DIR"
               logger -t "$LOG_TAG" "[INFO] Working directory: $PWD"
-          
+
               logger -t "$LOG_TAG" "[INFO] Downloading kubeadm..."
               curl -fsSL -o kubeadm "$kUBEADM_URL" || { logger -t "$LOG_TAG" "[ERROR] Failed to download kubeadm"; exit 1; }
-          
+
               logger -t "$LOG_TAG" "[INFO] Downloading checksum file..."
               curl -fsSL -o kubeadm.sha256sum "$CHECKSUM_URL" || { logger -t "$LOG_TAG" "[ERROR] Failed to download checksum file"; exit 1; }
-          
+
               logger -t "$LOG_TAG" "[INFO] Verifying checksum..."
               awk '{print $1"  kubeadm"}' kubeadm.sha256sum | sha256sum -c - || { logger -t "$LOG_TAG" "[ERROR] Checksum verification failed!"; exit 1; }
-          
+
               logger -t "$LOG_TAG" "[INFO] Installing kubeadm..."
               install -m 755 kubeadm "$INSTALL_PATH"
-          
+
               logger -t "$LOG_TAG" "[INFO] kubeadm successfully updated to $KUBERNETES_VERSION."
               rm -rf "$TMP_DIR"
             else
@@ -90,13 +90,13 @@ import Tabs from '@theme/Tabs'
             Description=Install and update kubeadm
             After=network.target
             Wants=network-online.target
-            
+
             [Service]
             Type=oneshot
             EnvironmentFile=-/etc/default/kubeadm/download.env
             ExecStart=/bin/bash -c "/etc/default/kubeadm/download-script.sh"
             RemainAfterExit=yes
-            
+
             [Install]
             WantedBy=multi-user.target
             EOF
@@ -128,41 +128,41 @@ import Tabs from '@theme/Tabs'
               content: |
                 #!/bin/bash
                 set -Eeuo pipefail
-                
+
                 KUBERNETES_VERSION="$\{KUBERNETES_VERSION:-${COMPONENTS_VERSION.kubernetes.value}}"
                 BASE_URL="$\{BASE_URL:-${DOWNLOAD_VERSION.kubeadm.baseUrl}}"
                 kUBEADM_URL="$\{BASE_URL}/${DOWNLOAD_VERSION.kubeadm.templateUrlBin}"
                 CHECKSUM_URL="$\{BASE_URL}/${DOWNLOAD_VERSION.kubeadm.templateUrlBinCheckSum}"
                 INSTALL_PATH="${DOWNLOAD_VERSION.kubeadm.path}"
-                
+
                 LOG_TAG="kubeadm-installer"
                 TMP_DIR="$(mktemp -d)"
-                
+
                 logger -t "$LOG_TAG" "[INFO] Checking current kubeadm version..."
-                
+
                 CURRENT_VERSION=$(kubeadm version --client --short 2>/dev/null | awk '{print $3}' | sed 's/v//') || CURRENT_VERSION="none"
-                
+
                 logger -t "$LOG_TAG" "[INFO] Current: $CURRENT_VERSION, Target: $KUBERNETES_VERSION"
                 logger -t "$LOG_TAG" "[INFO] Download URL: $kUBEADM_URL"
-                
+
                 if [[ "$CURRENT_VERSION" != "$KUBERNETES_VERSION" ]]; then
                   logger -t "$LOG_TAG" "[INFO] Updating kubeadm to version $KUBERNETES_VERSION..."
-                  
+
                   cd "$TMP_DIR"
                   logger -t "$LOG_TAG" "[INFO] Working directory: $PWD"
-                  
+
                   logger -t "$LOG_TAG" "[INFO] Downloading kubeadm..."
                   curl -fsSL -o kubeadm "$kUBEADM_URL" || { logger -t "$LOG_TAG" "[ERROR] Failed to download kubeadm"; exit 1; }
-                  
+
                   logger -t "$LOG_TAG" "[INFO] Downloading checksum file..."
                   curl -fsSL -o kubeadm.sha256sum "$CHECKSUM_URL" || { logger -t "$LOG_TAG" "[ERROR] Failed to download checksum file"; exit 1; }
-                  
+
                   logger -t "$LOG_TAG" "[INFO] Verifying checksum..."
                   awk '{print $1"  kubeadm"}' kubeadm.sha256sum | sha256sum -c - || { logger -t "$LOG_TAG" "[ERROR] Checksum verification failed!"; exit 1; }
-                  
+
                   logger -t "$LOG_TAG" "[INFO] Installing kubeadm..."
                   install -m 755 kubeadm "$INSTALL_PATH"
-                  
+
                   logger -t "$LOG_TAG" "[INFO] kubeadm successfully updated to $KUBERNETES_VERSION."
                   rm -rf "$TMP_DIR"
                 else
@@ -182,13 +182,13 @@ import Tabs from '@theme/Tabs'
                 Description=Install and update kubeadm
                 After=network.target
                 Wants=network-online.target
-                
+
                 [Service]
                 Type=oneshot
                 EnvironmentFile=-/etc/default/kubeadm/download.env
                 ExecStart=/bin/bash -c "/etc/default/kubeadm/download-script.sh"
                 RemainAfterExit=yes
-                
+
                 [Install]
                 WantedBy=multi-user.target
           `}

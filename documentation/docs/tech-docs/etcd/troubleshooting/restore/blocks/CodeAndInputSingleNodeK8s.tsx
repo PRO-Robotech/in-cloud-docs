@@ -1,7 +1,7 @@
 import React, { createContext, FC, useState, ReactNode, useContext }  from 'react'
 import { Flex, Input }                                                from 'antd'
 import CodeBlock                                                      from '@theme/CodeBlock'
-import dedent                                                         from 'dedent'
+import dedent                                                         from 'ts-dedent'
 import { CERTIFICATES }                                               from '@site/src/constants/kubernetes/certs'
 import { PORTS }                                                      from '@site/src/constants/kubernetes/ports'
 import { ETCD_ARGS }                                                  from '@site/src/constants/kubernetes/etcdArgs'

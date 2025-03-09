@@ -1,7 +1,7 @@
 import React, { FC, useState } from 'react'
 import { Flex, Input } from 'antd'
 import CodeBlock from '@theme/CodeBlock'
-import dedent from 'dedent'
+import dedent from 'ts-dedent'
 
 export const CodeAndInputDownloadCreds: FC = () => {
   const [searchNamespace, setSearchNamespace] = useState<string>()

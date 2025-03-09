@@ -1,4 +1,4 @@
-import dedent                   from 'dedent'
+import dedent                   from 'ts-dedent'
 import CodeBlock                from '@theme/CodeBlock'
 import { CUSTOM_VALUE }         from '@site/src/constants/kubernetes/customValue'
 import TabItem from '@theme/TabItem'
@@ -88,29 +88,83 @@ import Tabs from '@theme/Tabs'
 
     <TabItem value='Cloud-init'>
         <h4>Systemd Unit ENV</h4>
-        <CodeBlock language="yaml">
+        <CodeBlock language="bash">
             {dedent`
+              - path: /etc/default/crictl/config.env
+                owner: root:root
+                permissions: '0644'
+                content: |
+                  CRI_ENDPOINT="${CUSTOM_VALUE.criEndpoint.value}"
             `}
         </CodeBlock>
 
         <h4>Инструкция шаблонизации</h4>
-        <CodeBlock language="yaml">
+        <CodeBlock language="bash">
             {dedent`
+              - path: /etc/default/crictl/crictl.yaml.template.sh
+                owner: root:root
+                permissions: '0755'
+                content: |
+                  #!/bin/bash
+                  set -Eeuo pipefail
+                  
+                  export CRI_ENDPOINT="$\{CRI_ENDPOINT:-${CUSTOM_VALUE.criEndpoint.value}}"
+                  
+                  TEMPLATE_PATH="/etc/default/crictl/crictl.yaml.template"
+                  CONFIG_PATH="/etc/crictl.yaml"
+                  LOG_TAG="crictl-config"
+                  
+                  if [[ ! -f "$TEMPLATE_PATH" ]]; then
+                    logger -t "$LOG_TAG" "[ERROR] Template file $TEMPLATE_PATH not found!"
+                    exit 1
+                  fi
+                  
+                  logger -t "$LOG_TAG" "[INFO] Generating crictl config..."
+                  envsubst '$CRI_ENDPOINT' < "$TEMPLATE_PATH" > "$CONFIG_PATH"
+                  
+                  if [[ -f "$CONFIG_PATH" && -s "$CONFIG_PATH" ]]; then
+                    logger -t "$LOG_TAG" "[INFO] Configuration generated successfully at $CONFIG_PATH"
+                  else
+                    logger -t "$LOG_TAG" "[ERROR] Failed to generate configuration!"
+                    exit 1
+                  fi
             `}
         </CodeBlock>
 
+
         <h4>Шаблон кастомного конфигурационно файла</h4>
-        <CodeBlock language="yaml">
+        <CodeBlock language="bash">
+            {dedent`
+              - path: /etc/default/crictl/crictl.yaml.template
+                owner: root:root
+                permissions: '0644'
+                content: |
+                  runtime-endpoint: unix://$\{CRI_ENDPOINT}
             `}
         </CodeBlock>
 
         <h4>Systemd Unit Template</h4>
-        <CodeBlock language="yaml">
+        <CodeBlock language="bash">
             {dedent`
+              - path: /usr/lib/systemd/system/crictl-config-update.service
+                owner: root:root
+                permissions: '0644'
+                content: |
+                  [Unit]
+                  Description=Update crictl config
+                  After=network.target
+                  Wants=network-online.target
+                  
+                  [Service]
+                  Type=oneshot
+                  EnvironmentFile=-/etc/default/crictl/config.env
+                  ExecStart=/bin/bash /etc/default/crictl/crictl.yaml.template.sh
+                  RemainAfterExit=yes
+                  
+                  [Install]
+                  WantedBy=multi-user.target
             `}
         </CodeBlock>
-
-
     </TabItem>
 
 </Tabs>

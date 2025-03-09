@@ -31,7 +31,7 @@ export const etcd = [
             label: '5.1.1.3.1. Etcd',
             id: 'tech-docs/etcd/components/etcd/check',
           },
-        ]
+        ],
       },
     ],
   },
@@ -72,7 +72,7 @@ export const etcd = [
         label: '5.1.3.3. Удаление узла',
         id: 'tech-docs/etcd/components/etcd/remove-members',
       },
-    ]
+    ],
   },
   {
     type: 'doc',

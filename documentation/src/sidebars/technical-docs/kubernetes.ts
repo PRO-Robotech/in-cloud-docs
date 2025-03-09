@@ -86,7 +86,7 @@ export const kubernetes = [
               {
                 type: 'category',
                 label: '5.2.1.3.5.1. Init',
-                
+
                 collapsed: true,
                 link: {
                   type: 'doc',
@@ -114,7 +114,7 @@ export const kubernetes = [
                     label: '5.2.1.3.5.1.4. ETCD',
                     id: 'tech-docs/kubernetes/components/etcd/etcd-settings',
                   },
-                ]
+                ],
               },
               {
                 type: 'doc',
@@ -122,7 +122,7 @@ export const kubernetes = [
                 // title: '5.2.1.3.5.1. Join',
                 id: 'tech-docs/kubernetes/k8s-join-manifests',
               },
-            ]
+            ],
           },
         ],
       },
@@ -190,8 +190,8 @@ export const kubernetes = [
                 label: '5.2.1.4.7.4. ETCD',
                 id: 'tech-docs/kubernetes/components/etcd/component-ready',
               },
-            ]
-          }
+            ],
+          },
         ],
       },
     ],
@@ -215,7 +215,7 @@ export const kubernetes = [
             label: '5.2.2.0.2. Join',
             id: 'tech-docs/kubernetes/certificates/join-all',
           },
-        ]
+        ],
       },
       {
         type: 'category',
@@ -231,7 +231,7 @@ export const kubernetes = [
             label: '5.2.2.1.2. Join',
             id: 'tech-docs/kubernetes/certificates/centerAuthority/join-ca',
           },
-        ]
+        ],
       },
       {
         type: 'category',
@@ -248,7 +248,7 @@ export const kubernetes = [
             label: '5.2.2.2.2. Join',
             id: 'tech-docs/kubernetes/certificates/components/join-certificates',
           },
-        ]
+        ],
       },
       {
         type: 'category',
@@ -260,7 +260,7 @@ export const kubernetes = [
             label: '5.2.2.3.1. Init',
             id: 'tech-docs/kubernetes/certificates/service-account',
           },
-        ]
+        ],
       },
       {
         type: 'doc',
@@ -288,7 +288,7 @@ export const kubernetes = [
             label: '5.2.3.1.1. Kubelet',
             id: 'tech-docs/kubernetes/components/kubelet/kubelet-init-start',
           },
-        ]
+        ],
       },
       {
         type: 'category',
@@ -309,7 +309,7 @@ export const kubernetes = [
             label: '5.2.3.2.2. ETCD',
             id: 'tech-docs/kubernetes/etcd-join',
           },
-        ]
+        ],
       },
     ],
   },
@@ -337,7 +337,7 @@ export const kubernetes = [
                 label: '5.2.4.1.1.2. Join',
                 id: 'tech-docs/kubernetes/additionalSetup/marking-join',
               },
-            ]
+            ],
           },
           {
             type: 'doc',
@@ -359,15 +359,14 @@ export const kubernetes = [
                 label: '5.2.4.1.3.2. Join',
                 id: 'tech-docs/kubernetes/additionalSetup/upload-configs-all-join',
               },
-            ]
+            ],
           },
           {
             type: 'doc',
             label: '5.2.4.1.4. Загрузка ЦА',
             id: 'tech-docs/kubernetes/additionalSetup/upload-ca',
           },
-        ]
-        
+        ],
       },
     ],
   },

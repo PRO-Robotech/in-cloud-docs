@@ -1,7 +1,7 @@
 import React, { FC, useState }    from 'react'
 import { Flex, Input, Alert }     from 'antd'
 import CodeBlock                  from '@theme/CodeBlock'
-import dedent                     from 'dedent'
+import dedent                     from 'ts-dedent'
 import { CERTIFICATES }           from '@site/src/constants/kubernetes/certs'
 import { PORTS }                  from '@site/src/constants/kubernetes/ports'
 import { CUSTOM_VALUE }           from '@site/src/constants/kubernetes/customValue'

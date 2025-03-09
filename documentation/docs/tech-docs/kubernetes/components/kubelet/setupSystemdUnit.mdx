@@ -1,4 +1,4 @@
-import dedent                   from 'dedent'
+import dedent                   from 'ts-dedent'
 import CodeBlock                from '@theme/CodeBlock'
 import { PORTS }                from '@site/src/constants/kubernetes/ports'
 import { CUSTOM_VALUE }         from '@site/src/constants/kubernetes/customValue'
@@ -64,13 +64,23 @@ import DIR from '@site/docs/tech-docs/kubernetes/components/kubelet/dir.mdx'
         <h4>Systemd Unit Custom ENV</h4>
         :::info Внимание
         Данный блок конфигурации применим **только** при установке Kubernetes вручную (методом _«Kubernetes the Hard Way»_). При использовании утилиты **kubeadm** конфигурационный файл будет создан автоматически на основе спецификации, указанной в файле `kubeadm-config`.
+        
+        <h4>Переменные окружения</h4>
+        <CodeBlock language="bash">
+            {dedent`
+                export CLUSTER_NAME="${CUSTOM_VALUE.clusterName.value}"
+                export BASE_DOMAIN="${CUSTOM_VALUE.kubernetesBaseDomain.value}"
+            `}
+        </CodeBlock>
         <CodeBlock language="bash">
             {dedent`
                 cat <<EOF > ${CUSTOM_VALUE.kuberneteKubeletFolderPath.value}/kubeadm-flags.env
                 KUBELET_KUBEADM_ARGS="
                 --container-runtime-endpoint=unix://${CUSTOM_VALUE.criEndpoint.value} \
                 --pod-infra-container-image=${CUSTOM_VALUE.baseDockerRegistry.value}/${CUSTOM_VALUE.pausedImage.value} \
-                --config=${CUSTOM_VALUE.kuberneteKubeletFolderPath.value}/custom-config.yaml
+                --config=${CUSTOM_VALUE.kuberneteKubeletFolderPath.value}/custom-config.yaml \
+                --cluster-domain=${CUSTOM_VALUE.kubernetesClusterDomain.value} \
+                --cluster-dns=${CUSTOM_VALUE.kubernetesDNSAddress.value}
                 "
                 EOF
             `}
@@ -111,13 +121,17 @@ import DIR from '@site/docs/tech-docs/kubernetes/components/kubelet/dir.mdx'
               owner: root:root
               permissions: '0644'
               content: |
+                # Note: This dropin only works with kubeadm and kubelet v1.11+
                 [Service]
-                Environment="KUBELET_KUBECONFIG_ARGS=--bootstrap-kubeconfig=/etc/kubernetes/bootstrap-kubelet.conf --kubeconfig=/etc/kubernetes/kubelet.conf"
-                Environment="KUBELET_CONFIG_ARGS=--config=/var/lib/kubelet/config.yaml"
-                EnvironmentFile=-/var/lib/kubelet/kubeadm-flags.env
+                Environment="KUBELET_KUBECONFIG_ARGS=--bootstrap-kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/bootstrap-kubelet.conf --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/kubelet.conf"
+                Environment="KUBELET_CONFIG_ARGS=--config=${CUSTOM_VALUE.kuberneteKubeletFolderPath.value}/config.yaml"
+                # This is a file that "kubeadm init" and "kubeadm join" generates at runtime, populating the KUBELET_KUBEADM_ARGS variable dynamically
+                EnvironmentFile=-${CUSTOM_VALUE.kuberneteKubeletFolderPath.value}/kubeadm-flags.env
+                # This is a file that the user can use for overrides of the kubelet args as a last resort. Preferably, the user should use
+                # the .NodeRegistration.KubeletExtraArgs object in the configuration files instead. KUBELET_EXTRA_ARGS should be sourced from this file.
                 EnvironmentFile=-/etc/default/kubelet/extra-args.env
                 ExecStart=
-                ExecStart=/usr/local/bin/kubelet
+                ExecStart=/usr/local/bin/kubelet $KUBELET_KUBECONFIG_ARGS $KUBELET_CONFIG_ARGS $KUBELET_KUBEADM_ARG $KUBELET_EXTRA_ARGS
           `}
         </CodeBlock>
 

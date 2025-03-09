@@ -3,16 +3,16 @@ id: ThreeNodeK8s
 ---
 
 import CodeBlock                  from '@theme/CodeBlock'
-import dedent                     from 'dedent'
+import dedent                     from 'ts-dedent'
 import { CUSTOM_VALUE }           from '@site/src/constants/kubernetes/customValue'
 import TabItem                    from '@theme/TabItem'
 import Tabs                       from '@theme/Tabs'
 import { ETCD_ARGS }              from '@site/src/constants/kubernetes/etcdArgs'
 import { CodeAndInputExportPods } from '@site/src/components/commonBlocks'
-import { ThreeNodeFunctionsK8s }  from './blocks'
 
 import { CERTIFICATES }         from '@site/src/constants/kubernetes/certs'
 import { PORTS }                from '@site/src/constants/kubernetes/ports'
+import { ThreeNodeFunctionsK8s }  from './blocks'
 
 export const ETCD_endpoints           = 'https://10.10.10.3:2379,https://10.10.10.4:2379,https://10.10.10.5:2379'
 export const ETCD_endpoint_1          = 'https://10.10.10.3:2379'

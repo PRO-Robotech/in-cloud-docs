@@ -1,5 +1,8 @@
 /* eslint-disable no-template-curly-in-string */
-import dedent from 'dedent'
+import dedent from 'ts-dedent'
+import { CERTIFICATES } from '@site/src/constants/kubernetes/certs'
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+import { PORTS } from '@site/src/constants/kubernetes/ports'
 import { TCustomValueItems } from '../../customTypes/customValue'
 
 export const KUBELET_COFNIG_DATA: TCustomValueItems = {
@@ -13,26 +16,30 @@ export const KUBELET_COFNIG_DATA: TCustomValueItems = {
             cacheTTL: 0s
             enabled: true
         x509:
-          clientCAFile: $\{KUBERNETES_CA_CRT_PATH}
+          clientCAFile: "${CERTIFICATES.kubernetesCA.crtPath}"
       authorization:
         mode: Webhook
         webhook:
           cacheAuthorizedTTL: 0s
           cacheUnauthorizedTTL: 0s
       cgroupDriver: systemd
-      clusterDNS:
-      - $\{SERVICE_DNS}
-      clusterDomain: $\{CLUSTER_DOMAIN}
+      # Для того, что бы сделать эту часть конфигурации статичной
+      # все динамичные части будут определены через переменные окружения 
+      # systemd Unit kubelet
+      # >>>>>>
+      # clusterDNS:
+      # - "${CUSTOM_VALUE.kubernetesDNSAddress.value}"
+      # clusterDomain: cluster.local
       # TODO нужны только при hardway
-      # tlsCertFile: "$\{KUBELET_CURRENT_SERVER_CRT_PATH}"
-      # tlsPrivateKeyFile: "$\{KUBELET_CURRENT_SERVER_CRT_PATH}"
+      # tlsCertFile: "${CERTIFICATES.kubeletCurrentServer.crtPath}"
+      # tlsPrivateKeyFile: "${CERTIFICATES.kubeletCurrentServer.crtPath}"
       containerLogMaxSize: "50Mi"
-      containerRuntimeEndpoint: ""
+      containerRuntimeEndpoint: "${CUSTOM_VALUE.criEndpoint.value}"
       cpuManagerReconcilePeriod: 0s
       evictionPressureTransitionPeriod: 5s
       fileCheckFrequency: 0s
       healthzBindAddress: 127.0.0.1
-      healthzPort: $\{KUBELET_HEALTHZ_PORT}
+      healthzPort: ${PORTS.kubeletHealthz.portNumber}
       httpCheckFrequency: 0s
       imageGCHighThresholdPercent: 55
       imageGCLowThresholdPercent: 50
@@ -62,7 +69,7 @@ export const KUBELET_COFNIG_DATA: TCustomValueItems = {
       serverTLSBootstrap: true
       shutdownGracePeriod: 15s
       shutdownGracePeriodCriticalPods: 5s
-      staticPodPath: $\{BASE_K8S_PATH}/manifests
+      staticPodPath: ${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/manifests
       streamingConnectionIdleTimeout: 0s
       syncFrequency: 0s
       tlsMinVersion: "VersionTLS12"
@@ -78,5 +85,5 @@ export const KUBELET_COFNIG_DATA: TCustomValueItems = {
         - "TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256"
         - "TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256"
     `,
-  }
+  },
 }
