@@ -12,13 +12,13 @@ import Tabs from '@theme/Tabs'
                 [Unit]
                 Description=containerd container runtime
                 Documentation=https://containerd.io
-                After=network.target local-fs.target
-                Requires=containerd-install.service containerd-config-update.service runc-install.service
-                
+                After=network.target local-fs.target containerd-install.service runc-install.service
+                Wants=containerd-install.service runc-install.service
+
                 [Service]
                 ExecStartPre=-/sbin/modprobe overlay
                 ExecStart=/usr/local/bin/containerd
-                
+
                 Type=notify
                 Delegate=yes
                 KillMode=process
@@ -29,7 +29,7 @@ import Tabs from '@theme/Tabs'
                 LimitNOFILE=infinity
                 TasksMax=infinity
                 OOMScoreAdjust=-999
-                
+
                 [Install]
                 WantedBy=multi-user.target
                 EOF
@@ -49,13 +49,13 @@ import Tabs from '@theme/Tabs'
                   [Unit]
                   Description=containerd container runtime
                   Documentation=https://containerd.io
-                  After=network.target local-fs.target
-                  Requires=containerd-install.service containerd-config-update.service runc-install.service
-              
+                  After=network.target local-fs.target containerd-install.service runc-install.service
+                  Wants=containerd-install.service runc-install.service
+
                   [Service]
                   ExecStartPre=-/sbin/modprobe overlay
                   ExecStart=/usr/local/bin/containerd
-                  
+
                   Type=notify
                   Delegate=yes
                   KillMode=process
@@ -66,7 +66,7 @@ import Tabs from '@theme/Tabs'
                   LimitNOFILE=infinity
                   TasksMax=infinity
                   OOMScoreAdjust=-999
-                  
+
                   [Install]
                   WantedBy=multi-user.target
             `}

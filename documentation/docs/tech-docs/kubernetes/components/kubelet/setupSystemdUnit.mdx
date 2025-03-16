@@ -18,21 +18,21 @@ import DIR from '@site/docs/tech-docs/kubernetes/components/kubelet/dir.mdx'
               [Unit]
               Description=kubelet: The Kubernetes Node Agent
               Documentation=https://kubernetes.io/docs/
-              Wants=network-online.target
-              After=network-online.target
-              
+              Wants=network-online.target containerd.service
+              After=network-online.target containerd.service
+
               [Service]
               ExecStart=/usr/bin/kubelet
               Restart=always
               StartLimitInterval=0
               RestartSec=10
-              
+
               [Install]
               WantedBy=multi-user.target
               EOF
             `}
         </CodeBlock>
-        
+
         <h4>Systemd Unit Config</h4>
         <CodeBlock language="bash">
             {dedent`
@@ -64,14 +64,8 @@ import DIR from '@site/docs/tech-docs/kubernetes/components/kubelet/dir.mdx'
         <h4>Systemd Unit Custom ENV</h4>
         :::info Внимание
         Данный блок конфигурации применим **только** при установке Kubernetes вручную (методом _«Kubernetes the Hard Way»_). При использовании утилиты **kubeadm** конфигурационный файл будет создан автоматически на основе спецификации, указанной в файле `kubeadm-config`.
-        
+
         <h4>Переменные окружения</h4>
-        <CodeBlock language="bash">
-            {dedent`
-                export CLUSTER_NAME="${CUSTOM_VALUE.clusterName.value}"
-                export BASE_DOMAIN="${CUSTOM_VALUE.kubernetesBaseDomain.value}"
-            `}
-        </CodeBlock>
         <CodeBlock language="bash">
             {dedent`
                 cat <<EOF > ${CUSTOM_VALUE.kuberneteKubeletFolderPath.value}/kubeadm-flags.env
@@ -100,15 +94,15 @@ import DIR from '@site/docs/tech-docs/kubernetes/components/kubelet/dir.mdx'
                 [Unit]
                 Description=kubelet: The Kubernetes Node Agent
                 Documentation=https://kubernetes.io/docs/
-                Wants=network-online.target
-                After=network-online.target
-            
+                Wants=network-online.target containerd.service
+                After=network-online.target containerd.service
+
                 [Service]
                 ExecStart=/usr/bin/kubelet
                 Restart=always
                 StartLimitInterval=0
                 RestartSec=10
-            
+
                 [Install]
                 WantedBy=multi-user.target
           `}

@@ -80,7 +80,7 @@ export const kubernetes = [
           },
           {
             type: 'category',
-            label: '5.2.1.3.5. УП',
+            label: '5.2.1.3.5. УК',
             collapsed: true,
             items: [
               {
@@ -163,7 +163,7 @@ export const kubernetes = [
           },
           {
             type: 'category',
-            label: '5.2.1.4.7. УП',
+            label: '5.2.1.4.7. УК',
             collapsed: true,
             link: {
               type: 'doc',

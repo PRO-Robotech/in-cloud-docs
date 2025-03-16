@@ -1,6 +1,8 @@
 import dedent                   from 'ts-dedent'
 import CodeBlock                from '@theme/CodeBlock'
 
+import { KUBEADM_DOWNLOAD_SCRIPT }     from '@site/docs/tech-docs/kubernetes/components/kubeadm/scripts/download-script.sh'
+
 import { DOWNLOAD_VERSION }     from '@site/src/constants/kubernetes/downloads'
 import { COMPONENTS_VERSION }   from '@site/src/constants/kubernetes/componentsVersion'
 import TabItem from '@theme/TabItem'
@@ -20,8 +22,8 @@ import Tabs from '@theme/Tabs'
         <CodeBlock language="bash">
             {dedent`
               cat <<EOF > /etc/default/kubeadm/download.env
-              KUBERNETES_VERSION="${COMPONENTS_VERSION.kubernetes.value}"
-              BASE_URL="${DOWNLOAD_VERSION.kubeadm.baseUrl}"
+              COMPONENT_VERSION="${COMPONENTS_VERSION.kubernetes.value}"
+              REPOSITORY="${DOWNLOAD_VERSION.kubeadm.baseUrl}"
               EOF
             `}
         </CodeBlock>
@@ -30,47 +32,7 @@ import Tabs from '@theme/Tabs'
         <CodeBlock language="bash">
           {dedent`
             cat <<"EOF" > /etc/default/kubeadm/download-script.sh
-            #!/bin/bash
-            set -Eeuo pipefail
-
-            KUBERNETES_VERSION="$\{KUBERNETES_VERSION:-${COMPONENTS_VERSION.kubernetes.value}}"
-            BASE_URL="$\{BASE_URL:-${DOWNLOAD_VERSION.kubeadm.baseUrl}}"
-            kUBEADM_URL="$\{BASE_URL}/${DOWNLOAD_VERSION.kubeadm.templateUrlBin}"
-            CHECKSUM_URL="$\{BASE_URL}/${DOWNLOAD_VERSION.kubeadm.templateUrlBinCheckSum}"
-            INSTALL_PATH="${DOWNLOAD_VERSION.kubeadm.path}"
-
-            LOG_TAG="kubeadm-installer"
-            TMP_DIR="$(mktemp -d)"
-
-            logger -t "$LOG_TAG" "[INFO] Checking current kubeadm version..."
-            CURRENT_VERSION=$(kubeadm version --client --short 2>/dev/null | awk '{print $3}' | sed 's/v//') || CURRENT_VERSION="none"
-
-            logger -t "$LOG_TAG" "[INFO] Current: $CURRENT_VERSION, Target: $KUBERNETES_VERSION"
-            logger -t "$LOG_TAG" "[INFO] Download URL: $kUBEADM_URL"
-
-            if [[ "$CURRENT_VERSION" != "$KUBERNETES_VERSION" ]]; then
-              logger -t "$LOG_TAG" "[INFO] Updating kubeadm to version $KUBERNETES_VERSION..."
-
-              cd "$TMP_DIR"
-              logger -t "$LOG_TAG" "[INFO] Working directory: $PWD"
-
-              logger -t "$LOG_TAG" "[INFO] Downloading kubeadm..."
-              curl -fsSL -o kubeadm "$kUBEADM_URL" || { logger -t "$LOG_TAG" "[ERROR] Failed to download kubeadm"; exit 1; }
-
-              logger -t "$LOG_TAG" "[INFO] Downloading checksum file..."
-              curl -fsSL -o kubeadm.sha256sum "$CHECKSUM_URL" || { logger -t "$LOG_TAG" "[ERROR] Failed to download checksum file"; exit 1; }
-
-              logger -t "$LOG_TAG" "[INFO] Verifying checksum..."
-              awk '{print $1"  kubeadm"}' kubeadm.sha256sum | sha256sum -c - || { logger -t "$LOG_TAG" "[ERROR] Checksum verification failed!"; exit 1; }
-
-              logger -t "$LOG_TAG" "[INFO] Installing kubeadm..."
-              install -m 755 kubeadm "$INSTALL_PATH"
-
-              logger -t "$LOG_TAG" "[INFO] kubeadm successfully updated to $KUBERNETES_VERSION."
-              rm -rf "$TMP_DIR"
-            else
-              logger -t "$LOG_TAG" "[INFO] kubeadm is already up to date. Skipping installation."
-            fi
+            ${KUBEADM_DOWNLOAD_SCRIPT.data.value}
             EOF
           `}
         </CodeBlock>
@@ -114,8 +76,8 @@ import Tabs from '@theme/Tabs'
               owner: root:root
               permissions: '0644'
               content: |
-                KUBERNETES_VERSION="${COMPONENTS_VERSION.kubernetes.value}"
-                BASE_URL="${DOWNLOAD_VERSION.kubeadm.baseUrl}"
+                COMPONENT_VERSION="${COMPONENTS_VERSION.kubernetes.value}"
+                REPOSITORY="${DOWNLOAD_VERSION.kubeadm.baseUrl}"
           `}
         </CodeBlock>
 
@@ -126,48 +88,7 @@ import Tabs from '@theme/Tabs'
               owner: root:root
               permissions: '0755'
               content: |
-                #!/bin/bash
-                set -Eeuo pipefail
-
-                KUBERNETES_VERSION="$\{KUBERNETES_VERSION:-${COMPONENTS_VERSION.kubernetes.value}}"
-                BASE_URL="$\{BASE_URL:-${DOWNLOAD_VERSION.kubeadm.baseUrl}}"
-                kUBEADM_URL="$\{BASE_URL}/${DOWNLOAD_VERSION.kubeadm.templateUrlBin}"
-                CHECKSUM_URL="$\{BASE_URL}/${DOWNLOAD_VERSION.kubeadm.templateUrlBinCheckSum}"
-                INSTALL_PATH="${DOWNLOAD_VERSION.kubeadm.path}"
-
-                LOG_TAG="kubeadm-installer"
-                TMP_DIR="$(mktemp -d)"
-
-                logger -t "$LOG_TAG" "[INFO] Checking current kubeadm version..."
-
-                CURRENT_VERSION=$(kubeadm version --client --short 2>/dev/null | awk '{print $3}' | sed 's/v//') || CURRENT_VERSION="none"
-
-                logger -t "$LOG_TAG" "[INFO] Current: $CURRENT_VERSION, Target: $KUBERNETES_VERSION"
-                logger -t "$LOG_TAG" "[INFO] Download URL: $kUBEADM_URL"
-
-                if [[ "$CURRENT_VERSION" != "$KUBERNETES_VERSION" ]]; then
-                  logger -t "$LOG_TAG" "[INFO] Updating kubeadm to version $KUBERNETES_VERSION..."
-
-                  cd "$TMP_DIR"
-                  logger -t "$LOG_TAG" "[INFO] Working directory: $PWD"
-
-                  logger -t "$LOG_TAG" "[INFO] Downloading kubeadm..."
-                  curl -fsSL -o kubeadm "$kUBEADM_URL" || { logger -t "$LOG_TAG" "[ERROR] Failed to download kubeadm"; exit 1; }
-
-                  logger -t "$LOG_TAG" "[INFO] Downloading checksum file..."
-                  curl -fsSL -o kubeadm.sha256sum "$CHECKSUM_URL" || { logger -t "$LOG_TAG" "[ERROR] Failed to download checksum file"; exit 1; }
-
-                  logger -t "$LOG_TAG" "[INFO] Verifying checksum..."
-                  awk '{print $1"  kubeadm"}' kubeadm.sha256sum | sha256sum -c - || { logger -t "$LOG_TAG" "[ERROR] Checksum verification failed!"; exit 1; }
-
-                  logger -t "$LOG_TAG" "[INFO] Installing kubeadm..."
-                  install -m 755 kubeadm "$INSTALL_PATH"
-
-                  logger -t "$LOG_TAG" "[INFO] kubeadm successfully updated to $KUBERNETES_VERSION."
-                  rm -rf "$TMP_DIR"
-                else
-                  logger -t "$LOG_TAG" "[INFO] kubeadm is already up to date. Skipping installation."
-                fi
+                ${KUBEADM_DOWNLOAD_SCRIPT.data.value}
           `}
         </CodeBlock>
 

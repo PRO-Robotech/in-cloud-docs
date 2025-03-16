@@ -48,6 +48,8 @@ import Tabs from '@theme/Tabs'
               ttl: "24h"
           certificateKey: 0c00c2fd5c67c37656c00d78a9d7e1f2eb794ef8e4fc3e2a4b532eb14323cd59
           nodeRegistration:
+            imagePullPolicy: IfNotPresent
+            taints: null
             kubeletExtraArgs:
               cloud-provider: external
               config: "${CUSTOM_VALUE.kuberneteKubeletFolderPath.value}/config-custom.yaml"
@@ -66,12 +68,14 @@ import Tabs from '@theme/Tabs'
           ---
           apiVersion: kubeadm.k8s.io/v1beta3
           kind: ClusterConfiguration
+          clusterName: "$\{CLUSTER_NAME}"
           controlPlaneEndpoint: $\{INTERNAL_API}:${KUBE_API_ARGS.securePort.value}
           imageRepository: "${CUSTOM_VALUE.baseDockerRegistry.value}"
           networking:
             serviceSubnet: ${CUSTOM_VALUE.kubernetesServiceCIDR.value}
             dnsDomain: ${CUSTOM_VALUE.kubernetesClusterDomain.value}
           kubernetesVersion: ${COMPONENTS_VERSION.kubernetes.value}
+          dns: {}
           etcd:
             local:
               imageRepository: "${CUSTOM_VALUE.baseDockerRegistry.value}"
@@ -96,6 +100,12 @@ import Tabs from '@theme/Tabs'
                 peer-trusted-ca-file: "${ETCD_ARGS.peerTrustedCAFile.value}"
                 snapshot-count: "${ETCD_ARGS.snapshotCount.value}"
                 trusted-ca-file: "${ETCD_ARGS.trustedCAFile.value}"
+                listen-metrics-urls: "http://0.0.0.0:2381" # TODO
+                quota-backend-bytes: "10737418240" # TODO
+              peerCertSANs:
+                - 127.0.0.1
+              serverCertSANs:
+                - 127.0.0.1
           apiServer:
             extraArgs:
               aggregator-reject-forwarding-redirect: "${KUBE_API_ARGS.aggregatorRejectForwardingRedirect.value}"
@@ -279,6 +289,8 @@ import Tabs from '@theme/Tabs'
 
             certSANs:
               - "127.0.0.1"
+              # TODO для доабвления внешнего FQDN в сертификаты кластера
+              # - api.$\{CLUSTER_NAME}.$\{EXTERNAL_DOMAIN}
 
             timeoutForControlPlane: 4m0s
 
@@ -465,6 +477,8 @@ import Tabs from '@theme/Tabs'
                   ttl: "24h"
               certificateKey: 0c00c2fd5c67c37656c00d78a9d7e1f2eb794ef8e4fc3e2a4b532eb14323cd59
               nodeRegistration:
+                imagePullPolicy: IfNotPresent
+                taints: null
                 kubeletExtraArgs:
                   cloud-provider: external
                   config: "${CUSTOM_VALUE.kuberneteKubeletFolderPath.value}/config-custom.yaml"
@@ -487,6 +501,7 @@ import Tabs from '@theme/Tabs'
               apiVersion: kubeadm.k8s.io/v1beta3
               kind: ClusterConfiguration
 
+              clusterName: "$\{CLUSTER_NAME}"
               # TODO нужно указывать VIP LoadBalancer
               controlPlaneEndpoint: {{ local_hostname }}:${KUBE_API_ARGS.securePort.value}
 
@@ -495,6 +510,7 @@ import Tabs from '@theme/Tabs'
                 serviceSubnet: ${CUSTOM_VALUE.kubernetesServiceCIDR.value}
                 dnsDomain: cluster.local
               kubernetesVersion: ${COMPONENTS_VERSION.kubernetes.value}
+              dns: {}
               etcd:
                 local:
                   imageRepository: "${CUSTOM_VALUE.baseDockerRegistry.value}"
@@ -519,6 +535,12 @@ import Tabs from '@theme/Tabs'
                     peer-trusted-ca-file: "${ETCD_ARGS.peerTrustedCAFile.value}"
                     snapshot-count: "${ETCD_ARGS.snapshotCount.value}"
                     trusted-ca-file: "${ETCD_ARGS.trustedCAFile.value}"
+                    listen-metrics-urls: "http://0.0.0.0:2381" # TODO
+                    quota-backend-bytes: "10737418240" # TODO
+                  peerCertSANs:
+                    - 127.0.0.1
+                  serverCertSANs:
+                    - 127.0.0.1
               apiServer:
                 extraArgs:
                   aggregator-reject-forwarding-redirect: "${KUBE_API_ARGS.aggregatorRejectForwardingRedirect.value}"

@@ -17,15 +17,6 @@ import Tabs from '@theme/Tabs'
             `}
         </CodeBlock>
 
-        <h4>Systemd Unit ENV</h4>
-        <CodeBlock language="bash">
-            {dedent`
-              cat <<"EOF" > /etc/default/containerd/config.env
-              SANDBOX_IMAGE="${CUSTOM_VALUE.baseDockerRegistry.value}/${CUSTOM_VALUE.pausedImage.value}"
-              EOF
-            `}
-        </CodeBlock>
-
         <h4>Базовый конфигурационный файл</h4>
         <CodeBlock language="bash">
             {dedent`
@@ -36,52 +27,14 @@ import Tabs from '@theme/Tabs'
             `}
         </CodeBlock>
 
-        <h4>Инструкция шаблонизации</h4>
-        <CodeBlock language="bash">
-            {dedent`
-              cat <<"EOF" > /etc/default/containerd/b-cloud-config.toml.template.sh
-              #!/bin/bash
-              set -Eeuo pipefail
-              
-              export SANDBOX_IMAGE="$\{SANDBOX_IMAGE:-registry.k8s.io/pause:3.9}"
-              
-              TEMPLATE_PATH="/etc/default/containerd/b-cloud-config.toml.template"
-              CONFIG_PATH="/etc/containerd/conf.d/b-cloud.toml"
-              LOG_TAG="containerd-config"
-              
-              if [[ ! -f "$TEMPLATE_PATH" ]]; then
-                logger -t "$LOG_TAG" "[ERROR] Template file $TEMPLATE_PATH not found!"
-                exit 1
-              fi
-              
-              logger -t "$LOG_TAG" "[INFO] Generating containerd config..."
-              envsubst '$SANDBOX_IMAGE' < "$TEMPLATE_PATH" > "$CONFIG_PATH"
-              
-              if [[ -f "$CONFIG_PATH" && -s "$CONFIG_PATH" ]]; then
-                logger -t "$LOG_TAG" "[INFO] Configuration generated successfully at $CONFIG_PATH"
-              else
-                logger -t "$LOG_TAG" "[ERROR] Failed to generate configuration!"
-                exit 1
-              fi
-              EOF
-            `}
-        </CodeBlock>
-
-        <h4>Настройка прав</h4>
-        <CodeBlock language="bash">
-            {dedent`
-              chmod +x /etc/default/containerd/b-cloud-config.toml.template.sh
-            `}
-        </CodeBlock>
-
         <h4>Шаблон кастомного конфигурационно файла</h4>
         <CodeBlock language="bash">
             {dedent`
-              cat <<"EOF" > /etc/default/containerd/b-cloud-config.toml.template
-              version = 2       
+              cat <<"EOF" > /etc/containerd/conf.d/b-cloud.toml
+              version = 2
               [plugins]
                 [plugins."io.containerd.grpc.v1.cri"]
-                  sandbox_image = "$\{SANDBOX_IMAGE}"
+                  sandbox_image = "${CUSTOM_VALUE.baseDockerRegistry.value}/${CUSTOM_VALUE.pausedImage.value}"
                 [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
                   runtime_type = "io.containerd.runc.v2"
                 [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
@@ -92,40 +45,9 @@ import Tabs from '@theme/Tabs'
             `}
         </CodeBlock>
 
-        <h4>Systemd Unit Template</h4>
-        <CodeBlock language="bash">
-            {dedent`
-              cat <<"EOF" > /usr/lib/systemd/system/containerd-config-update.service
-              [Unit]
-              Description=Update containerd config
-              After=network.target
-              Wants=network-online.target
-              
-              [Service]
-              Type=oneshot
-              EnvironmentFile=-/etc/default/containerd/config.env
-              ExecStartPre=/bin/mkdir -p /etc/containerd/conf.d
-              ExecStart=/bin/bash /etc/default/containerd/b-cloud-config.toml.template.sh
-              RemainAfterExit=yes
-              
-              [Install]
-              WantedBy=multi-user.target
-              EOF
-            `}
-        </CodeBlock>
     </TabItem>
 
     <TabItem value='Cloud-init'>
-        <h4>Systemd Unit ENV</h4>
-        <CodeBlock language="yaml">
-            {dedent`
-              - path: /etc/default/containerd/config.env
-                owner: root:root
-                permissions: '0644'
-                content: |
-                  SANDBOX_IMAGE="${CUSTOM_VALUE.baseDockerRegistry.value}/${CUSTOM_VALUE.pausedImage.value}"
-            `}
-        </CodeBlock>
 
         <h4>Базовый конфигурационный файл</h4>
         <CodeBlock language="yaml">
@@ -139,50 +61,17 @@ import Tabs from '@theme/Tabs'
             `}
         </CodeBlock>
 
-        <h4>Инструкция шаблонизации</h4>
-        <CodeBlock language="yaml">
-            {dedent`
-              - path: /etc/default/containerd/b-cloud-config.toml.template.sh
-                owner: root:root
-                permissions: '0755'
-                content: |
-                  #!/bin/bash
-                  set -Eeuo pipefail
-                  
-                  export SANDBOX_IMAGE="$\{SANDBOX_IMAGE:-${CUSTOM_VALUE.baseDockerRegistry.value}/${CUSTOM_VALUE.pausedImage.value}}"
-                  
-                  TEMPLATE_PATH="/etc/default/containerd/b-cloud-config.toml.template"
-                  CONFIG_PATH="/etc/containerd/conf.d/b-cloud.toml"
-                  LOG_TAG="containerd-config"
-                  
-                  if [[ ! -f "$TEMPLATE_PATH" ]]; then
-                    logger -t "$LOG_TAG" "[ERROR] Template file $TEMPLATE_PATH not found!"
-                    exit 1
-                  fi
-                  
-                  logger -t "$LOG_TAG" "[INFO] Generating containerd config..."
-                  envsubst '$SANDBOX_IMAGE' < "$TEMPLATE_PATH" > "$CONFIG_PATH"
-                  
-                  if [[ -f "$CONFIG_PATH" && -s "$CONFIG_PATH" ]]; then
-                    logger -t "$LOG_TAG" "[INFO] Configuration generated successfully at $CONFIG_PATH"
-                  else
-                    logger -t "$LOG_TAG" "[ERROR] Failed to generate configuration!"
-                    exit 1
-                  fi
-            `}
-        </CodeBlock>
-
         <h4>Шаблон кастомного конфигурационно файла</h4>
         <CodeBlock language="yaml">
             {dedent`
-              - path: /etc/default/containerd/b-cloud-config.toml.template
+              - path: /etc/containerd/conf.d/b-cloud.toml
                 owner: root:root
                 permissions: '0644'
                 content: |
-                  version = 2       
+                  version = 2
                   [plugins]
                     [plugins."io.containerd.grpc.v1.cri"]
-                      sandbox_image = "$\{SANDBOX_IMAGE}"
+                      sandbox_image = "${CUSTOM_VALUE.baseDockerRegistry.value}/${CUSTOM_VALUE.pausedImage.value}"
                     [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
                       runtime_type = "io.containerd.runc.v2"
                     [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
@@ -192,32 +81,6 @@ import Tabs from '@theme/Tabs'
             `}
         </CodeBlock>
 
-        <h4>Systemd Unit Template</h4>
-        <CodeBlock language="yaml">
-            {dedent`
-              - path: /usr/lib/systemd/system/containerd-config-update.service
-                owner: root:root
-                permissions: '0644'
-                content: |
-                  [Unit]
-                  Description=Update containerd config
-                  After=network.target
-                  Wants=network-online.target
-                  
-                  [Service]
-                  Type=oneshot
-                  EnvironmentFile=-/etc/default/containerd/config.env
-                  ExecStartPre=/bin/mkdir -p /etc/containerd/conf.d
-                  ExecStart=/bin/bash /etc/default/containerd/b-cloud-config.toml.template.sh
-                  RemainAfterExit=yes
-                  
-                  [Install]
-                  WantedBy=multi-user.target
-            `}
-        </CodeBlock>
-
-
     </TabItem>
 
 </Tabs>
-
