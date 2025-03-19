@@ -15,7 +15,7 @@ import Tabs from '@theme/Tabs'
 <Tabs groupId="install-type">
 
     <TabItem value='Bash'>
-      <h4>Кастомный конфигурационный файл kubelet</h4>
+      <h4>Конфигурация modprobe</h4>
 
       <CodeBlock language="bash">
       {dedent`
@@ -30,7 +30,7 @@ import Tabs from '@theme/Tabs'
 
     <TabItem value='Cloud-init'>
 
-      <h4>Кастомный конфигурационный файл kubelet</h4>
+      <h4>Конфигурация modprobe</h4>
       <CodeBlock language="bash">
       {dedent`
         - path: /etc/modules-load.d/k8s.conf
@@ -72,7 +72,7 @@ import Tabs from '@theme/Tabs'
 <Tabs groupId="install-type">
 
     <TabItem value='Bash'>
-      <h4>Кастомный конфигурационный файл kubelet</h4>
+      <h4>Конфигурация sysctl</h4>
 
       <CodeBlock language="bash">
       {dedent`
@@ -87,7 +87,7 @@ import Tabs from '@theme/Tabs'
 
     <TabItem value='Cloud-init'>
 
-      <h4>Кастомный конфигурационный файл kubelet</h4>
+      <h4>Конфигурация sysctl</h4>
       <CodeBlock language="bash">
       {dedent`
         - path: /etc/sysctl.d/99-br-netfilter.conf
@@ -110,7 +110,7 @@ import Tabs from '@theme/Tabs'
 <Tabs groupId="install-type">
 
     <TabItem value='Bash'>
-      <h4>Кастомный конфигурационный файл kubelet</h4>
+      <h4>Конфигурация sysctl</h4>
 
       <CodeBlock language="bash">
       {dedent`
@@ -124,7 +124,7 @@ import Tabs from '@theme/Tabs'
 
     <TabItem value='Cloud-init'>
 
-      <h4>Кастомный конфигурационный файл kubelet</h4>
+      <h4>Конфигурация sysctl</h4>
       <CodeBlock language="bash">
       {dedent`
         - path: /etc/sysctl.d/99-network.conf

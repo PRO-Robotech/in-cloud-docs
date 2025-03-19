@@ -19,7 +19,7 @@ import Tabs from '@theme/Tabs'
             `}
         </CodeBlock>
 
-        <h4>Systemd Unit ENV</h4>
+        <h4>Переменные окружения</h4>
         <CodeBlock language="bash">
             {dedent`
               cat <<EOF > /etc/default/runc/download.env
@@ -46,7 +46,7 @@ import Tabs from '@theme/Tabs'
             `}
         </CodeBlock>
 
-        <h4>Systemd Unit Download</h4>
+        <h4>Сервис загрузки</h4>
         <CodeBlock language="bash">
             {dedent`
               cat <<EOF > /usr/lib/systemd/system/runc-install.service
@@ -67,11 +67,19 @@ import Tabs from '@theme/Tabs'
             `}
         </CodeBlock>
 
+        <h4>Загрузки</h4>
+        <CodeBlock language="bash">
+            {dedent`
+              systemctl enable runc-install.service
+              systemctl start runc-install.service
+            `}
+        </CodeBlock>
+
     </TabItem>
 
     <TabItem value='Cloud-init'>
 
-        <h4>Systemd Unit ENV</h4>
+        <h4>Переменные окружения</h4>
         <CodeBlock language="yaml">
             {dedent`
               - path: /etc/default/runc/download.env
@@ -83,7 +91,7 @@ import Tabs from '@theme/Tabs'
             `}
         </CodeBlock>
 
-        <h4>Инструкция загрузки</h4>
+        <h4>Инструкция загрузки/Настройка прав</h4>
         <CodeBlock language="yaml">
             {dedent`
               - path: /etc/default/runc/download-script.sh
@@ -95,7 +103,7 @@ import Tabs from '@theme/Tabs'
         </CodeBlock>
 
 
-        <h4>Systemd Unit Download</h4>
+        <h4>Сервис загрузки</h4>
         <CodeBlock language="yaml">
             {dedent`
               - path: /usr/lib/systemd/system/runc-install.service
@@ -118,6 +126,14 @@ import Tabs from '@theme/Tabs'
             `}
         </CodeBlock>
 
+
+        <h4>Загрузки</h4>
+        <CodeBlock language="bash">
+            {dedent`
+              - systemctl enable runc-install.service
+              - systemctl start runc-install.service
+            `}
+        </CodeBlock>
 
     </TabItem>
 

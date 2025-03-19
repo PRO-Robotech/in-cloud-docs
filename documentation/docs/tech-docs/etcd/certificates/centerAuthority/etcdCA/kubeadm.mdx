@@ -5,19 +5,19 @@ import dedent           from 'ts-dedent'
 
 
 <CodeBlock language="bash">
-{dedent`
-    export BASE_K8S_PATH="${CUSTOM_VALUE.kuberneteBaseFolderPath.value}"
-`}
+  {dedent`
+    kubeadm init phase certs etcd-ca --config=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/kubeadm.conf
+  `}
 </CodeBlock>
 
-```bash
-kubeadm init phase certs etcd-ca \
-    --config=${BASE_K8S_PATH}/kubeadm.conf
-```
 :::note
 После выполнения команды мы получаем следующий вывод.
-```
-#### Create ETCD CA
-[certs] Generating "etcd/ca" certificate and key
-```
+
+<CodeBlock language="bash">
+  {dedent`
+    #### Create ETCD CA
+    [certs] Generating "etcd/ca" certificate and key
+  `}
+</CodeBlock>
+
 :::

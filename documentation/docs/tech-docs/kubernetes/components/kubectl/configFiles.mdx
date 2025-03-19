@@ -7,7 +7,7 @@ import { CUSTOM_VALUE }         from '@site/src/constants/kubernetes/customValue
 <CodeBlock language="bash">
     {dedent`
         export BASE_K8S_PATH="${CUSTOM_VALUE.kuberneteBaseFolderPath.value}"
-        export KUBECONFIG=$\{BASE_K8S_PATH}/admin.conf
+        export KUBECONFIG=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/admin.conf
     `}
 </CodeBlock>
 

@@ -10,24 +10,19 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 
 
 # 5.2.1.4.7. Проверка
-:::warning  
-**Обратите внимание:** в данном разделе рассматривается совокупность факторов, определяющих готовность узла к развертыванию управляющего контура.  
+:::warning
+**Обратите внимание:** в данном разделе рассматривается совокупность факторов, определяющих готовность узла к развертыванию управляющего контура.
 :::
 
 
 ## 5.2.1.4.7.1 Проверка готовности окружения
 
-<CodeBlock language="bash">
-    {dedent`
-        export BASE_K8S_PATH="${CUSTOM_VALUE.kuberneteBaseFolderPath.value}"
-    `}
-</CodeBlock>
 
 <Tabs groupId="current-master">
   <TabItem value='Init'>
     <CodeBlock language="bash">
       {dedent`
-        kubeadm init phase preflight --dry-run --config=$\{BASE_K8S_PATH}/kubeadm.conf
+        kubeadm init phase preflight --dry-run --config=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/kubeadm.conf
       `}
     </CodeBlock>
 
@@ -64,7 +59,7 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
   <TabItem value='Join'>
     <CodeBlock language="bash">
       {dedent`
-        kubeadm join phase preflight --dry-run --config=$\{BASE_K8S_PATH}/kubeadm.conf
+        kubeadm join phase preflight --dry-run --config=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/kubeadm.conf
       `}
     </CodeBlock>
 

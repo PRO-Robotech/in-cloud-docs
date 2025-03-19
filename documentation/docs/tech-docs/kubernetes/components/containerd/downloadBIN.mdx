@@ -18,7 +18,7 @@ import Tabs from '@theme/Tabs'
             `}
         </CodeBlock>
 
-        <h4>Systemd Unit ENV</h4>
+        <h4>Переменные окружения</h4>
         <CodeBlock language="bash">
             {dedent`
               cat <<EOF > /etc/default/containerd/download.env
@@ -44,7 +44,7 @@ import Tabs from '@theme/Tabs'
             `}
         </CodeBlock>
 
-        <h4>Systemd Unit Download</h4>
+        <h4>Сервис загрузки</h4>
         <CodeBlock language="bash">
             {dedent`
               cat <<EOF > /usr/lib/systemd/system/containerd-install.service
@@ -65,11 +65,20 @@ import Tabs from '@theme/Tabs'
             `}
         </CodeBlock>
 
+
+        <h4>Загрузка</h4>
+        <CodeBlock language="bash">
+            {dedent`
+              systemctl enable containerd-install.service
+              systemctl start containerd-install.service
+            `}
+        </CodeBlock>
+
     </TabItem>
 
     <TabItem value='Cloud-init'>
 
-        <h4>Systemd Unit ENV</h4>
+        <h4>Переменные окружения</h4>
         <CodeBlock language="yaml">
             {dedent`
               - path: /etc/default/containerd/download.env
@@ -81,7 +90,7 @@ import Tabs from '@theme/Tabs'
             `}
         </CodeBlock>
 
-        <h4>Инструкция загрузки</h4>
+        <h4>Инструкция загрузки/Настройка прав</h4>
         <CodeBlock language="yaml">
             {dedent`
               - path: /etc/default/containerd/download-script.sh
@@ -89,11 +98,10 @@ import Tabs from '@theme/Tabs'
                 permissions: '0755'
                 content: |
                   ${CONTAINERD_DOWNLOAD_SCRIPT.data.value}
-
             `}
         </CodeBlock>
 
-        <h4>Systemd Unit Download</h4>
+        <h4>Сервис загрузки</h4>
         <CodeBlock language="yaml">
             {dedent`
               - path: /usr/lib/systemd/system/containerd-install.service
@@ -113,6 +121,14 @@ import Tabs from '@theme/Tabs'
 
                   [Install]
                   WantedBy=multi-user.target
+            `}
+        </CodeBlock>
+
+        <h4>Загрузка</h4>
+        <CodeBlock language="bash">
+            {dedent`
+              - systemctl enable containerd-install.service
+              - systemctl start containerd-install.service
             `}
         </CodeBlock>
 

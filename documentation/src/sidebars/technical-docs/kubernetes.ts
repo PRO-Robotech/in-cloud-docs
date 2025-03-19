@@ -128,7 +128,7 @@ export const kubernetes = [
       },
       {
         type: 'category',
-        label: '5.2.1.4. Проверка ПО',
+        label: '5.2.1.4. Проверка',
         // id: 'tech-docs/kubernetes/components/components-ready',
         items: [
           {
