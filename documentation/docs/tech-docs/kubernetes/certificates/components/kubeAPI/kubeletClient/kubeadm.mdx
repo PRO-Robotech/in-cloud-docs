@@ -11,7 +11,7 @@ import dedent           from 'ts-dedent'
 
 ```bash
 kubeadm init phase certs apiserver-kubelet-client \
-    --config=${BASE_K8S_PATH}/kubeadm.conf
+    --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
 ```
 
 :::note

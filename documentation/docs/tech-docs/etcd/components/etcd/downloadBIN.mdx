@@ -81,6 +81,7 @@ import Tabs from '@theme/Tabs'
         <h4>Переменные окружения</h4>
         <CodeBlock language="yaml">
             {dedent`
+              #write_files:
               - path: /etc/default/etcd/download.env
                 owner: root:root
                 permissions: '0644'

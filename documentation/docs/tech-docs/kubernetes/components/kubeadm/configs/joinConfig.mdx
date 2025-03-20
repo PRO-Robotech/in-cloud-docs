@@ -25,7 +25,7 @@ import { PORTS }                from '@site/src/constants/kubernetes/ports'
 
   <h4>Конфигурационный файл kubeadm для подключения мастера к кластеру</h4>
   <CodeBlock>
-    {dedent`cat <<EOF > ${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/kubeadm.conf
+    {dedent`cat <<EOF > ${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
       ---
       apiVersion: kubeadm.k8s.io/v1beta3
       controlPlane:

@@ -27,7 +27,7 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
     <h4>Обновление конфигурации</h4>
     <CodeBlock language="bash">
         {dedent`
-            kubeadm init phase upload-config all --config=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/kubeadm.conf
+            kubeadm init phase upload-config all --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
         `}
     </CodeBlock>
 

@@ -9,9 +9,9 @@ import Tabs                     from '@theme/Tabs'
             Если требуется создать сразу все сертификаты, то воспользуйтесь следующими командами
             ```bash
             kubeadm init phase certs all \
-                --config=${BASE_K8S_PATH}/kubeadm.conf
+                --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
             kubeadm init phase kubeconfig all \
-                --config=${BASE_K8S_PATH}/kubeadm.conf
+                --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
             ```
         </TabItem>
     </Tabs>

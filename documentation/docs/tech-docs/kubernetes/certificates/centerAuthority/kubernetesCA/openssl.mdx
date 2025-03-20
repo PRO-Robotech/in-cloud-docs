@@ -4,58 +4,52 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 import CodeBlock        from '@theme/CodeBlock'
 import dedent           from 'ts-dedent'
 
-<h4>Переменные окружения</h4>
-<CodeBlock language="bash">
-    {dedent`
-        export BASE_K8S_PATH="${CUSTOM_VALUE.kuberneteBaseFolderPath.value}"
-        export KUBERNETES_CA_CSR_CONF="${CERTIFICATES.kubernetesCA.crtConf}"
-        export KUBERNETES_CA_CN="${CERTIFICATES.kubernetesCA.cname}"
-        export KUBERNETES_CA_KEY_PATH="${CERTIFICATES.kubernetesCA.keyPath}"
-        export KUBERNETES_CA_KEY_SIZE=${CERTIFICATES.kubernetesCA.keySize}
-        export KUBERNETES_CA_CRT_PATH="${CERTIFICATES.kubernetesCA.crtPath}"
-    `}
-</CodeBlock>
-
 <h4>Рабочая директория</h4>
 <CodeBlock language="bash">
-    {dedent`
-        mkdir -p ${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/openssl
-        mkdir -p ${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/pki
-    `}
+  {dedent`
+    mkdir -p ${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/openssl
+    mkdir -p ${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/pki
+  `}
 </CodeBlock>
 
 <h4>Конфигурация</h4>
-```bash
-cat <<EOF > ${KUBERNETES_CA_CSR_CONF}
-[req]
-distinguished_name = req_distinguished_name
-x509_extensions    = v3_ca
-prompt             = no
+<CodeBlock language="bash">
+  {dedent`
+    cat <<EOF > ${CERTIFICATES.kubernetesCA.crtConf}
+    [req]
+    distinguished_name = req_distinguished_name
+    x509_extensions    = v3_ca
+    prompt             = no
 
-[req_distinguished_name]
-CN = ${KUBERNETES_CA_CN}
+    [req_distinguished_name]
+    CN = ${CERTIFICATES.kubernetesCA.cname}
 
-[v3_ca]
-keyUsage = critical, keyCertSign, keyEncipherment, digitalSignature
-basicConstraints = critical,CA:TRUE
-EOF
-```
+    [v3_ca]
+    keyUsage = critical, keyCertSign, keyEncipherment, digitalSignature
+    basicConstraints = critical,CA:TRUE
+    EOF
+  `}
+</CodeBlock>
 
 <h4>Генерация приватного ключа</h4>
-```bash
-openssl genrsa \
-    -out "${KUBERNETES_CA_KEY_PATH}" ${KUBERNETES_CA_KEY_SIZE}
-```
+<CodeBlock language="bash">
+  {dedent`
+    openssl genrsa \\
+      -out ${CERTIFICATES.kubernetesCA.keyPath} ${CERTIFICATES.kubernetesCA.keySize}
+  `}
+</CodeBlock>
 
 <h4>Генерация публичного ключа</h4>
-```bash
-openssl req \
-    -x509 \
-    -new \
-    -nodes \
-    -key "${KUBERNETES_CA_KEY_PATH}" \
-    -sha256 \
-    -days 3650 \
-    -out "${KUBERNETES_CA_CRT_PATH}" \
-    -config "${KUBERNETES_CA_CSR_CONF}"
-```
+<CodeBlock language="bash">
+  {dedent`
+    openssl req \\
+      -x509 \\
+      -new \\
+      -nodes \\
+      -key ${CERTIFICATES.kubernetesCA.keyPath} \\
+      -sha256 \\
+      -days 3650 \\
+      -out ${CERTIFICATES.kubernetesCA.crtPath} \\
+      -config ${CERTIFICATES.kubernetesCA.crtConf}
+  `}
+</CodeBlock>

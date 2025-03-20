@@ -4,21 +4,6 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 import CodeBlock        from '@theme/CodeBlock'
 import dedent           from 'ts-dedent'
 
-<h4>Переменные окружения</h4>
-<CodeBlock language="bash">
-    {dedent`
-        export BASE_K8S_PATH="${CUSTOM_VALUE.kuberneteBaseFolderPath.value}"
-        export KUBERNETES_ADMIN_CLIENT_CN="${CERTIFICATES.kubernetesAdminClient.cname}"
-        export KUBERNETES_ADMIN_CLIENT_CRT_CONF="${CERTIFICATES.kubernetesAdminClient.crtConf}"
-        export KUBERNETES_ADMIN_CLIENT_CRT_PATH="${CERTIFICATES.kubernetesAdminClient.crtPath}"
-        export KUBERNETES_ADMIN_CLIENT_CSR_PATH="${CERTIFICATES.kubernetesAdminClient.csrPath}"
-        export KUBERNETES_ADMIN_CLIENT_KEY_PATH="${CERTIFICATES.kubernetesAdminClient.keyPath}"
-        export KUBERNETES_ADMIN_CLIENT_KEY_SIZE=${CERTIFICATES.kubernetesAdminClient.keySize}
-        export KUBERNETES_CA_CRT_PATH="${CERTIFICATES.kubernetesCA.crtPath}"
-        export KUBERNETES_CA_KEY_PATH="${CERTIFICATES.kubernetesCA.keyPath}"
-    `}
-</CodeBlock>
-
 <h4>Рабочая директория</h4>
 <CodeBlock language="bash">
     {dedent`
@@ -29,52 +14,60 @@ import dedent           from 'ts-dedent'
 </CodeBlock>
 
 <h4>Конфигурация</h4>
-```bash
-cat <<EOF > ${KUBERNETES_ADMIN_CLIENT_CRT_CONF}
-[ req ]
-default_bits        = ${KUBERNETES_ADMIN_CLIENT_KEY_SIZE}
-prompt              = no
-default_md          = sha256
-distinguished_name  = dn
+<CodeBlock language="bash">
+  {dedent`
+    cat <<EOF > ${CERTIFICATES.kubernetesAdminClient.crtConf}
+    [ req ]
+    default_bits        = ${CERTIFICATES.kubernetesAdminClient.keySize}
+    prompt              = no
+    default_md          = sha256
+    distinguished_name  = dn
 
-[ dn ]
-CN = ${KUBERNETES_ADMIN_CLIENT_CN}
-O  = kubeadm:cluster-admins
+    [ dn ]
+    CN = ${CERTIFICATES.kubernetesAdminClient.cname}
+    O  = kubeadm:cluster-admins
 
-[ v3_ext ]
-authorityKeyIdentifier=keyid,issuer:always
-basicConstraints=CA:FALSE
-keyUsage=keyEncipherment,dataEncipherment
-extendedKeyUsage=clientAuth
-EOF
-```
+    [ v3_ext ]
+    authorityKeyIdentifier=keyid,issuer:always
+    basicConstraints=CA:FALSE
+    keyUsage=keyEncipherment,dataEncipherment
+    extendedKeyUsage=clientAuth
+    EOF
+  `}
+</CodeBlock>
 
 <h4>Приватные ключи</h4>
-```bash
-openssl genrsa \
-    -out "${KUBERNETES_ADMIN_CLIENT_KEY_PATH}" ${KUBERNETES_ADMIN_CLIENT_KEY_SIZE}
-```
+<CodeBlock language="bash">
+  {dedent`
+    openssl genrsa \\
+      -out ${CERTIFICATES.kubernetesAdminClient.keyPath} ${CERTIFICATES.kubernetesAdminClient.keySize}
+  `}
+</CodeBlock>
 
 <h4>Генерация CSR</h4>
-```bash
-openssl req \
-    -new \
-    -key    "${KUBERNETES_ADMIN_CLIENT_KEY_PATH}" \
-    -out    "${KUBERNETES_ADMIN_CLIENT_CSR_PATH}" \
-    -config "${KUBERNETES_ADMIN_CLIENT_CRT_CONF}"
-```
+<CodeBlock language="bash">
+  {dedent`
+    openssl req \\
+      -new \\
+      -key    ${CERTIFICATES.kubernetesAdminClient.keyPath} \\
+      -out    ${CERTIFICATES.kubernetesAdminClient.csrPath} \\
+      -config ${CERTIFICATES.kubernetesAdminClient.crtConf}
+  `}
+</CodeBlock>
 
 <h4>Подпись CSR</h4>
-```bash
-openssl x509 \
-    -req \
-    -days 365 \
-    -sha256 \
-    -CA "${KUBERNETES_CA_CRT_PATH}" \
-    -CAkey "${KUBERNETES_CA_KEY_PATH}" \
-    -CAcreateserial \
-    -in "${KUBERNETES_ADMIN_CLIENT_CSR_PATH}" \
-    -out "${KUBERNETES_ADMIN_CLIENT_CRT_PATH}" \
-    -extensions v3_ext \
-    -extfile "${KUBERNETES_ADMIN_CLIENT_CRT_CONF}"
-```
+<CodeBlock language="bash">
+  {dedent`
+    openssl x509 \\
+      -req \\
+      -days 365 \\
+      -sha256 \\
+      -CA ${CERTIFICATES.kubernetesCA.crtPath} \\
+      -CAkey ${CERTIFICATES.kubernetesCA.keyPath} \\
+      -CAcreateserial \\
+      -in ${CERTIFICATES.kubernetesAdminClient.csrPath} \\
+      -out ${CERTIFICATES.kubernetesAdminClient.crtPath} \\
+      -extensions v3_ext \\
+      -extfile ${CERTIFICATES.kubernetesAdminClient.crtConf}
+  `}
+</CodeBlock>

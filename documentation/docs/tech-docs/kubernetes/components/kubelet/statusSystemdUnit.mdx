@@ -2,7 +2,7 @@ import dedent                   from 'ts-dedent'
 import CodeBlock                from '@theme/CodeBlock'
 
 :::warning
-Обратите внимание, что при создании кластера с помощью ***Kubeadm*** без выполнения команд `kubeadm init` или `kubeadm join`, Systemd Unit будет добавлен в автозапуск, но будет выключен.  
+Обратите внимание, что при создании кластера с помощью ***Kubeadm*** без выполнения команд `kubeadm init` или `kubeadm join`, Systemd Unit будет добавлен в автозапуск, но будет выключен.
 :::
 
 
@@ -12,13 +12,13 @@ import CodeBlock                from '@theme/CodeBlock'
     `}
 </CodeBlock>
 
-:::info 
+:::info
 <CodeBlock language="bash">
     {dedent`
         ○ kubelet.service - kubelet: The Kubernetes Node Agent
             Loaded: loaded (/usr/lib/systemd/system/kubelet.service; enabled; preset: enabled)
             Drop-In: /usr/lib/systemd/system/kubelet.service.d
-                    └─10-kubeadm.conf
+                    └─10-kubeadm.yaml
             Active: inactive (dead)
             Docs: https://kubernetes.io/docs/
     `}

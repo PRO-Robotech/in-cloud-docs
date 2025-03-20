@@ -14,7 +14,7 @@ import Tabs                   from '@theme/Tabs'
     <CodeBlock language="bash">
         {dedent`
             kubeadm join phase control-plane-prepare download-certs \
-              --config=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/kubeadm.conf
+              --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
         `}
     </CodeBlock>
 

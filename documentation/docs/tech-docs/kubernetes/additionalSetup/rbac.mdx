@@ -272,7 +272,7 @@ import {KUBE_API_ARGS} from '@site/src/constants/kubernetes/kubeAPIArgs'
     <h4>Генерация ролевой модели</h4>
     <CodeBlock language="bash">
         {dedent`
-            kubeadm init phase bootstrap-token --config=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/kubeadm.conf
+            kubeadm init phase bootstrap-token --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
         `}
     </CodeBlock>
 

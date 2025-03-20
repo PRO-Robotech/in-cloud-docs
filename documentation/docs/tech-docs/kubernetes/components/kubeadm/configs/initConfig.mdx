@@ -36,7 +36,7 @@ import Tabs from '@theme/Tabs'
       :::
       <CodeBlock>
         {dedent`
-          cat <<EOF > ${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/kubeadm.conf
+          cat <<EOF > ${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
           ---
           apiVersion: kubeadm.k8s.io/v1beta3
           kind: InitConfiguration
@@ -462,7 +462,7 @@ import Tabs from '@theme/Tabs'
 
       <CodeBlock>
         {dedent`
-          - path: ${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/kubeadm.conf
+          - path: ${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
             owner: root:root
             permissions: '0644'
             content: |

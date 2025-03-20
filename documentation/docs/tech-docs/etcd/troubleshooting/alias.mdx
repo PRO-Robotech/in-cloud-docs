@@ -28,96 +28,98 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 ## 5.1.5.2.1. Поиск ID контейнера
 > Данный алиас поможет быстро найти ID контейнера по меткам `io.kubernetes.pod.name` и `io.kubernetes.pod.namespace`
 
-```bash
-cidsearch() {
-  crictl ps \
-    --label io.kubernetes.pod.name="$1" \
-    --label io.kubernetes.pod.namespace="$2" \
-    -o json | jq -r '.containers[].id'
-}
-```
+<CodeBlock language="bash">
+    {dedent`
+      cidsearch() {
+        crictl ps \\
+          --label io.kubernetes.pod.name="$1" \\
+          --label io.kubernetes.pod.namespace="$2" \\
+          -o json | jq -r '.containers[].id'
+      }
+    `}
+</CodeBlock>
+
 
 ## 5.1.5.2.2. Поиск PID контейнера
 
 > Данный алиас поможет быстро найти PID контейнера по меткам `io.kubernetes.container.name` и `io.kubernetes.pod.namespace`
 
-```bash
-cpidsearch() {
-  crictl inspect \
-    $(cidsearch "$1" "$2") | jq .info.pid
-}
-```
+<CodeBlock language="bash">
+    {dedent`
+      cpidsearch() {
+        crictl inspect \\
+          $(cidsearch "$1" "$2") | jq .info.pid
+      }
+    `}
+</CodeBlock>
 
 ## 5.1.5.2.3. Прямое подключение
 
 > Прямое подключение подходит в ситуациях, когда мы знаем на каком узле находится ETCD инстанс, и сертификаты лежат в хостовой файловой системе.
 
+### Подключение
 <CodeBlock language="bash">
   {dedent`
-        export BASE_K8S_PATH="${CUSTOM_VALUE.kuberneteBaseFolderPath.value}"
-        export ETCD_PEER_CRT_PATH="${CERTIFICATES.etcdPeer.crtPath}"
-        export ETCD_PEER_KEY_PATH="${CERTIFICATES.etcdPeer.keyPath}"
-        export ETCD_CA_CRT_PATH="${CERTIFICATES.etcdCA.crtPath}"
-    `}
+    alias etcdctl='etcdctl \\
+      --cert=${CERTIFICATES.etcdPeer.crtPath} \\
+      --key=${CERTIFICATES.etcdPeer.keyPath} \\
+      --cacert=${CERTIFICATES.etcdCA.crtPath}'
+  `}
 </CodeBlock>
 
 
-### Подключение
-```bash
-alias etcdctl='etcdctl \
-  --cert=${ETCD_PEER_CRT_PATH} \
-  --key=${ETCD_PEER_KEY_PATH} \
-  --cacert=${ETCD_CA_CRT_PATH}'
-```
-
 ### Список участников кластера
-
-```bash
-etcdctlMembers() {
-  etcdctl member list \
-  --write-out=json |
-  jq \
-  -r '[.members[].clientURLs[]] | join(",")'
-}
-```
+<CodeBlock language="bash">
+  {dedent`
+    etcdctlMembers() {
+      etcdctl member list \\
+      --write-out=json | jq \\
+      -r '[.members[].clientURLs[]] | join(",")'
+  `}
+</CodeBlock>
 
 ### Актуальная ревизия
-
-```bash
-etcdctlRevision() {
-  etcdctl \
-    --endpoints=$(etcdctlMembers) \
-    endpoint status \
-    -w json |
-    jq \
-    -r .[].Status.header.revision
-}
-```
+<CodeBlock language="bash">
+  {dedent`
+    etcdctlRevision() {
+      etcdctl \\
+        --endpoints=$(etcdctlMembers) \\
+        endpoint status \\
+        -w json | jq \\
+        -r .[].Status.header.revision
+    }
+  `}
+</CodeBlock>
 
 ### Подключение
-
-```bash
-alias etcdctl='etcdctl \
-  --cert=${ETCD_PEER_CRT_PATH} \
-  --key=${ETCD_PEER_KEY_PATH} \
-  --cacert=${ETCD_CA_CRT_PATH}'
-```
+<CodeBlock language="bash">
+  {dedent`
+    alias etcdctl='etcdctl \\
+      --cert=${CERTIFICATES.etcdPeer.crtPath} \\
+      --key=${CERTIFICATES.etcdPeer.keyPath} \\
+      --cacert=${CERTIFICATES.etcdCA.crtPath}'
+  `}
+</CodeBlock>
 
 ### Уплотение
+<CodeBlock language="bash">
+  {dedent`
+    alias etcdctlCompaction='etcdctl \\
+      --endpoints=$(etcdctlMembers) \\
+      compaction $(etcdctlRevision)'
+  `}
+</CodeBlock>
 
-```bash
-alias etcdctlCompaction='etcdctl \
-  --endpoints=$(etcdctlMembers) \
-  compaction $(etcdctlRevision)'
-```
 
 ### Дефрагментация
+<CodeBlock language="bash">
+  {dedent`
+    alias etcdctlDefrag='etcdctl \\
+      --endpoints=$(etcdctlMembers) \\
+      defrag'
+  `}
+</CodeBlock>
 
-```bash
-alias etcdctlDefrag='etcdctl \
-  --endpoints=$(etcdctlMembers) \
-  defrag'
-```
 
 ## 5.1.5.2.4. Подключение через crictl
 
@@ -134,90 +136,93 @@ alias etcdctlDefrag='etcdctl \
 :::
 
 ### Поиск ID контейнера
-
-```bash
-cidsearch() {
-  crictl ps \
-    --label io.kubernetes.pod.name="$1" \
-    --label io.kubernetes.pod.namespace="$2" \
-    -o json | jq -r '.containers[].id'
-}
-```
+<CodeBlock language="bash">
+  {dedent`
+    cidsearch() {
+      crictl ps \\
+        --label io.kubernetes.pod.name="$1" \\
+        --label io.kubernetes.pod.namespace="$2" \\
+        -o json | jq -r '.containers[].id'
+    }
+  `}
+</CodeBlock>
 
 ### Флаги для подключения к etcdctl
 
 > alias функции, которая подставляет флаги с указанием PEER-сертификата, PEER-ключа , CA-сертификата ETCD кластера и ENDPOINT-а.
 
-```bash
-ectlflagsearch() {
-  ETCD_ARGS=$( \
-    crictl inspect $(cidsearch "$1" "$2") |
-      jq -r \
-        '.info.runtimeSpec.process.args[]' ) ; \
-  echo -n \
-    '--cert='$(grep --\
-      '--peer-cert-file=' <<< $ETCD_ARGS |
-      sed 's/[^=]*=//') \
-    '--key='$(grep --\
-      '--peer-key-file=' <<< $ETCD_ARGS |
-      sed 's/[^=]*=//') \
-    '--cacert='$(grep --\
-      '--trusted-ca-file=' <<< $ETCD_ARGS |
-      sed 's/[^=]*=//') \
-    '--endpoints='$(grep --\
-      '--advertise-client-urls=' <<< $ETCD_ARGS |
-      sed 's/[^=]*=//')
-}
-```
+<CodeBlock language="bash">
+  {dedent`
+    ectlflagsearch() {
+      ETCD_ARGS=$( \\
+        crictl inspect $(cidsearch "$1" "$2") | jq -r \\
+          '.info.runtimeSpec.process.args[]' ) ; \\
+        echo -n \\
+          '--cert='$(grep --\\
+          '--peer-cert-file=' <<< $ETCD_ARGS | sed 's/[^=]*=//') \\
+          '--key='$(grep --\\
+          '--peer-key-file=' <<< $ETCD_ARGS | sed 's/[^=]*=//') \\
+          '--cacert='$(grep --\\
+          '--trusted-ca-file=' <<< $ETCD_ARGS | sed 's/[^=]*=//') \\
+          '--endpoints='$(grep --\\
+          '--advertise-client-urls=' <<< $ETCD_ARGS | sed 's/[^=]*=//')
+    }
+  `}
+</CodeBlock>
 
 ### Подключение
-
-```bash
-alias ectl='crictl exec \
-  -ti $(cidsearch ${SEARCH_POD_NAME} ${SEARCH_NAMESPACE}) \
-  etcdctl \
-  $(ectlflagsearch ${SEARCH_POD_NAME} ${SEARCH_NAMESPACE})'
-```
+<CodeBlock language="bash">
+  {dedent`
+    alias ectl='crictl exec \\
+      -ti $(cidsearch $\{SEARCH_POD_NAME} $\{SEARCH_NAMESPACE}) \\
+      etcdctl \\
+      $(ectlflagsearch $\{SEARCH_POD_NAME} $\{SEARCH_NAMESPACE})'
+  `}
+</CodeBlock>
 
 ### Список участников кластера
+<CodeBlock language="bash">
+  {dedent`
+    ectlMembers() {
+      ectl member list \\
+      --write-out=json | jq \\
+      -r '[.members[].clientURLs[]] | join(",")'
+    }
+  `}
+</CodeBlock>
 
-```bash
-ectlMembers() {
-  ectl member list \
-  --write-out=json |
-  jq \
-  -r '[.members[].clientURLs[]] | join(",")'
-}
-```
 
 ### Актуальная ревизия
-
-```bash
-ectlRevision() {
-  ectl \
-    endpoint status \
-    --cluster \
-    -w json |
-    jq -r  \
-    '[.[].Status.header.revision] | join(" ")'
-}
-```
+<CodeBlock language="bash">
+  {dedent`
+    ectlRevision() {
+      ectl \\
+        endpoint status \\
+        --cluster \\
+        -w json | jq -r  \\
+        '[.[].Status.header.revision] | join(" ")'
+    }
+  `}
+</CodeBlock>
 
 ### Уплотение
+<CodeBlock language="bash">
+  {dedent`
+    alias ectlCompaction='ectl \\
+      compaction $(ectlRevision) \\
+      --cluster'
+  `}
+</CodeBlock>
 
-```bash
-alias ectlCompaction='ectl \
-  compaction $(ectlRevision) \
-  --cluster'
-```
 
 ### Дефрагментация
-
-```bash
-alias ectlDefrag='ectl \
-  defrag \
-  --cluster'
-```
+<CodeBlock language="bash">
+  {dedent`
+    alias ectlDefrag='ectl \\
+      defrag \\
+      --cluster'
+  `}
+</CodeBlock>
 
 ## 5.1.5.2.5. Подключение через nsenter
 
@@ -233,91 +238,88 @@ alias ectlDefrag='ectl \
 
 <CodeAndInputExportPods />
 
-<CodeBlock language="bash">
-  {dedent`
-        export BASE_K8S_PATH="${CUSTOM_VALUE.kuberneteBaseFolderPath.value}"
-        export ETCD_PEER_CRT_PATH="${CERTIFICATES.etcdPeer.crtPath}"
-        export ETCD_PEER_KEY_PATH="${CERTIFICATES.etcdPeer.keyPath}"
-        export ETCD_CA_CRT_PATH="${CERTIFICATES.etcdCA.crtPath}"
-    `}
-</CodeBlock>
-
-
 ### Поиск ID контейнера
 
 > Данный алиас поможет быстро найти ID контейнера по меткам `io.kubernetes.container.name` и `io.kubernetes.pod.namespace`
 
-```bash
-cidsearch() {
-  crictl ps \
-    --label io.kubernetes.pod.name="$1" \
-    --label io.kubernetes.pod.namespace="$2" \
-    -o json | jq -r '.containers[].id'
-}
-```
+<CodeBlock language="bash">
+  {dedent`
+    cidsearch() {
+      crictl ps \\
+        --label io.kubernetes.pod.name="$1" \\
+        --label io.kubernetes.pod.namespace="$2" \\
+        -o json | jq -r '.containers[].id'
+    }
+  `}
+</CodeBlock>
 
 ### Поиск PID контейнера
 
 > Данный алиас поможет быстро найти PID контейнера по меткам `io.kubernetes.container.name` и `io.kubernetes.pod.namespace`
 
-```bash
-cpidsearch() {
-  crictl inspect \
-    $(cidsearch "$1" "$2") | jq .info.pid
-}
-```
+<CodeBlock language="bash">
+  {dedent`
+    cpidsearch() {
+      crictl inspect \\
+        $(cidsearch "$1" "$2") | jq .info.pid
+    }
+  `}
+</CodeBlock>
+
 
 ### Список участников кластера
-
-```bash
-nectlMembers() {
-  nectl member list \
-  --write-out=json |
-  jq \
-  -r '[.members[].clientURLs[]] | join(",")'
-}
-```
+<CodeBlock language="bash">
+  {dedent`
+    nectlMembers() {
+      nectl member list \\
+      --write-out=json | jq \\
+      -r '[.members[].clientURLs[]] | join(",")'
+    }
+  `}
+</CodeBlock>
 
 ### Актуальная ревизия
-
-```bash
-nectlRevision() {
-  nectl \
-    --endpoints=$(nectlMembers) \
-    endpoint status \
-    -w json |
-    jq \
-    -r .[].Status.header.revision
-}
-```
+<CodeBlock language="bash">
+  {dedent`
+    nectlMembers() {
+      nectl member list \\
+      --write-out=json | jq \\
+      -r '[.members[].clientURLs[]] | join(",")'
+    }
+  `}
+</CodeBlock>
 
 ### Подключение
+<CodeBlock language="bash">
+  {dedent`
+    alias nectl='nsenter \\
+      -m -n -t \\
+      $(cpidsearch $\{SEARCH_CONTAINER_NAME} $\{SEARCH_NAMESPACE}) \\
+      etcdctl \\
+      --cert=${CERTIFICATES.etcdPeer.crtPath} \\
+      --key=${CERTIFICATES.etcdPeer.keyPath} \\
+      --cacert=${CERTIFICATES.etcdCA.crtPath}'
+  `}
+</CodeBlock>
 
-```bash
-alias nectl='nsenter \
-  -m -n -t \
-  $(cpidsearch ${SEARCH_CONTAINER_NAME} ${SEARCH_NAMESPACE}) \
-  etcdctl \
-  --cert=${ETCD_PEER_CRT_PATH} \
-  --key=${ETCD_PEER_KEY_PATH} \
-  --cacert=${ETCD_CA_CRT_PATH}'
-```
 
 ### Уплотение
-
-```bash
-alias nectlCompaction='nectl \
-  --endpoints=$(nectlMembers) \
-  compaction $(nectlRevision)'
-```
+<CodeBlock language="bash">
+  {dedent`
+    alias nectlCompaction='nectl \\
+      --endpoints=$(nectlMembers) \\
+      compaction $(nectlRevision)'
+  `}
+</CodeBlock>
 
 ### Дефрагментация
-
-```bash
-alias nectlDefrag='nectl \
-  --endpoints=$(nectlMembers) \
-  defrag'
-```
+<CodeBlock language="bash">
+  {dedent`
+    alias nectlDefrag='nectl \\
+      --endpoints=$(nectlMembers) \\
+      defrag'
+  `}
+</CodeBlock>
 
 ## 5.1.5.2.6. Подключение через kubectl
 
@@ -337,90 +339,94 @@ alias nectlDefrag='nectl \
 
 > alias функции, которая подставляет флаги с указанием PEER-сертификата, PEER-ключа , CA-сертификата ETCD кластера и ENDPOINT-а.
 
-```bash
-kectlflagsearch() {
-  ETCD_ARGS=$( \
-      kubectl get pod \
-      -n ${SEARCH_NAMESPACE} \
-      ${SEARCH_POD_NAME} \
-      -o yaml) ; \
-    echo -n \
-      '--cert='$(grep --\
-   '--peer-cert-file=' <<< $ETCD_ARGS |
-        sed 's/[^=]*=//') \
-      '--key='$(grep --\
-   '--peer-key-file=' <<< $ETCD_ARGS |
-        sed 's/[^=]*=//') \
-      '--cacert='$(grep --\
-   '--trusted-ca-file=' <<< $ETCD_ARGS |
-        sed 's/[^=]*=//') \
-      '--endpoints='$(grep --\
-   '--advertise-client-urls=' <<< $ETCD_ARGS |
-        sed 's/[^=]*=//' |
-        sed 's/$(POD_NAME)/'${SEARCH_POD_NAME}'/' |
-        sed 's/$(POD_NAMESPACE)/'${SEARCH_NAMESPACE}'/')
-  }
-```
+<CodeBlock language="bash">
+  {dedent`
+    kectlflagsearch() {
+      ETCD_ARGS=$( kubectl get pod \\
+        -n $\{SEARCH_NAMESPACE} \\
+           $\{SEARCH_POD_NAME} \\
+        -o yaml) ; \\
+        echo -n \\
+          '--cert='$(grep --\\
+          '--peer-cert-file=' <<< $ETCD_ARGS | sed 's/[^=]*=//') \\
+          '--key='$(grep --\\
+          '--peer-key-file=' <<< $ETCD_ARGS | sed 's/[^=]*=//') \\
+          '--cacert='$(grep --\\
+          '--trusted-ca-file=' <<< $ETCD_ARGS | sed 's/[^=]*=//') \\
+          '--endpoints='$(grep --\\
+          '--advertise-client-urls=' <<< $ETCD_ARGS \|
+          sed 's/[^=]*=//' \|
+          sed 's/$(POD_NAME)/'$\{SEARCH_POD_NAME}'/' \|
+          sed 's/$(POD_NAMESPACE)/'$\{SEARCH_NAMESPACE}'/')
+      }
+  `}
+</CodeBlock>
 
 ### Подключение
-
-```bash
-alias kectl='kubectl exec -it \
-  -n ${SEARCH_NAMESPACE} \
-  ${SEARCH_POD_NAME} \
-  -- \
-  etcdctl \
-  $(kectlflagsearch ${SEARCH_POD_NAME} ${SEARCH_NAMESPACE})'
-```
+<CodeBlock language="bash">
+  {dedent`
+    alias kectl='kubectl exec -it \\
+      -n $\{SEARCH_NAMESPACE} \\
+      $\{SEARCH_POD_NAME} \\
+      -- \\
+      etcdctl \\
+      $(kectlflagsearch $\{SEARCH_POD_NAME} $\{SEARCH_NAMESPACE})'
+  `}
+</CodeBlock>
 
 ### Список участников кластера
-
-```bash
-kectlMembers() {
-  kectl member list \
-  --write-out=json |
-  jq \
-  -r '[.members[].clientURLs[]] | join(",")'
-}
-```
+<CodeBlock language="bash">
+  {dedent`
+    kectlMembers() {
+      kectl member list \\
+      --write-out=json | jq \\
+      -r '[.members[].clientURLs[]] | join(",")'
+    }
+  `}
+</CodeBlock>
 
 ### Актуальная ревизия
+<CodeBlock language="bash">
+  {dedent`
+    kectlRevision() {
+      kectl \\
+        endpoint status \\
+        --cluster \\
+        -w json | jq -r  \\
+        '[.[].Status.header.revision] | join(" ")'
+    }
+  `}
+</CodeBlock>
 
-```bash
-kectlRevision() {
-  kectl \
-    endpoint status \
-    --cluster \
-    -w json |
-    jq -r  \
-    '[.[].Status.header.revision] | join(" ")'
-}
-```
 
 ### Уплотение
-
-```bash
-alias kectlCompaction='kectl \
-  compaction $(kectlRevision) \
-  --cluster'
-```
+<CodeBlock language="bash">
+  {dedent`
+    alias kectlCompaction='kectl \\
+      compaction $(kectlRevision) \\
+      --cluster'
+  `}
+</CodeBlock>
 
 ### Дефрагментация
-
-```bash
-alias kectlDefrag='kectl \
-  defrag \
-  --cluster'
-```
+<CodeBlock language="bash">
+  {dedent`
+    alias kectlDefrag='kectl \\
+      defrag \\
+      --cluster'
+  `}
+</CodeBlock>
 
 ### Получение пути `data-dir`
+<CodeBlock language="bash">
+  {dedent`
+    kgdatadirpath() {
+      jq -r '.spec.containers[0].command[], .spec.containers[0].args[]? | select(startswith("--data-dir"))' <<< "$(kubectl get pod -n "$1" "$2" -o json)" \|
+        awk -F= '{print $2}' | head -n1
+    }
+  `}
+</CodeBlock>
 
-```bash
-kgdatadirpath() {
-  jq -r '.spec.containers[0].command[], .spec.containers[0].args[]? | select(startswith("--data-dir"))' <<< "$(kubectl get pod -n "$1" "$2" -o json)" |
-    awk -F= '{print $2}' | head -n1
-}
-```
 
 ### Загрузка файла резервной копии
 

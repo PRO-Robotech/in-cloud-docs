@@ -20,6 +20,9 @@ export const CUSTOM_VALUE: TCustomValueItems = {
   kuberneteBaseFolderPath: {
     value: '/etc/kubernetes',
   },
+  kubeadmBaseConfigPath: {
+    value: '/var/run/kubeadm',
+  },
   kuberneteKubeletFolderPath: {
     value: '/var/lib/kubelet',
   },

@@ -2,7 +2,7 @@ import dedent                   from 'ts-dedent'
 import CodeBlock                from '@theme/CodeBlock'
 
 :::warning
-Обратите внимание, что при создании кластера с помощью ***Kubeadm*** без выполнения команд `kubeadm init` или `kubeadm join`, файл конфигурации Kubelet (`/var/lib/kubelet/config.yaml`) не будет создан.  
+Обратите внимание, что при создании кластера с помощью ***Kubeadm*** без выполнения команд `kubeadm init` или `kubeadm join`, файл конфигурации Kubelet (`/var/lib/kubelet/config.yaml`) не будет создан.
 :::
 
 <CodeBlock language="bash">
@@ -13,11 +13,11 @@ import CodeBlock                from '@theme/CodeBlock'
 
 <CodeBlock language="bash">
     {dedent`
-        ls -la /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf
+        ls -la /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.yaml
     `}
 </CodeBlock>
 
-:::info 
+:::info
 <CodeBlock language="bash">
     {dedent`
         -rw-r--r-- 1 root root 1721 Feb 19 18:57 /var/lib/kubelet/config.yaml
@@ -26,7 +26,7 @@ import CodeBlock                from '@theme/CodeBlock'
 
 <CodeBlock language="bash">
     {dedent`
-        -rw-r--r-- 1 root root 903 Feb 19 22:10 /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf
+        -rw-r--r-- 1 root root 903 Feb 19 22:10 /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.yaml
     `}
 </CodeBlock>
 :::

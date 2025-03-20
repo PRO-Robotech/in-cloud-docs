@@ -70,7 +70,7 @@ import MastersTabs from '@site/docs/tech-docs/kubernetes/setupEnvironments/initM
 
     <CodeBlock language="bash">
         {dedent`
-            kubeadm init phase mark-control-plane --config=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/kubeadm.conf
+            kubeadm init phase mark-control-plane --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
         `}
     </CodeBlock>
 

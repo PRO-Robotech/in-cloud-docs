@@ -8,9 +8,9 @@ import Tabs                     from '@theme/Tabs'
         <TabItem value='Kubeadm'>
             ```bash
             kubeadm join phase control-plane-prepare certs \
-                --config=${BASE_K8S_PATH}/kubeadm.conf
+                --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
             kubeadm join phase control-plane-prepare kubeconfig \
-                --config=${BASE_K8S_PATH}/kubeadm.conf
+                --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
             ```
 
             :::note

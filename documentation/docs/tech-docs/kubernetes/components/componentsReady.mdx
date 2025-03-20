@@ -22,7 +22,7 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
   <TabItem value='Init'>
     <CodeBlock language="bash">
       {dedent`
-        kubeadm init phase preflight --dry-run --config=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/kubeadm.conf
+        kubeadm init phase preflight --dry-run --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
       `}
     </CodeBlock>
 
@@ -59,7 +59,7 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
   <TabItem value='Join'>
     <CodeBlock language="bash">
       {dedent`
-        kubeadm join phase preflight --dry-run --config=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/kubeadm.conf
+        kubeadm join phase preflight --dry-run --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
       `}
     </CodeBlock>
 

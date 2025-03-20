@@ -1,9 +1,9 @@
 #### Генерация Kubelet сертификатов
 ```bash
 kubeadm init phase kubeconfig kubelet \
-    --config=${BASE_K8S_PATH}/kubeadm.conf
+    --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
 kubeadm init phase kubelet-finalize experimental-cert-rotation \
-    --config=${BASE_K8S_PATH}/kubeadm.conf
+    --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
 ```
 
 :::note

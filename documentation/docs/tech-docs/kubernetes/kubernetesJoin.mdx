@@ -4,6 +4,8 @@ id: k8s-join
 
 import TabItem  from '@theme/TabItem'
 import Tabs     from '@theme/Tabs'
+import CodeBlock from '@theme/CodeBlock'
+import dedent from 'ts-dedent'
 
 # 5.2.3.2. Расширение
 
@@ -17,9 +19,11 @@ import Tabs     from '@theme/Tabs'
     Обратите внимание: для расширения ноды используется заранее подготовленный конфигурационный файл ```kubeadm``` с предуказанным токеном. В промышленной эксплуатации рекомендуется генерировать уникальный токен для каждого узла с ограниченным временем жизни для повышения безопасности.
     :::
 
-    ```bash
-    kubeadm join --config=${BASE_K8S_PATH}/kubeadm.conf
-    ```
+    <CodeBlock language="bash">
+      {dedent`
+        kubeadm join --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
+      `}
+    </CodeBlock>
 
     :::note
     ```
@@ -82,9 +86,9 @@ import Tabs     from '@theme/Tabs'
 
     To start administering your cluster from this node, you need to run the following as a regular user:
 
-    	mkdir -p $HOME/.kube
-    	sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-    	sudo chown $(id -u):$(id -g) $HOME/.kube/config
+      mkdir -p $HOME/.kube
+      sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+      sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
     Run 'kubectl get nodes' to see this node join the cluster.
 
@@ -100,13 +104,16 @@ import Tabs     from '@theme/Tabs'
     Обратите внимание: для расширения ноды используется заранее подготовленный конфигурационный файл ```kubeadm``` с предуказанным токеном. В промышленной эксплуатации рекомендуется генерировать уникальный токен для каждого узла с ограниченным временем жизни для повышения безопасности.
     :::
 
-    ```bash
-    kubeadm join phase control-plane-join etcd --config=${BASE_K8S_PATH}/kubeadm.conf
-    ```
+    <CodeBlock language="bash">
+      {dedent`
+        kubeadm join phase control-plane-join etcd --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
+      `}
+    </CodeBlock>
+
 
     :::note
     ```
-    
+
     ```
     :::
   </TabItem>

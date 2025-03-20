@@ -2,11 +2,6 @@
 id: join-certificates
 
 ---
-import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
-
-import CodeBlock from '@theme/CodeBlock'
-import dedent from 'ts-dedent'
-
 import JoinCertsGen from '@site/docs/tech-docs/kubernetes/certificates/components/_kubeadm/joinAllCertsGen.mdx'
 import JoinKubeconfigGen from '@site/docs/tech-docs/kubernetes/certificates/components/_kubeadm/joinAllKubeconfigGen.mdx'
 
@@ -20,7 +15,7 @@ import JoinKubeconfigGen from '@site/docs/tech-docs/kubernetes/certificates/comp
 - Заказ сертификатов для использования в ```Kubeconfig```.
 :::
 
-:::warning  
+:::warning
 Обратите внимание, что данный раздел зависит от следующих документов:
 - [Загрузка ЦА](../centerAuthority/join.mdx).
 :::
