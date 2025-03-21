@@ -4,20 +4,6 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 import CodeBlock        from '@theme/CodeBlock'
 import dedent           from 'ts-dedent'
 
-<h4>Переменные окружения</h4>
-<CodeBlock language="bash">
-    {dedent`
-        export BASE_K8S_PATH="${CUSTOM_VALUE.kuberneteBaseFolderPath.value}"
-        export KUBERNETES_ETCD_CLIENT_CN="${CERTIFICATES.kubernetesEtcdClient.cname}"
-        export KUBERNETES_ETCD_CLIENT_CRT_CONF="${CERTIFICATES.kubernetesEtcdClient.crtConf}"
-        export KUBERNETES_ETCD_CLIENT_CRT_PATH="${CERTIFICATES.kubernetesEtcdClient.crtPath}"
-        export KUBERNETES_ETCD_CLIENT_CSR_PATH="${CERTIFICATES.kubernetesEtcdClient.csrPath}"
-        export KUBERNETES_ETCD_CLIENT_KEY_PATH="${CERTIFICATES.kubernetesEtcdClient.keyPath}"
-        export KUBERNETES_ETCD_CLIENT_KEY_SIZE=${CERTIFICATES.kubernetesEtcdClient.keySize}
-        export ETCD_CA_CRT_PATH="${CERTIFICATES.etcdCA.crtPath}"
-        export ETCD_CA_KEY_PATH="${CERTIFICATES.etcdCA.keyPath}"
-    `}
-</CodeBlock>
 
 <h4>Рабочая директория</h4>
 <CodeBlock language="bash">
@@ -28,51 +14,59 @@ import dedent           from 'ts-dedent'
 </CodeBlock>
 
 <h4>Конфигурация</h4>
-```bash
-cat <<EOF > ${KUBERNETES_ETCD_CLIENT_CRT_CONF}
-[ req ]
-default_bits        = ${KUBERNETES_ETCD_CLIENT_KEY_SIZE}
-prompt              = no
-default_md          = sha256
-distinguished_name  = dn
+<CodeBlock language="bash">
+    {dedent`
+      cat <<EOF > ${CERTIFICATES.kubernetesEtcdClient.crtConf}
+      [ req ]
+      default_bits        = ${CERTIFICATES.kubernetesEtcdClient.keySize}
+      prompt              = no
+      default_md          = sha256
+      distinguished_name  = dn
 
-[ dn ]
-CN = ${KUBERNETES_ETCD_CLIENT_CN}
+      [ dn ]
+      CN = ${CERTIFICATES.kubernetesEtcdClient.cname}
 
-[ v3_ext ]
-authorityKeyIdentifier=keyid,issuer:always
-basicConstraints=CA:FALSE
-keyUsage=keyEncipherment,dataEncipherment
-extendedKeyUsage=clientAuth
-EOF
-```
+      [ v3_ext ]
+      authorityKeyIdentifier=keyid,issuer:always
+      basicConstraints=CA:FALSE
+      keyUsage=keyEncipherment,dataEncipherment
+      extendedKeyUsage=clientAuth
+      EOF
+    `}
+</CodeBlock>
 
 <h4>Генерация приватного ключа</h4>
-```bash
-openssl genrsa \
-    -out "${KUBERNETES_ETCD_CLIENT_KEY_PATH}" ${KUBERNETES_ETCD_CLIENT_KEY_SIZE}
-```
+<CodeBlock language="bash">
+  {dedent`
+    openssl genrsa \\
+      -out ${CERTIFICATES.kubernetesEtcdClient.keyPath} ${CERTIFICATES.kubernetesEtcdClient.keySize}
+  `}
+</CodeBlock>
 
 <h4>Генерация CSR</h4>
-```bash
-openssl req \
-    -new \
-    -key    "${KUBERNETES_ETCD_CLIENT_KEY_PATH}" \
-    -out    "${KUBERNETES_ETCD_CLIENT_CSR_PATH}" \
-    -config "${KUBERNETES_ETCD_CLIENT_CRT_CONF}"
-```
+<CodeBlock language="bash">
+  {dedent`
+    openssl req \\
+      -new \\
+      -key    ${CERTIFICATES.kubernetesEtcdClient.keyPath} \\
+      -out    ${CERTIFICATES.kubernetesEtcdClient.csrPath} \\
+      -config ${CERTIFICATES.kubernetesEtcdClient.crtConf}
+  `}
+</CodeBlock>
 
 <h4>Подпись CSR</h4>
-```bash
-openssl x509 \
-    -req \
-    -days 365 \
-    -sha256 \
-    -CA "${ETCD_CA_CRT_PATH}" \
-    -CAkey "${ETCD_CA_KEY_PATH}" \
-    -CAcreateserial \
-    -in "${KUBERNETES_ETCD_CLIENT_CSR_PATH}" \
-    -out "${KUBERNETES_ETCD_CLIENT_CRT_PATH}" \
-    -extensions v3_ext \
-    -extfile "${KUBERNETES_ETCD_CLIENT_CRT_CONF}"
-```
+<CodeBlock language="bash">
+  {dedent`
+    openssl x509 \\
+      -req \\
+      -days 365 \\
+      -sha256 \\
+      -CA ${CERTIFICATES.etcdCA.crtPath} \\
+      -CAkey ${CERTIFICATES.etcdCA.keyPath} \\
+      -CAcreateserial \\
+      -in ${CERTIFICATES.kubernetesEtcdClient.csrPath} \\
+      -out ${CERTIFICATES.kubernetesEtcdClient.crtPath} \\
+      -extensions v3_ext \\
+      -extfile ${CERTIFICATES.kubernetesEtcdClient.crtConf}
+  `}
+</CodeBlock>

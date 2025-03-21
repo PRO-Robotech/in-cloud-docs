@@ -218,12 +218,10 @@ import {KUBE_API_ARGS} from '@site/src/constants/kubernetes/kubeAPIArgs'
     <summary>Cluster-Info</summary>
     <h4>Переменные окружения</h4>
     <CodeBlock language="bash">
-        {dedent`
-            export KUBE_APISERVER_PORT=${PORTS.kubeAPIServer.portNumber}
-            export KUBE_CA_CRT_BASE64=$(base64 -w 0 /etc/kubernetes/pki/ca.crt)
-            export CLUSTER_NAME="${CUSTOM_VALUE.clusterName.value}"
-            export BASE_DOMAIN="${CUSTOM_VALUE.kubernetesBaseDomain.value}"
-        `}
+      {dedent`
+          export KUBE_CA_CRT_BASE64=$(base64 -w 0 /etc/kubernetes/pki/ca.crt)
+          export CLUSTER_API_URL=https://api.${CUSTOM_VALUE.clusterName.value}.${CUSTOM_VALUE.kubernetesBaseDomain.value}
+      `}
     </CodeBlock>
 
     <h4>Обновление Сluster-info</h4>
@@ -238,7 +236,7 @@ import {KUBE_API_ARGS} from '@site/src/constants/kubernetes/kubeAPIArgs'
             clusters:
             - cluster:
                 certificate-authority-data: $\{KUBE_CA_CRT_BASE64}
-                server: https://api.$\{CLUSTER_NAME}.$\{BASE_DOMAIN}:${KUBE_API_ARGS.securePort.value}
+                server: $\{CLUSTER_API_URL}:${KUBE_API_ARGS.securePort.value}
               name: ""
             contexts: null
             current-context: ""

@@ -24,9 +24,9 @@ import MastersTabs from '@site/docs/tech-docs/kubernetes/setupEnvironments/initM
 
 <h4>Переменные окружения</h4>
 <CodeBlock language="bash">
-    {dedent`
-        export FULL_HOST_NAME="${CUSTOM_VALUE.virtualMachineFullName.value}"
-    `}
+  {dedent`
+    export FULL_HOST_NAME="${CUSTOM_VALUE.virtualMachineFullName.value}"
+  `}
 </CodeBlock>
 
 
@@ -43,9 +43,9 @@ import MastersTabs from '@site/docs/tech-docs/kubernetes/setupEnvironments/initM
 
     :::note
     <CodeBlock language="bash">
-        {dedent`
-          node/master-1.example.example.com labeled
-        `}
+      {dedent`
+        node/master-1.example.example.com labeled
+      `}
     </CodeBlock>
     :::
 
@@ -58,9 +58,9 @@ import MastersTabs from '@site/docs/tech-docs/kubernetes/setupEnvironments/initM
 
     :::note
     <CodeBlock language="bash">
-        {dedent`
-          node/master-1.example.example.com modified
-        `}
+      {dedent`
+        node/master-1.example.example.com modified
+      `}
     </CodeBlock>
     :::
 
@@ -69,17 +69,17 @@ import MastersTabs from '@site/docs/tech-docs/kubernetes/setupEnvironments/initM
   <TabItem value='Kubeadm'>
 
     <CodeBlock language="bash">
-        {dedent`
-            kubeadm init phase mark-control-plane --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
-        `}
+      {dedent`
+        kubeadm init phase mark-control-plane --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
+      `}
     </CodeBlock>
 
     :::note
     <CodeBlock language="bash">
-        {dedent`
-          [mark-control-plane] Marking the node master-1.example.example.com as control-plane by adding the labels: [node-role.kubernetes.io/control-plane node.kubernetes.io/exclude-from-external-load-balancers]
-          [mark-control-plane] Marking the node master-1.example.example.com as control-plane by adding the taints [node-role.kubernetes.io/control-plane:NoSchedule]
-        `}
+      {dedent`
+        [mark-control-plane] Marking the node master-1.example.example.com as control-plane by adding the labels: [node-role.kubernetes.io/control-plane node.kubernetes.io/exclude-from-external-load-balancers]
+        [mark-control-plane] Marking the node master-1.example.example.com as control-plane by adding the taints [node-role.kubernetes.io/control-plane:NoSchedule]
+      `}
     </CodeBlock>
     :::
 

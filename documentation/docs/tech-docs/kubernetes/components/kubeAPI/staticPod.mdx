@@ -1,55 +1,19 @@
 import { CUSTOM_VALUE }       from '@site/src/constants/kubernetes/customValue'
-import { CERTIFICATES }       from '@site/src/constants/kubernetes/certs'
-import { PORTS }              from '@site/src/constants/kubernetes/ports'
 import { COMPONENTS_VERSION } from '@site/src/constants/kubernetes/componentsVersion'
 import { KUBE_API_ARGS }      from '@site/src/constants/kubernetes/kubeAPIArgs'
 
 import CodeBlock              from '@theme/CodeBlock'
 import dedent                 from 'ts-dedent'
 
+
 <h4>Переменные окружния</h4>
 
 <CodeBlock language="bash">
     {dedent`
-      export KUBELET_SERVER_PORT=${PORTS.kubeletServer.portNumber}
-      export KUBELET_READ_ONLY_PORT=${PORTS.kubeletReadOnlyPort.portNumber}
-      export KUBE_APISERVER_PORT=${PORTS.kubeAPIServer.portNumber}
-      export ETCD_SERVER_PORT=${PORTS.etcdServer.portNumber}
-      export ETCD_SERVERS="https://127.0.0.1:$\{ETCD_SERVER_PORT}"
-      export SERVICE_CIDR="${CUSTOM_VALUE.kubernetesServiceCIDR.value}"
       export MACHINE_LOCAL_ADDRESS="${CUSTOM_VALUE.virtualMachineLocalAddress.value}"
     `}
 </CodeBlock>
 
-<CodeBlock language="bash">
-    {dedent`
-      export BASE_K8S_PATH="${CUSTOM_VALUE.kuberneteBaseFolderPath.value}"
-      export BASE_DOMAIN="${CUSTOM_VALUE.kubernetesBaseDomain.value}"
-      export CLUSTER_NAME="${CUSTOM_VALUE.clusterName.value}"
-      export KUBERNETES_VERSION="${COMPONENTS_VERSION.kubernetes.value}"
-      export CLUSTER_DOMAIN="${CUSTOM_VALUE.kubernetesClusterDomain.value}"
-      export BASE_DOCKER_REGISTRY="${CUSTOM_VALUE.baseDockerRegistry.value}"
-    `}
-</CodeBlock>
-
-<CodeBlock language="bash">
-    {dedent`
-      export KUBERNETES_SERVICE_ACCOUNT_KEY_PATH="${CERTIFICATES.kubernetesSA.keyPath}"
-      export KUBERNETES_SERVICE_ACCOUNT_CRT_PATH="${CERTIFICATES.kubernetesSA.crtPath}"
-      export KUBERNETES_SERVER_KEY_PATH="${CERTIFICATES.kubernetesServer.keyPath}"
-      export KUBERNETES_SERVER_CRT_PATH="${CERTIFICATES.kubernetesServer.crtPath}"
-      export KUBERNETES_KUBELET_CLIENT_KEY_PATH="${CERTIFICATES.kubernetesKubeletClient.keyPath}"
-      export KUBERNETES_KUBELET_CLIENT_CRT_PATH="${CERTIFICATES.kubernetesKubeletClient.crtPath}"
-      export KUBERNETES_FRONT_PROXY_CLIENT_KEY_PATH="${CERTIFICATES.kubernetesFrontProxyClient.keyPath}"
-      export KUBERNETES_FRONT_PROXY_CLIENT_CRT_PATH="${CERTIFICATES.kubernetesFrontProxyClient.crtPath}"
-      export KUBERNETES_FRONT_PROXY_CLIENT_CN="${CERTIFICATES.kubernetesFrontProxyClient.cname}"
-      export KUBERNETES_ETCD_CLIENT_KEY_PATH="${CERTIFICATES.kubernetesEtcdClient.keyPath}"
-      export KUBERNETES_ETCD_CLIENT_CRT_PATH="${CERTIFICATES.kubernetesEtcdClient.crtPath}"
-      export KUBERNETES_CA_CRT_PATH="${CERTIFICATES.kubernetesCA.crtPath}"
-      export FRONT_PROXY_CA_CRT_PATH="${CERTIFICATES.frontProxyCA.crtPath}"
-      export ETCD_CA_CRT_PATH="${CERTIFICATES.etcdCA.crtPath}"
-    `}
-</CodeBlock>
 
 <h4>Рабочая директория</h4>
 

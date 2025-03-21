@@ -5,21 +5,6 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 import CodeBlock        from '@theme/CodeBlock'
 import dedent           from 'ts-dedent'
 
-<h4>Переменные окружения</h4>
-<CodeBlock language="bash">
-{dedent`
-    export BASE_K8S_PATH="${CUSTOM_VALUE.kuberneteBaseFolderPath.value}"
-    export KUBERNETES_CONTROLLER_MANAGER_CLIENT_CN="${CERTIFICATES.kubernetesControllerManagerClient.cname}"
-    export KUBERNETES_CONTROLLER_MANAGER_CLIENT_CRT_CONF="${CERTIFICATES.kubernetesControllerManagerClient.crtConf}"
-    export KUBERNETES_CONTROLLER_MANAGER_CLIENT_CRT_PATH="${CERTIFICATES.kubernetesControllerManagerClient.crtPath}"
-    export KUBERNETES_CONTROLLER_MANAGER_CLIENT_CSR_PATH="${CERTIFICATES.kubernetesControllerManagerClient.csrPath}"
-    export KUBERNETES_CONTROLLER_MANAGER_CLIENT_KEY_PATH="${CERTIFICATES.kubernetesControllerManagerClient.keyPath}"
-    export KUBERNETES_CONTROLLER_MANAGER_CLIENT_KEY_SIZE=${CERTIFICATES.kubernetesControllerManagerClient.keySize}
-    export KUBERNETES_CA_CRT_PATH="${CERTIFICATES.kubernetesCA.crtPath}"
-    export KUBERNETES_CA_KEY_PATH="${CERTIFICATES.kubernetesCA.keyPath}"
-`}
-</CodeBlock>
-
 <h4>Рабочая директория</h4>
 <CodeBlock language="bash">
     {dedent`
@@ -29,52 +14,60 @@ import dedent           from 'ts-dedent'
 </CodeBlock>
 
 <h4>Конфигурация</h4>
-```bash
-cat <<EOF > ${KUBERNETES_CONTROLLER_MANAGER_CLIENT_CRT_CONF}
-[ req ]
-default_bits        = ${KUBERNETES_CONTROLLER_MANAGER_CLIENT_KEY_SIZE}
-prompt              = no
-default_md          = sha256
-distinguished_name  = dn
+<CodeBlock language="bash">
+  {dedent`
+    cat <<EOF > ${CERTIFICATES.kubernetesControllerManagerClient.crtConf}
+    [ req ]
+    default_bits        = ${CERTIFICATES.kubernetesControllerManagerClient.keySize}
+    prompt              = no
+    default_md          = sha256
+    distinguished_name  = dn
 
-[ dn ]
-CN = ${KUBERNETES_CONTROLLER_MANAGER_CLIENT_CN}
+    [ dn ]
+    CN = ${CERTIFICATES.kubernetesControllerManagerClient.cname}
 
-[ v3_ext ]
-authorityKeyIdentifier=keyid,issuer:always
-basicConstraints=CA:FALSE
-keyUsage=keyEncipherment,dataEncipherment
-extendedKeyUsage=clientAuth
-EOF
-```
+    [ v3_ext ]
+    authorityKeyIdentifier=keyid,issuer:always
+    basicConstraints=CA:FALSE
+    keyUsage=keyEncipherment,dataEncipherment
+    extendedKeyUsage=clientAuth
+    EOF
+  `}
+</CodeBlock>
 
 <h4>Генерация приватного ключа</h4>
-```bash
-openssl genrsa \
-    -out "${KUBERNETES_CONTROLLER_MANAGER_CLIENT_KEY_PATH}" ${KUBERNETES_CONTROLLER_MANAGER_CLIENT_KEY_SIZE}
-```
+<CodeBlock language="bash">
+  {dedent`
+    openssl genrsa \\
+      -out ${CERTIFICATES.kubernetesControllerManagerClient.keyPath} ${CERTIFICATES.kubernetesControllerManagerClient.keySize}
+  `}
+</CodeBlock>
 
 <h4>Генерация CSR</h4>
-```bash
-openssl req \
-    -new \
-    -key "${KUBERNETES_CONTROLLER_MANAGER_CLIENT_KEY_PATH}" \
-    -out "${KUBERNETES_CONTROLLER_MANAGER_CLIENT_CSR_PATH}" \
-    -config "${KUBERNETES_CONTROLLER_MANAGER_CLIENT_CRT_CONF}"
-```
+<CodeBlock language="bash">
+  {dedent`
+    openssl req \\
+      -new \\
+      -key ${CERTIFICATES.kubernetesControllerManagerClient.keyPath} \\
+      -out ${CERTIFICATES.kubernetesControllerManagerClient.csrPath} \\
+      -config ${CERTIFICATES.kubernetesControllerManagerClient.crtConf}
+  `}
+</CodeBlock>
 
 <h4>Подпись CSR</h4>
-```bash
-openssl x509 \
-    -req \
-    -days 365 \
-    -sha256 \
-    -outform PEM \
-    -CA "${KUBERNETES_CA_CRT_PATH}" \
-    -CAkey "${KUBERNETES_CA_KEY_PATH}" \
-    -CAcreateserial \
-    -in "${KUBERNETES_CONTROLLER_MANAGER_CLIENT_CSR_PATH}" \
-    -out "${KUBERNETES_CONTROLLER_MANAGER_CLIENT_CRT_PATH}" \
-    -extensions v3_ext \
-    -extfile "${KUBERNETES_CONTROLLER_MANAGER_CLIENT_CRT_CONF}"
-```
+<CodeBlock language="bash">
+  {dedent`
+    openssl x509 \\
+      -req \\
+      -days 365 \\
+      -sha256 \\
+      -outform PEM \\
+      -CA ${CERTIFICATES.kubernetesCA.crtPath} \\
+      -CAkey ${CERTIFICATES.kubernetesCA.keyPath} \\
+      -CAcreateserial \\
+      -in ${CERTIFICATES.kubernetesControllerManagerClient.csrPath} \\
+      -out ${CERTIFICATES.kubernetesControllerManagerClient.crtPath} \\
+      -extensions v3_ext \\
+      -extfile ${CERTIFICATES.kubernetesControllerManagerClient.crtConf}
+  `}
+</CodeBlock>

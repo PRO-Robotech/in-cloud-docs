@@ -1,7 +1,6 @@
 /* eslint-disable no-template-curly-in-string */
 import { CERTIFICATES } from '@site/src/constants/kubernetes/certs'
 import { PORTS } from '@site/src/constants/kubernetes/ports'
-import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 import { TCustomValueItems } from '../../customTypes/customValue'
 
 export const ETCD_ARGS: TCustomValueItems = {
@@ -82,7 +81,7 @@ export const ETCD_ARGS: TCustomValueItems = {
     value: 'zap',
   },
   advertiseClientUrls: {
-    value: 'https://${MACHINE_LOCAL_ADDRESS}:${PORTS.etcdPeer.portNumber}',
+    value: `https://$\{MACHINE_LOCAL_ADDRESS}:${PORTS.etcdPeer.portNumber}`,
   },
 
   workDir: {

@@ -4,21 +4,6 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 import CodeBlock        from '@theme/CodeBlock'
 import dedent           from 'ts-dedent'
 
-<h4>Переменные окружения</h4>
-<CodeBlock language="bash">
-    {dedent`
-        export BASE_K8S_PATH="${CUSTOM_VALUE.kuberneteBaseFolderPath.value}"
-        export KUBERNETES_FRONT_PROXY_CLIENT_CN="${CERTIFICATES.kubernetesFrontProxyClient.cname}"
-        export KUBERNETES_FRONT_PROXY_CLIENT_CRT_CONF="${CERTIFICATES.kubernetesFrontProxyClient.crtConf}"
-        export KUBERNETES_FRONT_PROXY_CLIENT_CRT_PATH="${CERTIFICATES.kubernetesFrontProxyClient.crtPath}"
-        export KUBERNETES_FRONT_PROXY_CLIENT_CSR_PATH="${CERTIFICATES.kubernetesFrontProxyClient.csrPath}"
-        export KUBERNETES_FRONT_PROXY_CLIENT_KEY_PATH="${CERTIFICATES.kubernetesFrontProxyClient.keyPath}"
-        export KUBERNETES_FRONT_PROXY_CLIENT_KEY_SIZE=${CERTIFICATES.kubernetesFrontProxyClient.keySize}
-        export FRONT_PROXY_CA_CRT_PATH="${CERTIFICATES.frontProxyCA.crtPath}"
-        export FRONT_PROXY_CA_KEY_PATH="${CERTIFICATES.frontProxyCA.keyPath}"
-    `}
-</CodeBlock>
-
 <h4>Рабочая директория</h4>
 <CodeBlock language="bash">
     {dedent`
@@ -28,51 +13,59 @@ import dedent           from 'ts-dedent'
 </CodeBlock>
 
 <h4>Конфигурация</h4>
-```bash
-cat <<EOF > ${KUBERNETES_FRONT_PROXY_CLIENT_CRT_CONF}
-[ req ]
-default_bits        = ${KUBERNETES_FRONT_PROXY_CLIENT_KEY_SIZE}
-prompt              = no
-default_md          = sha256
-distinguished_name  = dn
+<CodeBlock language="bash">
+  {dedent`
+    cat <<EOF > ${CERTIFICATES.kubernetesFrontProxyClient.crtConf}
+    [ req ]
+    default_bits        = ${CERTIFICATES.kubernetesFrontProxyClient.keySize}
+    prompt              = no
+    default_md          = sha256
+    distinguished_name  = dn
 
-[ dn ]
-CN = ${KUBERNETES_FRONT_PROXY_CLIENT_CN}
+    [ dn ]
+    CN = ${CERTIFICATES.kubernetesFrontProxyClient.cname}
 
-[ v3_ext ]
-authorityKeyIdentifier=keyid,issuer:always
-basicConstraints=CA:FALSE
-keyUsage=keyEncipherment,dataEncipherment
-extendedKeyUsage=clientAuth
-EOF
-```
+    [ v3_ext ]
+    authorityKeyIdentifier=keyid,issuer:always
+    basicConstraints=CA:FALSE
+    keyUsage=keyEncipherment,dataEncipherment
+    extendedKeyUsage=clientAuth
+    EOF
+  `}
+</CodeBlock>
 
 <h4>Генерация приватного ключа</h4>
-```bash
-openssl genrsa \
-    -out "${KUBERNETES_FRONT_PROXY_CLIENT_KEY_PATH}" ${KUBERNETES_FRONT_PROXY_CLIENT_KEY_SIZE}
-```
+<CodeBlock language="bash">
+    {dedent`
+      openssl genrsa \\
+        -out ${CERTIFICATES.kubernetesFrontProxyClient.keyPath} ${CERTIFICATES.kubernetesFrontProxyClient.keySize}
+    `}
+</CodeBlock>
 
 <h4>Генерация CSR</h4>
-```bash
-openssl req \
-    -new \
-    -key    "${KUBERNETES_FRONT_PROXY_CLIENT_KEY_PATH}" \
-    -out    "${KUBERNETES_FRONT_PROXY_CLIENT_CSR_PATH}" \
-    -config "${KUBERNETES_FRONT_PROXY_CLIENT_CRT_CONF}"
-```
+<CodeBlock language="bash">
+    {dedent`
+      openssl req \\
+        -new \\
+        -key    ${CERTIFICATES.kubernetesFrontProxyClient.keyPath} \\
+        -out    ${CERTIFICATES.kubernetesFrontProxyClient.csrPath} \\
+        -config ${CERTIFICATES.kubernetesFrontProxyClient.crtConf}
+    `}
+</CodeBlock>
 
 <h4>Подпись CSR</h4>
-```bash
-openssl x509 \
-    -req \
-    -days 365 \
-    -sha256 \
-    -CA "${FRONT_PROXY_CA_CRT_PATH}" \
-    -CAkey "${FRONT_PROXY_CA_KEY_PATH}" \
-    -CAcreateserial \
-    -in "${KUBERNETES_FRONT_PROXY_CLIENT_CSR_PATH}" \
-    -out "${KUBERNETES_FRONT_PROXY_CLIENT_CRT_PATH}" \
-    -extensions v3_ext \
-    -extfile "${KUBERNETES_FRONT_PROXY_CLIENT_CRT_CONF}"
-```
+<CodeBlock language="bash">
+  {dedent`
+    openssl x509 \\
+      -req \\
+      -days 365 \\
+      -sha256 \\
+      -CA ${CERTIFICATES.frontProxyCA.crtPath} \\
+      -CAkey ${CERTIFICATES.frontProxyCA.keyPath} \\
+      -CAcreateserial \\
+      -in ${CERTIFICATES.kubernetesFrontProxyClient.csrPath} \\
+      -out ${CERTIFICATES.kubernetesFrontProxyClient.crtPath} \\
+      -extensions v3_ext \\
+      -extfile ${CERTIFICATES.kubernetesFrontProxyClient.crtConf}
+  `}
+</CodeBlock>

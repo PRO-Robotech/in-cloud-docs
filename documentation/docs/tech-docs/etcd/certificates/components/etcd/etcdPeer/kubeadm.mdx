@@ -3,7 +3,6 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 import CodeBlock        from '@theme/CodeBlock'
 import dedent           from 'ts-dedent'
 
-
 <CodeBlock language="bash">
   {dedent`
     kubeadm init phase certs etcd-peer --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml

@@ -11,20 +11,20 @@ import CodeBlock                  from '@theme/CodeBlock'
 
 <CodeBlock language="bash">
     {dedent`
-        export ETCD_METRICS_PORT=${PORTS.etcdMetricServer.portNumber}
-        export ETCD_PEER_PORT=${PORTS.etcdPeer.portNumber}
-        export ETCD_SERVER_PORT=${PORTS.etcdServer.portNumber}
+        export PORTS.etcdMetricServer.portNumber=${PORTS.etcdMetricServer.portNumber}
+        export PORTS.etcdPeer.portNumber=${PORTS.etcdPeer.portNumber}
+        export PORTS.etcdServer.portNumber=${PORTS.etcdServer.portNumber}
     `}
 </CodeBlock>
 
 <CodeBlock language="bash">
     {dedent`
-        export BASE_K8S_PATH="${CUSTOM_VALUE.kuberneteBaseFolderPath.value}"
+        export CUSTOM_VALUE.kuberneteBaseFolderPath.value="${CUSTOM_VALUE.kuberneteBaseFolderPath.value}"
         export MACHINE_LOCAL_ADDRESS=${CUSTOM_VALUE.virtualMachineLocalAddress.value}
         export FULL_HOST_NAME="${CUSTOM_VALUE.virtualMachineFullName.value}"
-        export BASE_DOCKER_REGISTRY="${CUSTOM_VALUE.baseDockerRegistry.value}"
-        export ETCD_VERSION="${COMPONENTS_VERSION.etcd.value}"
-        export ETCD_INITIAL_CLUSTER="$\{FULL_HOST_NAME}=https://$\{MACHINE_LOCAL_ADDRESS}:$\{ETCD_PEER_PORT}"
+        export CUSTOM_VALUE.baseDockerRegistry.value="${CUSTOM_VALUE.baseDockerRegistry.value}"
+        export COMPONENTS_VERSION.etcd.value="${COMPONENTS_VERSION.etcd.value}"
+        export ETCD_INITIAL_CLUSTER="$\{FULL_HOST_NAME}=${ETCD_ARGS.initialAdvertisePeerUrls.value}"
     `}
 </CodeBlock>
 
@@ -55,7 +55,7 @@ import CodeBlock                  from '@theme/CodeBlock'
     kind: Pod
     metadata:
       annotations:
-        kubeadm.kubernetes.io/etcd.advertise-client-urls: https://$\{MACHINE_LOCAL_ADDRESS}:$\{ETCD_SERVER_PORT}
+        kubeadm.kubernetes.io/etcd.advertise-client-urls: https://$\{MACHINE_LOCAL_ADDRESS}:${CUSTOM_VALUE.kuberneteBaseFolderPath.value}
       creationTimestamp: null
       labels:
         component: etcd
@@ -92,14 +92,14 @@ import CodeBlock                  from '@theme/CodeBlock'
         - --peer-trusted-ca-file=${ETCD_ARGS.peerTrustedCAFile.value}
         - --snapshot-count=10000
         - --trusted-ca-file=${ETCD_ARGS.trustedCAFile.value}
-        image: $\{BASE_DOCKER_REGISTRY}/etcd:$\{ETCD_VERSION}
+        image: ${CUSTOM_VALUE.baseDockerRegistry.value}/etcd:${COMPONENTS_VERSION.etcd.value}
         imagePullPolicy: IfNotPresent
         livenessProbe:
           failureThreshold: 8
           httpGet:
             host: 127.0.0.1
             path: /health?exclude=NOSPACE&serializable=true
-            port: $\{ETCD_METRICS_PORT}
+            port: ${PORTS.etcdMetricServer.portNumber}
             scheme: HTTP
           initialDelaySeconds: 10
           periodSeconds: 10
@@ -114,7 +114,7 @@ import CodeBlock                  from '@theme/CodeBlock'
           httpGet:
             host: 127.0.0.1
             path: /health?serializable=false
-            port: $\{ETCD_METRICS_PORT}
+            port: ${PORTS.etcdMetricServer.portNumber}
             scheme: HTTP
           initialDelaySeconds: 10
           periodSeconds: 10

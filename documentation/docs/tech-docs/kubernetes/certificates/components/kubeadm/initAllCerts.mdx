@@ -1,18 +1,24 @@
 
 import TabItem                  from '@theme/TabItem'
 import Tabs                     from '@theme/Tabs'
+import CodeBlock        from '@theme/CodeBlock'
+import dedent           from 'ts-dedent'
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+
 
 <details open>
   <summary>All INIT Certificates</summary>
     <Tabs groupId="install-type">
         <TabItem value='Kubeadm'>
             Если требуется создать сразу все сертификаты, то воспользуйтесь следующими командами
-            ```bash
-            kubeadm init phase certs all \
-                --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
-            kubeadm init phase kubeconfig all \
-                --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
-            ```
+            <CodeBlock language="bash">
+              {dedent`
+                kubeadm init phase certs all \\
+                  --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
+                kubeadm init phase kubeconfig all \\
+                  --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
+              `}
+            </CodeBlock>
         </TabItem>
     </Tabs>
 </details>

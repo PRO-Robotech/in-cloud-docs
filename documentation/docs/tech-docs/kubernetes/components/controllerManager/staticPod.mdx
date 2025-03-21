@@ -7,28 +7,7 @@ import { COMPONENTS_VERSION } from '@site/src/constants/kubernetes/componentsVer
 import dedent                     from 'ts-dedent'
 import CodeBlock                  from '@theme/CodeBlock'
 
-<h4>Переменные окружния</h4>
-
-<CodeBlock language="bash">
-    {dedent`
-      export BASE_K8S_PATH="${CUSTOM_VALUE.kuberneteBaseFolderPath.value}"
-      export CLUSTER_NAME="${CUSTOM_VALUE.clusterName.value}"
-      export KUBERNETES_VERSION="${COMPONENTS_VERSION.kubernetes.value}"
-      export KUBE_CONTROLLER_MANAGER_PORT=${PORTS.kubeControllerManager.portNumber}
-    `}
-</CodeBlock>
-<CodeBlock language="bash">
-    {dedent`
-      export KUBERNETES_CA_CRT_PATH="${CERTIFICATES.kubernetesCA.crtPath}"
-      export KUBERNETES_CA_KEY_PATH="${CERTIFICATES.kubernetesCA.keyPath}"
-      export FRONT_PROXY_CA_CRT_PATH="${CERTIFICATES.frontProxyCA.crtPath}"
-      export KUBERNETES_SERVICE_ACCOUNT_KEY_PATH="${CERTIFICATES.kubernetesSA.keyPath}"
-    `}
-</CodeBlock>
-
-
 <h4>Рабочая директория</h4>
-
 <CodeBlock language="bash">
     {dedent`
         mkdir -p ${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/manifests
@@ -36,133 +15,134 @@ import CodeBlock                  from '@theme/CodeBlock'
 </CodeBlock>
 
 <h4>Генерация манифеста</h4>
-
-```bash
-cat <<EOF > ${BASE_K8S_PATH}/manifests/kube-controller-manager.yaml
-apiVersion: v1
-kind: Pod
-metadata:
-  creationTimestamp: null
-  labels:
-    component: kube-controller-manager
-    tier: control-plane
-  name: kube-controller-manager
-  namespace: kube-system
-spec:
-  containers:
-  - command:
-    - kube-controller-manager
-    - --authentication-kubeconfig=${BASE_K8S_PATH}/controller-manager.conf
-    - --authorization-always-allow-paths=/healthz,/readyz,/livez,/metrics
-    - --authorization-kubeconfig=${BASE_K8S_PATH}/controller-manager.conf
-    - --bind-address=0.0.0.0
-    - --client-ca-file=${KUBERNETES_CA_CRT_PATH}
-    - --cluster-name=${CLUSTER_NAME}
-    - --cluster-signing-cert-file=${KUBERNETES_CA_CRT_PATH}
-    - --cluster-signing-duration=720h
-    - --cluster-signing-key-file=${KUBERNETES_CA_KEY_PATH}
-    - --concurrent-replicaset-syncs=20
-    - --controllers=*,bootstrapsigner,tokencleaner
-    - --feature-gates=RotateKubeletServerCertificate=true
-    - --kube-api-burst=120
-    - --kube-api-qps=100
-    - --kubeconfig=${BASE_K8S_PATH}/controller-manager.conf
-    - --leader-elect=true
-    - --namespace-sync-period=2m0s
-    - --node-startup-grace-period=10s
-    - --requestheader-client-ca-file=${FRONT_PROXY_CA_CRT_PATH}
-    - --root-ca-file=${KUBERNETES_CA_CRT_PATH}
-    - --service-account-private-key-file=${KUBERNETES_SERVICE_ACCOUNT_KEY_PATH}
-    - --terminated-pod-gc-threshold=12500
-    - --use-service-account-credentials=true
-    - --v=2
-    image: registry.k8s.io/kube-controller-manager:${KUBERNETES_VERSION}
-    imagePullPolicy: IfNotPresent
-    livenessProbe:
-      failureThreshold: 8
-      httpGet:
-        path: /healthz
-        port: ${KUBE_CONTROLLER_MANAGER_PORT}
-        scheme: HTTPS
-      initialDelaySeconds: 10
-      periodSeconds: 10
-      timeoutSeconds: 15
-    name: kube-controller-manager
-    resources:
-      requests:
-        cpu: 200m
-    startupProbe:
-      failureThreshold: 24
-      httpGet:
-        path: /healthz
-        port: ${KUBE_CONTROLLER_MANAGER_PORT}
-        scheme: HTTPS
-      initialDelaySeconds: 10
-      periodSeconds: 10
-      timeoutSeconds: 15
-    volumeMounts:
-    - mountPath: /etc/ssl/certs
-      name: ca-certs
-      readOnly: true
-    - mountPath: /etc/ca-certificates
-      name: etc-ca-certificates
-      readOnly: true
-    - mountPath: /etc/pki
-      name: etc-pki
-      readOnly: true
-    - mountPath: /usr/libexec/kubernetes/kubelet-plugins/volume/exec
-      name: flexvolume-dir
-    - mountPath: ${BASE_K8S_PATH}/pki
-      name: k8s-certs
-      readOnly: true
-    - mountPath: ${BASE_K8S_PATH}/controller-manager.conf
-      name: kubeconfig
-      readOnly: true
-    - mountPath: /usr/local/share/ca-certificates
-      name: usr-local-share-ca-certificates
-      readOnly: true
-    - mountPath: /usr/share/ca-certificates
-      name: usr-share-ca-certificates
-      readOnly: true
-  hostNetwork: true
-  priority: 2000001000
-  priorityClassName: system-node-critical
-  securityContext:
-    seccompProfile:
-      type: RuntimeDefault
-  volumes:
-  - hostPath:
-      path: /etc/ssl/certs
-      type: DirectoryOrCreate
-    name: ca-certs
-  - hostPath:
-      path: /etc/ca-certificates
-      type: DirectoryOrCreate
-    name: etc-ca-certificates
-  - hostPath:
-      path: /etc/pki
-      type: DirectoryOrCreate
-    name: etc-pki
-  - hostPath:
-      path: /usr/libexec/kubernetes/kubelet-plugins/volume/exec
-      type: DirectoryOrCreate
-    name: flexvolume-dir
-  - hostPath:
-      path: ${BASE_K8S_PATH}/pki
-      type: DirectoryOrCreate
-    name: k8s-certs
-  - hostPath:
-      path: ${BASE_K8S_PATH}/controller-manager.conf
-      type: FileOrCreate
-    name: kubeconfig
-  - hostPath:
-      path: /usr/local/share/ca-certificates
-      type: DirectoryOrCreate
-    name: usr-local-share-ca-certificates
-  - hostPath:
-      path: /usr/share/ca-certificates
-      type: DirectoryOrCreate
-    name: usr-share-ca-certificates
-status: {}
-EOF
-```
+<CodeBlock language="bash">
+    {dedent`
+      cat <<EOF > ${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/manifests/kube-controller-manager.yaml
+      apiVersion: v1
+      kind: Pod
+      metadata:
+        creationTimestamp: null
+        labels:
+          component: kube-controller-manager
+          tier: control-plane
+        name: kube-controller-manager
+        namespace: kube-system
+      spec:
+        containers:
+        - command:
+          - kube-controller-manager
+          - --authentication-kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/controller-manager.conf
+          - --authorization-always-allow-paths=/healthz,/readyz,/livez,/metrics
+          - --authorization-kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/controller-manager.conf
+          - --bind-address=0.0.0.0
+          - --client-ca-file=${CERTIFICATES.kubernetesCA.crtPath}
+          - --cluster-name=${CUSTOM_VALUE.clusterName.value}
+          - --cluster-signing-cert-file=${CERTIFICATES.kubernetesCA.crtPath}
+          - --cluster-signing-duration=720h
+          - --cluster-signing-key-file=${CERTIFICATES.kubernetesCA.keyPath}
+          - --concurrent-replicaset-syncs=20
+          - --controllers=*,bootstrapsigner,tokencleaner
+          - --feature-gates=RotateKubeletServerCertificate=true
+          - --kube-api-burst=120
+          - --kube-api-qps=100
+          - --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/controller-manager.conf
+          - --leader-elect=true
+          - --namespace-sync-period=2m0s
+          - --node-startup-grace-period=10s
+          - --requestheader-client-ca-file=${CERTIFICATES.frontProxyCA.crtPath}
+          - --root-ca-file=${CERTIFICATES.kubernetesCA.crtPath}
+          - --service-account-private-key-file=${CERTIFICATES.kubernetesSA.keyPath}
+          - --terminated-pod-gc-threshold=12500
+          - --use-service-account-credentials=true
+          - --v=2
+          image: ${CUSTOM_VALUE.baseDockerRegistry.value}/kube-controller-manager:${COMPONENTS_VERSION.kubernetes.value}
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 8
+            httpGet:
+              path: /healthz
+              port: ${PORTS.kubeControllerManager.portNumber}
+              scheme: HTTPS
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 15
+          name: kube-controller-manager
+          resources:
+            requests:
+              cpu: 200m
+          startupProbe:
+            failureThreshold: 24
+            httpGet:
+              path: /healthz
+              port: ${PORTS.kubeControllerManager.portNumber}
+              scheme: HTTPS
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 15
+          volumeMounts:
+          - mountPath: /etc/ssl/certs
+            name: ca-certs
+            readOnly: true
+          - mountPath: /etc/ca-certificates
+            name: etc-ca-certificates
+            readOnly: true
+          - mountPath: /etc/pki
+            name: etc-pki
+            readOnly: true
+          - mountPath: /usr/libexec/kubernetes/kubelet-plugins/volume/exec
+            name: flexvolume-dir
+          - mountPath: ${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/pki
+            name: k8s-certs
+            readOnly: true
+          - mountPath: ${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/controller-manager.conf
+            name: kubeconfig
+            readOnly: true
+          - mountPath: /usr/local/share/ca-certificates
+            name: usr-local-share-ca-certificates
+            readOnly: true
+          - mountPath: /usr/share/ca-certificates
+            name: usr-share-ca-certificates
+            readOnly: true
+        hostNetwork: true
+        priority: 2000001000
+        priorityClassName: system-node-critical
+        securityContext:
+          seccompProfile:
+            type: RuntimeDefault
+        volumes:
+        - hostPath:
+            path: /etc/ssl/certs
+            type: DirectoryOrCreate
+          name: ca-certs
+        - hostPath:
+            path: /etc/ca-certificates
+            type: DirectoryOrCreate
+          name: etc-ca-certificates
+        - hostPath:
+            path: /etc/pki
+            type: DirectoryOrCreate
+          name: etc-pki
+        - hostPath:
+            path: /usr/libexec/kubernetes/kubelet-plugins/volume/exec
+            type: DirectoryOrCreate
+          name: flexvolume-dir
+        - hostPath:
+            path: ${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/pki
+            type: DirectoryOrCreate
+          name: k8s-certs
+        - hostPath:
+            path: ${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/controller-manager.conf
+            type: FileOrCreate
+          name: kubeconfig
+        - hostPath:
+            path: /usr/local/share/ca-certificates
+            type: DirectoryOrCreate
+          name: usr-local-share-ca-certificates
+        - hostPath:
+            path: /usr/share/ca-certificates
+            type: DirectoryOrCreate
+          name: usr-share-ca-certificates
+      status: {}
+      EOF
+    `}
+</CodeBlock>
