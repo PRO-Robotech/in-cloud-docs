@@ -7,30 +7,32 @@ import dedent from 'ts-dedent'
 
 <h4>Генерация манифеста</h4>
 <CodeBlock language="bash">
-    {dedent`
-        kubeadm join phase control-plane-prepare certs --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
-    `}
+  {dedent`
+    kubeadm join phase control-plane-prepare certs \\
+      --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml \\
+      --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/admin.conf
+  `}
 </CodeBlock>
 
 
 :::note
 <CodeBlock language="bash">
-    {dedent`
-        [preflight] Reading configuration from the cluster...
-        [preflight] FYI: You can look at this config file with 'kubectl -n kube-system get cm kubeadm-config -o yaml'
-        [certs] Using certificateDir folder "/etc/kubernetes/pki"
-        [certs] Generating "etcd/server" certificate and key
-        [certs] etcd/server serving cert is signed for DNS names [localhost master-1.example.example.com master-3.example.example.com] and IPs [217.114.0.145 127.0.0.1 ::1 31.129.111.153]
-        [certs] Generating "etcd/peer" certificate and key
-        [certs] etcd/peer serving cert is signed for DNS names [localhost master-1.example.example.com master-3.example.example.com] and IPs [217.114.0.145 127.0.0.1 ::1 31.129.111.153]
-        [certs] Generating "etcd/healthcheck-client" certificate and key
-        [certs] Generating "apiserver-etcd-client" certificate and key
-        [certs] Generating "apiserver" certificate and key
-        [certs] apiserver serving cert is signed for DNS names [api.example.example.com kubernetes kubernetes.default kubernetes.default.svc kubernetes.default.svc.example.example.com master-3.example.example.com] and IPs [29.64.0.1 217.114.0.145 31.129.111.153 127.0.0.1]
-        [certs] Generating "apiserver-kubelet-client" certificate and key
-        [certs] Generating "front-proxy-client" certificate and key
-        [certs] Valid certificates and keys now exist in "/etc/kubernetes/pki"
-        [certs] Using the existing "sa" key
-    `}
+  {dedent`
+    [preflight] Reading configuration from the cluster...
+    [preflight] FYI: You can look at this config file with 'kubectl -n kube-system get cm kubeadm-config -o yaml'
+    [certs] Using certificateDir folder "/etc/kubernetes/pki"
+    [certs] Generating "etcd/server" certificate and key
+    [certs] etcd/server serving cert is signed for DNS names [localhost master-1.example.example.com master-3.example.example.com] and IPs [217.114.0.145 127.0.0.1 ::1 31.129.111.153]
+    [certs] Generating "etcd/peer" certificate and key
+    [certs] etcd/peer serving cert is signed for DNS names [localhost master-1.example.example.com master-3.example.example.com] and IPs [217.114.0.145 127.0.0.1 ::1 31.129.111.153]
+    [certs] Generating "etcd/healthcheck-client" certificate and key
+    [certs] Generating "apiserver-etcd-client" certificate and key
+    [certs] Generating "apiserver" certificate and key
+    [certs] apiserver serving cert is signed for DNS names [api.example.example.com kubernetes kubernetes.default kubernetes.default.svc kubernetes.default.svc.example.example.com master-3.example.example.com] and IPs [29.64.0.1 217.114.0.145 31.129.111.153 127.0.0.1]
+    [certs] Generating "apiserver-kubelet-client" certificate and key
+    [certs] Generating "front-proxy-client" certificate and key
+    [certs] Valid certificates and keys now exist in "/etc/kubernetes/pki"
+    [certs] Using the existing "sa" key
+  `}
 </CodeBlock>
 :::

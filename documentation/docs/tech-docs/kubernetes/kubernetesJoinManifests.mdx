@@ -25,9 +25,11 @@ import dedent from 'ts-dedent'
 
 <h4>Генерация манифеста</h4>
 <CodeBlock language="bash">
-    {dedent`
-        kubeadm join phase control-plane-prepare control-plane --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
-    `}
+  {dedent`
+    kubeadm join phase control-plane-prepare control-plane \\
+      --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml \\
+      --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/admin.conf
+  `}
 </CodeBlock>
 
 

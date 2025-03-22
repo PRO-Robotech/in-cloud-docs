@@ -18,7 +18,9 @@ import dedent from 'ts-dedent'
 <h4>Генерация манифеста</h4>
 <CodeBlock language="bash">
   {dedent`
-    kubeadm init phase control-plane all --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
+    kubeadm init phase control-plane all \\
+      --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml \\
+      --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/super-admin.conf
   `}
 </CodeBlock>
 
@@ -39,7 +41,9 @@ import dedent from 'ts-dedent'
 <h4>Генерация манифеста</h4>
 <CodeBlock language="bash">
   {dedent`
-    kubeadm init phase etcd local --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
+    kubeadm init phase etcd local \\
+      --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml \\
+      --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/super-admin.conf
   `}
 </CodeBlock>
 

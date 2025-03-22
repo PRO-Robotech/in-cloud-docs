@@ -25,7 +25,9 @@ import MastersTabs from '@site/docs/tech-docs/kubernetes/setupEnvironments/initM
 <h4>Переменные окружения</h4>
 <CodeBlock language="bash">
   {dedent`
-    export FULL_HOST_NAME="${CUSTOM_VALUE.virtualMachineFullName.value}"
+    export CLUSTER_NAME=${CUSTOM_VALUE.clusterName.value}
+    export BASE_DOMAIN=${CUSTOM_VALUE.kubernetesBaseDomain.value}
+    export FULL_HOST_NAME=${CUSTOM_VALUE.virtualMachineFullName.value}
   `}
 </CodeBlock>
 
@@ -37,7 +39,8 @@ import MastersTabs from '@site/docs/tech-docs/kubernetes/setupEnvironments/initM
     <h4>Маркировка узла</h4>
     <CodeBlock language="bash">
       {dedent`
-        kubectl label node $\{FULL_HOST_NAME} node-role.kubernetes.io/control-plane="" --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/super-admin.conf
+        kubectl label node $\{FULL_HOST_NAME} node-role.kubernetes.io/control-plane="" \\
+          --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/super-admin.conf
       `}
     </CodeBlock>
 
@@ -52,7 +55,9 @@ import MastersTabs from '@site/docs/tech-docs/kubernetes/setupEnvironments/initM
     <h4>Ограничение узла</h4>
     <CodeBlock language="bash">
       {dedent`
-        kubectl taint node $\{FULL_HOST_NAME} node-role.kubernetes.io/control-plane="":NoSchedule --overwrite --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/super-admin.conf
+        kubectl taint node $\{FULL_HOST_NAME} node-role.kubernetes.io/control-plane="":NoSchedule \\
+          --overwrite \\
+          --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/super-admin.conf
       `}
     </CodeBlock>
 
@@ -70,7 +75,9 @@ import MastersTabs from '@site/docs/tech-docs/kubernetes/setupEnvironments/initM
 
     <CodeBlock language="bash">
       {dedent`
-        kubeadm init phase mark-control-plane --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
+        kubeadm init phase mark-control-plane \\
+          --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml \\
+          --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/super-admin.conf
       `}
     </CodeBlock>
 

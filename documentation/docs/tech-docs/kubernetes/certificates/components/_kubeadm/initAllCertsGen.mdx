@@ -7,29 +7,31 @@ import dedent from 'ts-dedent'
 
 <h4>Генерация сертификатов</h4>
 <CodeBlock language="bash">
-    {dedent`
-        kubeadm init phase certs all --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
-    `}
+  {dedent`
+    kubeadm init phase certs all \\
+      --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml \\
+      --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/super-admin.conf
+  `}
 </CodeBlock>
 
 :::note
 <CodeBlock language="bash">
-    {dedent`
-        [certs] Using certificateDir folder "/etc/kubernetes/pki"
-        [certs] Generating "ca" certificate and key
-        [certs] Generating "apiserver" certificate and key
-        [certs] apiserver serving cert is signed for DNS names [api.example.example.com kubernetes kubernetes.default kubernetes.default.svc kubernetes.default.svc.example.example.com pylcozuscb] and IPs [29.64.0.1 31.129.111.153 127.0.0.1]
-        [certs] Generating "apiserver-kubelet-client" certificate and key
-        [certs] Generating "front-proxy-ca" certificate and key
-        [certs] Generating "front-proxy-client" certificate and key
-        [certs] Generating "etcd/ca" certificate and key
-        [certs] Generating "etcd/server" certificate and key
-        [certs] etcd/server serving cert is signed for DNS names [localhost master-1.example.example.com pylcozuscb] and IPs [31.129.111.153 127.0.0.1 ::1]
-        [certs] Generating "etcd/peer" certificate and key
-        [certs] etcd/peer serving cert is signed for DNS names [localhost master-1.example.example.com pylcozuscb] and IPs [31.129.111.153 127.0.0.1 ::1]
-        [certs] Generating "etcd/healthcheck-client" certificate and key
-        [certs] Generating "apiserver-etcd-client" certificate and key
-        [certs] Generating "sa" key and public key
-    `}
+  {dedent`
+    [certs] Using certificateDir folder "/etc/kubernetes/pki"
+    [certs] Generating "ca" certificate and key
+    [certs] Generating "apiserver" certificate and key
+    [certs] apiserver serving cert is signed for DNS names [api.example.example.com kubernetes kubernetes.default kubernetes.default.svc kubernetes.default.svc.example.example.com pylcozuscb] and IPs [29.64.0.1 31.129.111.153 127.0.0.1]
+    [certs] Generating "apiserver-kubelet-client" certificate and key
+    [certs] Generating "front-proxy-ca" certificate and key
+    [certs] Generating "front-proxy-client" certificate and key
+    [certs] Generating "etcd/ca" certificate and key
+    [certs] Generating "etcd/server" certificate and key
+    [certs] etcd/server serving cert is signed for DNS names [localhost master-1.example.example.com pylcozuscb] and IPs [31.129.111.153 127.0.0.1 ::1]
+    [certs] Generating "etcd/peer" certificate and key
+    [certs] etcd/peer serving cert is signed for DNS names [localhost master-1.example.example.com pylcozuscb] and IPs [31.129.111.153 127.0.0.1 ::1]
+    [certs] Generating "etcd/healthcheck-client" certificate and key
+    [certs] Generating "apiserver-etcd-client" certificate and key
+    [certs] Generating "sa" key and public key
+  `}
 </CodeBlock>
 :::

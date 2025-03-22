@@ -6,9 +6,11 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 <CodeBlock language="bash">
   {dedent`
     kubeadm init phase kubeconfig kubelet \\
-      --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
+      --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml \\
+      --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/super-admin.conf
     kubeadm init phase kubelet-finalize experimental-cert-rotation \\
-      --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
+      --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml \\
+      --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/super-admin.conf
   `}
 </CodeBlock>
 
@@ -21,5 +23,4 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
     [kubeconfig] Writing "kubelet.conf" kubeconfig file
   `}
 </CodeBlock>
-
 :::

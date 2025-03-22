@@ -37,7 +37,8 @@ import {KUBE_API_ARGS} from '@site/src/constants/kubernetes/kubeAPIArgs'
     <CodeBlock language="bash">
 
         {dedent`
-          kubectl --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/super-admin.conf apply -f - <<EOF
+          kubectl \\
+            --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/super-admin.conf apply -f - <<EOF
           ---
           apiVersion: rbac.authorization.k8s.io/v1
           kind: ClusterRole
@@ -184,7 +185,9 @@ import {KUBE_API_ARGS} from '@site/src/constants/kubernetes/kubeAPIArgs'
     <h4>Создание токена доступа</h4>
     <CodeBlock>
       {dedent`
-        kubectl apply -f - <<EOF
+        kubectl \\
+          --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/super-admin.conf \\
+          apply -f - <<EOF
         ---
         apiVersion: v1
         kind: Secret
@@ -227,7 +230,9 @@ import {KUBE_API_ARGS} from '@site/src/constants/kubernetes/kubeAPIArgs'
     <h4>Обновление Сluster-info</h4>
     <CodeBlock>
       {dedent`
-        kubectl --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/super-admin.conf apply -f - <<EOF
+        kubectl \\
+          --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/super-admin.conf \\
+          apply -f - <<EOF
         ---
         apiVersion: v1
         data:
@@ -269,22 +274,24 @@ import {KUBE_API_ARGS} from '@site/src/constants/kubernetes/kubeAPIArgs'
 
     <h4>Генерация ролевой модели</h4>
     <CodeBlock language="bash">
-        {dedent`
-            kubeadm init phase bootstrap-token --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
-        `}
+      {dedent`
+        kubeadm init phase bootstrap-token \\
+          --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml \\
+          --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/super-admin.conf
+      `}
     </CodeBlock>
 
     :::note
     <CodeBlock language="bash">
-        {dedent`
-            [bootstrap-token] Using token: fjt9ex.lwzqgdlvoxtqk4yw
-            [bootstrap-token] Configuring bootstrap tokens, cluster-info ConfigMap, RBAC Roles
-            [bootstrap-token] Configured RBAC rules to allow Node Bootstrap tokens to get nodes
-            [bootstrap-token] Configured RBAC rules to allow Node Bootstrap tokens to post CSRs in order for nodes to get long term certificate credentials
-            [bootstrap-token] Configured RBAC rules to allow the csrapprover controller automatically approve CSRs from a Node Bootstrap Token
-            [bootstrap-token] Configured RBAC rules to allow certificate rotation for all node client certificates in the cluster
-            [bootstrap-token] Creating the "cluster-info" ConfigMap in the "kube-public" namespace
-        `}
+      {dedent`
+        [bootstrap-token] Using token: fjt9ex.lwzqgdlvoxtqk4yw
+        [bootstrap-token] Configuring bootstrap tokens, cluster-info ConfigMap, RBAC Roles
+        [bootstrap-token] Configured RBAC rules to allow Node Bootstrap tokens to get nodes
+        [bootstrap-token] Configured RBAC rules to allow Node Bootstrap tokens to post CSRs in order for nodes to get long term certificate credentials
+        [bootstrap-token] Configured RBAC rules to allow the csrapprover controller automatically approve CSRs from a Node Bootstrap Token
+        [bootstrap-token] Configured RBAC rules to allow certificate rotation for all node client certificates in the cluster
+        [bootstrap-token] Creating the "cluster-info" ConfigMap in the "kube-public" namespace
+      `}
     </CodeBlock>
     :::
 

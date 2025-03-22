@@ -56,6 +56,9 @@ export const ETCD_ARGS: TCustomValueItems = {
   dataDir: {
     value: '/var/lib/etcd',
   },
+  quotaBackendBytes: {
+    value: '10737418240',
+  },
   clientCertAuth: {
     value: 'true',
   },

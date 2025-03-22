@@ -8,22 +8,24 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 
 <h4>Запуск kubelet</h4>
 <CodeBlock language="bash">
-    {dedent`
-        kubeadm join phase kubelet-start --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
-    `}
+  {dedent`
+    kubeadm join phase kubelet-start \\
+      --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml \\
+      --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/admin.conf
+  `}
 </CodeBlock>
 
 :::note
 <CodeBlock language="bash">
-    {dedent`
-        [preflight] Reading configuration from the cluster...
-        [preflight] FYI: You can look at this config file with 'kubectl -n kube-system get cm kubeadm-config -o yaml'
-        [kubelet-start] Writing kubelet configuration to file "/var/lib/kubelet/config.yaml"
-        [kubelet-start] Writing kubelet environment file with flags to file "/var/lib/kubelet/kubeadm-flags.env"
-        [kubelet-start] Starting the kubelet
-        [kubelet-check] Waiting for a healthy kubelet at http://127.0.0.1:10248/healthz. This can take up to 4m0s
-        [kubelet-check] The kubelet is healthy after 502.252318ms
-        [kubelet-start] Waiting for the kubelet to perform the TLS Bootstrap
-    `}
+  {dedent`
+    [preflight] Reading configuration from the cluster...
+    [preflight] FYI: You can look at this config file with 'kubectl -n kube-system get cm kubeadm-config -o yaml'
+    [kubelet-start] Writing kubelet configuration to file "/var/lib/kubelet/config.yaml"
+    [kubelet-start] Writing kubelet environment file with flags to file "/var/lib/kubelet/kubeadm-flags.env"
+    [kubelet-start] Starting the kubelet
+    [kubelet-check] Waiting for a healthy kubelet at http://127.0.0.1:10248/healthz. This can take up to 4m0s
+    [kubelet-check] The kubelet is healthy after 502.252318ms
+    [kubelet-start] Waiting for the kubelet to perform the TLS Bootstrap
+  `}
 </CodeBlock>
 :::

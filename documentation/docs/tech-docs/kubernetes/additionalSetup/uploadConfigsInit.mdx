@@ -8,9 +8,12 @@ import Tabs from '@theme/Tabs'
 import CodeBlock from '@theme/CodeBlock'
 import dedent from 'ts-dedent'
 
+import {KUBEADM_COFNIG_DATA} from '@site/src/constants/kubernetes/kubeletConfigData'
+import {KUBELET_COFNIG_DATA} from '@site/src/constants/kubernetes/kubeletConfigData'
 import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+import { ETCD_ARGS }                  from '@site/src/constants/kubernetes/etcdArgs'
 
-# 5.2.4.1.1. Загрузка конфигурации
+# 5.2.4.1.3.1. Загрузка конфигурации
 
 :::warning
 В этом разделе описана инструкция по загрузке актуальной конфигурации `Kubeadm` и `Kubelet` в управляющий контур Kubernetes в виде ресура `ConfigMap`. Этот подход упрощает управление изменениями в конфигурации узлов Kubernetes, охватывая как рабочие (`worker`), так и управляющие (`master`) узлы.
@@ -19,24 +22,83 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 <Tabs groupId="install-type">
 
   <TabItem value='HardWay'>
-    TODO
+    <h4>Переменные окружния для шаблона конфигурационного файла</h4>
+    <CodeBlock language="bash">
+      {dedent`
+        export CLUSTER_NAME='${CUSTOM_VALUE.clusterName.value}'
+        export BASE_DOMAIN='${CUSTOM_VALUE.kubernetesBaseDomain.value}'
+        export FULL_HOST_NAME=${CUSTOM_VALUE.virtualMachineFullName.value}
+        export INTERNAL_API=api.${CUSTOM_VALUE.kubernetesClusterExternalDomain.value}
+        export MACHINE_LOCAL_ADDRESS=${CUSTOM_VALUE.virtualMachineLocalAddress.value}
+        export ETCD_INITIAL_CLUSTER="$\{FULL_HOST_NAME}=${ETCD_ARGS.initialAdvertisePeerUrls.value}"
+      `}
+    </CodeBlock>
+
+    <details close>
+    <summary>kubeadm-config</summary>
+    <CodeBlock>
+
+      {dedent`
+        kubectl \\
+          --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/super-admin.conf \\
+          apply -f - <<EOF
+        ---
+        apiVersion: v1
+        kind: ConfigMap
+        metadata:
+          name: kubeadm-config
+          namespace: kube-system
+        data:
+          ClusterConfiguration: |
+            ${KUBEADM_COFNIG_DATA.data.value}
+        EOF
+      `}
+
+    </CodeBlock>
+    </details>
+
+    <details close>
+    <summary>kubelet-config</summary>
+    <CodeBlock>
+
+      {dedent`
+        kubectl \\
+          --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/super-admin.conf \\
+          apply -f - <<EOF
+        ---
+        apiVersion: v1
+        kind: ConfigMap
+        metadata:
+          name: kubelet-config
+          namespace: kube-system
+        data:
+          kubelet: |
+            ${KUBELET_COFNIG_DATA.data.value}
+        EOF
+      `}
+
+    </CodeBlock>
+    </details>
+
   </TabItem>
 
   <TabItem value='Kubeadm'>
 
     <h4>Обновление конфигурации</h4>
     <CodeBlock language="bash">
-        {dedent`
-            kubeadm init phase upload-config all --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
-        `}
+      {dedent`
+        kubeadm init phase upload-config all \\
+          --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml \\
+          --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/super-admin.conf
+      `}
     </CodeBlock>
 
     :::note
     <CodeBlock language="bash">
-        {dedent`
-          [upload-config] Storing the configuration used in ConfigMap "kubeadm-config" in the "kube-system" Namespace
-          [kubelet] Creating a ConfigMap "kubelet-config" in namespace kube-system with the configuration for the kubelets in the cluster
-        `}
+      {dedent`
+        [upload-config] Storing the configuration used in ConfigMap "kubeadm-config" in the "kube-system" Namespace
+        [kubelet] Creating a ConfigMap "kubelet-config" in namespace kube-system with the configuration for the kubelets in the cluster
+      `}
     </CodeBlock>
     :::
 

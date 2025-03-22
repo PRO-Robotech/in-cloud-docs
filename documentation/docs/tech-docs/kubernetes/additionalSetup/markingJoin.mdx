@@ -37,7 +37,8 @@ import MastersTabs from '@site/docs/tech-docs/kubernetes/setupEnvironments/secon
     <h4>Маркировка узла</h4>
     <CodeBlock language="bash">
       {dedent`
-        kubectl label node $\{FULL_HOST_NAME} node-role.kubernetes.io/control-plane="" --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/super-admin.conf
+        kubectl label node $\{FULL_HOST_NAME} node-role.kubernetes.io/control-plane="" \\
+          --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/super-admin.conf
       `}
     </CodeBlock>
 
@@ -52,7 +53,9 @@ import MastersTabs from '@site/docs/tech-docs/kubernetes/setupEnvironments/secon
     <h4>Ограничение узла</h4>
     <CodeBlock language="bash">
       {dedent`
-        kubectl taint node $\{FULL_HOST_NAME} node-role.kubernetes.io/control-plane="":NoSchedule --overwrite --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/super-admin.conf
+        kubectl taint node $\{FULL_HOST_NAME} node-role.kubernetes.io/control-plane="":NoSchedule \\
+          --overwrite \\
+          --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/super-admin.conf
       `}
     </CodeBlock>
 
@@ -69,9 +72,11 @@ import MastersTabs from '@site/docs/tech-docs/kubernetes/setupEnvironments/secon
   <TabItem value='Kubeadm'>
 
     <CodeBlock language="bash">
-        {dedent`
-            kubeadm join phase control-plane-join mark-control-plane --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
-        `}
+      {dedent`
+        kubeadm join phase control-plane-join mark-control-plane \\
+          --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml \\
+          --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/admin.conf
+      `}
     </CodeBlock>
 
     :::note

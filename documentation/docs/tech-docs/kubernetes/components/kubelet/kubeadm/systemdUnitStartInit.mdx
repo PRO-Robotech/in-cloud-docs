@@ -8,17 +8,19 @@ import { CUSTOM_VALUE }         from '@site/src/constants/kubernetes/customValue
 
 <h4>Запуск kubelet</h4>
 <CodeBlock language="bash">
-    {dedent`
-        kubeadm init phase kubelet-start --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
-    `}
+  {dedent`
+    kubeadm init phase kubelet-start \\
+      --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml \\
+      --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/super-admin.conf
+  `}
 </CodeBlock>
 
 :::note
 <CodeBlock language="bash">
-    {dedent`
-        [kubelet-start] Writing kubelet environment file with flags to file "/var/lib/kubelet/kubeadm-flags.env"
-        [kubelet-start] Writing kubelet configuration to file "/var/lib/kubelet/config.yaml"
-        [kubelet-start] Starting the kubelet
-    `}
+  {dedent`
+    [kubelet-start] Writing kubelet environment file with flags to file "/var/lib/kubelet/kubeadm-flags.env"
+    [kubelet-start] Writing kubelet configuration to file "/var/lib/kubelet/config.yaml"
+    [kubelet-start] Starting the kubelet
+  `}
 </CodeBlock>
 :::

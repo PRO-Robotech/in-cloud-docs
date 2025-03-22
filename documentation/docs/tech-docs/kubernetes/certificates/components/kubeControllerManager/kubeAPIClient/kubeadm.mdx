@@ -8,14 +8,18 @@ import dedent           from 'ts-dedent'
 <CodeBlock language="bash">
   {dedent`
     kubeadm init phase kubeconfig controller-manager \\
-      --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
+      --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml \\
+      --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/super-admin.conf
   `}
 </CodeBlock>
 
 :::note
 После выполнения команд мы получаем следующий вывод.
-```
-#### Генерация Kube Controller Manager сертификатов
-[kubeconfig] Writing "controller-manager.conf" kubeconfig file
-```
+
+<CodeBlock language="bash">
+  {dedent`
+    #### Генерация Kube Controller Manager сертификатов
+    [kubeconfig] Writing "controller-manager.conf" kubeconfig file
+  `}
+</CodeBlock>
 :::

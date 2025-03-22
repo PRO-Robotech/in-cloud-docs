@@ -24,20 +24,23 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 
   <TabItem value='Kubeadm'>
 
-    <h4>Обновление конфигурации</h4>
+    <h4>Загрузка сертификатов</h4>
     <CodeBlock language="bash">
-        {dedent`
-            kubeadm init phase  upload-certs --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml --upload-certs
-        `}
+      {dedent`
+        kubeadm init phase  upload-certs \\
+          --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml \\
+          --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/super-admin.conf \\
+          --upload-certs
+      `}
     </CodeBlock>
 
     :::note
     <CodeBlock language="bash">
-        {dedent`
-          [upload-certs] Storing the certificates in Secret "kubeadm-certs" in the "kube-system" Namespace
-          [upload-certs] Using certificate key:
-          0c00c2fd5c67c37656c00d78a9d7e1f2eb794ef8e4fc3e2a4b532eb14323cd5
-        `}
+      {dedent`
+        [upload-certs] Storing the certificates in Secret "kubeadm-certs" in the "kube-system" Namespace
+        [upload-certs] Using certificate key:
+        0c00c2fd5c67c37656c00d78a9d7e1f2eb794ef8e4fc3e2a4b532eb14323cd5
+      `}
     </CodeBlock>
     :::
 

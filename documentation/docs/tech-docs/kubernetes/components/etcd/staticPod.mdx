@@ -71,8 +71,8 @@ import CodeBlock                  from '@theme/CodeBlock'
         - --peer-client-cert-auth=${ETCD_ARGS.peerClientCertAuth.value}
         - --peer-key-file=${ETCD_ARGS.peerKeyFile.value}
         - --peer-trusted-ca-file=${ETCD_ARGS.peerTrustedCAFile.value}
-        - --snapshot-count="${ETCD_ARGS.snapshotCount.value}"
-        - --quota-backend-bytes: "10737418240" # TODO
+        - --snapshot-count=${ETCD_ARGS.snapshotCount.value}
+        - --quota-backend-bytes=${ETCD_ARGS.quotaBackendBytes.value}
         - --trusted-ca-file=${ETCD_ARGS.trustedCAFile.value}
         image: ${CUSTOM_VALUE.baseDockerRegistry.value}/etcd:${COMPONENTS_VERSION.etcd.value}
         imagePullPolicy: IfNotPresent

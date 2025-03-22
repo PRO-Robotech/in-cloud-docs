@@ -9,7 +9,8 @@ import dedent from 'ts-dedent'
 <CodeBlock language="bash">
     {dedent`
         kubeadm init phase  control-plane controller-manager \\
-          --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
+          --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml \\
+          --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/super-admin.conf
     `}
 </CodeBlock>
 

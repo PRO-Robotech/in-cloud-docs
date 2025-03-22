@@ -13,33 +13,33 @@ import {KUBE_SCHEDULER_ARGS} from '@site/src/constants/kubernetes/kubeSchedulerA
 export const KUBERNETES_ETCD_API_ARGS: TCustomValueItems = {
   data: {
     value: dedent`
-      advertise-client-urls: ${ETCD_ARGS.advertiseClientUrls.value}
-      auto-compaction-retention: ${ETCD_ARGS.autoCompactionRetention.value}
-      cert-file: ${ETCD_ARGS.certFile.value}
-      client-cert-auth: ${ETCD_ARGS.clientCertAuth.value}
-      data-dir: ${ETCD_ARGS.dataDir.value}
-      election-timeout: ${ETCD_ARGS.electionTimeout.value}
-      experimental-initial-corrupt-check=true
-      experimental-watch-progress-notify-interval=5s
-      heartbeat-interval: ${ETCD_ARGS.heartbeatInterval.value}
-      initial-advertise-peer-urls: ${ETCD_ARGS.initialAdvertisePeerUrls.value}
-      initial-cluster: ${ETCD_ARGS.initialCluster.value}
-      key-file: ${ETCD_ARGS.keyFile.value}
-      listen-client-urls: ${ETCD_ARGS.listenClientUrls.value}
-      listen-metrics-urls: ${ETCD_ARGS.listenMetricsUrls.value}
-      listen-peer-urls: ${ETCD_ARGS.listenPeerUrls.value}
-      logger: ${ETCD_ARGS.logger.value}
-      max-snapshots: ${ETCD_ARGS.maxSnapshots.value}
-      max-wals: ${ETCD_ARGS.maxWals.value}
-      metrics: ${ETCD_ARGS.metrics.value}
-      name: ${ETCD_ARGS.name.value}
-      peer-cert-file: ${ETCD_ARGS.peerCertFile.value}
-      peer-client-cert-auth: ${ETCD_ARGS.peerClientCertAuth.value}
-      peer-key-file: ${ETCD_ARGS.peerKeyFile.value}
-      peer-trusted-ca-file: ${ETCD_ARGS.peerTrustedCAFile.value}
+      advertise-client-urls: "${ETCD_ARGS.advertiseClientUrls.value}"
+      auto-compaction-retention: "${ETCD_ARGS.autoCompactionRetention.value}"
+      cert-file: "${ETCD_ARGS.certFile.value}"
+      client-cert-auth: "${ETCD_ARGS.clientCertAuth.value}"
+      data-dir: "${ETCD_ARGS.dataDir.value}"
+      election-timeout: "${ETCD_ARGS.electionTimeout.value}"
+      heartbeat-interval: "${ETCD_ARGS.heartbeatInterval.value}"
+      initial-advertise-peer-urls: "${ETCD_ARGS.initialAdvertisePeerUrls.value}"
+      initial-cluster: "${ETCD_ARGS.initialCluster.value}"
+      key-file: "${ETCD_ARGS.keyFile.value}"
+      listen-client-urls: "${ETCD_ARGS.listenClientUrls.value}"
+      listen-metrics-urls: "${ETCD_ARGS.listenMetricsUrls.value}"
+      listen-peer-urls: "${ETCD_ARGS.listenPeerUrls.value}"
+      logger: "${ETCD_ARGS.logger.value}"
+      max-snapshots: "${ETCD_ARGS.maxSnapshots.value}"
+      max-wals: "${ETCD_ARGS.maxWals.value}"
+      metrics: "${ETCD_ARGS.metrics.value}"
+      name: "${ETCD_ARGS.name.value}"
+      peer-cert-file: "${ETCD_ARGS.peerCertFile.value}"
+      peer-client-cert-auth: "${ETCD_ARGS.peerClientCertAuth.value}"
+      peer-key-file: "${ETCD_ARGS.peerKeyFile.value}"
+      peer-trusted-ca-file: "${ETCD_ARGS.peerTrustedCAFile.value}"
       snapshot-count: "${ETCD_ARGS.snapshotCount.value}"
       quota-backend-bytes: "10737418240" # TODO
-      trusted-ca-file: ${ETCD_ARGS.trustedCAFile.value}
+      experimental-initial-corrupt-check: "true"
+      experimental-watch-progress-notify-interval: "5s"
+      trusted-ca-file: "${ETCD_ARGS.trustedCAFile.value}"
     `
   }
 };

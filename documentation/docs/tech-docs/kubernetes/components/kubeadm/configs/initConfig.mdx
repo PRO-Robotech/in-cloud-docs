@@ -26,12 +26,14 @@ import {KUBERNETES_KUBE_SCHEDULER_ARGS} from '@site/src/constants/kubernetes/kub
     <TabItem value='Bash'>
       <h4>Переменные окружния для шаблона конфигурационного файла</h4>
       <CodeBlock language="bash">
-          {dedent`
-            export CLUSTER_NAME='${CUSTOM_VALUE.clusterName.value}'
-            export BASE_DOMAIN='${CUSTOM_VALUE.kubernetesBaseDomain.value}'
-            export FULL_HOST_NAME=${CUSTOM_VALUE.virtualMachineFullName.value}
-            export INTERNAL_API=api.${CUSTOM_VALUE.kubernetesClusterExternalDomain.value}
-          `}
+        {dedent`
+          export CLUSTER_NAME='${CUSTOM_VALUE.clusterName.value}'
+          export BASE_DOMAIN='${CUSTOM_VALUE.kubernetesBaseDomain.value}'
+          export FULL_HOST_NAME=${CUSTOM_VALUE.virtualMachineFullName.value}
+          export INTERNAL_API=api.${CUSTOM_VALUE.kubernetesClusterExternalDomain.value}
+          export MACHINE_LOCAL_ADDRESS=${CUSTOM_VALUE.virtualMachineLocalAddress.value}
+          export ETCD_INITIAL_CLUSTER="$\{FULL_HOST_NAME}=${ETCD_ARGS.initialAdvertisePeerUrls.value}"
+        `}
       </CodeBlock>
 
       <h4>Конфигурационный файл kubeadm для инициализации кластера</h4>

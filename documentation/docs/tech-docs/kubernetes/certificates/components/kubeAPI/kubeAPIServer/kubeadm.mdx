@@ -6,15 +6,19 @@ import dedent           from 'ts-dedent'
 <CodeBlock language="bash">
   {dedent`
     kubeadm init phase certs apiserver \\
-      --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
+      --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml \\
+      --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/super-admin.conf
   `}
 </CodeBlock>
 
 :::note
 После выполнения команд мы получаем следующий вывод.
-```
-#### Генерация Kube API сертификатов
-[certs] Generating "apiserver" certificate and key
-[certs] apiserver serving cert is signed for DNS names [kubernetes kubernetes.default kubernetes.default.svc kubernetes.default.svc.cluster.local master-1.example.example.com] and IPs [10.96.0.1 192.168.10.27]
-```
+
+<CodeBlock language="bash">
+  {dedent`
+    #### Генерация Kube API сертификатов
+    [certs] Generating "apiserver" certificate and key
+    [certs] apiserver serving cert is signed for DNS names [kubernetes kubernetes.default kubernetes.default.svc kubernetes.default.svc.cluster.local master-1.example.example.com] and IPs [10.96.0.1 192.168.10.27]
+  `}
+</CodeBlock>
 :::

@@ -18,7 +18,7 @@ export const KUBE_SCHEDULER_ARGS: TCustomValueItems = {
     value: 'true',
   },
   authorizationAlwaysAllowPaths: {
-    value: '["/healthz","/readyz","/livez"]',
+    value: '/healthz,/readyz,/livez,/metrics',
   },
   authorizationKubeconfig: {
     value: `${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/scheduler.conf`,
