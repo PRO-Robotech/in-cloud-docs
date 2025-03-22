@@ -14,11 +14,10 @@ import { KUBEADM_COFNIG_DATA } from '@site/src/constants/kubernetes/kubeadmConfi
 import TabItem from '@theme/TabItem'
 import Tabs from '@theme/Tabs'
 
-
 import {KUBERNETES_ETCD_API_ARGS} from '@site/src/constants/kubernetes/kubernetesArgs'
 import {KUBERNETES_KUBE_API_ARGS} from '@site/src/constants/kubernetes/kubernetesArgs'
 import {KUBERNETES_KUBE_CONTROLLER_MANAGER_ARGS} from '@site/src/constants/kubernetes/kubernetesArgs'
-
+import {KUBERNETES_KUBE_SCHEDULER_ARGS} from '@site/src/constants/kubernetes/kubernetesArgs'
 
 <details>
 <summary>Конфигурация Kubeadm для инициализации кластера</summary>
@@ -30,9 +29,8 @@ import {KUBERNETES_KUBE_CONTROLLER_MANAGER_ARGS} from '@site/src/constants/kuber
           {dedent`
             export CLUSTER_NAME='${CUSTOM_VALUE.clusterName.value}'
             export BASE_DOMAIN='${CUSTOM_VALUE.kubernetesBaseDomain.value}'
-            export CLUSTER_DOMAIN=${CUSTOM_VALUE.kubernetesClusterDomain.value}
             export FULL_HOST_NAME=${CUSTOM_VALUE.virtualMachineFullName.value}
-            export INTERNAL_API=api.${CUSTOM_VALUE.kubernetesClusterDomain.value}
+            export INTERNAL_API=api.${CUSTOM_VALUE.kubernetesClusterExternalDomain.value}
           `}
       </CodeBlock>
 
@@ -104,15 +102,15 @@ import {KUBERNETES_KUBE_CONTROLLER_MANAGER_ARGS} from '@site/src/constants/kuber
             certSANs:
               - "127.0.0.1"
               # TODO для доабвления внешнего FQDN в сертификаты кластера
-              # - api.$\{CLUSTER_NAME}.$\{EXTERNAL_DOMAIN}
+              # - $\{INTERNAL_API}
             timeoutForControlPlane: 4m0s
           controllerManager:
             extraArgs:
+              cluster-name: "$\{CLUSTER_NAME}"
               ${KUBERNETES_KUBE_CONTROLLER_MANAGER_ARGS.data.value}
           scheduler:
             extraArgs:
-              bind-address: 0.0.0.0
-              leader-elect: "true"
+              ${KUBERNETES_KUBE_SCHEDULER_ARGS.data.value}
           EOF
         `}
       </CodeBlock>
@@ -161,15 +159,17 @@ import {KUBERNETES_KUBE_CONTROLLER_MANAGER_ARGS} from '@site/src/constants/kuber
               apiVersion: kubeadm.k8s.io/v1beta3
               kind: ClusterConfiguration
 
-              clusterName: "$\{CLUSTER_NAME}"
+              clusterName: "${CUSTOM_VALUE.clusterName.value}"
               # TODO нужно указывать VIP LoadBalancer
               controlPlaneEndpoint: {{ local_hostname }}:${KUBE_API_ARGS.securePort.value}
 
               imageRepository: "${CUSTOM_VALUE.baseDockerRegistry.value}"
+
               networking:
                 serviceSubnet: ${CUSTOM_VALUE.kubernetesServiceCIDR.value}
                 dnsDomain: cluster.local
               kubernetesVersion: ${COMPONENTS_VERSION.kubernetes.value}
+
               dns: {}
               etcd:
                 local:
@@ -181,9 +181,11 @@ import {KUBERNETES_KUBE_CONTROLLER_MANAGER_ARGS} from '@site/src/constants/kuber
                     - 127.0.0.1
                   serverCertSANs:
                     - 127.0.0.1
+
               apiServer:
                 extraArgs:
                   ${KUBERNETES_KUBE_API_ARGS.data.value}
+
                 extraVolumes:
                 - name: "k8s-audit"
                   hostPath: "/var/log/kubernetes/audit/"
@@ -193,14 +195,15 @@ import {KUBERNETES_KUBE_CONTROLLER_MANAGER_ARGS} from '@site/src/constants/kuber
                 certSANs:
                   - "127.0.0.1"
                 timeoutForControlPlane: 4m0s
+
               controllerManager:
                 extraArgs:
+                  cluster-name: "${CUSTOM_VALUE.clusterName.value}"
                   ${KUBERNETES_KUBE_CONTROLLER_MANAGER_ARGS.data.value}
+
               scheduler:
                 extraArgs:
-                  bind-address: 0.0.0.0
-                  leader-elect: "true"
-
+                  ${KUBERNETES_KUBE_SCHEDULER_ARGS.data.value}
         `}
         </CodeBlock>
     </TabItem>

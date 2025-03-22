@@ -1,36 +1,42 @@
 
 import TabItem                  from '@theme/TabItem'
 import Tabs                     from '@theme/Tabs'
+import dedent                     from 'ts-dedent'
+import CodeBlock                  from '@theme/CodeBlock'
 
 <details open>
 <summary>All JOIN Certificates</summary>
     <Tabs groupId="install-type">
         <TabItem value='Kubeadm'>
-            ```bash
-            kubeadm join phase control-plane-prepare certs \
+          <CodeBlock language="bash">
+            {dedent`
+              kubeadm join phase control-plane-prepare certs \\
                 --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
-            kubeadm join phase control-plane-prepare kubeconfig \
+              kubeadm join phase control-plane-prepare kubeconfig \\
                 --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
-            ```
+            `}
+          </CodeBlock>
 
-            :::note
-            После выполнения команд мы получаем следующий вывод.
-            ```
-            [certs] Using certificateDir folder "/etc/kubernetes/pki"
-            [certs] Generating "apiserver" certificate and key
-            [certs] apiserver serving cert is signed for DNS names [api.example.example.com kubernetes kubernetes.default kubernetes.default.svc kubernetes.default.svc.example.example.com master-2.example.example.com] and IPs [29.64.0.1 192.168.10.29 192.168.10.35 127.0.0.1]
-            [certs] Generating "apiserver-kubelet-client" certificate and key
-            [certs] Generating "front-proxy-client" certificate and key
-            [certs] Generating "etcd/healthcheck-client" certificate and key
-            [certs] Generating "apiserver-etcd-client" certificate and key
-            [certs] Generating "etcd/server" certificate and key
-            [certs] etcd/server serving cert is signed for DNS names [localhost master-1.example.example.com master-2.example.example.com] and IPs [192.168.10.29 127.0.0.1 ::1 192.168.10.35]
-            [certs] Generating "etcd/peer" certificate and key
-            [certs] etcd/peer serving cert is signed for DNS names [localhost master-1.example.example.com master-2.example.example.com] and IPs [192.168.10.29 127.0.0.1 ::1 192.168.10.35]
-            [certs] Valid certificates and keys now exist in "/etc/kubernetes/pki"
-            [certs] Generating "sa" key
-            ```
-            :::
+          :::note
+          После выполнения команд мы получаем следующий вывод.
+          <CodeBlock language="bash">
+            {dedent`
+              [certs] Using certificateDir folder "/etc/kubernetes/pki"
+              [certs] Generating "apiserver" certificate and key
+              [certs] apiserver serving cert is signed for DNS names [api.example.example.com kubernetes kubernetes.default kubernetes.default.svc kubernetes.default.svc.example.example.com master-2.example.example.com] and IPs [29.64.0.1 192.168.10.29 192.168.10.35 127.0.0.1]
+              [certs] Generating "apiserver-kubelet-client" certificate and key
+              [certs] Generating "front-proxy-client" certificate and key
+              [certs] Generating "etcd/healthcheck-client" certificate and key
+              [certs] Generating "apiserver-etcd-client" certificate and key
+              [certs] Generating "etcd/server" certificate and key
+              [certs] etcd/server serving cert is signed for DNS names [localhost master-1.example.example.com master-2.example.example.com] and IPs [192.168.10.29 127.0.0.1 ::1 192.168.10.35]
+              [certs] Generating "etcd/peer" certificate and key
+              [certs] etcd/peer serving cert is signed for DNS names [localhost master-1.example.example.com master-2.example.example.com] and IPs [192.168.10.29 127.0.0.1 ::1 192.168.10.35]
+              [certs] Valid certificates and keys now exist in "/etc/kubernetes/pki"
+              [certs] Generating "sa" key
+            `}
+          </CodeBlock>
+          :::
         </TabItem>
     </Tabs>
 

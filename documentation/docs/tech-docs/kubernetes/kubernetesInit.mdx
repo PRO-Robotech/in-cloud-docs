@@ -114,13 +114,13 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
       You can now join any number of control-plane nodes by copying certificate authorities
       and service account keys on each node and then running the following as root:
 
-        kubeadm join api.example.example.com:6443 --token fjt9ex.lwzqgdlvoxtqk4yw \
-        --discovery-token-ca-cert-hash sha256:d0a2cf44fc8c8f4e5b9b021243434d303e1dc690b51a23efed0ba056647c87f6 \
+        kubeadm join api.example.example.com:6443 --token fjt9ex.lwzqgdlvoxtqk4yw \\
+        --discovery-token-ca-cert-hash sha256:d0a2cf44fc8c8f4e5b9b021243434d303e1dc690b51a23efed0ba056647c87f6 \\
         --control-plane --certificate-key 0c00c2fd5c67c37656c00d78a9d7e1f2eb794ef8e4fc3e2a4b532eb14323cd59
 
       Then you can join any number of worker nodes by running the following on each as root:
 
-      kubeadm join api.example.example.com:6443 --token fjt9ex.lwzqgdlvoxtqk4yw \
+      kubeadm join api.example.example.com:6443 --token fjt9ex.lwzqgdlvoxtqk4yw \\
         --discovery-token-ca-cert-hash sha256:d0a2cf44fc8c8f4e5b9b021243434d303e1dc690b51a23efed0ba056647c87f6
     `}
 </CodeBlock>

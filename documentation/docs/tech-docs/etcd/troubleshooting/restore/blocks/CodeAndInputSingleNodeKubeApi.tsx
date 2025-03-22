@@ -96,8 +96,8 @@ export const Master: FC = () => {
           <CodeBlock language="bash">
             {dedent`
               ssh \${K8S_NODE_USERNAME}@$\{K8S_NODE_ADDRESS_1} "mkdir -p ${ETCD_ARGS.workDir.value}"
-              rsync --rsync-path="sudo rsync" \
-                backup.db \
+              rsync --rsync-path="sudo rsync" \\
+                backup.db \\
                 \${K8S_NODE_USERNAME}@$\{K8S_NODE_ADDRESS_1}:${ETCD_ARGS.workDir.value}/backup.db
             `}
           </CodeBlock>
@@ -119,12 +119,10 @@ export const Master: FC = () => {
 
           <CodeBlock language="bash">
             {dedent`
-              crictl ps \
-              --label io.kubernetes.container.name=etcd \
-              -o json |
-              jq -r \
-                '(["PODNAME","PODNAMESPACE","CONTAINERNAME","CONTAINERID"] | (., map(length*"-"))), (.containers[] | [.labels."io.kubernetes.pod.name", .labels."io.kubernetes.pod.namespace", .metadata.name, .id ])| @tsv' |
-              column -t
+              crictl ps \\
+              --label io.kubernetes.container.name=etcd \\
+              -o json | jq -r \\
+                '(["PODNAME","PODNAMESPACE","CONTAINERNAME","CONTAINERID"] | (., map(length*"-"))), (.containers[] | [.labels."io.kubernetes.pod.name", .labels."io.kubernetes.pod.namespace", .metadata.name, .id ])| @tsv' | column -t
             `}
           </CodeBlock>
 
@@ -138,25 +136,25 @@ export const Master: FC = () => {
             {dedent`
               ectlflagsearch() {
                 ETCD_ARGS=$(
-                    crictl inspect \
-                    -o yaml \
-                    $(cidsearch \
-                      \${SEARCH_POD_NAME} \
-                      \${SEARCH_NAMESPACE} \
-                    )) ; \
-                  echo -n \
+                    crictl inspect \\
+                    -o yaml \\
+                    $(cidsearch \\
+                      \${SEARCH_POD_NAME} \\
+                      \${SEARCH_NAMESPACE} \\
+                    )) ; \\
+                  echo -n \\
                   '--cert='$(grep --\
                     '--peer-cert-file=' <<< $ETCD_ARGS |
                       head -n1 |
-                      sed 's/[^=]*=//') \
+                      sed 's/[^=]*=//') \\
                   '--key='$(grep --\
                     '--peer-key-file=' <<< $ETCD_ARGS |
                       head -n1 |
-                      sed 's/[^=]*=//') \
+                      sed 's/[^=]*=//') \\
                   '--cacert='$(grep --\
                     '--trusted-ca-file=' <<< $ETCD_ARGS |
                       head -n1 |
-                      sed 's/[^=]*=//') \
+                      sed 's/[^=]*=//') \\
                   '--endpoints='$(grep --\
                     '--advertise-client-urls=' <<< $ETCD_ARGS |
                       head -n1 |
@@ -185,10 +183,10 @@ export const Master: FC = () => {
           6. Подготовьте БД из снимка:
           <CodeBlock language="bash">
             {dedent`
-              etcdctl snapshot restore ${ETCD_ARGS.workDir.value}/backup.db \
-                --name=\${ETCD_NODE_NAME_1} \
-                --data-dir ${ETCD_ARGS.dataDir.value} \
-                --initial-advertise-peer-urls=https://\${K8S_NODE_ADDRESS_1}:\${ETCD_PEER_PORT} \
+              etcdctl snapshot restore ${ETCD_ARGS.workDir.value}/backup.db \\
+                --name=\${ETCD_NODE_NAME_1} \\
+                --data-dir ${ETCD_ARGS.dataDir.value} \\
+                --initial-advertise-peer-urls=https://\${K8S_NODE_ADDRESS_1}:\${ETCD_PEER_PORT} \\
                 --initial-cluster=\${ETCD_NODE_NAME_1}=https://\${K8S_NODE_ADDRESS_1}:\${ETCD_PEER_PORT}
             `}
           </CodeBlock>
@@ -260,8 +258,7 @@ export const Master: FC = () => {
 
           <CodeBlock language="bash">
             {dedent`
-              crictl ps -o json |
-              jq -r \
+              crictl ps -o json | jq -r \\
                 '(["PODNAME","PODNAMESPACE","CONTAINERNAME","CONTAINERID"] | (., map(length*"-"))), (.containers[] | [.labels."io.kubernetes.pod.name", .labels."io.kubernetes.pod.namespace", .metadata.name, .id ])| @tsv' |
               grep -e "etcd" -e "PODNAME" -e "---"  |
               column -t
@@ -298,9 +295,9 @@ export const Master: FC = () => {
 
           <CodeBlock language="bash">
             {dedent`
-              export CONTAINER_ID="$(crictl ps -a  \
-                --label io.kubernetes.container.name=etcd \
-                --label io.kubernetes.pod.namespace=kube-system \
+              export CONTAINER_ID="$(crictl ps -a  \\
+                --label io.kubernetes.container.name=etcd \\
+                --label io.kubernetes.pod.namespace=kube-system \\
                 | awk 'NR>1{r=$1} $0~/Running/{exit} END{print r}')"
               crictl stop \${CONTAINER_ID}
               crictl rm \${CONTAINER_ID}
@@ -366,9 +363,9 @@ export const Master: FC = () => {
 
           <CodeBlock language="bash">
             {dedent`
-              export CONTAINER_ID="$(crictl ps -a  \
-                --label io.kubernetes.container.name=etcd \
-                --label io.kubernetes.pod.namespace=kube-system \
+              export CONTAINER_ID="$(crictl ps -a  \\
+                --label io.kubernetes.container.name=etcd \\
+                --label io.kubernetes.pod.namespace=kube-system \\
                 | awk 'NR>1{r=$1} $0~/Running/{exit} END{print r}')"
 
               crictl ps --id $CONTAINER_ID
@@ -403,9 +400,9 @@ export const Master: FC = () => {
 
           <CodeBlock language="bash">
             {dedent`
-              export CONTAINER_ID="$(crictl ps -a  \
-                --label io.kubernetes.container.name=etcd \
-                --label io.kubernetes.pod.namespace=kube-system \
+              export CONTAINER_ID="$(crictl ps -a  \\
+                --label io.kubernetes.container.name=etcd \\
+                --label io.kubernetes.pod.namespace=kube-system \\
                 | awk 'NR>1{r=$1} $0~/Running/{exit} END{print r}')"
               crictl stop \${CONTAINER_ID}
               crictl rm \${CONTAINER_ID}
@@ -472,9 +469,9 @@ export const Master: FC = () => {
 
           <CodeBlock language="bash">
             {dedent`
-              export CONTAINER_ID="$(crictl ps -a  \
-                --label io.kubernetes.container.name=etcd \
-                --label io.kubernetes.pod.namespace=kube-system \
+              export CONTAINER_ID="$(crictl ps -a  \\
+                --label io.kubernetes.container.name=etcd \\
+                --label io.kubernetes.pod.namespace=kube-system \\
                 | awk 'NR>1{r=$1} $0~/Running/{exit} END{print r}')"
 
               crictl ps --id $CONTAINER_ID

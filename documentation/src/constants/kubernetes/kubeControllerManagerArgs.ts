@@ -147,7 +147,7 @@ export const KUBE_CONTROLLER_MANAGER_ARGS: TCustomValueItems = {
   tlsSniCertKey: { value: '' },
   unhealthyZoneThreshold: { value: '0.55' },
   useServiceAccountCredentials: { value: 'true' },
-  v: { value: '8' },
+  v: { value: '2' },
   version: { value: 'false' },
   vmodule: { value: '' },
   volumeHostAllowLocalLoopback: { value: 'true' },

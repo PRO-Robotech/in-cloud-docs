@@ -1,15 +1,24 @@
+import dedent                     from 'ts-dedent'
+import CodeBlock                  from '@theme/CodeBlock'
+
 #### Генерация Kubelet сертификатов
-```bash
-kubeadm init phase kubeconfig kubelet \
-    --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
-kubeadm init phase kubelet-finalize experimental-cert-rotation \
-    --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
-```
+<CodeBlock language="bash">
+  {dedent`
+    kubeadm init phase kubeconfig kubelet \\
+      --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
+    kubeadm init phase kubelet-finalize experimental-cert-rotation \\
+      --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
+  `}
+</CodeBlock>
 
 :::note
 После выполнения команд мы получаем следующий вывод.
-```
-#### Генерация Kubelet сертификатов
-[kubeconfig] Writing "kubelet.conf" kubeconfig file
-```
+
+<CodeBlock language="bash">
+  {dedent`
+    #### Генерация Kubelet сертификатов
+    [kubeconfig] Writing "kubelet.conf" kubeconfig file
+  `}
+</CodeBlock>
+
 :::

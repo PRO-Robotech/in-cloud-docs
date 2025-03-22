@@ -1,11 +1,21 @@
-```bash
-kubeadm init phase kubeconfig scheduler \
-    --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
-```
+import dedent                     from 'ts-dedent'
+import CodeBlock                  from '@theme/CodeBlock'
+
+<CodeBlock language="bash">
+  {dedent`
+    kubeadm init phase kubeconfig scheduler \\
+      --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
+  `}
+</CodeBlock>
+
 :::note
 После выполнения команд мы получаем следующий вывод.
-```
-#### Генерация Kube Scheduler сертификатов
-[kubeconfig] Writing "scheduler.conf" kubeconfig file
-```
+
+<CodeBlock language="bash">
+  {dedent`
+    #### Генерация Kube Scheduler сертификатов
+    [kubeconfig] Writing "scheduler.conf" kubeconfig file
+  `}
+</CodeBlock>
+
 :::

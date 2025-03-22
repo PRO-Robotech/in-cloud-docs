@@ -11,6 +11,7 @@ import dedent from 'ts-dedent'
     export BASE_DOMAIN=${CUSTOM_VALUE.kubernetesBaseDomain.value}
     export CLUSTER_DOMAIN=${CUSTOM_VALUE.kubernetesClusterDomain.value}
     export FULL_HOST_NAME=${CUSTOM_VALUE.virtualMachineFullName.value}
+    export CLUSTER_API_ENDPOINT=api.${CUSTOM_VALUE.clusterName.value}.${CUSTOM_VALUE.kubernetesBaseDomain.value}
   `}
 </CodeBlock>
 
@@ -42,7 +43,7 @@ import dedent from 'ts-dedent'
     DNS.3 = kubernetes.default.svc
     DNS.4 = kubernetes.default.svc.$\{CLUSTER_DOMAIN}
     DNS.5 = $\{FULL_HOST_NAME}
-    DNS.6 = api.$\{CLUSTER_NAME}.$\{BASE_DOMAIN}
+    DNS.6 = $\{CLUSTER_API_ENDPOINT}
     IP.1  = ${CUSTOM_VALUE.virtualMachineLocalAddress.value}
     IP.2  = 127.0.0.1
 

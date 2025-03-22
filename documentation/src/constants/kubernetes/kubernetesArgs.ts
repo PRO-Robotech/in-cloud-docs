@@ -8,31 +8,38 @@ import dedent from 'ts-dedent'
 import {ETCD_ARGS}              from '@site/src/constants/kubernetes/etcdArgs'
 import {KUBE_API_ARGS}          from '@site/src/constants/kubernetes/kubeAPIArgs'
 import {KUBE_CONTROLLER_MANAGER_ARGS} from '@site/src/constants/kubernetes/kubeControllerManagerArgs'
+import {KUBE_SCHEDULER_ARGS} from '@site/src/constants/kubernetes/kubeSchedulerArgs'
 
 export const KUBERNETES_ETCD_API_ARGS: TCustomValueItems = {
   data: {
     value: dedent`
-      auto-compaction-retention: "${ETCD_ARGS.autoCompactionRetention.value}"
-      cert-file: "${ETCD_ARGS.certFile.value}"
-      client-cert-auth: "${ETCD_ARGS.clientCertAuth.value}"
-      data-dir: "${ETCD_ARGS.dataDir.value}"
-      election-timeout: "${ETCD_ARGS.electionTimeout.value}"
-      experimental-initial-corrupt-check: "${ETCD_ARGS.experimentalInitialCorruptCheck.value}"
-      experimental-watch-progress-notify-interval: "${ETCD_ARGS.experimentalWatchProgressNotifyInterval.value}"
-      heartbeat-interval: "${ETCD_ARGS.heartbeatInterval.value}"
-      key-file: "${ETCD_ARGS.keyFile.value}"
-      logger: "${ETCD_ARGS.logger.value}"
-      max-snapshots: "${ETCD_ARGS.maxSnapshots.value}"
-      max-wals: "${ETCD_ARGS.maxWals.value}"
-      metrics: "${ETCD_ARGS.metrics.value}"
-      peer-cert-file: "${ETCD_ARGS.peerCertFile.value}"
-      peer-client-cert-auth: "${ETCD_ARGS.peerClientCertAuth.value}"
-      peer-key-file: "${ETCD_ARGS.peerKeyFile.value}"
-      peer-trusted-ca-file: "${ETCD_ARGS.peerTrustedCAFile.value}"
+      advertise-client-urls: ${ETCD_ARGS.advertiseClientUrls.value}
+      auto-compaction-retention: ${ETCD_ARGS.autoCompactionRetention.value}
+      cert-file: ${ETCD_ARGS.certFile.value}
+      client-cert-auth: ${ETCD_ARGS.clientCertAuth.value}
+      data-dir: ${ETCD_ARGS.dataDir.value}
+      election-timeout: ${ETCD_ARGS.electionTimeout.value}
+      experimental-initial-corrupt-check=true
+      experimental-watch-progress-notify-interval=5s
+      heartbeat-interval: ${ETCD_ARGS.heartbeatInterval.value}
+      initial-advertise-peer-urls: ${ETCD_ARGS.initialAdvertisePeerUrls.value}
+      initial-cluster: ${ETCD_ARGS.initialCluster.value}
+      key-file: ${ETCD_ARGS.keyFile.value}
+      listen-client-urls: ${ETCD_ARGS.listenClientUrls.value}
+      listen-metrics-urls: ${ETCD_ARGS.listenMetricsUrls.value}
+      listen-peer-urls: ${ETCD_ARGS.listenPeerUrls.value}
+      logger: ${ETCD_ARGS.logger.value}
+      max-snapshots: ${ETCD_ARGS.maxSnapshots.value}
+      max-wals: ${ETCD_ARGS.maxWals.value}
+      metrics: ${ETCD_ARGS.metrics.value}
+      name: ${ETCD_ARGS.name.value}
+      peer-cert-file: ${ETCD_ARGS.peerCertFile.value}
+      peer-client-cert-auth: ${ETCD_ARGS.peerClientCertAuth.value}
+      peer-key-file: ${ETCD_ARGS.peerKeyFile.value}
+      peer-trusted-ca-file: ${ETCD_ARGS.peerTrustedCAFile.value}
       snapshot-count: "${ETCD_ARGS.snapshotCount.value}"
-      trusted-ca-file: "${ETCD_ARGS.trustedCAFile.value}"
-      listen-metrics-urls: "http://0.0.0.0:2381" # TODO
       quota-backend-bytes: "10737418240" # TODO
+      trusted-ca-file: ${ETCD_ARGS.trustedCAFile.value}
     `
   }
 };
@@ -232,49 +239,13 @@ export const KUBERNETES_KUBE_CONTROLLER_MANAGER_ARGS: TCustomValueItems = {
       authorization-webhook-cache-authorized-ttl: "${KUBE_CONTROLLER_MANAGER_ARGS.authorizationWebhookCacheAuthorizedTtl.value}"
       authorization-webhook-cache-unauthorized-ttl: "${KUBE_CONTROLLER_MANAGER_ARGS.authorizationWebhookCacheUnauthorizedTtl.value}"
       bind-address: "${KUBE_CONTROLLER_MANAGER_ARGS.bindAddress.value}"
-
       cidr-allocator-type: "${KUBE_CONTROLLER_MANAGER_ARGS.cidrAllocatorType.value}"
       client-ca-file: "${KUBE_CONTROLLER_MANAGER_ARGS.clientCaFile.value}"
-
       cloud-provider: "${KUBE_CONTROLLER_MANAGER_ARGS.cloudProvider.value}"
       cloud-provider-gce-lb-src-cidrs: "${KUBE_CONTROLLER_MANAGER_ARGS.cloudProviderGceLbSrcCidrs.value}"
-      cluster-name: "${KUBE_CONTROLLER_MANAGER_ARGS.clusterName.value}"
-
       cluster-signing-cert-file: "${KUBE_CONTROLLER_MANAGER_ARGS.clusterSigningCertFile.value}"
       cluster-signing-duration: "${KUBE_CONTROLLER_MANAGER_ARGS.clusterSigningDuration.value}"
       cluster-signing-key-file: "${KUBE_CONTROLLER_MANAGER_ARGS.clusterSigningKeyFile.value}"
-
-      # Не указывать если значение "" или undefined
-      # cluster-signing-kube-apiserver-client-cert-file: "${KUBE_CONTROLLER_MANAGER_ARGS.clusterSigningKubeApiserverClientCertFile.value}"
-      # cluster-signing-kube-apiserver-client-key-file: "${KUBE_CONTROLLER_MANAGER_ARGS.clusterSigningKubeApiserverClientKeyFile.value}"
-      # cluster-signing-kubelet-client-cert-file: "${KUBE_CONTROLLER_MANAGER_ARGS.clusterSigningKubeletClientCertFile.value}"
-      # cluster-signing-kubelet-client-key-file: "${KUBE_CONTROLLER_MANAGER_ARGS.clusterSigningKubeletClientKeyFile.value}"
-      # cluster-signing-kubelet-serving-cert-file: "${KUBE_CONTROLLER_MANAGER_ARGS.clusterSigningKubeletServingCertFile.value}"
-      # cluster-signing-kubelet-serving-key-file: "${KUBE_CONTROLLER_MANAGER_ARGS.clusterSigningKubeletServingKeyFile.value}"
-      # cluster-signing-legacy-unknown-cert-file: "${KUBE_CONTROLLER_MANAGER_ARGS.clusterSigningLegacyUnknownCertFile.value}"
-      # cluster-signing-legacy-unknown-key-file: "${KUBE_CONTROLLER_MANAGER_ARGS.clusterSigningLegacyUnknownKeyFile.value}"
-      # cluster-cidr: "${KUBE_CONTROLLER_MANAGER_ARGS.clusterCidr.value}"
-      # cloud-config: "${KUBE_CONTROLLER_MANAGER_ARGS.cloudConfig.value}"
-      # cert-dir: "${KUBE_CONTROLLER_MANAGER_ARGS.certDir.value}"
-      # allow-metric-labels-manifest: "${KUBE_CONTROLLER_MANAGER_ARGS.allowMetricLabelsManifest.value}"
-      # allow-metric-labels: "${KUBE_CONTROLLER_MANAGER_ARGS.allowMetricLabels.value}"
-      # disabled-metrics: "${KUBE_CONTROLLER_MANAGER_ARGS.disabledMetrics.value}"
-      # leader-migration-config: "${KUBE_CONTROLLER_MANAGER_ARGS.leaderMigrationConfig.value}"
-      # master: "${KUBE_CONTROLLER_MANAGER_ARGS.master.value}"
-      # pv-recycler-pod-template-filepath-hostpath: "${KUBE_CONTROLLER_MANAGER_ARGS.pvRecyclerPodTemplateFilepathHostpath.value}"
-      # pv-recycler-pod-template-filepath-nfs: "${KUBE_CONTROLLER_MANAGER_ARGS.pvRecyclerPodTemplateFilepathNfs.value}"
-      # service-cluster-ip-range: "${KUBE_CONTROLLER_MANAGER_ARGS.serviceClusterIpRange.value}"
-      # show-hidden-metrics-for-version: "${KUBE_CONTROLLER_MANAGER_ARGS.showHiddenMetricsForVersion.value}"
-      # tls-cert-file: "${KUBE_CONTROLLER_MANAGER_ARGS.tlsCertFile.value}"
-      # tls-cipher-suites: "${KUBE_CONTROLLER_MANAGER_ARGS.tlsCipherSuites.value}"
-      # tls-min-version: "${KUBE_CONTROLLER_MANAGER_ARGS.tlsMinVersion.value}"
-      # tls-private-key-file: "${KUBE_CONTROLLER_MANAGER_ARGS.tlsPrivateKeyFile.value}"
-      # tls-sni-cert-key: "${KUBE_CONTROLLER_MANAGER_ARGS.tlsSniCertKey.value}"
-      # vmodule: "${KUBE_CONTROLLER_MANAGER_ARGS.vmodule.value}"
-      # volume-host-cidr-denylist: "${KUBE_CONTROLLER_MANAGER_ARGS.volumeHostCidrDenylist.value}"
-      # external-cloud-volume-plugin: "${KUBE_CONTROLLER_MANAGER_ARGS.externalCloudVolumePlugin.value}"
-      # requestheader-allowed-names: "${KUBE_CONTROLLER_MANAGER_ARGS.requestheaderAllowedNames.value}"
-
       concurrent-cron-job-syncs: "${KUBE_CONTROLLER_MANAGER_ARGS.concurrentCronJobSyncs.value}"
       concurrent-deployment-syncs: "${KUBE_CONTROLLER_MANAGER_ARGS.concurrentDeploymentSyncs.value}"
       concurrent-endpoint-syncs: "${KUBE_CONTROLLER_MANAGER_ARGS.concurrentEndpointSyncs.value}"
@@ -372,6 +343,102 @@ export const KUBERNETES_KUBE_CONTROLLER_MANAGER_ARGS: TCustomValueItems = {
       v: "${KUBE_CONTROLLER_MANAGER_ARGS.v.value}"
       version: "${KUBE_CONTROLLER_MANAGER_ARGS.version.value}"
       volume-host-allow-local-loopback: "${KUBE_CONTROLLER_MANAGER_ARGS.volumeHostAllowLocalLoopback.value}"
+
+      # Не указывать если значение "" или undefined
+      # cluster-signing-kube-apiserver-client-cert-file: "${KUBE_CONTROLLER_MANAGER_ARGS.clusterSigningKubeApiserverClientCertFile.value}"
+      # cluster-signing-kube-apiserver-client-key-file: "${KUBE_CONTROLLER_MANAGER_ARGS.clusterSigningKubeApiserverClientKeyFile.value}"
+      # cluster-signing-kubelet-client-cert-file: "${KUBE_CONTROLLER_MANAGER_ARGS.clusterSigningKubeletClientCertFile.value}"
+      # cluster-signing-kubelet-client-key-file: "${KUBE_CONTROLLER_MANAGER_ARGS.clusterSigningKubeletClientKeyFile.value}"
+      # cluster-signing-kubelet-serving-cert-file: "${KUBE_CONTROLLER_MANAGER_ARGS.clusterSigningKubeletServingCertFile.value}"
+      # cluster-signing-kubelet-serving-key-file: "${KUBE_CONTROLLER_MANAGER_ARGS.clusterSigningKubeletServingKeyFile.value}"
+      # cluster-signing-legacy-unknown-cert-file: "${KUBE_CONTROLLER_MANAGER_ARGS.clusterSigningLegacyUnknownCertFile.value}"
+      # cluster-signing-legacy-unknown-key-file: "${KUBE_CONTROLLER_MANAGER_ARGS.clusterSigningLegacyUnknownKeyFile.value}"
+      # cluster-cidr: "${KUBE_CONTROLLER_MANAGER_ARGS.clusterCidr.value}"
+      # cloud-config: "${KUBE_CONTROLLER_MANAGER_ARGS.cloudConfig.value}"
+      # cert-dir: "${KUBE_CONTROLLER_MANAGER_ARGS.certDir.value}"
+      # allow-metric-labels-manifest: "${KUBE_CONTROLLER_MANAGER_ARGS.allowMetricLabelsManifest.value}"
+      # allow-metric-labels: "${KUBE_CONTROLLER_MANAGER_ARGS.allowMetricLabels.value}"
+      # disabled-metrics: "${KUBE_CONTROLLER_MANAGER_ARGS.disabledMetrics.value}"
+      # leader-migration-config: "${KUBE_CONTROLLER_MANAGER_ARGS.leaderMigrationConfig.value}"
+      # master: "${KUBE_CONTROLLER_MANAGER_ARGS.master.value}"
+      # pv-recycler-pod-template-filepath-hostpath: "${KUBE_CONTROLLER_MANAGER_ARGS.pvRecyclerPodTemplateFilepathHostpath.value}"
+      # pv-recycler-pod-template-filepath-nfs: "${KUBE_CONTROLLER_MANAGER_ARGS.pvRecyclerPodTemplateFilepathNfs.value}"
+      # service-cluster-ip-range: "${KUBE_CONTROLLER_MANAGER_ARGS.serviceClusterIpRange.value}"
+      # show-hidden-metrics-for-version: "${KUBE_CONTROLLER_MANAGER_ARGS.showHiddenMetricsForVersion.value}"
+      # tls-cert-file: "${KUBE_CONTROLLER_MANAGER_ARGS.tlsCertFile.value}"
+      # tls-cipher-suites: "${KUBE_CONTROLLER_MANAGER_ARGS.tlsCipherSuites.value}"
+      # tls-min-version: "${KUBE_CONTROLLER_MANAGER_ARGS.tlsMinVersion.value}"
+      # tls-private-key-file: "${KUBE_CONTROLLER_MANAGER_ARGS.tlsPrivateKeyFile.value}"
+      # tls-sni-cert-key: "${KUBE_CONTROLLER_MANAGER_ARGS.tlsSniCertKey.value}"
+      # vmodule: "${KUBE_CONTROLLER_MANAGER_ARGS.vmodule.value}"
+      # volume-host-cidr-denylist: "${KUBE_CONTROLLER_MANAGER_ARGS.volumeHostCidrDenylist.value}"
+      # external-cloud-volume-plugin: "${KUBE_CONTROLLER_MANAGER_ARGS.externalCloudVolumePlugin.value}"
+      # requestheader-allowed-names: "${KUBE_CONTROLLER_MANAGER_ARGS.requestheaderAllowedNames.value}"
     `
   }
 };
+
+export const KUBERNETES_KUBE_SCHEDULER_ARGS: TCustomValueItems = {
+  data: {
+    value: dedent`
+      authentication-kubeconfig: "${KUBE_SCHEDULER_ARGS.authenticationKubeconfig.value}"
+      authentication-skip-lookup: "${KUBE_SCHEDULER_ARGS.authenticationSkipLookup.value}"
+      authentication-token-webhook-cache-ttl: "${KUBE_SCHEDULER_ARGS.authenticationTokenWebhookCacheTtl.value}"
+      authentication-tolerate-lookup-failure: "${KUBE_SCHEDULER_ARGS.authenticationTolerateLookupFailure.value}"
+      authorization-always-allow-paths: "${KUBE_SCHEDULER_ARGS.authorizationAlwaysAllowPaths.value}"
+      authorization-kubeconfig: "${KUBE_SCHEDULER_ARGS.authorizationKubeconfig.value}"
+      authorization-webhook-cache-authorized-ttl: "${KUBE_SCHEDULER_ARGS.authorizationWebhookCacheAuthorizedTtl.value}"
+      authorization-webhook-cache-unauthorized-ttl: "${KUBE_SCHEDULER_ARGS.authorizationWebhookCacheUnauthorizedTtl.value}"
+      bind-address: "${KUBE_SCHEDULER_ARGS.bindAddress.value}"
+      client-ca-file: "${KUBE_SCHEDULER_ARGS.clientCaFile.value}"
+      contention-profiling: "${KUBE_SCHEDULER_ARGS.contentionProfiling.value}"
+      help: "${KUBE_SCHEDULER_ARGS.help.value}"
+      http2-max-streams-per-connection: "${KUBE_SCHEDULER_ARGS.http2MaxStreamsPerConnection.value}"
+      kube-api-burst: "${KUBE_SCHEDULER_ARGS.kubeApiBurst.value}"
+      kube-api-content-type: "${KUBE_SCHEDULER_ARGS.kubeApiContentType.value}"
+      kube-api-qps: "${KUBE_SCHEDULER_ARGS.kubeApiQps.value}"
+      kubeconfig: "${KUBE_SCHEDULER_ARGS.kubeconfig.value}"
+      leader-elect: "${KUBE_SCHEDULER_ARGS.leaderElect.value}"
+      leader-elect-lease-duration: "${KUBE_SCHEDULER_ARGS.leaderElectLeaseDuration.value}"
+      leader-elect-renew-deadline: "${KUBE_SCHEDULER_ARGS.leaderElectRenewDeadline.value}"
+      leader-elect-resource-lock: "${KUBE_SCHEDULER_ARGS.leaderElectResourceLock.value}"
+      leader-elect-resource-name: "${KUBE_SCHEDULER_ARGS.leaderElectResourceName.value}"
+      leader-elect-resource-namespace: "${KUBE_SCHEDULER_ARGS.leaderElectResourceNamespace.value}"
+      leader-elect-retry-period: "${KUBE_SCHEDULER_ARGS.leaderElectRetryPeriod.value}"
+      log-flush-frequency: "${KUBE_SCHEDULER_ARGS.logFlushFrequency.value}"
+      log-json-info-buffer-size: "${KUBE_SCHEDULER_ARGS.logJsonInfoBufferSize.value}"
+      log-json-split-stream: "${KUBE_SCHEDULER_ARGS.logJsonSplitStream.value}"
+      log-text-info-buffer-size: "${KUBE_SCHEDULER_ARGS.logTextInfoBufferSize.value}"
+      log-text-split-stream: "${KUBE_SCHEDULER_ARGS.logTextSplitStream.value}"
+      logging-format: "${KUBE_SCHEDULER_ARGS.loggingFormat.value}"
+      permit-address-sharing: "${KUBE_SCHEDULER_ARGS.permitAddressSharing.value}"
+      permit-port-sharing: "${KUBE_SCHEDULER_ARGS.permitPortSharing.value}"
+      pod-max-in-unschedulable-pods-duration: "${KUBE_SCHEDULER_ARGS.podMaxInUnschedulablePodsDuration.value}"
+      profiling: "${KUBE_SCHEDULER_ARGS.profiling.value}"
+      requestheader-extra-headers-prefix: "${KUBE_SCHEDULER_ARGS.requestheaderExtraHeadersPrefix.value}"
+      requestheader-group-headers: "${KUBE_SCHEDULER_ARGS.requestheaderGroupHeaders.value}"
+      requestheader-username-headers: "${KUBE_SCHEDULER_ARGS.requestheaderUsernameHeaders.value}"
+      secure-port: "${KUBE_SCHEDULER_ARGS.securePort.value}"
+      v: "${KUBE_SCHEDULER_ARGS.v.value}"
+      version: "${KUBE_SCHEDULER_ARGS.version.value}"
+
+      # allow-metric-labels: "${KUBE_SCHEDULER_ARGS.allowMetricLabels.value}"
+      # allow-metric-labels-manifest: "${KUBE_SCHEDULER_ARGS.allowMetricLabelsManifest.value}"
+      # cert-dir: "${KUBE_SCHEDULER_ARGS.certDir.value}"
+      # config: "${KUBE_SCHEDULER_ARGS.config.value}"
+      # disabled-metrics: "${KUBE_SCHEDULER_ARGS.disabledMetrics.value}"
+      # feature-gates: "${KUBE_SCHEDULER_ARGS.featureGates.value}"
+      # master: "${KUBE_SCHEDULER_ARGS.master.value}"
+      # requestheader-allowed-names: "${KUBE_SCHEDULER_ARGS.requestheaderAllowedNames.value}"
+      # requestheader-client-ca-file: "${KUBE_SCHEDULER_ARGS.requestheaderClientCaFile.value}"
+      # show-hidden-metrics-for-version: "${KUBE_SCHEDULER_ARGS.showHiddenMetricsForVersion.value}"
+      # tls-cert-file: "${KUBE_SCHEDULER_ARGS.tlsCertFile.value}"
+      # tls-cipher-suites: "${KUBE_SCHEDULER_ARGS.tlsCipherSuites.value}"
+      # tls-min-version: "${KUBE_SCHEDULER_ARGS.tlsMinVersion.value}"
+      # tls-private-key-file: "${KUBE_SCHEDULER_ARGS.tlsPrivateKeyFile.value}"
+      # tls-sni-cert-key: "${KUBE_SCHEDULER_ARGS.tlsSniCertKey.value}"
+      # vmodule: "${KUBE_SCHEDULER_ARGS.vmodule.value}"
+      # write-config-to: "${KUBE_SCHEDULER_ARGS.writeConfigTo.value}"
+    `
+  }
+}

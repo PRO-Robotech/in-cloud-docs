@@ -8,7 +8,8 @@ import dedent from 'ts-dedent'
 <h4>Генерация манифеста</h4>
 <CodeBlock language="bash">
     {dedent`
-        kubeadm init phase  control-plane controller-manager --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
+        kubeadm init phase  control-plane controller-manager \\
+          --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
     `}
 </CodeBlock>
 
