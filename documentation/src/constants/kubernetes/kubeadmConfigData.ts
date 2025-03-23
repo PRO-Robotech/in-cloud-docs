@@ -1,6 +1,4 @@
-/* eslint-disable no-template-curly-in-string */
 import dedent from 'ts-dedent'
-import {ETCD_ARGS} from '@site/src/constants/kubernetes/etcdArgs'
 import {KUBE_API_ARGS} from '@site/src/constants/kubernetes/kubeAPIArgs'
 import {TCustomValueItems} from '../../customTypes/customValue'
 import {COMPONENTS_VERSION}   from '@site/src/constants/kubernetes/componentsVersion'

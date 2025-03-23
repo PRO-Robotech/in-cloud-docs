@@ -1,6 +1,5 @@
 /* eslint-disable no-template-curly-in-string */
 import { CERTIFICATES } from '@site/src/constants/kubernetes/certs'
-import { PORTS } from '@site/src/constants/kubernetes/ports'
 import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 import { TCustomValueItems } from '../../customTypes/customValue'
 

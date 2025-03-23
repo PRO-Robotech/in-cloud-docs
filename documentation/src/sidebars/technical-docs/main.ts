@@ -1,9 +1,9 @@
-import { cilium } from './cilium'
+// import { cilium } from './cilium'
 import { etcd } from './etcd'
 import { kubernetes } from './kubernetes'
-import { monitoring } from './monitoring'
-import { vault } from './vault'
-import { harbor } from './harbor'
+// import { monitoring } from './monitoring'
+// import { vault } from './vault'
+// import { harbor } from './harbor'
 
 export const main = [
   {

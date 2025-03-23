@@ -4,20 +4,16 @@ import dedent                   from 'ts-dedent'
 import CodeBlock                from '@theme/CodeBlock'
 import {ETCD_ARGS}              from '@site/src/constants/kubernetes/etcdArgs'
 import {KUBE_API_ARGS}          from '@site/src/constants/kubernetes/kubeAPIArgs'
-import {KUBE_CONTROLLER_MANAGER_ARGS} from '@site/src/constants/kubernetes/kubeControllerManagerArgs'
-import { PORTS }                from '@site/src/constants/kubernetes/ports'
 import { CUSTOM_VALUE }         from '@site/src/constants/kubernetes/customValue'
 import { COMPONENTS_VERSION }   from '@site/src/constants/kubernetes/componentsVersion'
-import { CERTIFICATES }         from '@site/src/constants/kubernetes/certs'
-import { KUBELET_COFNIG_DATA } from '@site/src/constants/kubernetes/kubeletConfigData'
 import { KUBEADM_COFNIG_DATA } from '@site/src/constants/kubernetes/kubeadmConfigData'
-import TabItem from '@theme/TabItem'
-import Tabs from '@theme/Tabs'
-
 import {KUBERNETES_ETCD_API_ARGS} from '@site/src/constants/kubernetes/kubernetesArgs'
 import {KUBERNETES_KUBE_API_ARGS} from '@site/src/constants/kubernetes/kubernetesArgs'
 import {KUBERNETES_KUBE_CONTROLLER_MANAGER_ARGS} from '@site/src/constants/kubernetes/kubernetesArgs'
 import {KUBERNETES_KUBE_SCHEDULER_ARGS} from '@site/src/constants/kubernetes/kubernetesArgs'
+
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
 
 <details>
 <summary>Конфигурация Kubeadm для инициализации кластера</summary>
