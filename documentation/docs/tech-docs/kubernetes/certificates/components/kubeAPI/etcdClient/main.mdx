@@ -4,14 +4,12 @@ import Tabs                 from '@theme/Tabs'
 import ETCDClientCert       from '@site/docs/tech-docs/kubernetes/certificates/components/kubeAPI/etcdClient/openssl.mdx'
 import ETCDClientKubeadm    from '@site/docs/tech-docs/kubernetes/certificates/components/kubeAPI/etcdClient/kubeadm.mdx'
 
-<details>
-  <summary>Kubernetes API Client > ETCD</summary>
-  <Tabs groupId="install-type">
-    <TabItem value='HardWay'>
-      <ETCDClientCert />
-    </TabItem>
-    <TabItem value='Kubeadm'>
-      <ETCDClientKubeadm />
-    </TabItem>
-  </Tabs>
-</details>
+<Tabs groupId="install-type">
+  <TabItem value='HardWay'>
+    <ETCDClientCert />
+  </TabItem>
+  <TabItem value='Kubeadm'>
+    <ETCDClientKubeadm />
+  </TabItem>
+</Tabs>
+

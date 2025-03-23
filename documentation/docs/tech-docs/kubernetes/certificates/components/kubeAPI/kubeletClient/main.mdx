@@ -4,14 +4,11 @@ import Tabs                 from '@theme/Tabs'
 import KubeletClientCert       from '@site/docs/tech-docs/kubernetes/certificates/components/kubeAPI/kubeletClient/openssl.mdx'
 import KubeletClientKubeadm    from '@site/docs/tech-docs/kubernetes/certificates/components/kubeAPI/kubeletClient/kubeadm.mdx'
 
-<details>
-  <summary>Kubernetes API Client > Kubelet</summary>
-  <Tabs groupId="install-type">
-    <TabItem value='HardWay'>
-      <KubeletClientCert />
-    </TabItem>
-    <TabItem value='Kubeadm'>
-      <KubeletClientKubeadm />
-    </TabItem>
-  </Tabs>
-</details>
+<Tabs groupId="install-type">
+  <TabItem value='HardWay'>
+    <KubeletClientCert />
+  </TabItem>
+  <TabItem value='Kubeadm'>
+    <KubeletClientKubeadm />
+  </TabItem>
+</Tabs>
