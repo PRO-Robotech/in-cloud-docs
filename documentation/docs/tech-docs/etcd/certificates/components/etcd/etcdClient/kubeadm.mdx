@@ -6,8 +6,7 @@ import dedent           from 'ts-dedent'
 <CodeBlock language="bash">
   {dedent`
     kubeadm init phase certs etcd-healthcheck-client \\
-      --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml \\
-      --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/super-admin.conf
+      --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
   `}
 </CodeBlock>
 

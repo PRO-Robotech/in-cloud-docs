@@ -14,8 +14,7 @@ import dedent from 'ts-dedent'
 <CodeBlock language="bash">
     {dedent`
         kubeadm join phase control-plane-join etcd \\
-          --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml \\
-          --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/admin.conf
+          --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
     `}
 </CodeBlock>
 

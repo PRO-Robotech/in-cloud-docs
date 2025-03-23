@@ -10,8 +10,7 @@ import { CUSTOM_VALUE }         from '@site/src/constants/kubernetes/customValue
 <CodeBlock language="bash">
   {dedent`
     kubeadm init phase kubelet-start \\
-      --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml \\
-      --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/super-admin.conf
+      --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
   `}
 </CodeBlock>
 

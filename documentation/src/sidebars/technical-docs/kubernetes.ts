@@ -203,7 +203,7 @@ export const kubernetes = [
     items: [
       {
         type: 'category',
-        label: '5.2.2.0. ALL',
+        label: '5.2.2.0. Все серт-ы',
         items: [
           {
             type: 'doc',
@@ -252,19 +252,36 @@ export const kubernetes = [
       },
       {
         type: 'category',
-        label: '5.2.2.3. Сервис Аккаунт',
+        label: '5.2.2.3. Kubeconfigs',
         collapsed: true,
         items: [
           {
             type: 'doc',
             label: '5.2.2.3.1. Init',
+            id: 'tech-docs/kubernetes/certificates/components/init-kubeconfigs',
+          },
+          // {
+          //   type: 'doc',
+          //   label: '5.2.2.2.2. Join',
+          //   id: 'tech-docs/kubernetes/certificates/components/join-certificates',
+          // },
+        ],
+      },
+      {
+        type: 'category',
+        label: '5.2.2.4. Сервис Аккаунт',
+        collapsed: true,
+        items: [
+          {
+            type: 'doc',
+            label: '5.2.2.4.1. Init',
             id: 'tech-docs/kubernetes/certificates/service-account',
           },
         ],
       },
       {
         type: 'doc',
-        label: '5.2.2.4. Проверка',
+        label: '5.2.2.5. Проверка',
         id: 'tech-docs/kubernetes/certificates/examination',
       },
     ],
@@ -370,70 +387,70 @@ export const kubernetes = [
       },
     ],
   },
-  {
-    type: 'category',
-    label: '5.2.6. Сеть',
-    collapsed: true,
-    items: [
-      {
-        type: 'category',
-        label: '5.2.6.1. Сервисная',
-        collapsed: true,
-        items: [
-          {
-            type: 'doc',
-            label: '5.2.6.1.1. Концепт',
-            id: 'tech-docs/kubernetes-network/base-load-balancer-principal',
-          },
-          {
-            type: 'doc',
-            label: '5.2.6.1.1. Концепт2',
-            id: 'tech-docs/kubernetes-network/resource-service',
-          },
-          // {
-          //   type: 'doc',
-          //   label: 'LoadBalancer Citrix',
-          //   id: 'tech-docs/kubernetes-network/base-load-balancer-citrix',
-          // },
-          {
-            type: 'doc',
-            label: '5.2.6.1.2. Metallb',
-            id: 'tech-docs/kubernetes-network/metallb/base-load-balancer-metallb',
-          },
-          // {
-          //   type: 'doc',
-          //   label: 'LoadBalancer Cilium',
-          //   id: 'tech-docs/kubernetes-network/base-load-balancer-cilium',
-          // },
-        ],
-      },
-      {
-        type: 'category',
-        label: '5.2.6.2. Подовая',
-        collapsed: true,
-        items: [
-          {
-            type: 'doc',
-            label: '5.2.6.2.1. Концепт',
-            id: 'tech-docs/kubernetes-network/base-pod-principal',
-          },
-          {
-            type: 'doc',
-            label: '5.2.6.2.2. CNI Cilium',
-            id: 'tech-docs/kubernetes-network/base-pod-cni-cilium',
-          },
-        ],
-      },
-      {
-        type: 'doc',
-        label: '5.2.6.3. NAG',
-        id: 'tech-docs/kubernetes-network/base-network-access-group-principal',
-      },
-    ],
-  },
-  {
-    type: 'doc',
-    label: '5.2.6. Диагностика',
-    id: 'tech-docs/kubernetes-thw/k8s-troubleshooting',
-  },
+  // {
+  //   type: 'category',
+  //   label: '5.2.5. Сеть',
+  //   collapsed: true,
+  //   items: [
+  //     {
+  //       type: 'category',
+  //       label: '5.2.5.1. Сервисная',
+  //       collapsed: true,
+  //       items: [
+  //         {
+  //           type: 'doc',
+  //           label: '5.2.5.1.1. Концепт',
+  //           id: 'tech-docs/kubernetes-network/base-load-balancer-principal',
+  //         },
+  //         {
+  //           type: 'doc',
+  //           label: '5.2.5.1.1. Концепт2',
+  //           id: 'tech-docs/kubernetes-network/resource-service',
+  //         },
+  //         // {
+  //         //   type: 'doc',
+  //         //   label: 'LoadBalancer Citrix',
+  //         //   id: 'tech-docs/kubernetes-network/base-load-balancer-citrix',
+  //         // },
+  //         {
+  //           type: 'doc',
+  //           label: '5.2.5.1.2. Metallb',
+  //           id: 'tech-docs/kubernetes-network/metallb/base-load-balancer-metallb',
+  //         },
+  //         // {
+  //         //   type: 'doc',
+  //         //   label: 'LoadBalancer Cilium',
+  //         //   id: 'tech-docs/kubernetes-network/base-load-balancer-cilium',
+  //         // },
+  //       ],
+  //     },
+  //     {
+  //       type: 'category',
+  //       label: '5.2.5.2. Подовая',
+  //       collapsed: true,
+  //       items: [
+  //         {
+  //           type: 'doc',
+  //           label: '5.2.5.2.1. Концепт',
+  //           id: 'tech-docs/kubernetes-network/base-pod-principal',
+  //         },
+  //         {
+  //           type: 'doc',
+  //           label: '5.2.5.2.2. CNI Cilium',
+  //           id: 'tech-docs/kubernetes-network/base-pod-cni-cilium',
+  //         },
+  //       ],
+  //     },
+  //     {
+  //       type: 'doc',
+  //       label: '5.2.5.3. NAG',
+  //       id: 'tech-docs/kubernetes-network/base-network-access-group-principal',
+  //     },
+  //   ],
+  // },
+  // {
+  //   type: 'doc',
+  //   label: '5.2.6. Диагностика',
+  //   id: 'tech-docs/kubernetes-thw/k8s-troubleshooting',
+  // },
 ]

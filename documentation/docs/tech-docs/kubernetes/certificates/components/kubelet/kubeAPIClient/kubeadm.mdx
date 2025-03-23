@@ -6,11 +6,7 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 <CodeBlock language="bash">
   {dedent`
     kubeadm init phase kubeconfig kubelet \\
-      --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml \\
-      --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/super-admin.conf
-    kubeadm init phase kubelet-finalize experimental-cert-rotation \\
-      --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml \\
-      --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/super-admin.conf
+      --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
   `}
 </CodeBlock>
 
@@ -21,6 +17,26 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
   {dedent`
     #### Генерация Kubelet сертификатов
     [kubeconfig] Writing "kubelet.conf" kubeconfig file
+  `}
+</CodeBlock>
+:::
+
+
+#### Ротация Kubelet сертификатов
+<CodeBlock language="bash">
+  {dedent`
+    kubeadm init phase kubelet-finalize experimental-cert-rotation \\
+      --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
+  `}
+</CodeBlock>
+
+:::note
+После выполнения команд мы получаем следующий вывод.
+
+<CodeBlock language="bash">
+  {dedent`
+    #### Ротация Kubelet сертификатов
+    [kubelet-finalize] Updating "/etc/kubernetes/kubelet.conf" to point to a rotatable kubelet client certificate and key
   `}
 </CodeBlock>
 :::
