@@ -1,12 +1,10 @@
-import dedent                   from 'ts-dedent'
-import CodeBlock                from '@theme/CodeBlock'
-import { PORTS }                from '@site/src/constants/kubernetes/ports'
-import { CUSTOM_VALUE }         from '@site/src/constants/kubernetes/customValue'
+import dedent from 'ts-dedent'
+import CodeBlock from '@theme/CodeBlock'
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 import TabItem from '@theme/TabItem'
 import Tabs from '@theme/Tabs'
 import DIR from '@site/docs/tech-docs/kubernetes/components/kubelet/dir.mdx'
-import { DOWNLOAD_VERSION }     from '@site/src/constants/kubernetes/downloads'
-
+import { DOWNLOAD_VERSION } from '@site/src/constants/kubernetes/downloads'
 
 <Tabs groupId="install-type">
 
@@ -64,7 +62,7 @@ import { DOWNLOAD_VERSION }     from '@site/src/constants/kubernetes/downloads'
         </CodeBlock>
 
         <h4>Systemd Unit Custom ENV</h4>
-        :::info Внимание
+        :::warning Внимание
         Данный блок конфигурации применим **только** при установке Kubernetes вручную (методом _«Kubernetes the Hard Way»_). При использовании утилиты **kubeadm** конфигурационный файл будет создан автоматически на основе спецификации, указанной в файле `kubeadm-config`.
 
         <h4>Переменные окружения</h4>

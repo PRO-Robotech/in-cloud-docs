@@ -1,0 +1,810 @@
+---
+title: "Kubernetes The Hard Way"
+date: 2025-03-23
+slug: kubernetes-the-hard-way
+---
+
+import { PORTS } from '@site/src/constants/kubernetes/ports'
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+import { COMPONENTS_VERSION } from '@site/src/constants/kubernetes/componentsVersion'
+import MastersTabs from '@site/docs/tech-docs/kubernetes/setupEnvironments/allMasterTabs.mdx'
+import ContainerdDownloadBIN from '@site/docs/tech-docs/kubernetes/components/containerd/downloadBIN.mdx'
+import RuncDownloadBIN from '@site/docs/tech-docs/kubernetes/components/runc/downloadBIN.mdx'
+import CrictlDownloadBIN from '@site/docs/tech-docs/kubernetes/components/crictl/downloadBIN.mdx'
+import KubectlDownloadBIN from '@site/docs/tech-docs/kubernetes/components/kubectl/downloadBIN.mdx'
+import KubeadmDownloadBIN from '@site/docs/tech-docs/kubernetes/components/kubeadm/downloadBIN.mdx'
+import KubeletDownloadBIN from '@site/docs/tech-docs/kubernetes/components/kubelet/downloadBIN.mdx'
+import EtcdDownloadBIN from '@site/docs/tech-docs/etcd/components/etcd/downloadBIN.mdx'
+
+import ContainerdStartSystemdUnit from '@site/docs/tech-docs/kubernetes/components/containerd/startSystemdUnit.mdx'
+import ContainerdSetupSystemdUnit from '@site/docs/tech-docs/kubernetes/components/containerd/setupSystemdUnit.mdx'
+import ContainerdConfigFiles from '@site/docs/tech-docs/kubernetes/components/containerd/configFiles.mdx'
+
+import CrictlConfigFiles from '@site/docs/tech-docs/kubernetes/components/crictl/configFiles.mdx'
+
+import KubeletEnableSystemdUnit from '@site/docs/tech-docs/kubernetes/components/kubelet/systemdUnit/systemdUnitEnable.mdx'
+import KubeletSetupSystemdUnit from '@site/docs/tech-docs/kubernetes/components/kubelet/setupSystemdUnit.mdx'
+import KubeletConfigFiles from '@site/docs/tech-docs/kubernetes/components/kubelet/configFiles.mdx'
+
+import KubeadmConfigFiles        from '@site/docs/tech-docs/kubernetes/components/kubeadm/configFiles.mdx'
+import KubeadmDIR                from '@site/docs/tech-docs/kubernetes/components/kubeadm/dir.mdx'
+
+import ComponentsReady from '@site/docs/tech-docs/kubernetes/components/componentsReadyComponent.mdx'
+
+import KubernetesCA from '@site/docs/tech-docs/kubernetes/certificates/centerAuthority/kubernetesCA/main.mdx'
+import FrontProxyCA from '@site/docs/tech-docs/kubernetes/certificates/centerAuthority/frontProxyCA/main.mdx'
+import ETCDCA   from '@site/docs/tech-docs/etcd/certificates/centerAuthority/etcdCA/main.mdx'
+
+import KubeletServer from '@site/docs/tech-docs/kubernetes/certificates/components/kubelet/kubeletServer/main.mdx'
+import KubeAPIETCDClientMain from '@site/docs/tech-docs/kubernetes/certificates/components/kubeAPI/etcdClient/main.mdx'
+import KubeletClientMain from '@site/docs/tech-docs/kubernetes/certificates/components/kubeAPI/kubeletClient/main.mdx'
+import FrontProxyClientMain from '@site/docs/tech-docs/kubernetes/certificates/components/kubeAPI/frontProxyClient/main.mdx'
+import KubeAPIServerMain from '@site/docs/tech-docs/kubernetes/certificates/components/kubeAPI/kubeAPIServer/main.mdx'
+import ETCDClientETCDMain from '@site/docs/tech-docs/etcd/certificates/components/etcd/etcdClient/main.mdx'
+import ETCDServerMain from '@site/docs/tech-docs/etcd/certificates/components/etcd/etcdServer/main.mdx'
+import ETCDPeerMain from '@site/docs/tech-docs/etcd/certificates/components/etcd/etcdPeer/main.mdx'
+
+import KubeSchedulerCerts from '@site/docs/tech-docs/kubernetes/certificates/components/kubeScheduler/main.mdx'
+import KubeAPIClient from '@site/docs/tech-docs/kubernetes/certificates/components/kubelet/kubeAPIClient/main.mdx'
+import AdminClientMain from '@site/docs/tech-docs/kubernetes/certificates/components/admin/adminClient/main.mdx'
+import SuperAdminClientMain from '@site/docs/tech-docs/kubernetes/certificates/components/admin/superAdminClient/main.mdx'
+import KubeControllerKubeAPIClient from '@site/docs/tech-docs/kubernetes/certificates/components/kubeControllerManager/kubeAPIClient/main.mdx'
+
+import ServiceAccount from '@site/docs/tech-docs/kubernetes/certificates/serviceAccountComponent.mdx'
+import Examination from '@site/docs/tech-docs/kubernetes/certificates/examinationComponent.mdx'
+
+
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+import CodeBlock from '@theme/CodeBlock'
+import dedent from 'ts-dedent'
+
+#### Развертывание Kubernetes The Hard Way
+
+***Возобновляем серию статей по Kubernetes в новом формате.***
+
+Эта статья будет содержать общий опыт по развертыванию Kubernetes, не используя средства автоматического развертывания, такие как `kubeadm`. Также данный формат напрямую синхронизируется с документацией, которую мы стараемся писать по лучшим практикам написания с использованием методик `IAC`.
+
+Также вся конфигурация, описанная дальше, полностью дублирует поведение `kubeadm`, где на выходе получите кластер, который будет сложно определить — собран он через kub`eadm или `"The Hard Way"`.
+
+{/* truncate */}
+
+
+### Введение
+`Kubernetes` стал стандартом для управления контейнерами. Инструменты вроде `kubeadm` сильно упрощают развертывание, но важно понимать, как `Kubernetes` работает изнутри. Без этого сложно понять логику автоматизации. В этой статье мы рассмотрим подход `"The Hard Way"` — самостоятельная настройка каждого компонента.
+
+### Почему "The Hard Way"?
+Развертывание Kubernetes "The Hard Way" может показаться сложным, но такой подход дает ряд преимуществ:
+
+- Глубокое понимание: Вы получите полное представление о том, как работает Kubernetes "под капотом".
+
+- Гибкость: Вы сможете настроить каждый компонент в соответствии с вашими конкретными потребностями.
+
+### Компоненты Kubernetes
+
+<table>
+  <thead>
+    <tr>
+      <th>Компонент</th>
+      <th>Версия</th>
+      <th>Описание</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>containerd</td>
+      <td>{COMPONENTS_VERSION.containerd.value}</td>
+      <td>Отвечает за запуск и управление контейнерами.</td>
+    </tr>
+    <tr>
+      <td>runc</td>
+      <td>{COMPONENTS_VERSION.runc.value}</td>
+      <td>Интерфейс для запуска контейнеров с использованием ядра Linux.</td>
+    </tr>
+    <tr>
+      <td>crictl</td>
+      <td>{COMPONENTS_VERSION.crictl.value}</td>
+      <td>Инструмент для взаимодействия с контейнерной средой, использующей интерфейс CRI.</td>
+    </tr>
+    <tr>
+      <td>kubectl</td>
+      <td>{COMPONENTS_VERSION.kubernetes.value}</td>
+      <td>Инструмент для взаимодействия с Kubernetes-API сервером.</td>
+    </tr>
+    <tr>
+      <td>kubeadm</td>
+      <td>{COMPONENTS_VERSION.kubernetes.value}</td>
+      <td>Инструмент для упрощения развертывания и настройки Kubernetes. (*Будем использовать как инструмент проверки соответствия конфигурации).</td>
+    </tr>
+    <tr>
+      <td>kubelet</td>
+      <td>{COMPONENTS_VERSION.kubernetes.value}</td>
+      <td>Агент отвечающий за запуск и управление контейнерами (подами), а также за поддержание их текущего состояния.</td>
+    </tr>
+    <tr>
+      <td>etcd</td>
+      <td>{COMPONENTS_VERSION.etcd.value}</td>
+      <td>Распределенное хранилище ключей-значений, используемое для хранения конфигурации кластера.</td>
+    </tr>
+    <tr>
+      <td>kube-apiserver</td>
+      <td>{COMPONENTS_VERSION.kubernetes.value}</td>
+      <td>RESTful API интерфейс для взаимодействия с системой.</td>
+    </tr>
+    <tr>
+      <td>kube-controller-manager</td>
+      <td>{COMPONENTS_VERSION.kubernetes.value}</td>
+      <td>Компонент отвечающий за управление состоянием ресурсов в кластере через различные контроллеры.</td>
+    </tr>
+    <tr>
+      <td>kube-scheduler</td>
+      <td>{COMPONENTS_VERSION.kubernetes.value}</td>
+      <td>Компонент отвечающий за распределение подов по узлам кластера.</td>
+    </tr>
+    <tr>
+      <td>conntrack</td>
+      <td>v1.4.+</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>socat</td>
+      <td>1.8.+</td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
+### Шаги развертывания
+Развертывание Kubernetes "The Hard Way" включает в себя следующие шаги:
+
+- Создание инфраструктуры
+- Базовая настройка узлов
+- Загрузка модулей ядра
+- Настройка Sysctl
+- Установка компонентов
+- Настройка компонентов
+- Проверка готовности компонентов
+- Создание корневых сертификатов
+- Создание сертификатов приложений
+- Создание kubeconfigs приложений
+- Создание ключа для подписи Service Accounts
+- Проверка готовности блока сертификатов
+- Создание Static Pods
+- Запуск Kubelet
+- Загрузка конфигурационных файлов в Kubernetes
+- Загрузка корневых сертификатов в Kubernetes
+- Маркировка узлов
+- Создание токенов для подключения новых узлов
+- Создание ролевой модели для созданных токенов
+
+### Создание инфраструктуры
+Для основы нашего кластера нам потребуется:
+
+#### Информация о кластере
+
+<table>
+  <thead>
+    <tr>
+      <th>Имя</th>
+      <th>внешний домен</th>
+      <th>Версия</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>{CUSTOM_VALUE.clusterName.value}</td>
+      <td>{CUSTOM_VALUE.kubernetesBaseDomain.value}</td>
+      <td>{COMPONENTS_VERSION.kubernetes.value}</td>
+    </tr>
+  </tbody>
+</table>
+
+#### Виртуальные машины под управляющий контур
+
+<table>
+  <thead>
+    <tr>
+      <th>Имя</th>
+      <th>IP Адрес</th>
+      <th>Базовая ОС</th>
+      <th>Ресурсы</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>master-1.{CUSTOM_VALUE.clusterName.value}.{CUSTOM_VALUE.kubernetesBaseDomain.value}</td>
+      <td>10.0.0.16</td>
+      <td>ubuntu-24-04-lts</td>
+      <td>2CPU/2RAM/20Gb</td>
+    </tr>
+    <tr>
+      <td>master-2.{CUSTOM_VALUE.clusterName.value}.{CUSTOM_VALUE.kubernetesBaseDomain.value}</td>
+      <td>10.0.0.22</td>
+      <td>ubuntu-24-04-lts</td>
+      <td>2CPU/2RAM/20Gb</td>
+    </tr>
+    <tr>
+      <td>master-3.{CUSTOM_VALUE.clusterName.value}.{CUSTOM_VALUE.kubernetesBaseDomain.value}</td>
+      <td>10.0.0.14</td>
+      <td>ubuntu-24-04-lts</td>
+      <td>2CPU/2RAM/20Gb</td>
+    </tr>
+  </tbody>
+</table>
+
+#### Балансировщик для kube-apiserver
+
+<table>
+  <thead>
+    <tr>
+      <th>IP Адрес</th>
+      <th>Таргет группа</th>
+      <th>Порт</th>
+      <th>Целевой порт</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>10.0.0.6</td>
+      <td>
+      - 10.0.0.16
+      - 10.0.0.22
+      - 10.0.0.14
+      </td>
+      <td>6443</td>
+      <td>6443</td>
+    </tr>
+  </tbody>
+</table>
+
+#### DNS записи
+
+<table>
+  <thead>
+    <tr>
+      <th>A (Record)с</th>
+      <th>IP Адрес</th>
+      <th>TTL</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>api.{CUSTOM_VALUE.clusterName.value}.{CUSTOM_VALUE.kubernetesBaseDomain.value}</td>
+      <td>10.0.0.6</td>
+      <td>60s</td>
+    </tr>
+    <tr>
+      <td>master-1.{CUSTOM_VALUE.clusterName.value}.{CUSTOM_VALUE.kubernetesBaseDomain.value}</td>
+      <td>10.0.0.16</td>
+      <td>60s</td>
+    </tr>
+    <tr>
+      <td>master-2.{CUSTOM_VALUE.clusterName.value}.{CUSTOM_VALUE.kubernetesBaseDomain.value}</td>
+      <td>10.0.0.22</td>
+      <td>60s</td>
+    </tr>
+    <tr>
+      <td>master-3.{CUSTOM_VALUE.clusterName.value}.{CUSTOM_VALUE.kubernetesBaseDomain.value}</td>
+      <td>10.0.0.14</td>
+      <td>60s</td>
+    </tr>
+  </tbody>
+</table>
+
+#### Разрешенные порты на мастер нодах
+
+<table>
+  <thead>
+    <tr>
+      <th>Компонент</th>
+      <th>Порт</th>
+      <th>Протокол</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>etcd-server</td>
+      <td>{PORTS.etcdServer.portNumber}</td>
+      <td>TCP</td>
+    </tr>
+    <tr>
+      <td>etcd-peer</td>
+      <td>{PORTS.etcdPeer.portNumber}</td>
+      <td>TCP</td>
+    </tr>
+    <tr>
+      <td>etcd-metrics</td>
+      <td>{PORTS.etcdMetricServer.portNumber}</td>
+      <td>TCP</td>
+    </tr>
+    <tr>
+      <td>kube-apiserver</td>
+      <td>{PORTS.kubeAPIServer.portNumber}</td>
+      <td>TCP</td>
+    </tr>
+    <tr>
+      <td>kube-controller-manager</td>
+      <td>{PORTS.kubeControllerManager.portNumber}</td>
+      <td>TCP</td>
+    </tr>
+    <tr>
+      <td>kube-scheduler</td>
+      <td>{PORTS.kubeScheduler.portNumber}</td>
+      <td>TCP</td>
+    </tr>
+    <tr>
+      <td>kubelet-healthz</td>
+      <td>{PORTS.kubeletHealthz.portNumber}</td>
+      <td>TCP</td>
+    </tr>
+    <tr>
+      <td>kubelet-server</td>
+      <td>{PORTS.kubeletServer.portNumber}</td>
+      <td>TCP</td>
+    </tr>
+    <tr>
+      <td>kubelet-read-only-port</td>
+      <td>{PORTS.kubeletReadOnlyPort.portNumber}</td>
+      <td>TCP</td>
+    </tr>
+  </tbody>
+</table>
+
+### Базовая настройка узлов
+
+#### Переменные окружения узла
+<MastersTabs />
+
+<CodeBlock language="bash">
+  {dedent`
+        export CLUSTER_NAME="${CUSTOM_VALUE.clusterName.value}"
+        export BASE_DOMAIN="${CUSTOM_VALUE.kubernetesBaseDomain.value}"
+        export CLUSTER_DOMAIN="${CUSTOM_VALUE.kubernetesClusterDomain.value}"
+        export FULL_HOST_NAME="${CUSTOM_VALUE.virtualMachineFullName.value}"
+    `}
+</CodeBlock>
+
+#### Изменение имени узла
+
+<CodeBlock language="bash">
+  {dedent`
+        hostnamectl set-hostname $\{FULL_HOST_NAME}
+    `}
+</CodeBlock>
+
+<Tabs groupId="install-pkg">
+
+    <TabItem value='apt'>
+      <CodeBlock language="bash">
+        {dedent`
+          sudo apt update
+          sudo apt install conntrack socat
+        `}
+      </CodeBlock>
+    </TabItem>
+
+    <TabItem value='yum'>
+      <CodeBlock language="bash">
+        {dedent`
+          sudo yum update
+          sudo yum install conntrack-tools socat
+        `}
+      </CodeBlock>
+    </TabItem>
+
+    <TabItem value='dnf'>
+      <CodeBlock language="bash">
+        {dedent`
+          sudo dnf update
+          sudo dnf install conntrack-tools socat
+        `}
+      </CodeBlock>
+    </TabItem>
+
+</Tabs>
+
+### Загрузка модулей ядра
+<Tabs groupId="install-type">
+
+    <TabItem value='Bash'>
+      <h4>Конфигурация modprobe</h4>
+
+      <CodeBlock language="bash">
+        {dedent`
+          cat <<EOF > /etc/modules-load.d/k8s.conf
+          overlay
+          br_netfilter
+          EOF
+        `}
+      </CodeBlock>
+
+      <CodeBlock language="bash">
+        {dedent`
+              sudo -i
+              modprobe overlay
+              modprobe br_netfilter
+          `}
+      </CodeBlock>
+
+
+    </TabItem>
+
+    <TabItem value='Cloud-init'>
+
+      <h4>Конфигурация modprobe</h4>
+      <CodeBlock language="bash">
+      {dedent`
+        # write_files:
+        - path: /etc/modules-load.d/k8s.conf
+          owner: root:root
+          permissions: '0644'
+          content: |
+            overlay
+            br_netfilter
+      `}
+      </CodeBlock>
+
+      <CodeBlock language="bash">
+        {dedent`
+          # runcmd:
+          - modprobe overlay
+          - modprobe br_netfilter
+        `}
+      </CodeBlock>
+
+    </TabItem>
+</Tabs>
+
+
+:::note
+Модуль `overlay` связан с файловой системой OverlayFS, которая помогает эффективно управлять слоями в файловой системе контейнеров. Благодаря ей можно объединять несколько директорий (слоёв) в одну виртуальную файловую систему. Такие контейнерные рантаймы, как Docker и containerd (часто используемые вместе с Kubernetes), применяют OverlayFS для хранения и управления образами контейнеров.
+
+Модуль `br_netfilter` интегрирует сетевые мосты (bridges) с подсистемой netfilter в ядре Linux. Это означает, что трафик, проходящий через мосты, можно обрабатывать с помощью iptables.
+:::
+
+### Настройка Sysctl
+
+
+:::warning
+
+#### Настройка сети
+
+После загрузки модуля br_netfilter часто требуется установить системные параметры, чтобы убедиться, что бриджированный трафик обрабатывается iptables.
+
+<Tabs groupId="install-type">
+
+    <TabItem value='Bash'>
+      <h4>Конфигурация sysctl</h4>
+
+      <CodeBlock language="bash">
+      {dedent`
+        cat <<EOF > /etc/sysctl.d/99-br-netfilter.conf
+        net.bridge.bridge-nf-call-iptables=1
+        net.bridge.bridge-nf-call-ip6tables=1
+        EOF
+      `}
+      </CodeBlock>
+
+    </TabItem>
+
+    <TabItem value='Cloud-init'>
+
+      <h4>Конфигурация sysctl</h4>
+      <CodeBlock language="bash">
+      {dedent`
+        # write_files:
+        - path: /etc/sysctl.d/99-br-netfilter.conf
+          owner: root:root
+          permissions: '0644'
+          content: |
+            net.bridge.bridge-nf-call-iptables=1
+            net.bridge.bridge-nf-call-ip6tables=1
+      `}
+      </CodeBlock>
+
+    </TabItem>
+
+</Tabs>
+
+
+Если параметр `net.ipv4.ip_forward` не включен, ядро операционной системы не будет пересылать IP-пакеты между интерфейсами, что приведет к проблемам с сетью в кластере Kubernetes. Это может проявляться в недоступности сервисов, невозможности подов связаться друг с другом или с внешними ресурсами.
+
+
+<Tabs groupId="install-type">
+
+  <TabItem value='Bash'>
+    <h4>Конфигурация sysctl</h4>
+    <CodeBlock language="bash">
+    {dedent`
+      cat <<EOF > /etc/sysctl.d/99-network.conf
+      net.ipv4.ip_forward=1
+      EOF
+    `}
+    </CodeBlock>
+
+    <CodeBlock language="bash">
+      {dedent`
+        sysctl --system
+      `}
+    </CodeBlock>
+
+  </TabItem>
+
+  <TabItem value='Cloud-init'>
+
+    <h4>Конфигурация sysctl</h4>
+    <CodeBlock language="bash">
+    {dedent`
+      # write_files:
+      - path: /etc/sysctl.d/99-network.conf
+        owner: root:root
+        permissions: '0644'
+        content: |
+          net.ipv4.ip_forward=1
+    `}
+    </CodeBlock>
+
+    <CodeBlock language="bash">
+      {dedent`
+        # runcmd:
+        - sysctl --system
+      `}
+    </CodeBlock>
+
+  </TabItem>
+
+</Tabs>
+
+:::
+
+### Установка компонентов
+
+<Tabs groupId="component">
+
+  <TabItem value='containerd'>
+    <details open>
+      <summary>Установка containerd</summary>
+      <ContainerdDownloadBIN/>
+    </details>
+  </TabItem>
+
+  <TabItem value='runc'>
+    <details open>
+      <summary>Установка runc</summary>
+      <RuncDownloadBIN/>
+    </details>
+  </TabItem>
+
+  <TabItem value='crictl'>
+    <details open>
+      <summary>Установка crictl</summary>
+      <CrictlDownloadBIN/>
+    </details>
+  </TabItem>
+
+  <TabItem value='kubectl'>
+    <details open>
+      <summary>Установка kubectl</summary>
+      <KubectlDownloadBIN/>
+    </details>
+  </TabItem>
+
+  <TabItem value='kubeadm'>
+    :::danger Внимание!
+    Просьба обратить внимание, что установка данного компонента требуется для проверки нашей конфигурации на соответствие автоматики инструмента.
+    :::
+    <details open>
+      <summary>Установка kubeadm</summary>
+      <KubeadmDownloadBIN/>
+    </details>
+  </TabItem>
+
+  <TabItem value='kubelet'>
+    <details open>
+      <summary>Установка kubelet</summary>
+      <KubeletDownloadBIN/>
+    </details>
+  </TabItem>
+
+  <TabItem value='etcd'>
+    <details open>
+      <summary>Установка etcd</summary>
+      <EtcdDownloadBIN/>
+    </details>
+  </TabItem>
+
+</Tabs>
+
+### Настройка компонентов
+
+<Tabs groupId="component">
+
+  <TabItem value='containerd'>
+    <details open>
+      <summary>Настройка containerd</summary>
+      <h4>Конфигурация компонента</h4>
+      <ContainerdConfigFiles />
+
+      <h4>Настройка Systemd Unit компонента</h4>
+      <ContainerdSetupSystemdUnit />
+
+      <h4>Старт Systemd Unit</h4>
+      <ContainerdStartSystemdUnit />
+    </details>
+  </TabItem>
+
+  <TabItem value='crictl'>
+    <details open>
+      <summary>Настройка crictl</summary>
+      <h4>Конфигурация компонента</h4>
+      <CrictlConfigFiles />
+    </details>
+  </TabItem>
+
+  <TabItem value='kubeadm'>
+    :::danger Внимание!
+    Просьба обратить внимание, что настройка данного компонента требуется для проверки нашей конфигурации на соответствие автоматики инструмента.
+    :::
+    <details open>
+      <summary>Настройка kubeadm</summary>
+        <h4>Рабочие директории компонента</h4>
+        <KubeadmDIR/>
+
+        <KubeadmConfigFiles/>
+
+    </details>
+  </TabItem>
+
+  <TabItem value='kubelet'>
+    <details open>
+      <summary>Настройка kubelet</summary>
+        <h4>Настройка Systemd Unit компонента</h4>
+        <KubeletSetupSystemdUnit />
+
+        <h4>Старт Systemd Unit</h4>
+        <KubeletEnableSystemdUnit />
+
+        <h4>Конфигурация компонента</h4>
+        <KubeletConfigFiles />
+    </details>
+  </TabItem>
+
+</Tabs>
+
+### Проверка готовности компонентов
+<ComponentsReady/>
+
+### Создание корневых сертификатов
+<Tabs groupId="CA">
+
+  <TabItem value='Kubernetes ЦА'>
+    <details open>
+      <summary>Kubernetes ЦА</summary>
+      <KubernetesCA />
+    </details>
+  </TabItem>
+
+  <TabItem value='FrontProxy ЦА'>
+    <details open>
+      <summary>FrontProxy ЦА</summary>
+      <FrontProxyCA />
+    </details>
+  </TabItem>
+
+  <TabItem value='ETCD ЦА'>
+    <details open>
+      <summary>ETCD ЦА</summary>
+      <ETCDCA />
+    </details>
+  </TabItem>
+
+</Tabs>
+
+
+### Создание сертификатов приложений
+<Tabs groupId="Certs-APPS">
+
+<TabItem value='Kubelet Server'>
+    <details open>
+      <summary>Kubelet server</summary>
+      <KubeletServer />
+    </details>
+  </TabItem>
+
+  <TabItem value='API > Etcd'>
+    <details open>
+      <summary>K8S-API client > Etcd</summary>
+      <KubeAPIETCDClientMain />
+    </details>
+  </TabItem>
+
+  <TabItem value='API > Kubelet'>
+    <details open>
+      <summary>K8S-API client > Kubelet</summary>
+      <KubeletClientMain />
+    </details>
+  </TabItem>
+
+  <TabItem value='API Server'>
+    <details open>
+      <summary>K8S-API server</summary>
+      <KubeAPIServerMain />
+    </details>
+  </TabItem>
+
+  <TabItem value='Proxy > API'>
+    <details open>
+      <summary>FrontProxy client > K8S-API</summary>
+      <FrontProxyClientMain />
+    </details>
+  </TabItem>
+
+  <TabItem value='Etcd Client'>
+    <details open>
+      <summary>Etcd client > Etcd</summary>
+      <ETCDClientETCDMain />
+    </details>
+  </TabItem>
+
+  <TabItem value='Etcd Server'>
+    <details open>
+      <summary>Etcd server</summary>
+      <ETCDServerMain />
+    </details>
+  </TabItem>
+
+  <TabItem value='Etcd Peer'>
+    <details open>
+      <summary>Etcd peer > Etcd</summary>
+      <ETCDPeerMain />
+    </details>
+  </TabItem>
+
+</Tabs>
+
+### Создание kubeconfigs приложений
+<Tabs groupId="Certs-APPS">
+
+<TabItem value='Kubelet'>
+    <details open>
+      <summary>Kubelet client</summary>
+      <KubeAPIClient />
+    </details>
+  </TabItem>
+
+  <TabItem value='Super Admin'>
+    <details open>
+      <summary>Super Admin</summary>
+      <SuperAdminClientMain />
+    </details>
+  </TabItem>
+
+  <TabItem value='Admin'>
+    <details open>
+      <summary>Admin</summary>
+      <AdminClientMain />
+    </details>
+  </TabItem>
+
+  <TabItem value='Controller'>
+    <details open>
+      <summary>Kube Controller Manager</summary>
+      <KubeControllerKubeAPIClient />
+    </details>
+  </TabItem>
+
+  <TabItem value='Scheduler'>
+    <details open>
+      <summary>Kube Scheduler</summary>
+      <KubeSchedulerCerts />
+    </details>
+  </TabItem>
+
+</Tabs>
+
+### Создание ключа для подписи Service Accounts
+<ServiceAccount/>
+
+### Проверка готовности блока сертификатов
+<Examination/>

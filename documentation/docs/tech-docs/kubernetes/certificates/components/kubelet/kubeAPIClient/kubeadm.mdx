@@ -2,7 +2,7 @@ import dedent                     from 'ts-dedent'
 import CodeBlock                  from '@theme/CodeBlock'
 import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 
-#### Генерация Kubelet сертификатов
+<h4>Генерация сертификатов</h4>
 <CodeBlock language="bash">
   {dedent`
     kubeadm init phase kubeconfig kubelet \\
@@ -15,14 +15,13 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 
 <CodeBlock language="bash">
   {dedent`
-    #### Генерация Kubelet сертификатов
+    #### Генерация сертификатов
     [kubeconfig] Writing "kubelet.conf" kubeconfig file
   `}
 </CodeBlock>
 :::
 
-
-#### Ротация Kubelet сертификатов
+<h4>Ротация сертификатов</h4>
 <CodeBlock language="bash">
   {dedent`
     kubeadm init phase kubelet-finalize experimental-cert-rotation \\
@@ -35,7 +34,7 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 
 <CodeBlock language="bash">
   {dedent`
-    #### Ротация Kubelet сертификатов
+    #### Ротация сертификатов
     [kubelet-finalize] Updating "/etc/kubernetes/kubelet.conf" to point to a rotatable kubelet client certificate and key
   `}
 </CodeBlock>

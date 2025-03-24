@@ -47,7 +47,7 @@ import MastersTabs from '@site/docs/tech-docs/kubernetes/setupEnvironments/initM
     :::note
     <CodeBlock language="bash">
       {dedent`
-        node/master-1.example.example.com labeled
+        node/master-1.my-first-cluster.example.com labeled
       `}
     </CodeBlock>
     :::
@@ -64,7 +64,7 @@ import MastersTabs from '@site/docs/tech-docs/kubernetes/setupEnvironments/initM
     :::note
     <CodeBlock language="bash">
       {dedent`
-        node/master-1.example.example.com modified
+        node/master-1.my-first-cluster.example.com modified
       `}
     </CodeBlock>
     :::
@@ -84,8 +84,8 @@ import MastersTabs from '@site/docs/tech-docs/kubernetes/setupEnvironments/initM
     :::note
     <CodeBlock language="bash">
       {dedent`
-        [mark-control-plane] Marking the node master-1.example.example.com as control-plane by adding the labels: [node-role.kubernetes.io/control-plane node.kubernetes.io/exclude-from-external-load-balancers]
-        [mark-control-plane] Marking the node master-1.example.example.com as control-plane by adding the taints [node-role.kubernetes.io/control-plane:NoSchedule]
+        [mark-control-plane] Marking the node master-1.my-first-cluster.example.com as control-plane by adding the labels: [node-role.kubernetes.io/control-plane node.kubernetes.io/exclude-from-external-load-balancers]
+        [mark-control-plane] Marking the node master-1.my-first-cluster.example.com as control-plane by adding the taints [node-role.kubernetes.io/control-plane:NoSchedule]
       `}
     </CodeBlock>
     :::

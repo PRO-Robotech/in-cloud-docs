@@ -3,6 +3,7 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 import CodeBlock        from '@theme/CodeBlock'
 import dedent           from 'ts-dedent'
 
+<h4>Генерация сертификатов</h4>
 <CodeBlock language="bash">
   {dedent`
     kubeadm init phase certs etcd-peer \\
@@ -15,9 +16,9 @@ import dedent           from 'ts-dedent'
 
 <CodeBlock language="bash">
   {dedent`
-    #### Генерация ETCD сертификатов
+    #### Генерация сертификатов
     [certs] Generating "etcd/peer" certificate and key
-    [certs] etcd/peer serving cert is signed for DNS names [localhost master-1.example.example.com] and IPs [192.168.10.27 127.0.0.1 ::1]
+    [certs] etcd/peer serving cert is signed for DNS names [localhost master-1.my-first-cluster.example.com] and IPs [192.168.10.27 127.0.0.1 ::1]
   `}
 </CodeBlock>
 

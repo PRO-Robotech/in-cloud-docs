@@ -43,12 +43,12 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
         [download-certs] Saving the certificates to the folder: "/etc/kubernetes/pki"
         [certs] Using certificateDir folder "/etc/kubernetes/pki"
         [certs] Generating "apiserver" certificate and key
-        [certs] apiserver serving cert is signed for DNS names [api.example.example.com kubernetes kubernetes.default kubernetes.default.svc kubernetes.default.svc.example.example.com master-2.example.example.com] and IPs [29.64.0.1 83.222.26.71 31.129.111.153 127.0.0.1]
+        [certs] apiserver serving cert is signed for DNS names [api.my-first-cluster.example.com kubernetes kubernetes.default kubernetes.default.svc kubernetes.default.svc.my-first-cluster.example.com master-2.my-first-cluster.example.com] and IPs [29.64.0.1 83.222.26.71 31.129.111.153 127.0.0.1]
         [certs] Generating "apiserver-kubelet-client" certificate and key
         [certs] Generating "etcd/server" certificate and key
-        [certs] etcd/server serving cert is signed for DNS names [localhost master-1.example.example.com master-2.example.example.com] and IPs [83.222.26.71 127.0.0.1 ::1 31.129.111.153]
+        [certs] etcd/server serving cert is signed for DNS names [localhost master-1.my-first-cluster.example.com master-2.my-first-cluster.example.com] and IPs [83.222.26.71 127.0.0.1 ::1 31.129.111.153]
         [certs] Generating "etcd/peer" certificate and key
-        [certs] etcd/peer serving cert is signed for DNS names [localhost master-1.example.example.com master-2.example.example.com] and IPs [83.222.26.71 127.0.0.1 ::1 31.129.111.153]
+        [certs] etcd/peer serving cert is signed for DNS names [localhost master-1.my-first-cluster.example.com master-2.my-first-cluster.example.com] and IPs [83.222.26.71 127.0.0.1 ::1 31.129.111.153]
         [certs] Generating "etcd/healthcheck-client" certificate and key
         [certs] Generating "apiserver-etcd-client" certificate and key
         [certs] Generating "front-proxy-client" certificate and key
@@ -78,8 +78,8 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
         [etcd] Waiting for the new etcd member to join the cluster. This can take up to 40s
 
         The 'update-status' phase is deprecated and will be removed in a future release. Currently it performs no operation
-        [mark-control-plane] Marking the node master-2.example.example.com as control-plane by adding the labels: [node-role.kubernetes.io/control-plane node.kubernetes.io/exclude-from-external-load-balancers]
-        [mark-control-plane] Marking the node master-2.example.example.com as control-plane by adding the taints [node-role.kubernetes.io/control-plane:NoSchedule]
+        [mark-control-plane] Marking the node master-2.my-first-cluster.example.com as control-plane by adding the labels: [node-role.kubernetes.io/control-plane node.kubernetes.io/exclude-from-external-load-balancers]
+        [mark-control-plane] Marking the node master-2.my-first-cluster.example.com as control-plane by adding the taints [node-role.kubernetes.io/control-plane:NoSchedule]
 
         This node has joined the cluster and a new control plane instance was created:
         * Certificate signing request was sent to apiserver and approval was received.

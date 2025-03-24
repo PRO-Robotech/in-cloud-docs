@@ -71,8 +71,8 @@ const config: Config = {
   ],
 
   plugins: [
-    require.resolve('./plugins/webpack'), 
-    require.resolve('./plugins/medusa'), 
+    require.resolve('./plugins/webpack'),
+    require.resolve('./plugins/medusa'),
     'docusaurus-plugin-astroturf',
     [
       "docusaurus2-dotenv-2",
@@ -110,7 +110,7 @@ const config: Config = {
           position: 'left',
           label: 'Техническая документация',
         },
-        // {to: 'blog', label: 'Blog', position: 'left'}, // or position: 'right'
+        {to: 'blog', label: 'Blog', position: 'left'}, // or position: 'right'
       ],
     },
 

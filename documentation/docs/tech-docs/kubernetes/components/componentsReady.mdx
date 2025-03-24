@@ -2,11 +2,7 @@
 id: components-ready
 ---
 
-import Tabs from '@theme/Tabs'
-import TabItem from '@theme/TabItem'
-import CodeBlock from '@theme/CodeBlock'
-import dedent from 'ts-dedent'
-import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+import ComponentReady from '@site/docs/tech-docs/kubernetes/components/componentsReadyComponent.mdx'
 
 
 # 5.2.1.4.7. Проверка
@@ -16,89 +12,6 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 
 
 ## 5.2.1.4.7.1 Проверка готовности окружения
-
-
-<Tabs groupId="current-master">
-  <TabItem value='Init'>
-    <CodeBlock language="bash">
-      {dedent`
-        kubeadm init phase preflight --dry-run \\
-          --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml \\
-          --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/super-admin.conf
-      `}
-    </CodeBlock>
-
-    :::note
-    Если все установлено корректно, команда выполнится без ошибок, и вы увидите следующий вывод:
-    <CodeBlock language="bash">
-      {dedent`
-        [preflight] Running pre-flight checks
-        [preflight] Would pull the required images (like 'kubeadm config images pull')
-      `}
-    </CodeBlock>
-    :::
-
-    :::note
-    Если процесс был разделен на полуавтоматический режим то допустимый вывод может выглядеть вот так:
-      <CodeBlock language="bash">
-        {dedent`
-          [WARNING FileAvailable--etc-kubernetes-manifests-kube-apiserver.yaml]: /etc/kubernetes/manifests/kube-apiserver.yaml already exists
-          [WARNING FileAvailable--etc-kubernetes-manifests-kube-controller-manager.yaml]: /etc/kubernetes/manifests/kube-controller-manager.yaml already exists
-          [WARNING FileAvailable--etc-kubernetes-manifests-kube-scheduler.yaml]: /etc/kubernetes/manifests/kube-scheduler.yaml already exists
-          [WARNING FileAvailable--etc-kubernetes-manifests-etcd.yaml]: /etc/kubernetes/manifests/etcd.yaml already exists
-          [preflight] Running pre-flight checks
-          [preflight] Reading configuration from the cluster...
-          [preflight] FYI: You can look at this config file with 'kubectl -n kube-system get cm kubeadm-config -o yaml'
-          [preflight] Running pre-flight checks before initializing the new control plane instance
-          [preflight] Would pull the required images (like 'kubeadm config images pull')
-        `}
-      </CodeBlock>
-    :::
-
-  </TabItem>
-
-
-  <TabItem value='Join'>
-    <CodeBlock language="bash">
-      {dedent`
-        kubeadm join phase preflight --dry-run \\
-          --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml \\
-          --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/admin.conf
-      `}
-    </CodeBlock>
-
-    :::note
-    Если все установлено корректно, команда выполнится без ошибок, и вы увидите следующий вывод:
-      <CodeBlock language="bash">
-        {dedent`
-          [preflight] Running pre-flight checks
-          [preflight] Reading configuration from the cluster...
-          [preflight] FYI: You can look at this config file with 'kubectl -n kube-system get cm kubeadm-config -o yaml'
-          [preflight] Running pre-flight checks before initializing the new control plane instance
-          [preflight] Would pull the required images (like 'kubeadm config images pull')
-        `}
-      </CodeBlock>
-    :::
-
-    :::note
-    Если процесс был разделен на полуавтоматический режим то допустимый вывод может выглядеть вот так:
-      <CodeBlock language="bash">
-        {dedent`
-          [WARNING FileAvailable--etc-kubernetes-manifests-kube-apiserver.yaml]: /etc/kubernetes/manifests/kube-apiserver.yaml already exists
-          [WARNING FileAvailable--etc-kubernetes-manifests-kube-controller-manager.yaml]: /etc/kubernetes/manifests/kube-controller-manager.yaml already exists
-          [WARNING FileAvailable--etc-kubernetes-manifests-kube-scheduler.yaml]: /etc/kubernetes/manifests/kube-scheduler.yaml already exists
-          [WARNING FileAvailable--etc-kubernetes-manifests-etcd.yaml]: /etc/kubernetes/manifests/etcd.yaml already exists
-          [preflight] Running pre-flight checks
-          [preflight] Reading configuration from the cluster...
-          [preflight] FYI: You can look at this config file with 'kubectl -n kube-system get cm kubeadm-config -o yaml'
-          [preflight] Running pre-flight checks before initializing the new control plane instance
-          [preflight] Would pull the required images (like 'kubeadm config images pull')
-        `}
-      </CodeBlock>
-    :::
-
-
-  </TabItem>
-</Tabs>
+<ComponentReady/>
 
 

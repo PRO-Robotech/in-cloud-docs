@@ -12,7 +12,7 @@ export const CUSTOM_VALUE: TCustomValueItems = {
     value: 'example.com',
   },
   clusterName: {
-    value: 'example',
+    value: 'my-first-cluster',
   },
   kubernetesClusterDomain: {
     value: 'cluster.local',

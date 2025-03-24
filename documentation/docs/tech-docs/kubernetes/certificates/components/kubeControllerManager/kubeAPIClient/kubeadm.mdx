@@ -3,8 +3,7 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 import CodeBlock        from '@theme/CodeBlock'
 import dedent           from 'ts-dedent'
 
-#### Генерация Kube Controller Manager сертификатов
-
+<h4>Генерация сертификатов</h4>
 <CodeBlock language="bash">
   {dedent`
     kubeadm init phase kubeconfig controller-manager \\
@@ -17,7 +16,7 @@ import dedent           from 'ts-dedent'
 
 <CodeBlock language="bash">
   {dedent`
-    #### Генерация Kube Controller Manager сертификатов
+    #### Генерация сертификатов
     [kubeconfig] Writing "controller-manager.conf" kubeconfig file
   `}
 </CodeBlock>

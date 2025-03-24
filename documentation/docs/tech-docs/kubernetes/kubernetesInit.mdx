@@ -20,7 +20,8 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 Данная команда впитывает в себя разделы:
 - [Проверка готовности узла](./components/componentsReady.mdx).
 - [Генерация ЦА](./certificates/centerAuthority/init.mdx).
-- [Генерация Сертификатов/Kubeconfigs](./certificates/components/initCerts.mdx).
+- [Генерация Сертификатов](./certificates/components/initCerts.mdx).
+- [Генерация Kubeconfigs](./certificates/components/initKubeconfigs.mdx).
 - [Генерация манифеста для ETCD](./components/etcd/setup.mdx).
 - [Генерация манифеста для Kube-API](./components/kubeAPI/setup.mdx).
 - [Генерация манифеста для Kube-Controller-Manager](./components/controllerManager/setup.mdx).
@@ -52,15 +53,15 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
       [certs] Using certificateDir folder "/etc/kubernetes/pki"
       [certs] Generating "ca" certificate and key
       [certs] Generating "apiserver" certificate and key
-      [certs] apiserver serving cert is signed for DNS names [api.example.example.com kubernetes kubernetes.default kubernetes.default.svc kubernetes.default.svc.example.example.com master-1.example.example.com] and IPs [29.64.0.1 212.67.15.21 127.0.0.1]
+      [certs] apiserver serving cert is signed for DNS names [api.my-first-cluster.example.com kubernetes kubernetes.default kubernetes.default.svc kubernetes.default.svc.my-first-cluster.example.com master-1.my-first-cluster.example.com] and IPs [29.64.0.1 212.67.15.21 127.0.0.1]
       [certs] Generating "apiserver-kubelet-client" certificate and key
       [certs] Generating "front-proxy-ca" certificate and key
       [certs] Generating "front-proxy-client" certificate and key
       [certs] Generating "etcd/ca" certificate and key
       [certs] Generating "etcd/server" certificate and key
-      [certs] etcd/server serving cert is signed for DNS names [localhost master-1.example.example.com] and IPs [212.67.15.21 127.0.0.1 ::1]
+      [certs] etcd/server serving cert is signed for DNS names [localhost master-1.my-first-cluster.example.com] and IPs [212.67.15.21 127.0.0.1 ::1]
       [certs] Generating "etcd/peer" certificate and key
-      [certs] etcd/peer serving cert is signed for DNS names [localhost master-1.example.example.com] and IPs [212.67.15.21 127.0.0.1 ::1]
+      [certs] etcd/peer serving cert is signed for DNS names [localhost master-1.my-first-cluster.example.com] and IPs [212.67.15.21 127.0.0.1 ::1]
       [certs] Generating "etcd/healthcheck-client" certificate and key
       [certs] Generating "apiserver-etcd-client" certificate and key
       [certs] Generating "sa" key and public key
@@ -87,8 +88,8 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
       [kubelet] Creating a ConfigMap "kubelet-config" in namespace kube-system with the configuration for the kubelets in the cluster
       [upload-certs] Storing the ./certificates in Secret "kubeadm-certs" in the "kube-system" Namespace
       [upload-certs] Using certificate key: 0c00c2fd5c67c37656c00d78a9d7e1f2eb794ef8e4fc3e2a4b532eb14323cd59
-      [mark-control-plane] Marking the node master-1.example.example.com as control-plane by adding the labels: [node-role.kubernetes.io/control-plane node.kubernetes.io/exclude-from-external-load-balancers]
-      [mark-control-plane] Marking the node master-1.example.example.com as control-plane by adding the taints [node-role.kubernetes.io/control-plane:NoSchedule]
+      [mark-control-plane] Marking the node master-1.my-first-cluster.example.com as control-plane by adding the labels: [node-role.kubernetes.io/control-plane node.kubernetes.io/exclude-from-external-load-balancers]
+      [mark-control-plane] Marking the node master-1.my-first-cluster.example.com as control-plane by adding the taints [node-role.kubernetes.io/control-plane:NoSchedule]
       [bootstrap-token] Using token: fjt9ex.lwzqgdlvoxtqk4yw
       [bootstrap-token] Configuring bootstrap tokens, cluster-info ConfigMap, RBAC Roles
       [bootstrap-token] Configured RBAC rules to allow Node Bootstrap tokens to get nodes
@@ -117,13 +118,13 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
       You can now join any number of control-plane nodes by copying certificate authorities
       and service account keys on each node and then running the following as root:
 
-        kubeadm join api.example.example.com:6443 --token fjt9ex.lwzqgdlvoxtqk4yw \\
+        kubeadm join api.my-first-cluster.example.com:6443 --token fjt9ex.lwzqgdlvoxtqk4yw \\
         --discovery-token-ca-cert-hash sha256:d0a2cf44fc8c8f4e5b9b021243434d303e1dc690b51a23efed0ba056647c87f6 \\
         --control-plane --certificate-key 0c00c2fd5c67c37656c00d78a9d7e1f2eb794ef8e4fc3e2a4b532eb14323cd59
 
       Then you can join any number of worker nodes by running the following on each as root:
 
-      kubeadm join api.example.example.com:6443 --token fjt9ex.lwzqgdlvoxtqk4yw \\
+      kubeadm join api.my-first-cluster.example.com:6443 --token fjt9ex.lwzqgdlvoxtqk4yw \\
         --discovery-token-ca-cert-hash sha256:d0a2cf44fc8c8f4e5b9b021243434d303e1dc690b51a23efed0ba056647c87f6
     `}
 </CodeBlock>

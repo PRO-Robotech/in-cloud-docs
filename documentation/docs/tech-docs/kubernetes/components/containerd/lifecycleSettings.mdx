@@ -2,7 +2,6 @@
 id: lifecycle-settings
 ---
 
-import DIR from '@site/docs/tech-docs/kubernetes/components/containerd/dir.mdx'
 import StartSystemdUnit from '@site/docs/tech-docs/kubernetes/components/containerd/startSystemdUnit.mdx'
 import SetupSystemdUnit from '@site/docs/tech-docs/kubernetes/components/containerd/setupSystemdUnit.mdx'
 import ConfigFiles from '@site/docs/tech-docs/kubernetes/components/containerd/configFiles.mdx'
@@ -14,21 +13,18 @@ import ConfigFiles from '@site/docs/tech-docs/kubernetes/components/containerd/c
 - Настройка Systemd Unit (сервис).
 - Запуск компонента и добавление сервиса в автозапуск.
 
-:::warning  
+:::warning
 Обратите внимание, что данный раздел зависит от следующих документов:
 - [Containerd Install](../containerd/lifecycle.mdx).
 - [Runc Install](../runc/lifecycle.mdx).
 :::
 
 ## 5.2.1.3.1.2. Конфигурация компонента
-
 <ConfigFiles />
 
 ## 5.2.1.3.1.3. Настройка Systemd Unit компонента
-
 <SetupSystemdUnit />
 
 ## 5.2.1.3.1.4. Старт Systemd Unit
-
 <StartSystemdUnit />
 

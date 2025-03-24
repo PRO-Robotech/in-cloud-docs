@@ -23,16 +23,6 @@ export const KUBELET_COFNIG_DATA: TCustomValueItems = {
           cacheAuthorizedTTL: 0s
           cacheUnauthorizedTTL: 0s
       cgroupDriver: systemd
-      # Для того, что бы сделать эту часть конфигурации статичной
-      # все динамичные части будут определены через переменные окружения
-      # systemd Unit kubelet
-      # >>>>>>
-      # clusterDNS:
-      # - "${CUSTOM_VALUE.kubernetesDNSAddress.value}"
-      # clusterDomain: cluster.local
-      # TODO нужны только при hardway
-      # tlsCertFile: "${CERTIFICATES.kubeletCurrentServer.crtPath}"
-      # tlsPrivateKeyFile: "${CERTIFICATES.kubeletCurrentServer.crtPath}"
       containerLogMaxSize: "50Mi"
       containerRuntimeEndpoint: "${CUSTOM_VALUE.criEndpoint.value}"
       cpuManagerReconcilePeriod: 0s
