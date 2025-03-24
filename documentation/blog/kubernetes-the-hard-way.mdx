@@ -53,6 +53,10 @@ import KubeControllerKubeAPIClient from '@site/docs/tech-docs/kubernetes/certifi
 import ServiceAccount from '@site/docs/tech-docs/kubernetes/certificates/serviceAccountComponent.mdx'
 import Examination from '@site/docs/tech-docs/kubernetes/certificates/examinationComponent.mdx'
 
+import KubeApiSetup from '@site/docs/tech-docs/kubernetes/components/kubeAPI/setupComponent.mdx'
+import KubeControllerManagerSetup from '@site/docs/tech-docs/kubernetes/components/controllerManager/setupComponent.mdx'
+import KubeSchedulerSetup from '@site/docs/tech-docs/kubernetes/components/scheduler/setupComponent.mdx'
+import ETCDSetup from '@site/docs/tech-docs/etcd/components/etcd/setupComponent.mdx'
 
 import TabItem from '@theme/TabItem'
 import Tabs from '@theme/Tabs'
@@ -766,7 +770,7 @@ import dedent from 'ts-dedent'
 ### Создание kubeconfigs приложений
 <Tabs groupId="Certs-APPS">
 
-<TabItem value='Kubelet'>
+  <TabItem value='Kubelet'>
     <details open>
       <summary>Kubelet client</summary>
       <KubeAPIClient />
@@ -808,3 +812,37 @@ import dedent from 'ts-dedent'
 
 ### Проверка готовности блока сертификатов
 <Examination/>
+
+### Создание Static Pods
+<Tabs groupId="Componenet">
+
+  <TabItem value='Kube-API'>
+    <details open>
+      <summary>Kube-API</summary>
+      <KubeApiSetup/>
+    </details>
+  </TabItem>
+
+  <TabItem value='Kube Controller Manager'>
+    <details open>
+      <summary>Kube Controller Manager</summary>
+      <KubeControllerManagerSetup/>
+    </details>
+  </TabItem>
+
+  <TabItem value='Kube Scheduler'>
+    <details open>
+      <summary>Kube Controller Manager</summary>
+      <KubeSchedulerSetup/>
+    </details>
+  </TabItem>
+
+  <TabItem value='ETCD'>
+    <details open>
+      <summary>ETCD</summary>
+      <ETCDSetup/>
+    </details>
+  </TabItem>
+
+</Tabs>
+

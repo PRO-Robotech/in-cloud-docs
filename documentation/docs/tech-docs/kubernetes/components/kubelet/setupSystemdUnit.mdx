@@ -72,7 +72,7 @@ import { DOWNLOAD_VERSION } from '@site/src/constants/kubernetes/downloads'
                 KUBELET_KUBEADM_ARGS="
                 --container-runtime-endpoint=unix://${CUSTOM_VALUE.criEndpoint.value} \
                 --pod-infra-container-image=${CUSTOM_VALUE.baseDockerRegistry.value}/${CUSTOM_VALUE.pausedImage.value} \
-                --config=${CUSTOM_VALUE.kuberneteKubeletFolderPath.value}/custom-config.yaml \
+                --config=${CUSTOM_VALUE.kuberneteKubeletFolderPath.value}/config-custom.yaml \
                 --cluster-domain=${CUSTOM_VALUE.kubernetesClusterDomain.value} \
                 --cluster-dns=${CUSTOM_VALUE.kubernetesDNSAddress.value}
                 "
@@ -152,7 +152,7 @@ import { DOWNLOAD_VERSION } from '@site/src/constants/kubernetes/downloads'
                   KUBELET_KUBEADM_ARGS="\
                   --container-runtime-endpoint=unix://${CUSTOM_VALUE.criEndpoint.value} \
                   --pod-infra-container-image=${CUSTOM_VALUE.baseDockerRegistry.value}/${CUSTOM_VALUE.pausedImage.value} \
-                  --config=${CUSTOM_VALUE.kuberneteKubeletFolderPath.value}/custom-config.yaml \
+                  --config=${CUSTOM_VALUE.kuberneteKubeletFolderPath.value}/config-custom.yaml \
                   "
             `}
         </CodeBlock>

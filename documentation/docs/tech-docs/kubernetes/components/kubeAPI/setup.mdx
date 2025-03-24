@@ -2,27 +2,8 @@
 id: api-settings
 ---
 
-import TabItem from '@theme/TabItem'
-import Tabs from '@theme/Tabs'
-
-import StaticPodHW from '@site/docs/tech-docs/kubernetes/components/kubeAPI/staticPod.mdx'
-import StaticPodKubeadm from '@site/docs/tech-docs/kubernetes/components/kubeAPI/kubeadm.mdx'
+import Setup from '@site/docs/tech-docs/kubernetes/components/kubeAPI/setupComponent.mdx'
 
 # 5.2.1.3.5.1.1. Kube-Apiserver
 
-:::warning
-Обратите внимание, что данный раздел является опциональным и предназначен только для случаев, когда необходимо настроить данный ресурс отдельно от остальных.
-:::
-
-
-<Tabs groupId="install-type">
-
-    <TabItem value='Static Pod'>
-        <StaticPodHW />
-    </TabItem>
-
-    <TabItem value='Kubeadm'>
-        <StaticPodKubeadm />
-    </TabItem>
-
-</Tabs>
+<Setup/>
