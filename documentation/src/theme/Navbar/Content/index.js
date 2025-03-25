@@ -7,7 +7,7 @@ import SearchBar from '@theme/SearchBar'
 import NavbarMobileSidebarToggle from '@theme/Navbar/MobileSidebar/Toggle'
 import NavbarLogo from '@theme/Navbar/Logo'
 import NavbarSearch from '@theme/Navbar/Search'
-// import { GithubLink } from '@site/src/components/GithubLink'
+import { GithubLink } from '@site/src/components/GithubLink'
 import styles from './styles.module.css'
 function useNavbarItems() {
   // TODO temporary casting until ThemeConfig type is improved
@@ -61,10 +61,9 @@ export default function NavbarContent() {
         // TODO stop hardcoding items?
         // Ask the user to add the respective navbar items => more flexible
         <>
-          {/* <NavbarItems items={rightItems} /> */}
-
-          {/* <GithubLink /> */} 
-          {/* <NavbarColorModeToggle className={styles.colorModeToggle} /> */}
+          <NavbarItems items={rightItems} />
+          <GithubLink />
+          <NavbarColorModeToggle className={styles.colorModeToggle} />
           {!searchBarItem && (
             <NavbarSearch>
               <SearchBar />
