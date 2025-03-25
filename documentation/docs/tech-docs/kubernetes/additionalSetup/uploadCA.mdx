@@ -2,47 +2,7 @@
 id: upload-ca
 ---
 
-import TabItem from '@theme/TabItem'
-import Tabs from '@theme/Tabs'
-
-import CodeBlock from '@theme/CodeBlock'
-import dedent from 'ts-dedent'
-
-import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+import UploadCAInit from '@site/docs/tech-docs/kubernetes/additionalSetup/uploadCAComponent.mdx'
 
 # 5.2.4.1.1. Загрузка корневых ЦА
-
-:::warning
-В этом разделе приведена инструкция по загрузке корневых сертификатов в управляющий контур Kubernetes. Сертификаты загружаются в зашифрованном виде как ресурс `Secret`, что позволяет их безопасно передавать и расшифровывать на другом узле для управления жизненным циклом узлов УК.
-:::
-
-<Tabs groupId="install-type">
-
-  <TabItem value='HardWay'>
-    TODO
-  </TabItem>
-
-  <TabItem value='Kubeadm'>
-
-    <h4>Загрузка сертификатов</h4>
-    <CodeBlock language="bash">
-      {dedent`
-        kubeadm init phase  upload-certs \\
-          --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml \\
-          --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/super-admin.conf \\
-          --upload-certs
-      `}
-    </CodeBlock>
-
-    :::note
-    <CodeBlock language="bash">
-      {dedent`
-        [upload-certs] Storing the certificates in Secret "kubeadm-certs" in the "kube-system" Namespace
-        [upload-certs] Using certificate key:
-        0c00c2fd5c67c37656c00d78a9d7e1f2eb794ef8e4fc3e2a4b532eb14323cd5
-      `}
-    </CodeBlock>
-    :::
-
-  </TabItem>
-</Tabs>
+<UploadCAInit/>

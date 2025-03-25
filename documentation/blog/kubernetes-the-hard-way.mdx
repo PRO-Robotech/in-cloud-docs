@@ -58,6 +58,20 @@ import KubeControllerManagerSetup from '@site/docs/tech-docs/kubernetes/componen
 import KubeSchedulerSetup from '@site/docs/tech-docs/kubernetes/components/scheduler/setupComponent.mdx'
 import ETCDSetup from '@site/docs/tech-docs/etcd/components/etcd/setupComponent.mdx'
 
+import KubeletInitSystemdUnutStartKubeadm from '@site/docs/tech-docs/kubernetes/components/kubelet/kubeadm/systemdUnitStartInit.mdx'
+import KubeletJoinSystemdUnutStartKubeadm from '@site/docs/tech-docs/kubernetes/components/kubelet/kubeadm/systemdUnitStartJoin.mdx'
+import KubeletSystemdUnutStart from '@site/docs/tech-docs/kubernetes/components/kubelet/systemdUnit/systemdUnitStart.mdx'
+import KubeletConfigFilesDefault from '@site/docs/tech-docs/kubernetes/components/kubelet/configFilesDefault.mdx'
+
+import KubernetesStatusReady from '@site/docs/tech-docs/kubernetes/statusCluster.mdx'
+import RbacComponent from '@site/docs/tech-docs/kubernetes/additionalSetup/rbacComponent.mdx'
+import UploadConfigsInit from '@site/docs/tech-docs/kubernetes/additionalSetup/uploadConfigsInitComponent.mdx'
+import UploadCAInit from '@site/docs/tech-docs/kubernetes/additionalSetup/uploadCAComponent.mdx'
+import MarkingInitComponent from '@site/docs/tech-docs/kubernetes/additionalSetup/markingInitComponent.mdx'
+import MarkingJoinComponent from '@site/docs/tech-docs/kubernetes/additionalSetup/markingJoinComponent.mdx'
+
+
+
 import TabItem from '@theme/TabItem'
 import Tabs from '@theme/Tabs'
 
@@ -162,25 +176,28 @@ import dedent from 'ts-dedent'
 ### Шаги развертывания
 Развертывание Kubernetes "The Hard Way" включает в себя следующие шаги:
 
-- Создание инфраструктуры
-- Базовая настройка узлов
-- Загрузка модулей ядра
-- Настройка Sysctl
-- Установка компонентов
-- Настройка компонентов
-- Проверка готовности компонентов
-- Создание корневых сертификатов
-- Создание сертификатов приложений
-- Создание kubeconfigs приложений
-- Создание ключа для подписи Service Accounts
-- Проверка готовности блока сертификатов
-- Создание Static Pods
-- Запуск Kubelet
-- Загрузка конфигурационных файлов в Kubernetes
-- Загрузка корневых сертификатов в Kubernetes
-- Маркировка узлов
-- Создание токенов для подключения новых узлов
-- Создание ролевой модели для созданных токенов
+
+- [Создание инфраструктуры.](#создание-инфраструктуры)
+- [Базовая настройка узла.](#базовая-настройка-узла)
+- [Загрузка модулей ядра.](#загрузка-модулей-ядра)
+- [Настройка Sysctl.](#настройка-sysctl)
+- [Установка компонентов.](#установка-компонентов)
+- [Настройка компонентов.](#настройка-компонентов)
+- [Проверка готовности компонентов.](#проверка-готовности-компонентов)
+- [Создание корневых сертификатов.](#создание-корневых-сертификатов)
+- [Создание сертификатов приложений.](#создание-сертификатов-приложений)
+- [Создание kubeconfigs приложений.](#создание-kubeconfigs-приложений)
+- [Создание ключа для подписи Service Accounts.](#создание-ключа-для-подписи-service-accounts)
+- [Проверка готовности блока сертификатов.](#проверка-готовности-блока-сертификатов)
+- [Создание Static Pods.](#создание-static-pods)
+- [Запуск Kubelet.](#запуск-kubelet)
+- [Проверка состояния кластера.](#проверка-состояния-кластера)
+- [Создание ролевой модели.](#создание-ролевой-модели)
+- [Загрузка конфигурационных файлов в Kubernetes.](#загрузка-конфигурационных-файлов-в-kubernetes)
+- [Загрузка корневых сертификатов в Kubernetes.](#загрузка-корневых-сертификатов-в-kubernetes)
+- [Маркировка и ограничение узла.](#маркировка-и-ограничение-узла)
+- [Создание токенов для подключения новых узла.](#создание-токенов-для-подключения-новых-узла)
+
 
 ### Создание инфраструктуры
 Для основы нашего кластера нам потребуется:
@@ -355,7 +372,7 @@ import dedent from 'ts-dedent'
   </tbody>
 </table>
 
-### Базовая настройка узлов
+### Базовая настройка узла
 
 #### Переменные окружения узла
 <MastersTabs />
@@ -568,29 +585,29 @@ import dedent from 'ts-dedent'
 
   <TabItem value='containerd'>
     <details open>
-      <summary>Установка containerd</summary>
-      <ContainerdDownloadBIN/>
+    <summary>Установка containerd</summary>
+    <ContainerdDownloadBIN/>
     </details>
   </TabItem>
 
   <TabItem value='runc'>
     <details open>
-      <summary>Установка runc</summary>
-      <RuncDownloadBIN/>
+    <summary>Установка runc</summary>
+    <RuncDownloadBIN/>
     </details>
   </TabItem>
 
   <TabItem value='crictl'>
     <details open>
-      <summary>Установка crictl</summary>
-      <CrictlDownloadBIN/>
+    <summary>Установка crictl</summary>
+    <CrictlDownloadBIN/>
     </details>
   </TabItem>
 
   <TabItem value='kubectl'>
     <details open>
-      <summary>Установка kubectl</summary>
-      <KubectlDownloadBIN/>
+    <summary>Установка kubectl</summary>
+    <KubectlDownloadBIN/>
     </details>
   </TabItem>
 
@@ -599,22 +616,22 @@ import dedent from 'ts-dedent'
     Просьба обратить внимание, что установка данного компонента требуется для проверки нашей конфигурации на соответствие автоматики инструмента.
     :::
     <details open>
-      <summary>Установка kubeadm</summary>
-      <KubeadmDownloadBIN/>
+    <summary>Установка kubeadm</summary>
+    <KubeadmDownloadBIN/>
     </details>
   </TabItem>
 
   <TabItem value='kubelet'>
     <details open>
-      <summary>Установка kubelet</summary>
-      <KubeletDownloadBIN/>
+    <summary>Установка kubelet</summary>
+    <KubeletDownloadBIN/>
     </details>
   </TabItem>
 
   <TabItem value='etcd'>
     <details open>
-      <summary>Установка etcd</summary>
-      <EtcdDownloadBIN/>
+    <summary>Установка etcd</summary>
+    <EtcdDownloadBIN/>
     </details>
   </TabItem>
 
@@ -626,23 +643,23 @@ import dedent from 'ts-dedent'
 
   <TabItem value='containerd'>
     <details open>
-      <summary>Настройка containerd</summary>
-      <h4>Конфигурация компонента</h4>
-      <ContainerdConfigFiles />
+    <summary>Настройка containerd</summary>
+    <h4>Конфигурация компонента</h4>
+    <ContainerdConfigFiles />
 
-      <h4>Настройка Systemd Unit компонента</h4>
-      <ContainerdSetupSystemdUnit />
+    <h4>Настройка Systemd Unit компонента</h4>
+    <ContainerdSetupSystemdUnit />
 
-      <h4>Старт Systemd Unit</h4>
-      <ContainerdStartSystemdUnit />
+    <h4>Старт Systemd Unit</h4>
+    <ContainerdStartSystemdUnit />
     </details>
   </TabItem>
 
   <TabItem value='crictl'>
     <details open>
-      <summary>Настройка crictl</summary>
-      <h4>Конфигурация компонента</h4>
-      <CrictlConfigFiles />
+    <summary>Настройка crictl</summary>
+    <h4>Конфигурация компонента</h4>
+    <CrictlConfigFiles />
     </details>
   </TabItem>
 
@@ -651,26 +668,24 @@ import dedent from 'ts-dedent'
     Просьба обратить внимание, что настройка данного компонента требуется для проверки нашей конфигурации на соответствие автоматики инструмента.
     :::
     <details open>
-      <summary>Настройка kubeadm</summary>
-        <h4>Рабочие директории компонента</h4>
-        <KubeadmDIR/>
-
-        <KubeadmConfigFiles/>
-
+    <summary>Настройка kubeadm</summary>
+    <h4>Рабочие директории компонента</h4>
+    <KubeadmDIR/>
+    <KubeadmConfigFiles/>
     </details>
   </TabItem>
 
   <TabItem value='kubelet'>
     <details open>
       <summary>Настройка kubelet</summary>
-        <h4>Настройка Systemd Unit компонента</h4>
-        <KubeletSetupSystemdUnit />
+      <h4>Настройка Systemd Unit компонента</h4>
+      <KubeletSetupSystemdUnit />
 
-        <h4>Старт Systemd Unit</h4>
-        <KubeletEnableSystemdUnit />
+      <h4>Старт Systemd Unit</h4>
+      <KubeletEnableSystemdUnit />
 
-        <h4>Конфигурация компонента</h4>
-        <KubeletConfigFiles />
+      <h4>Конфигурация компонента</h4>
+      <KubeletConfigFiles />
     </details>
   </TabItem>
 
@@ -684,22 +699,22 @@ import dedent from 'ts-dedent'
 
   <TabItem value='Kubernetes ЦА'>
     <details open>
-      <summary>Kubernetes ЦА</summary>
-      <KubernetesCA />
+    <summary>Kubernetes ЦА</summary>
+    <KubernetesCA />
     </details>
   </TabItem>
 
   <TabItem value='FrontProxy ЦА'>
     <details open>
-      <summary>FrontProxy ЦА</summary>
-      <FrontProxyCA />
+    <summary>FrontProxy ЦА</summary>
+    <FrontProxyCA />
     </details>
   </TabItem>
 
   <TabItem value='ETCD ЦА'>
     <details open>
-      <summary>ETCD ЦА</summary>
-      <ETCDCA />
+    <summary>ETCD ЦА</summary>
+    <ETCDCA />
     </details>
   </TabItem>
 
@@ -711,57 +726,57 @@ import dedent from 'ts-dedent'
 
 <TabItem value='Kubelet Server'>
     <details open>
-      <summary>Kubelet server</summary>
-      <KubeletServer />
+    <summary>Kubelet server</summary>
+    <KubeletServer />
     </details>
   </TabItem>
 
-  <TabItem value='API > Etcd'>
+  <TabItem value='API -> Etcd'>
     <details open>
-      <summary>K8S-API client > Etcd</summary>
-      <KubeAPIETCDClientMain />
+    <summary>K8S-API client > Etcd server</summary>
+    <KubeAPIETCDClientMain />
     </details>
   </TabItem>
 
-  <TabItem value='API > Kubelet'>
+  <TabItem value='API -> Kubelet'>
     <details open>
-      <summary>K8S-API client > Kubelet</summary>
-      <KubeletClientMain />
+    <summary>K8S-API client > Kubelet server</summary>
+    <KubeletClientMain />
     </details>
   </TabItem>
 
   <TabItem value='API Server'>
     <details open>
-      <summary>K8S-API server</summary>
-      <KubeAPIServerMain />
+    <summary>K8S-API server</summary>
+    <KubeAPIServerMain />
     </details>
   </TabItem>
 
-  <TabItem value='Proxy > API'>
+  <TabItem value='Proxy -> API'>
     <details open>
-      <summary>FrontProxy client > K8S-API</summary>
-      <FrontProxyClientMain />
+    <summary>FrontProxy client > K8S-API</summary>
+    <FrontProxyClientMain />
     </details>
   </TabItem>
 
   <TabItem value='Etcd Client'>
     <details open>
-      <summary>Etcd client > Etcd</summary>
-      <ETCDClientETCDMain />
+    <summary>Etcd client > Etcd</summary>
+    <ETCDClientETCDMain />
     </details>
   </TabItem>
 
   <TabItem value='Etcd Server'>
     <details open>
-      <summary>Etcd server</summary>
-      <ETCDServerMain />
+    <summary>Etcd server</summary>
+    <ETCDServerMain />
     </details>
   </TabItem>
 
   <TabItem value='Etcd Peer'>
     <details open>
-      <summary>Etcd peer > Etcd</summary>
-      <ETCDPeerMain />
+    <summary>Etcd peer > Etcd</summary>
+    <ETCDPeerMain />
     </details>
   </TabItem>
 
@@ -772,36 +787,36 @@ import dedent from 'ts-dedent'
 
   <TabItem value='Kubelet'>
     <details open>
-      <summary>Kubelet client</summary>
-      <KubeAPIClient />
+    <summary>Kubelet client</summary>
+    <KubeAPIClient />
     </details>
   </TabItem>
 
   <TabItem value='Super Admin'>
     <details open>
-      <summary>Super Admin</summary>
-      <SuperAdminClientMain />
+    <summary>Super Admin</summary>
+    <SuperAdminClientMain />
     </details>
   </TabItem>
 
   <TabItem value='Admin'>
     <details open>
-      <summary>Admin</summary>
-      <AdminClientMain />
+    <summary>Admin</summary>
+    <AdminClientMain />
     </details>
   </TabItem>
 
   <TabItem value='Controller'>
     <details open>
-      <summary>Kube Controller Manager</summary>
-      <KubeControllerKubeAPIClient />
+    <summary>Kube Controller Manager</summary>
+    <KubeControllerKubeAPIClient />
     </details>
   </TabItem>
 
   <TabItem value='Scheduler'>
     <details open>
-      <summary>Kube Scheduler</summary>
-      <KubeSchedulerCerts />
+    <summary>Kube Scheduler</summary>
+    <KubeSchedulerCerts />
     </details>
   </TabItem>
 
@@ -818,31 +833,143 @@ import dedent from 'ts-dedent'
 
   <TabItem value='Kube-API'>
     <details open>
-      <summary>Kube-API</summary>
-      <KubeApiSetup/>
+    <summary>Kube-API</summary>
+    <KubeApiSetup/>
     </details>
   </TabItem>
 
   <TabItem value='Kube Controller Manager'>
     <details open>
-      <summary>Kube Controller Manager</summary>
-      <KubeControllerManagerSetup/>
+    <summary>Kube Controller Manager</summary>
+    <KubeControllerManagerSetup/>
     </details>
   </TabItem>
 
   <TabItem value='Kube Scheduler'>
     <details open>
-      <summary>Kube Controller Manager</summary>
-      <KubeSchedulerSetup/>
+    <summary>Kube Controller Manager</summary>
+    <KubeSchedulerSetup/>
     </details>
   </TabItem>
 
   <TabItem value='ETCD'>
     <details open>
-      <summary>ETCD</summary>
-      <ETCDSetup/>
+    <summary>ETCD</summary>
+    <ETCDSetup/>
     </details>
   </TabItem>
 
 </Tabs>
 
+
+### Запуск Kubelet
+<Tabs groupId="phase">
+
+  <TabItem value='init'>
+    <details open>
+      <summary>Запуск/Настройка kubelet</summary>
+    <Tabs groupId="install-type">
+
+      <TabItem value='HardWay'>
+        > Данный конфигурационный файл требуется, что бы запустился `Kubelet`.
+
+        <details className="custom-gray-block">
+        <summary>Kubelet default config</summary>
+        <KubeletConfigFilesDefault/>
+        </details>
+        <KubeletSystemdUnutStart/>
+      </TabItem>
+
+      <TabItem value='Kubeadm'>
+        <KubeletInitSystemdUnutStartKubeadm/>
+      </TabItem>
+
+    </Tabs>
+    </details>
+  </TabItem>
+
+  <TabItem value='join'>
+    <details open>
+      <summary>Запуск/Настройка kubelet</summary>
+    <Tabs groupId="install-type">
+
+      <TabItem value='HardWay'>
+
+        <details className="custom-gray-block">
+        <summary>Kubelet default config</summary>
+        <KubeletConfigFilesDefault/>
+        </details>
+        <KubeletSystemdUnutStart/>
+      </TabItem>
+
+      <TabItem value='Kubeadm'>
+        <KubeletJoinSystemdUnutStartKubeadm/>
+      </TabItem>
+
+    </Tabs>
+    </details>
+  </TabItem>
+
+</Tabs>
+
+### Проверка состояния кластера
+<details open>
+<summary>Проверка состояния кластера</summary>
+<KubernetesStatusReady/>
+</details>
+
+### Создание ролевой модели
+<Tabs groupId="phase">
+
+  <TabItem value='init'>
+    <details open>
+    <summary>Настройка ролевой модели Kubeadm</summary>
+    <RbacComponent/>
+    </details>
+  </TabItem>
+
+</Tabs>
+
+### Загрузка конфигурационных файлов в Kubernetes
+<Tabs groupId="phase">
+
+  <TabItem value='init'>
+    <details open>
+    <summary>Настройка ролевой модели Kubeadm</summary>
+    <UploadConfigsInit/>
+    </details>
+  </TabItem>
+
+</Tabs>
+
+
+### Загрузка корневых сертификатов в Kubernetes
+<Tabs groupId="phase">
+
+  <TabItem value='init'>
+    <details open>
+    <summary>Загрузка корневых сертификатов в Kubernetes</summary>
+    <UploadCAInit/>
+    </details>
+  </TabItem>
+
+</Tabs>
+
+### Маркировка и ограничение узла
+<Tabs groupId="phase">
+
+  <TabItem value='init'>
+    <details open>
+    <summary>Маркировка и ограничение узла</summary>
+    <MarkingInitComponent/>
+    </details>
+  </TabItem>
+
+  <TabItem value='join'>
+    <details open>
+    <summary>Маркировка и ограничение узла</summary>
+    <MarkingJoinComponent/>
+    </details>
+  </TabItem>
+
+</Tabs>

@@ -14,3 +14,16 @@
   margin-right: -30px;
   overflow-y: auto; /* этот параметр исправляет в нужную сторону */
 }
+
+.custom-gray-block {
+  background-color: #55555573; /* светло-голубой */
+  border-radius: 6px;
+  padding: 10px;
+  margin-top: 10px;
+}
+
+.custom-gray-block summary {
+  color: #ffffff;
+  font-weight: bold;
+  cursor: pointer;
+}

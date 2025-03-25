@@ -29,6 +29,7 @@ import Tabs from '@theme/Tabs'
           export INTERNAL_API=api.${CUSTOM_VALUE.kubernetesClusterExternalDomain.value}
           export MACHINE_LOCAL_ADDRESS=${CUSTOM_VALUE.virtualMachineLocalAddress.value}
           export ETCD_INITIAL_CLUSTER="$\{FULL_HOST_NAME}=${ETCD_ARGS.initialAdvertisePeerUrls.value}"
+          export CERTIFICATE_UPLOAD_KEY=0c00c2fd5c67c37656c00d78a9d7e1f2eb794ef8e4fc3e2a4b532eb14323cd59
         `}
       </CodeBlock>
 
@@ -48,7 +49,7 @@ import Tabs from '@theme/Tabs'
             - token: "fjt9ex.lwzqgdlvoxtqk4yw"
               description: "kubeadm bootstrap token"
               ttl: "24h"
-          certificateKey: 0c00c2fd5c67c37656c00d78a9d7e1f2eb794ef8e4fc3e2a4b532eb14323cd59
+          certificateKey: $\{CERTIFICATE_UPLOAD_KEY}
           nodeRegistration:
             imagePullPolicy: IfNotPresent
             taints: null

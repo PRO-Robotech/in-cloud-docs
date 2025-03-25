@@ -2,9 +2,12 @@ import dedent                   from 'ts-dedent'
 import CodeBlock                from '@theme/CodeBlock'
 import { CUSTOM_VALUE }         from '@site/src/constants/kubernetes/customValue'
 
-
 > Данная команда запускает сервис Kubelet в рамках выделенной фазы утилиты Kubeadm.
 
+:::warning Обратите внимание!
+Данный раздел зависит от следующих разделов:
+- [Kubeadm Configs](/docs/tech-docs/kubernetes/components/kubeadm/lifecycleSettings.mdx).
+:::
 
 <h4>Запуск kubelet</h4>
 <CodeBlock language="bash">
@@ -14,7 +17,7 @@ import { CUSTOM_VALUE }         from '@site/src/constants/kubernetes/customValue
   `}
 </CodeBlock>
 
-:::note
+:::note Вывод команды
 <CodeBlock language="bash">
   {dedent`
     [kubelet-start] Writing kubelet environment file with flags to file "/var/lib/kubelet/kubeadm-flags.env"

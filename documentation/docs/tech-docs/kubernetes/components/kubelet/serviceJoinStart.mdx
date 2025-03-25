@@ -4,19 +4,23 @@ id: kubelet-join-start
 
 import SystemdUnutStartKubeadm from '@site/docs/tech-docs/kubernetes/components/kubelet/kubeadm/systemdUnitStartJoin.mdx'
 import SystemdUnutStart from '@site/docs/tech-docs/kubernetes/components/kubelet/systemdUnit/systemdUnitStart.mdx'
+import ConfigFiles from '@site/docs/tech-docs/kubernetes/components/kubelet/configFilesDefault.mdx'
 
 # 5.2.3.1.1. Kubelet Start
 
-:::warning
-Обратите внимание, что даные команды выполняются только отдельно от базовой инициализации кластера ```kubeadm init```.
+:::warning Обратите внимание!
+Даные команды выполняются только отдельно от базовой инициализации кластера ```kubeadm init```.
 :::
 
 ## 5.2.3.1.1.1. Kubeadm init phase
 <SystemdUnutStartKubeadm/>
 
 ## 5.2.3.1.1.1. Systemd Unit
-:::warning  
-Обратите внимание, что данный раздел зависит от следующих разделов:
-- [Kubeadm Configs](../kubeadm/configs/joinConfig.mdx).
-:::
+> Данный конфигурационный файл требуется, что бы запустился `Kubelet`.
+
+<details>
+  <summary>Kubelet default config</summary>
+  <ConfigFiles/>
+</details>
+
 <SystemdUnutStart/>

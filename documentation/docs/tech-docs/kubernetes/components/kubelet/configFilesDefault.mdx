@@ -1,0 +1,133 @@
+import dedent from 'ts-dedent'
+import CodeBlock from '@theme/CodeBlock'
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+<Tabs groupId="install-type">
+
+    <TabItem value='Bash'>
+      <h4>Базовый конфигурационный файл kubelet</h4>
+
+      <CodeBlock language="bash">
+      {dedent`
+        cat <<EOF > ${CUSTOM_VALUE.kuberneteKubeletFolderPath.value}/config.yaml
+        ---
+        apiVersion: kubelet.config.k8s.io/v1beta1
+        authentication:
+          anonymous:
+            enabled: false
+          webhook:
+            cacheTTL: 0s
+            enabled: true
+          x509:
+            clientCAFile: /etc/kubernetes/pki/ca.crt
+        authorization:
+          mode: Webhook
+          webhook:
+            cacheAuthorizedTTL: 0s
+            cacheUnauthorizedTTL: 0s
+        cgroupDriver: systemd
+        clusterDNS:
+        - 29.64.0.10
+        clusterDomain: cluster.local
+        containerRuntimeEndpoint: ""
+        cpuManagerReconcilePeriod: 0s
+        evictionPressureTransitionPeriod: 0s
+        fileCheckFrequency: 0s
+        healthzBindAddress: 127.0.0.1
+        healthzPort: 10248
+        httpCheckFrequency: 0s
+        imageMaximumGCAge: 0s
+        imageMinimumGCAge: 0s
+        kind: KubeletConfiguration
+        logging:
+          flushFrequency: 0
+          options:
+            json:
+              infoBufferSize: "0"
+            text:
+              infoBufferSize: "0"
+          verbosity: 0
+        memorySwap: {}
+        nodeStatusReportFrequency: 0s
+        nodeStatusUpdateFrequency: 0s
+        resolvConf: /run/systemd/resolve/resolv.conf
+        rotateCertificates: true
+        runtimeRequestTimeout: 0s
+        shutdownGracePeriod: 0s
+        shutdownGracePeriodCriticalPods: 0s
+        staticPodPath: /etc/kubernetes/manifests
+        streamingConnectionIdleTimeout: 0s
+        syncFrequency: 0s
+        volumeStatsAggPeriod: 0s
+        EOF
+      `}
+      </CodeBlock>
+
+    </TabItem>
+
+    <TabItem value='Cloud-init'>
+
+      <h4>Базовый конфигурационный файл kubelet</h4>
+      <CodeBlock language="bash">
+      {dedent`
+        - path: ${CUSTOM_VALUE.kuberneteKubeletFolderPath.value}/config.yaml
+          owner: root:root
+          permissions: '0644'
+          content: |
+            ---
+            apiVersion: kubelet.config.k8s.io/v1beta1
+            authentication:
+              anonymous:
+                enabled: false
+              webhook:
+                cacheTTL: 0s
+                enabled: true
+              x509:
+                clientCAFile: /etc/kubernetes/pki/ca.crt
+            authorization:
+              mode: Webhook
+              webhook:
+                cacheAuthorizedTTL: 0s
+                cacheUnauthorizedTTL: 0s
+            cgroupDriver: systemd
+            clusterDNS:
+            - 29.64.0.10
+            clusterDomain: cluster.local
+            containerRuntimeEndpoint: ""
+            cpuManagerReconcilePeriod: 0s
+            evictionPressureTransitionPeriod: 0s
+            fileCheckFrequency: 0s
+            healthzBindAddress: 127.0.0.1
+            healthzPort: 10248
+            httpCheckFrequency: 0s
+            imageMaximumGCAge: 0s
+            imageMinimumGCAge: 0s
+            kind: KubeletConfiguration
+            logging:
+              flushFrequency: 0
+              options:
+                json:
+                  infoBufferSize: "0"
+                text:
+                  infoBufferSize: "0"
+              verbosity: 0
+            memorySwap: {}
+            nodeStatusReportFrequency: 0s
+            nodeStatusUpdateFrequency: 0s
+            resolvConf: /run/systemd/resolve/resolv.conf
+            rotateCertificates: true
+            runtimeRequestTimeout: 0s
+            shutdownGracePeriod: 0s
+            shutdownGracePeriodCriticalPods: 0s
+            staticPodPath: /etc/kubernetes/manifests
+            streamingConnectionIdleTimeout: 0s
+            syncFrequency: 0s
+            volumeStatsAggPeriod: 0s
+      `}
+      </CodeBlock>
+
+    </TabItem>
+
+</Tabs>

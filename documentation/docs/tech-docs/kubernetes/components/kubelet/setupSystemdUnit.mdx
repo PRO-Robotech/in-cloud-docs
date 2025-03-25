@@ -61,25 +61,6 @@ import { DOWNLOAD_VERSION } from '@site/src/constants/kubernetes/downloads'
           `}
         </CodeBlock>
 
-        <h4>Systemd Unit Custom ENV</h4>
-        :::warning Внимание
-        Данный блок конфигурации применим **только** при установке Kubernetes вручную (методом _«Kubernetes the Hard Way»_). При использовании утилиты **kubeadm** конфигурационный файл будет создан автоматически на основе спецификации, указанной в файле `kubeadm-config`.
-
-        <h4>Переменные окружения</h4>
-        <CodeBlock language="bash">
-            {dedent`
-                cat <<EOF > ${CUSTOM_VALUE.kuberneteKubeletFolderPath.value}/kubeadm-flags.env
-                KUBELET_KUBEADM_ARGS="
-                --container-runtime-endpoint=unix://${CUSTOM_VALUE.criEndpoint.value} \
-                --pod-infra-container-image=${CUSTOM_VALUE.baseDockerRegistry.value}/${CUSTOM_VALUE.pausedImage.value} \
-                --config=${CUSTOM_VALUE.kuberneteKubeletFolderPath.value}/config-custom.yaml \
-                --cluster-domain=${CUSTOM_VALUE.kubernetesClusterDomain.value} \
-                --cluster-dns=${CUSTOM_VALUE.kubernetesDNSAddress.value}
-                "
-                EOF
-            `}
-        </CodeBlock>
-        :::
     </TabItem>
 
     <TabItem value='Cloud-init'>

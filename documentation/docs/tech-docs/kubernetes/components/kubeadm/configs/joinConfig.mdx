@@ -13,6 +13,7 @@ import { PORTS }                from '@site/src/constants/kubernetes/ports'
       {dedent`
         export MACHINE_LOCAL_ADDRESS="${CUSTOM_VALUE.virtualMachineLocalAddress.value}"
         export CLUSTER_API_ENDPOINT=api.${CUSTOM_VALUE.clusterName.value}.${CUSTOM_VALUE.kubernetesBaseDomain.value}
+        export CERTIFICATE_UPLOAD_KEY=0c00c2fd5c67c37656c00d78a9d7e1f2eb794ef8e4fc3e2a4b532eb14323cd59
 
       `}
   </CodeBlock>
@@ -26,7 +27,7 @@ import { PORTS }                from '@site/src/constants/kubernetes/ports'
         localAPIEndpoint:
           advertiseAddress: $\{MACHINE_LOCAL_ADDRESS}
           bindPort: ${PORTS.kubeAPIServer.portNumber}
-        certificateKey: 0c00c2fd5c67c37656c00d78a9d7e1f2eb794ef8e4fc3e2a4b532eb14323cd59
+        certificateKey: $\{CERTIFICATE_UPLOAD_KEY}
       discovery:
         bootstrapToken:
           apiServerEndpoint: $\{CLUSTER_API_ENDPOINT}:${KUBE_API_ARGS.securePort.value}

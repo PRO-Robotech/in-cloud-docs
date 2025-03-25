@@ -4,20 +4,23 @@ id: kubelet-init-start
 
 import SystemdUnutStartKubeadm from '@site/docs/tech-docs/kubernetes/components/kubelet/kubeadm/systemdUnitStartInit.mdx'
 import SystemdUnutStart from '@site/docs/tech-docs/kubernetes/components/kubelet/systemdUnit/systemdUnitStart.mdx'
+import ConfigFiles from '@site/docs/tech-docs/kubernetes/components/kubelet/configFilesDefault.mdx'
 
 # 5.2.3.1.1. Kubelet Start
 
-:::warning
-Обратите внимание, что данные команды выполняются только отдельно от базовой инициализации кластера (`kubeadm init`). Они предназначены исключительно для записи конфигурационного файла `kubelet` и запуска соответствующего systemd-сервиса.
+:::danger Обратите внимание!
+Данные команды выполняются только отдельно от базовой инициализации кластера (`kubeadm init`). Они предназначены исключительно для записи конфигурационного файла `kubelet` и запуска соответствующего systemd-сервиса.
 :::
 
 ## 5.2.3.1.1.1. Kubeadm init phase
 <SystemdUnutStartKubeadm/>
 
 ## 5.2.3.1.1.1. Systemd Unit
-:::warning  
-Обратите внимание, что данный раздел зависит от следующих разделов:
-- [Kubeadm Configs](../kubeadm/configs/initConfig.mdx).
-:::
+> Данный конфигурационный файл требуется, что бы запустился `Kubelet`.
+
+<details>
+  <summary>Kubelet default config</summary>
+  <ConfigFiles/>
+</details>
 
 <SystemdUnutStart/>
