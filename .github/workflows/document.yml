@@ -29,7 +29,7 @@ jobs:
 
       - name: Build documentation
         env:
-          BASEURL:  "/in-cloud"
+          BASEURL:  "/b-cloud-docs"
           URL:    "http://example.com"
           TITLE: ""
           DOC_INCLUDE_CURRENT_VERSION: false
