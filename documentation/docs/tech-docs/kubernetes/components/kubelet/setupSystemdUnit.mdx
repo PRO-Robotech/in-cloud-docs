@@ -130,11 +130,7 @@ import { DOWNLOAD_VERSION } from '@site/src/constants/kubernetes/downloads'
                 owner: root:root
                 permissions: '0644'
                 content: |
-                  KUBELET_KUBEADM_ARGS="\
-                  --container-runtime-endpoint=unix://${CUSTOM_VALUE.criEndpoint.value} \
-                  --pod-infra-container-image=${CUSTOM_VALUE.baseDockerRegistry.value}/${CUSTOM_VALUE.pausedImage.value} \
-                  --config=${CUSTOM_VALUE.kuberneteKubeletFolderPath.value}/config-custom.yaml \
-                  "
+                  KUBELET_KUBEADM_ARGS="--container-runtime-endpoint=unix://${CUSTOM_VALUE.criEndpoint.value} --pod-infra-container-image=${CUSTOM_VALUE.baseDockerRegistry.value}/${CUSTOM_VALUE.pausedImage.value} --config=${CUSTOM_VALUE.kuberneteKubeletFolderPath.value}/config-custom.yaml"
             `}
         </CodeBlock>
         :::

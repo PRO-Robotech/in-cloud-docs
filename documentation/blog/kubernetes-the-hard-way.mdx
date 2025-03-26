@@ -69,8 +69,10 @@ import UploadConfigsInit from '@site/docs/tech-docs/kubernetes/additionalSetup/u
 import UploadCAInit from '@site/docs/tech-docs/kubernetes/additionalSetup/uploadCAComponent.mdx'
 import MarkingInitComponent from '@site/docs/tech-docs/kubernetes/additionalSetup/markingInitComponent.mdx'
 import MarkingJoinComponent from '@site/docs/tech-docs/kubernetes/additionalSetup/markingJoinComponent.mdx'
-
-
+import BaseSetupOS from '@site/docs/tech-docs/kubernetes/setupEnvironments/baseOSSetupComponent.mdx'
+import СoreModulesComponent from '@site/docs/tech-docs/kubernetes/setupEnvironments/coreModulesComponent.mdx'
+import SysctlsComponent from '@site/docs/tech-docs/kubernetes/setupEnvironments/sysctlsComponent.mdx'
+import KubernetesDownloadCA  from '@site/docs/tech-docs/kubernetes/certificates/centerAuthority/downloadCA.mdx'
 
 import TabItem from '@theme/TabItem'
 import Tabs from '@theme/Tabs'
@@ -78,138 +80,167 @@ import Tabs from '@theme/Tabs'
 import CodeBlock from '@theme/CodeBlock'
 import dedent from 'ts-dedent'
 
-#### Развертывание Kubernetes The Hard Way
+### 1. Kubernetes The Hard Way
 
-***Возобновляем серию статей по Kubernetes в новом формате.***
+<em><strong>Возобновляем серию статей по Kubernetes в новом формате.</strong></em>
 
-Эта статья будет содержать общий опыт по развертыванию Kubernetes, не используя средства автоматического развертывания, такие как `kubeadm`. Также данный формат напрямую синхронизируется с документацией, которую мы стараемся писать по лучшим практикам написания с использованием методик `IAC`.
+<p>
+Данная статья описывает общий опыт ручного развертывания Kubernetes без использования автоматизированных инструментов, таких как <code>kubeadm</code>. Представленный подход согласуется с нашей документацией, которую мы ведём согласно лучшим практикам и методологиям <code>IAC</code>.
+</p>
 
-Также вся конфигурация, описанная дальше, полностью дублирует поведение `kubeadm`, где на выходе получите кластер, который будет сложно определить — собран он через kub`eadm или `"The Hard Way"`.
+<p>
+Вся конфигурация, приведённая далее, в точности повторяет поведение <code>kubeadm</code>. В результате итоговый кластер сложно отличить — собран ли он с помощью <code>kubeadm</code> или вручную, <strong>«The Hard Way»</strong>.
+</p>
+
 
 {/* truncate */}
 
 
-### Введение
-`Kubernetes` стал стандартом для управления контейнерами. Инструменты вроде `kubeadm` сильно упрощают развертывание, но важно понимать, как `Kubernetes` работает изнутри. Без этого сложно понять логику автоматизации. В этой статье мы рассмотрим подход `"The Hard Way"` — самостоятельная настройка каждого компонента.
+### 2. Введение
 
-### Почему "The Hard Way"?
-Развертывание Kubernetes "The Hard Way" может показаться сложным, но такой подход дает ряд преимуществ:
+<p>
+  <code>Kubernetes</code> стал де-факто стандартом в управлении контейнерами. Инструменты вроде <code>kubeadm</code> значительно упрощают его развертывание, однако для глубокого понимания принципов работы важно знать, как система устроена изнутри. Без этого трудно проектировать устойчивую и предсказуемую автоматизацию.
+</p>
 
-- Глубокое понимание: Вы получите полное представление о том, как работает Kubernetes "под капотом".
+<p>
+  В данной статье рассматривается пошаговая ручная настройка кластера — подход <strong>«The Hard Way»</strong>. Для каждой фазы <code>kubeadm</code> будет показано, как достичь аналогичного результата без использования автоматизированных инструментов, чтобы обеспечить чёткое понимание логики его работы.
+</p>
 
-- Гибкость: Вы сможете настроить каждый компонент в соответствии с вашими конкретными потребностями.
 
-### Компоненты Kubernetes
+### 3.Почему «The Hard Way»
+
+<p>
+  Развёртывание Kubernetes вручную требует дополнительных усилий. Однако данный подход обладает следующими преимуществами:
+</p>
+
+<ul>
+  <li>обеспечивает углублённое понимание архитектуры и внутренней логики работы компонентов Kubernetes;</li>
+  <li>позволяет гибко настраивать каждый компонент кластера в соответствии с техническими требованиями.</li>
+</ul>
+
+
+### 4. Компоненты Kubernetes
+
+<p>
+Ниже приведён перечень компонентов, необходимых для ручного развёртывания кластера. Для обеспечения совместимости все версии синхронизированы между собой.
+</p>
 
 <table>
   <thead>
     <tr>
       <th>Компонент</th>
       <th>Версия</th>
-      <th>Описание</th>
+      <th>Назначение</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <td>containerd</td>
       <td>{COMPONENTS_VERSION.containerd.value}</td>
-      <td>Отвечает за запуск и управление контейнерами.</td>
+      <td>Контейнерный рантайм, управляющий жизненным циклом контейнеров.</td>
     </tr>
     <tr>
       <td>runc</td>
       <td>{COMPONENTS_VERSION.runc.value}</td>
-      <td>Интерфейс для запуска контейнеров с использованием ядра Linux.</td>
+      <td>Низкоуровневый инструмент для запуска контейнеров с использованием средств ядра Linux.</td>
     </tr>
     <tr>
       <td>crictl</td>
       <td>{COMPONENTS_VERSION.crictl.value}</td>
-      <td>Инструмент для взаимодействия с контейнерной средой, использующей интерфейс CRI.</td>
+      <td>Утилита для отладки CRI-сред с поддержкой взаимодействия с containerd.</td>
     </tr>
     <tr>
       <td>kubectl</td>
       <td>{COMPONENTS_VERSION.kubernetes.value}</td>
-      <td>Инструмент для взаимодействия с Kubernetes-API сервером.</td>
+      <td>Клиент для взаимодействия с Kubernetes API.</td>
     </tr>
     <tr>
       <td>kubeadm</td>
       <td>{COMPONENTS_VERSION.kubernetes.value}</td>
-      <td>Инструмент для упрощения развертывания и настройки Kubernetes. (*Будем использовать как инструмент проверки соответствия конфигурации).</td>
+      <td>Инструмент для автоматизации установки и конфигурации Kubernetes (используется для валидации конфигурации).</td>
     </tr>
     <tr>
       <td>kubelet</td>
       <td>{COMPONENTS_VERSION.kubernetes.value}</td>
-      <td>Агент отвечающий за запуск и управление контейнерами (подами), а также за поддержание их текущего состояния.</td>
+      <td>Агент, запускаемый на каждом узле, обеспечивающий выполнение и контроль состояния подов.</td>
     </tr>
     <tr>
       <td>etcd</td>
       <td>{COMPONENTS_VERSION.etcd.value}</td>
-      <td>Распределенное хранилище ключей-значений, используемое для хранения конфигурации кластера.</td>
+      <td>Распределённое хранилище ключ–значение для хранения конфигурации и состояния кластера.</td>
     </tr>
     <tr>
       <td>kube-apiserver</td>
       <td>{COMPONENTS_VERSION.kubernetes.value}</td>
-      <td>RESTful API интерфейс для взаимодействия с системой.</td>
+      <td>Компонент, предоставляющий REST API для взаимодействия с кластером.</td>
     </tr>
     <tr>
       <td>kube-controller-manager</td>
       <td>{COMPONENTS_VERSION.kubernetes.value}</td>
-      <td>Компонент отвечающий за управление состоянием ресурсов в кластере через различные контроллеры.</td>
+      <td>Управляет состоянием объектов в кластере с помощью встроенных контроллеров.</td>
     </tr>
     <tr>
       <td>kube-scheduler</td>
       <td>{COMPONENTS_VERSION.kubernetes.value}</td>
-      <td>Компонент отвечающий за распределение подов по узлам кластера.</td>
+      <td>Отвечает за планирование размещения подов на узлах.</td>
     </tr>
     <tr>
       <td>conntrack</td>
       <td>v1.4.+</td>
-      <td></td>
+      <td>Утилита для отслеживания сетевых соединений (используется iptables и kubelet).</td>
     </tr>
     <tr>
       <td>socat</td>
       <td>1.8.+</td>
-      <td></td>
+      <td>Утилита для проброса портов и организации TCP-туннелей (используется при отладке и проксировании).</td>
     </tr>
   </tbody>
 </table>
 
-### Шаги развертывания
-Развертывание Kubernetes "The Hard Way" включает в себя следующие шаги:
+
+### 5. Шаги развертывания
+
+<p>
+Развёртывание Kubernetes вручную (подход «The Hard Way») включает следующие этапы:
+</p>
+
+<ul>
+  <li><a href="#6-создание-инфраструктуры">6. Создание инфраструктуры</a></li>
+  <li><a href="#7-базовая-настройка-узлов">7. Базовая настройка узлов</a></li>
+  <li><a href="#8-загрузка-модулей-ядра">8. Загрузка модулей ядра</a></li>
+  <li><a href="#9-настройка-параметров-sysctl">9. Настройка параметров sysctl</a></li>
+  <li><a href="#10-установка-компонентов">10. Установка компонентов</a></li>
+  <li><a href="#11-настройка-компонентов">11. Настройка компонентов</a></li>
+  <li><a href="#12-проверка-готовности-компонентов">12. Проверка готовности компонентов</a></li>
+  <li><a href="#13-создание-корневых-сертификатов">13. Создание корневых сертификатов</a></li>
+  <li><a href="#14-создание-сертификатов-приложений">14. Создание сертификатов приложений</a></li>
+  <li><a href="#15-создание-конфигураций-kubeconfig">15. Создание конфигураций kubeconfig</a></li>
+  <li><a href="#16-создание-ключа-подписи-serviceaccount">16. Создание ключа подписи ServiceAccount</a></li>
+  <li><a href="#17-проверка-блока-сертификатов">17. Проверка блока сертификатов</a></li>
+  <li><a href="#18-создание-static-pod-ов">18. Создание static pod-ов</a></li>
+  <li><a href="#19-запуск-службы-kubelet">19. Запуск службы Kubelet</a></li>
+  <li><a href="#20-проверка-состояния-кластера">20. Проверка состояния кластера</a></li>
+  <li><a href="#21-настройка-ролевой-модели">21. Настройка ролевой модели</a></li>
+  <li><a href="#22-загрузка-конфигурации-в-кластер">22. Загрузка конфигурации в кластер</a></li>
+  <li><a href="#23-загрузка-корневых-сертификатов-в-кластер">23. Загрузка корневых сертификатов в кластер</a></li>
+  <li><a href="#24-маркировка-и-ограничение-узлов">24. Маркировка и ограничение узлов</a></li>
+</ul>
 
 
-- [Создание инфраструктуры.](#создание-инфраструктуры)
-- [Базовая настройка узла.](#базовая-настройка-узла)
-- [Загрузка модулей ядра.](#загрузка-модулей-ядра)
-- [Настройка Sysctl.](#настройка-sysctl)
-- [Установка компонентов.](#установка-компонентов)
-- [Настройка компонентов.](#настройка-компонентов)
-- [Проверка готовности компонентов.](#проверка-готовности-компонентов)
-- [Создание корневых сертификатов.](#создание-корневых-сертификатов)
-- [Создание сертификатов приложений.](#создание-сертификатов-приложений)
-- [Создание kubeconfigs приложений.](#создание-kubeconfigs-приложений)
-- [Создание ключа для подписи Service Accounts.](#создание-ключа-для-подписи-service-accounts)
-- [Проверка готовности блока сертификатов.](#проверка-готовности-блока-сертификатов)
-- [Создание Static Pods.](#создание-static-pods)
-- [Запуск Kubelet.](#запуск-kubelet)
-- [Проверка состояния кластера.](#проверка-состояния-кластера)
-- [Создание ролевой модели.](#создание-ролевой-модели)
-- [Загрузка конфигурационных файлов в Kubernetes.](#загрузка-конфигурационных-файлов-в-kubernetes)
-- [Загрузка корневых сертификатов в Kubernetes.](#загрузка-корневых-сертификатов-в-kubernetes)
-- [Маркировка и ограничение узла.](#маркировка-и-ограничение-узла)
-- [Создание токенов для подключения новых узла.](#создание-токенов-для-подключения-новых-узла)
+### 6. Создание инфраструктуры
 
+<p>
+На этом этапе задаётся базовая архитектура кластера, включая его сетевую схему, управляющие узлы и основные параметры.
+</p>
 
-### Создание инфраструктуры
-Для основы нашего кластера нам потребуется:
-
-#### Информация о кластере
+#### Сведения о кластере
 
 <table>
   <thead>
     <tr>
       <th>Имя</th>
-      <th>внешний домен</th>
-      <th>Версия</th>
+      <th>Внешний домен</th>
+      <th>Версия Kubernetes</th>
     </tr>
   </thead>
   <tbody>
@@ -221,14 +252,14 @@ import dedent from 'ts-dedent'
   </tbody>
 </table>
 
-#### Виртуальные машины под управляющий контур
+#### Управляющие узлы
 
 <table>
   <thead>
     <tr>
       <th>Имя</th>
-      <th>IP Адрес</th>
-      <th>Базовая ОС</th>
+      <th>IP-адрес</th>
+      <th>Операционная система</th>
       <th>Ресурсы</th>
     </tr>
   </thead>
@@ -237,19 +268,19 @@ import dedent from 'ts-dedent'
       <td>master-1.{CUSTOM_VALUE.clusterName.value}.{CUSTOM_VALUE.kubernetesBaseDomain.value}</td>
       <td>10.0.0.16</td>
       <td>ubuntu-24-04-lts</td>
-      <td>2CPU/2RAM/20Gb</td>
+      <td>2CPU / 2RAM / 20GB</td>
     </tr>
     <tr>
       <td>master-2.{CUSTOM_VALUE.clusterName.value}.{CUSTOM_VALUE.kubernetesBaseDomain.value}</td>
       <td>10.0.0.22</td>
       <td>ubuntu-24-04-lts</td>
-      <td>2CPU/2RAM/20Gb</td>
+      <td>2CPU / 2RAM / 20GB</td>
     </tr>
     <tr>
       <td>master-3.{CUSTOM_VALUE.clusterName.value}.{CUSTOM_VALUE.kubernetesBaseDomain.value}</td>
       <td>10.0.0.14</td>
       <td>ubuntu-24-04-lts</td>
-      <td>2CPU/2RAM/20Gb</td>
+      <td>2CPU / 2RAM / 20GB</td>
     </tr>
   </tbody>
 </table>
@@ -259,8 +290,8 @@ import dedent from 'ts-dedent'
 <table>
   <thead>
     <tr>
-      <th>IP Адрес</th>
-      <th>Таргет группа</th>
+      <th>IP-адрес</th>
+      <th>Целевая группа</th>
       <th>Порт</th>
       <th>Целевой порт</th>
     </tr>
@@ -269,9 +300,9 @@ import dedent from 'ts-dedent'
     <tr>
       <td>10.0.0.6</td>
       <td>
-      - 10.0.0.16
-      - 10.0.0.22
-      - 10.0.0.14
+        - 10.0.0.16<br/>
+        - 10.0.0.22<br/>
+        - 10.0.0.14
       </td>
       <td>6443</td>
       <td>6443</td>
@@ -279,13 +310,13 @@ import dedent from 'ts-dedent'
   </tbody>
 </table>
 
-#### DNS записи
+#### DNS-записи
 
 <table>
   <thead>
     <tr>
-      <th>A (Record)с</th>
-      <th>IP Адрес</th>
+      <th>A-запись</th>
+      <th>IP-адрес</th>
       <th>TTL</th>
     </tr>
   </thead>
@@ -313,7 +344,7 @@ import dedent from 'ts-dedent'
   </tbody>
 </table>
 
-#### Разрешенные порты на мастер нодах
+#### Разрешённые порты на управляющих узлах
 
 <table>
   <thead>
@@ -372,215 +403,26 @@ import dedent from 'ts-dedent'
   </tbody>
 </table>
 
-### Базовая настройка узла
-
-#### Переменные окружения узла
-<MastersTabs />
-
-<CodeBlock language="bash">
-  {dedent`
-        export CLUSTER_NAME="${CUSTOM_VALUE.clusterName.value}"
-        export BASE_DOMAIN="${CUSTOM_VALUE.kubernetesBaseDomain.value}"
-        export CLUSTER_DOMAIN="${CUSTOM_VALUE.kubernetesClusterDomain.value}"
-        export FULL_HOST_NAME="${CUSTOM_VALUE.virtualMachineFullName.value}"
-    `}
-</CodeBlock>
-
-#### Изменение имени узла
-
-<CodeBlock language="bash">
-  {dedent`
-        hostnamectl set-hostname $\{FULL_HOST_NAME}
-    `}
-</CodeBlock>
-
-<Tabs groupId="install-pkg">
-
-    <TabItem value='apt'>
-      <CodeBlock language="bash">
-        {dedent`
-          sudo apt update
-          sudo apt install conntrack socat
-        `}
-      </CodeBlock>
-    </TabItem>
-
-    <TabItem value='yum'>
-      <CodeBlock language="bash">
-        {dedent`
-          sudo yum update
-          sudo yum install conntrack-tools socat
-        `}
-      </CodeBlock>
-    </TabItem>
-
-    <TabItem value='dnf'>
-      <CodeBlock language="bash">
-        {dedent`
-          sudo dnf update
-          sudo dnf install conntrack-tools socat
-        `}
-      </CodeBlock>
-    </TabItem>
-
-</Tabs>
-
-### Загрузка модулей ядра
-<Tabs groupId="install-type">
-
-    <TabItem value='Bash'>
-      <h4>Конфигурация modprobe</h4>
-
-      <CodeBlock language="bash">
-        {dedent`
-          cat <<EOF > /etc/modules-load.d/k8s.conf
-          overlay
-          br_netfilter
-          EOF
-        `}
-      </CodeBlock>
-
-      <CodeBlock language="bash">
-        {dedent`
-              sudo -i
-              modprobe overlay
-              modprobe br_netfilter
-          `}
-      </CodeBlock>
+### 7. Базовая настройка узлов
+<details open>
+<summary>Базовая настройка узлов</summary>
+<BaseSetupOS/>
+</details>
 
 
-    </TabItem>
+### 8. Загрузка модулей ядра
+<details open>
+<summary>Загрузка модулей ядра</summary>
+<СoreModulesComponent/>
+</details>
 
-    <TabItem value='Cloud-init'>
+### 9. Настройка параметров sysctl
+<details open>
+<summary>Настройка параметров sysctl</summary>
+<SysctlsComponent/>
+</details>
 
-      <h4>Конфигурация modprobe</h4>
-      <CodeBlock language="bash">
-      {dedent`
-        # write_files:
-        - path: /etc/modules-load.d/k8s.conf
-          owner: root:root
-          permissions: '0644'
-          content: |
-            overlay
-            br_netfilter
-      `}
-      </CodeBlock>
-
-      <CodeBlock language="bash">
-        {dedent`
-          # runcmd:
-          - modprobe overlay
-          - modprobe br_netfilter
-        `}
-      </CodeBlock>
-
-    </TabItem>
-</Tabs>
-
-
-:::note
-Модуль `overlay` связан с файловой системой OverlayFS, которая помогает эффективно управлять слоями в файловой системе контейнеров. Благодаря ей можно объединять несколько директорий (слоёв) в одну виртуальную файловую систему. Такие контейнерные рантаймы, как Docker и containerd (часто используемые вместе с Kubernetes), применяют OverlayFS для хранения и управления образами контейнеров.
-
-Модуль `br_netfilter` интегрирует сетевые мосты (bridges) с подсистемой netfilter в ядре Linux. Это означает, что трафик, проходящий через мосты, можно обрабатывать с помощью iptables.
-:::
-
-### Настройка Sysctl
-
-
-:::warning
-
-#### Настройка сети
-
-После загрузки модуля br_netfilter часто требуется установить системные параметры, чтобы убедиться, что бриджированный трафик обрабатывается iptables.
-
-<Tabs groupId="install-type">
-
-    <TabItem value='Bash'>
-      <h4>Конфигурация sysctl</h4>
-
-      <CodeBlock language="bash">
-      {dedent`
-        cat <<EOF > /etc/sysctl.d/99-br-netfilter.conf
-        net.bridge.bridge-nf-call-iptables=1
-        net.bridge.bridge-nf-call-ip6tables=1
-        EOF
-      `}
-      </CodeBlock>
-
-    </TabItem>
-
-    <TabItem value='Cloud-init'>
-
-      <h4>Конфигурация sysctl</h4>
-      <CodeBlock language="bash">
-      {dedent`
-        # write_files:
-        - path: /etc/sysctl.d/99-br-netfilter.conf
-          owner: root:root
-          permissions: '0644'
-          content: |
-            net.bridge.bridge-nf-call-iptables=1
-            net.bridge.bridge-nf-call-ip6tables=1
-      `}
-      </CodeBlock>
-
-    </TabItem>
-
-</Tabs>
-
-
-Если параметр `net.ipv4.ip_forward` не включен, ядро операционной системы не будет пересылать IP-пакеты между интерфейсами, что приведет к проблемам с сетью в кластере Kubernetes. Это может проявляться в недоступности сервисов, невозможности подов связаться друг с другом или с внешними ресурсами.
-
-
-<Tabs groupId="install-type">
-
-  <TabItem value='Bash'>
-    <h4>Конфигурация sysctl</h4>
-    <CodeBlock language="bash">
-    {dedent`
-      cat <<EOF > /etc/sysctl.d/99-network.conf
-      net.ipv4.ip_forward=1
-      EOF
-    `}
-    </CodeBlock>
-
-    <CodeBlock language="bash">
-      {dedent`
-        sysctl --system
-      `}
-    </CodeBlock>
-
-  </TabItem>
-
-  <TabItem value='Cloud-init'>
-
-    <h4>Конфигурация sysctl</h4>
-    <CodeBlock language="bash">
-    {dedent`
-      # write_files:
-      - path: /etc/sysctl.d/99-network.conf
-        owner: root:root
-        permissions: '0644'
-        content: |
-          net.ipv4.ip_forward=1
-    `}
-    </CodeBlock>
-
-    <CodeBlock language="bash">
-      {dedent`
-        # runcmd:
-        - sysctl --system
-      `}
-    </CodeBlock>
-
-  </TabItem>
-
-</Tabs>
-
-:::
-
-### Установка компонентов
-
+### 10. Установка компонентов
 <Tabs groupId="component">
 
   <TabItem value='containerd'>
@@ -612,9 +454,6 @@ import dedent from 'ts-dedent'
   </TabItem>
 
   <TabItem value='kubeadm'>
-    :::danger Внимание!
-    Просьба обратить внимание, что установка данного компонента требуется для проверки нашей конфигурации на соответствие автоматики инструмента.
-    :::
     <details open>
     <summary>Установка kubeadm</summary>
     <KubeadmDownloadBIN/>
@@ -637,20 +476,19 @@ import dedent from 'ts-dedent'
 
 </Tabs>
 
-### Настройка компонентов
-
+### 11. Настройка компонентов
 <Tabs groupId="component">
 
   <TabItem value='containerd'>
     <details open>
     <summary>Настройка containerd</summary>
-    <h4>Конфигурация компонента</h4>
+    #### Конфигурация компонента
     <ContainerdConfigFiles />
 
-    <h4>Настройка Systemd Unit компонента</h4>
+    #### Настройка Systemd Unit компонента
     <ContainerdSetupSystemdUnit />
 
-    <h4>Старт Systemd Unit</h4>
+    #### Старт Systemd Unit
     <ContainerdStartSystemdUnit />
     </details>
   </TabItem>
@@ -658,18 +496,15 @@ import dedent from 'ts-dedent'
   <TabItem value='crictl'>
     <details open>
     <summary>Настройка crictl</summary>
-    <h4>Конфигурация компонента</h4>
+    #### Конфигурация компонента
     <CrictlConfigFiles />
     </details>
   </TabItem>
 
   <TabItem value='kubeadm'>
-    :::danger Внимание!
-    Просьба обратить внимание, что настройка данного компонента требуется для проверки нашей конфигурации на соответствие автоматики инструмента.
-    :::
     <details open>
     <summary>Настройка kubeadm</summary>
-    <h4>Рабочие директории компонента</h4>
+    #### Рабочие директории компонента
     <KubeadmDIR/>
     <KubeadmConfigFiles/>
     </details>
@@ -678,50 +513,74 @@ import dedent from 'ts-dedent'
   <TabItem value='kubelet'>
     <details open>
       <summary>Настройка kubelet</summary>
-      <h4>Настройка Systemd Unit компонента</h4>
+      #### Настройка Systemd Unit компонента
       <KubeletSetupSystemdUnit />
 
-      <h4>Старт Systemd Unit</h4>
+      #### Старт Systemd Unit
       <KubeletEnableSystemdUnit />
 
-      <h4>Конфигурация компонента</h4>
+      #### Конфигурация компонента
+      <details className="custom-gray-block">
+      <summary>Расширенная конфигурация</summary>
       <KubeletConfigFiles />
+      </details>
+
     </details>
   </TabItem>
 
 </Tabs>
 
-### Проверка готовности компонентов
+### 12. Проверка готовности компонентов
+<details open>
+<summary>Проверка готовности компонентов</summary>
 <ComponentsReady/>
+</details>
 
-### Создание корневых сертификатов
-<Tabs groupId="CA">
 
-  <TabItem value='Kubernetes ЦА'>
+### 13. Создание корневых сертификатов
+<Tabs groupId="phase">
+
+  <TabItem value='init'>
     <details open>
-    <summary>Kubernetes ЦА</summary>
-    <KubernetesCA />
+    <summary>Создание корневых сертификатов</summary>
+
+    <Tabs groupId="CA">
+
+      <TabItem value='Kubernetes ЦА'>
+        <details open className="custom-gray-block">
+        <summary>Kubernetes ЦА</summary>
+        <KubernetesCA />
+        </details>
+      </TabItem>
+
+      <TabItem value='FrontProxy ЦА'>
+        <details open className="custom-gray-block">
+        <summary>FrontProxy ЦА</summary>
+        <FrontProxyCA />
+        </details>
+      </TabItem>
+
+      <TabItem value='ETCD ЦА'>
+        <details open className="custom-gray-block">
+        <summary>ETCD ЦА</summary>
+        <ETCDCA />
+        </details>
+      </TabItem>
+
+    </Tabs>
     </details>
   </TabItem>
 
-  <TabItem value='FrontProxy ЦА'>
+  <TabItem value='join'>
     <details open>
-    <summary>FrontProxy ЦА</summary>
-    <FrontProxyCA />
-    </details>
-  </TabItem>
-
-  <TabItem value='ETCD ЦА'>
-    <details open>
-    <summary>ETCD ЦА</summary>
-    <ETCDCA />
+    <summary>Выгрузка ЦА</summary>
+    <KubernetesDownloadCA/>
     </details>
   </TabItem>
 
 </Tabs>
 
-
-### Создание сертификатов приложений
+### 14. Создание сертификатов приложений
 <Tabs groupId="Certs-APPS">
 
 <TabItem value='Kubelet Server'>
@@ -782,7 +641,7 @@ import dedent from 'ts-dedent'
 
 </Tabs>
 
-### Создание kubeconfigs приложений
+### 15. Создание конфигураций kubeconfig
 <Tabs groupId="Certs-APPS">
 
   <TabItem value='Kubelet'>
@@ -822,13 +681,19 @@ import dedent from 'ts-dedent'
 
 </Tabs>
 
-### Создание ключа для подписи Service Accounts
+### 16. Создание ключа подписи ServiceAccount
+<details open>
+<summary>Создание ключа подписи ServiceAccount</summary>
 <ServiceAccount/>
+</details>
 
-### Проверка готовности блока сертификатов
+### 17. Проверка блока сертификатов
+<details open>
+<summary>Проверка блока сертификатов</summary>
 <Examination/>
+</details>
 
-### Создание Static Pods
+### 18. Создание static pod-ов
 <Tabs groupId="Componenet">
 
   <TabItem value='Kube-API'>
@@ -862,7 +727,7 @@ import dedent from 'ts-dedent'
 </Tabs>
 
 
-### Запуск Kubelet
+### 19. Запуск службы Kubelet
 <Tabs groupId="phase">
 
   <TabItem value='init'>
@@ -912,13 +777,13 @@ import dedent from 'ts-dedent'
 
 </Tabs>
 
-### Проверка состояния кластера
+### 20. Проверка состояния кластера
 <details open>
 <summary>Проверка состояния кластера</summary>
 <KubernetesStatusReady/>
 </details>
 
-### Создание ролевой модели
+### 21. Настройка ролевой модели
 <Tabs groupId="phase">
 
   <TabItem value='init'>
@@ -930,7 +795,7 @@ import dedent from 'ts-dedent'
 
 </Tabs>
 
-### Загрузка конфигурационных файлов в Kubernetes
+### 22. Загрузка конфигурации в кластер
 <Tabs groupId="phase">
 
   <TabItem value='init'>
@@ -943,7 +808,7 @@ import dedent from 'ts-dedent'
 </Tabs>
 
 
-### Загрузка корневых сертификатов в Kubernetes
+### 23. Загрузка корневых сертификатов в кластер
 <Tabs groupId="phase">
 
   <TabItem value='init'>
@@ -955,7 +820,7 @@ import dedent from 'ts-dedent'
 
 </Tabs>
 
-### Маркировка и ограничение узла
+### 24. Маркировка и ограничение узлов
 <Tabs groupId="phase">
 
   <TabItem value='init'>

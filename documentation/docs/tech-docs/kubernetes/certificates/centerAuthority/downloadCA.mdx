@@ -7,8 +7,17 @@ import dedent from 'ts-dedent'
 import TabItem                from '@theme/TabItem'
 import Tabs                   from '@theme/Tabs'
 
+
 <Tabs groupId="install-type">
+  <TabItem value='HardWay'>
+    TODO
+  </TabItem>
+
   <TabItem value='Kubeadm'>
+    :::warning Обратите внимание!
+    Данный раздел зависит от следующих разделов:
+    - [Kubeadm Configs](/docs/tech-docs/kubernetes/components/kubeadm/lifecycleSettings.mdx).
+    :::
 
     <h4>Генерация манифеста</h4>
     <CodeBlock language="bash">

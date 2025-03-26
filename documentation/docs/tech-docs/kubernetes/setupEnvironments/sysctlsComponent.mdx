@@ -1,0 +1,113 @@
+
+import CodeBlock from '@theme/CodeBlock'
+import dedent from 'ts-dedent'
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+#### Этапы установки компонента:
+- Конфигурация sysctl.
+- Загрузка модулей.
+
+:::warning Внимание!
+
+#### Сетевые параметры
+
+Для корректной маршрутизации и фильтрации трафика необходимо задать параметры ядра.
+
+<Tabs groupId="install-type">
+
+  <TabItem value="Bash">
+    #### Конфигурация sysctl
+    <CodeBlock language="bash">
+      {dedent`
+        cat <<EOF > /etc/sysctl.d/99-br-netfilter.conf
+        net.bridge.bridge-nf-call-iptables=1
+        net.bridge.bridge-nf-call-ip6tables=1
+        EOF
+      `}
+    </CodeBlock>
+
+    #### Применение конфигурации
+    <CodeBlock language="bash">
+      {dedent`
+        sysctl --system
+      `}
+    </CodeBlock>
+
+  </TabItem>
+
+  <TabItem value="Cloud-init">
+      #### Конфигурация sysctl
+      <CodeBlock language="bash">
+      {dedent`
+        # write_files:
+        - path: /etc/sysctl.d/99-br-netfilter.conf
+          owner: root:root
+          permissions: '0644'
+          content: |
+            net.bridge.bridge-nf-call-iptables=1
+            net.bridge.bridge-nf-call-ip6tables=1
+      `}
+    </CodeBlock>
+
+    #### Применение конфигурации
+    <CodeBlock language="bash">
+      {dedent`
+        # runcmd:
+        - sysctl --system
+      `}
+    </CodeBlock>
+
+  </TabItem>
+
+</Tabs>
+
+Если параметр `net.ipv4.ip_forward` не активирован, система не будет пересылать IP-пакеты между интерфейсами. Это может привести к сетевым сбоям внутри кластера, недоступности сервисов и потере связи между подами.
+
+<Tabs groupId="install-type">
+
+  <TabItem value="Bash">
+    #### Конфигурация sysctl
+    <CodeBlock language="bash">
+      {dedent`
+        cat <<EOF > /etc/sysctl.d/99-network.conf
+        net.ipv4.ip_forward=1
+        EOF
+      `}
+    </CodeBlock>
+
+    <CodeBlock language="bash">
+      {dedent`
+        sysctl --system
+      `}
+    </CodeBlock>
+
+  </TabItem>
+
+  <TabItem value="Cloud-init">
+
+    #### Конфигурация sysctl
+    <CodeBlock language="bash">
+      {dedent`
+        # write_files:
+        - path: /etc/sysctl.d/99-network.conf
+          owner: root:root
+          permissions: '0644'
+          content: |
+            net.ipv4.ip_forward=1
+      `}
+    </CodeBlock>
+
+    #### Применение конфигурации
+    <CodeBlock language="bash">
+      {dedent`
+        # runcmd:
+        - sysctl --system
+      `}
+    </CodeBlock>
+
+  </TabItem>
+
+</Tabs>
+
+:::

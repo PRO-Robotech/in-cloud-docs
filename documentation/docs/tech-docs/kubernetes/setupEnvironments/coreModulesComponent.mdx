@@ -1,0 +1,70 @@
+
+import CodeBlock from '@theme/CodeBlock'
+import dedent from 'ts-dedent'
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+#### Этапы установки компонента:
+- Конфигурация modprobe.
+- Загрузка модулей.
+
+<Tabs groupId="install-type">
+
+  <TabItem value="Bash">
+
+  #### Конфигурация modprobe
+  <CodeBlock language="bash">
+    {dedent`
+      cat <<EOF > /etc/modules-load.d/k8s.conf
+      overlay
+      br_netfilter
+      EOF
+    `}
+  </CodeBlock>
+
+  #### Загрузка модулей
+  <CodeBlock language="bash">
+    {dedent`
+      sudo -i
+      modprobe overlay
+      modprobe br_netfilter
+    `}
+  </CodeBlock>
+
+  </TabItem>
+
+  <TabItem value="Cloud-init">
+
+  #### Конфигурация modprobe
+  <CodeBlock language="bash">
+    {dedent`
+      # write_files:
+      - path: /etc/modules-load.d/k8s.conf
+        owner: root:root
+        permissions: '0644'
+        content: |
+          overlay
+          br_netfilter
+    `}
+  </CodeBlock>
+
+  #### Загрузка модулей
+  <CodeBlock language="bash">
+    {dedent`
+      # runcmd:
+      - modprobe overlay
+      - modprobe br_netfilter
+    `}
+  </CodeBlock>
+
+  </TabItem>
+
+</Tabs>
+
+:::note
+
+  Модуль overlay используется файловой системой OverlayFS для управления слоями контейнеров. Он позволяет объединять несколько директорий в единую виртуальную файловую систему. Применяется такими рантаймами, как Docker и containerd.
+
+  Модуль br_netfilter обеспечивает обработку трафика сетевых мостов через подсистему netfilter. Это необходимо для корректной работы iptables в Kubernetes.
+
+:::
