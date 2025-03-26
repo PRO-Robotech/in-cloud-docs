@@ -13,7 +13,7 @@ export const Header: FC = () => (
             const getBasePrefix = () => window.BASE_PREFIX || '';
             return (
               <Link to={`${getBasePrefix()}/tech-docs/kubernetes/about`}>
-                <img src={`${getBasePrefix()}/img/paws.png`} alt="Logo" className="logo2" />
+                <img src={`${getBasePrefix()}/img/paws2.svg`} alt="Logo" className="logo2" />
               </Link>
             );
           }}
