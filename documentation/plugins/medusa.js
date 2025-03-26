@@ -1,3 +1,4 @@
+
 export default function () {
   return {
     name: 'medusa',
@@ -9,7 +10,7 @@ export default function () {
             tagName: 'script',
             attributes: {
               charset: 'utf-8',
-              src: '/in-cloud/js/header-enabler.js',
+              src: '/js/header-enabler.js',
             },
           },
         ],
