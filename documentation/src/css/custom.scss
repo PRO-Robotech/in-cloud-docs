@@ -27,3 +27,88 @@
   font-weight: bold;
   cursor: pointer;
 }
+
+/* В styles.module.css */
+.headerContainer {
+  display: flex;
+  align-items: center; /* Выровнять по вертикали */
+  justify-content: space-between; /* Распределить элементы по краям */
+  position: relative;
+}
+
+.textContainer {
+  flex: 1;
+  margin-right: 30px;
+  margin-left: auto; /* Добавляем отступ слева для сдвига */
+}
+
+.logoContainer {
+  position: relative;
+  width: 100px;
+  height: auto;
+  margin-right: +200px;
+  margin-left: auto; /* Сдвигаем логотип влево */
+}
+
+.logo {
+  max-width: 300%;
+  height: auto;
+  border-radius: 2px; /* Скругляем углы логотипа */
+  box-shadow: 0 4px 10px rgba(255, 255, 255, 0.2); /* Добавляем тень для "парящего" эффекта */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Плавные переходы для анимации */
+}
+
+.logoContainer:hover .logo {
+  transform: translateY(-2px); /* Поднимаем логотип при наведении */
+  box-shadow: 0 8px 20px rgba(255, 255, 255, 0.3); /* Увеличиваем тень при наведении */
+}
+
+
+/* Контейнер для текста и логотипа */
+.text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+/* Стили для заголовка B-Cloud */
+.header-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  margin-bottom: -42px; /* Убираем отступ между логотипом и текстом */
+}
+
+/* Стили для подзаголовка */
+.subheading {
+  font-size: 1.3rem;
+  color: gray;
+  margin-top: 0; /* Убираем отступ сверху */
+  margin-bottom: 10; /* Убираем лишний отступ снизу */
+  font-weight: normal;
+  margin-right: 0px;
+  margin-left: +225px; /* Сдвигаем логотип влево */
+}
+
+/* Стили для логотипа */
+.logo2 {
+  width: 120px; /* Устанавливаем фиксированный размер логотипа */
+  height: 120px; /* Устанавливаем фиксированную высоту для круглой формы */
+  object-fit: contain; /* Убедитесь, что изображение сохраняет пропорции */
+  margin-right: 10px; /* Уменьшаем отступ между логотипом и текстом */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Плавный переход для эффектов */
+  border-radius: 50%; /* Логотип круглый */
+
+  /* Начальная подсветка */
+  box-shadow: 0 0 12px 2px rgba(255, 255, 255, 0.5); /* Легкое свечение по контуру */
+}
+
+/* Эффект при наведении на логотип */
+.logo2:hover {
+  transform: scale(1.1); /* Увеличиваем размер при наведении */
+  box-shadow: 0 0 15px 5px rgba(255, 255, 255, 0.8); /* Усиленное свечение при наведении */
+}
+
