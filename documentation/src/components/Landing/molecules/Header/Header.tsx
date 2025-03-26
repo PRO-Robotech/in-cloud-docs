@@ -20,7 +20,7 @@ export const Header: FC = () => (
         </BrowserOnly>
         B-Cloud
       </h1>
-      <p className="subheading">Строим вместе облако</p>
+      {/* <p className="subheading">Строим вместе облако</p> */}
     </div>
   </div>
 )
