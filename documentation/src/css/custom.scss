@@ -115,3 +115,22 @@
   transform: scale(1.1); /* Увеличиваем размер при наведении */
   box-shadow: 0 0 10px 3px rgba(255, 255, 255, 0.8); /* Усиленное свечение при наведении */
 }
+
+
+.obligatory-note-orange {
+  position: absolute;
+  right: 0;
+  color: orange;
+  font-weight: bold;
+  font-size: 15px;
+  margin-top: 0px;
+}
+
+.obligatory-note-green {
+  position: absolute;
+  right: 0;
+  color: rgb(0, 171, 43);
+  font-weight: bold;
+  font-size: 15px;
+  margin-top: 0px;
+}
