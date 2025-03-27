@@ -106,7 +106,7 @@ import { DOWNLOAD_VERSION } from '@site/src/constants/kubernetes/downloads'
                 # the .NodeRegistration.KubeletExtraArgs object in the configuration files instead. KUBELET_EXTRA_ARGS should be sourced from this file.
                 EnvironmentFile=-/etc/default/kubelet/extra-args.env
                 ExecStart=
-                ExecStart=/usr/local/bin/kubelet $KUBELET_KUBECONFIG_ARGS $KUBELET_CONFIG_ARGS $KUBELET_KUBEADM_ARG $KUBELET_EXTRA_ARGS
+                ExecStart=/usr/local/bin/kubelet $KUBELET_KUBECONFIG_ARGS $KUBELET_CONFIG_ARGS $KUBELET_KUBEADM_ARGS $KUBELET_EXTRA_ARGS
           `}
         </CodeBlock>
 

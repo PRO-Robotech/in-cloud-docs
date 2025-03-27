@@ -2,7 +2,23 @@
 id: examination
 ---
 
-import Examination from '@site/docs/tech-docs/kubernetes/certificates/examinationComponent.mdx'
+import KubeadmExamination from '@site/docs/tech-docs/kubernetes/certificates/examinationKubeadmComponent.mdx'
+import OpensslExamination from '@site/docs/tech-docs/kubernetes/certificates/examinationOpensslComponent.mdx'
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
 
 # 5.2.2.5. Проверка
-  <Examination/>
+<Tabs groupId="install-type">
+
+  <TabItem value='HardWay'>
+    <OpensslExamination/>
+  </TabItem>
+
+  <TabItem value='Kubeadm'>
+    <KubeadmExamination/>
+  </TabItem>
+
+</Tabs>
+
+
+

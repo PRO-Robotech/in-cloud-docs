@@ -1,0 +1,188 @@
+
+import CodeBlock        from '@theme/CodeBlock'
+import dedent           from 'ts-dedent'
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+
+> После настройки сертификатов рекомендуется проверить их корректность с помощью `Kubeadm`
+
+<h4>Рабочая директория</h4>
+<CodeBlock language="bash">
+    {dedent`
+        mkdir -p ${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/openssl
+    `}
+</CodeBlock>
+
+<h4>Инструкция по созданию скрипта</h4>
+<details className="custom-gray-block">
+<summary>Инструкция по созданию скрипта</summary>
+<CodeBlock language="bash">
+  {dedent`
+    cat <<'EOF' > ${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/openssl/cert-report.sh
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    # Временная директория для извлечённых сертификатов
+    TMPDIR=\$(mktemp -d)
+    trap 'rm -rf "\$TMPDIR"' EXIT
+
+    # Хэш-карта CN → имя CA-файла
+    declare -A CN_TO_CA_NAME
+    CERT_ROWS=()
+    CA_ROWS=()
+
+    # Заголовки таблиц
+    CERT_HEADER=\$(printf "%-28s %-25s %-15s %-24s %-20s" \\
+      "CERTIFICATE" "EXPIRES" "RESIDUAL TIME" "CERTIFICATE AUTHORITY" "EXTERNALLY MANAGED")
+    CA_HEADER=\$(printf "%-24s %-25s %-15s %-20s" \\
+      "CERTIFICATE AUTHORITY" "EXPIRES" "RESIDUAL TIME" "EXTERNALLY MANAGED")
+
+    # Путь к файлу сертификата для обработки (если указан)
+    CERT_PATH="\${1:-}"
+
+    if [ -n "\$CERT_PATH" ]; then
+      # Если путь к файлу передан, обрабатываем только этот файл
+      FILES=("\$CERT_PATH")
+    else
+      # Если путь не передан, ищем все сертификаты в /etc/kubernetes
+      mapfile -t FILES < <(find /etc/kubernetes -type f \\( -name "*.crt" -o -name "*.pem" -o -name "*.conf" \\) 2>/dev/null)
+    fi
+
+    # Извлекаем embedded сертификаты из kubeconfig'ов
+    extract_cert() {
+      local file="\$1"
+      local out="\$2"
+      if grep -q "client-certificate-data:" "\$file"; then
+        awk '/client-certificate-data:/ {print \$2}' "\$file" | base64 -d > "\$out"
+      else
+        cp "\$file" "\$out"
+      fi
+    }
+
+    # Подсчёт остатка времени действия
+    cert_lifetime() {
+      local end="\$1"
+      local end_ts now_ts days years
+      end_ts=\$(date -d "\$end" +%s)
+      now_ts=\$(date +%s)
+      (( end_ts < now_ts )) && echo "expired" && return
+      days=\$(( (end_ts - now_ts) / 86400 ))
+      years=\$(( days / 365 ))
+      (( years > 0 )) && echo "\${years}y" || echo "\${days}d"
+    }
+
+    # Нормализуем имя сертификата
+    cert_name() {
+      local path="\$1"
+      local base
+      base=\$(basename "\$path" | sed 's/\.\\(crt\\|pem\\)\$//')
+      case "\$path" in
+        */etcd/*)         echo "etcd-\$base" ;;
+        */front-proxy/*)  echo "front-proxy-\$base" ;;
+        *)                echo "\$base" ;;
+      esac
+    }
+
+    # Первый проход: собираем карту CN → имя CA
+    for file in "\${FILES[@]}"; do
+      crt="\$TMPDIR/ca.crt"
+      extract_cert "\$file" "\$crt" || continue
+      openssl x509 -in "\$crt" -noout -text 2>/dev/null | grep -A1 "Key Usage" | grep -q "Certificate Sign" || continue
+      cn=\$(openssl x509 -in "\$crt" -noout -subject 2>/dev/null | sed -n 's/.*CN *= *\\([^,\\/]*\\).*/\\1/p')
+      [[ -n "\$cn" ]] && CN_TO_CA_NAME["\$cn"]="\$(cert_name "\$file")"
+    done
+
+    # Второй проход: составляем таблицы сертификатов и CA
+    for file in "\${FILES[@]}"; do
+      crt="\$TMPDIR/cert.crt"
+      extract_cert "\$file" "\$crt" || continue
+      openssl x509 -in "\$crt" -noout >/dev/null 2>&1 || continue
+
+      name=\$(cert_name "\$file")
+      end_raw=\$(openssl x509 -in "\$crt" -noout -enddate | cut -d= -f2)
+      expires=\$(date -d "\$end_raw" "+%b %d, %Y %H:%M UTC")
+      residual=\$(cert_lifetime "\$end_raw")
+
+      if openssl x509 -in "\$crt" -noout -text | grep -A1 "Key Usage" | grep -q "Certificate Sign"; then
+        CA_ROWS+=("\$(printf "%-24s %-25s %-15s %-20s" "\$name" "\$expires" "\$residual" "no")")
+      else
+        issuer_cn=\$(openssl x509 -in "\$crt" -noout -issuer | sed -n 's/.*CN *= *\\([^,\\/]*\\).*/\\1/p')
+        ca_name="\${CN_TO_CA_NAME[\$issuer_cn]:-\$issuer_cn}"
+        CERT_ROWS+=("\$(printf "%-28s %-25s %-15s %-24s %-20s" "\$name" "\$expires" "\$residual" "\$ca_name" "no")")
+      fi
+    done
+
+    # Вывод финальных таблиц
+    echo
+    echo "\$CERT_HEADER"
+    printf "%s\\n" "\${CERT_ROWS[@]}" | sort
+    echo
+    echo "\$CA_HEADER"
+    printf "%s\\n" "\${CA_ROWS[@]}" | sort
+    EOF
+  `}
+</CodeBlock>
+</details>
+
+<h4>Настройка прав</h4>
+<CodeBlock language="bash">
+    {dedent`
+      chmod +x ${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/openssl/cert-report.sh
+    `}
+</CodeBlock>
+
+
+<h4>Запуск инструкции для все сертификатов/kubeconfigs</h4>
+<CodeBlock language="bash">
+    {dedent`
+      ${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/openssl/cert-report.sh
+    `}
+</CodeBlock>
+
+
+:::warning
+
+<CodeBlock language="bash">
+  {dedent`
+    CERTIFICATE                EXPIRES                  RESIDUAL TIME   CERTIFICATE AUTHORITY   EXTERNALLY MANAGED
+    admin.conf                 Oct 22, 2025 22:06 UTC   364d            ca                      no
+    apiserver                  Oct 22, 2025 22:06 UTC   364d            ca                      no
+    apiserver-etcd-client      Oct 22, 2025 22:06 UTC   364d            etcd-ca                 no
+    apiserver-kubelet-client   Oct 22, 2025 22:06 UTC   364d            ca                      no
+    controller-manager.conf    Oct 22, 2025 22:06 UTC   364d            ca                      no
+    etcd-healthcheck-client    Oct 22, 2025 22:06 UTC   364d            etcd-ca                 no
+    etcd-peer                  Oct 22, 2025 22:06 UTC   364d            etcd-ca                 no
+    etcd-server                Oct 22, 2025 22:06 UTC   364d            etcd-ca                 no
+    front-proxy-client         Oct 22, 2025 22:06 UTC   364d            front-proxy-ca          no
+    scheduler.conf             Oct 22, 2025 22:06 UTC   364d            ca                      no
+    super-admin.conf           Oct 22, 2025 22:06 UTC   364d            ca                      no
+
+    CERTIFICATE AUTHORITY   EXPIRES                  RESIDUAL TIME   EXTERNALLY MANAGED
+    ca                      Oct 20, 2034 22:04 UTC   9y              no
+    etcd-ca                 Oct 20, 2034 22:04 UTC   9y              no
+    front-proxy-ca          Oct 20, 2034 22:04 UTC   9y              no
+  `}
+</CodeBlock>
+
+:::
+
+
+<h4>Запуск инструкции для одного сертификата/kubeconfig</h4>
+<CodeBlock language="bash">
+    {dedent`
+      ${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/openssl/cert-report.sh ${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/pki/ca.crt
+    `}
+</CodeBlock>
+
+:::warning
+
+<CodeBlock language="bash">
+  {dedent`
+    CERTIFICATE                EXPIRES                  RESIDUAL TIME   CERTIFICATE AUTHORITY   EXTERNALLY MANAGED
+
+
+    CERTIFICATE AUTHORITY   EXPIRES                  RESIDUAL TIME   EXTERNALLY MANAGED
+    ca                      Oct 20, 2034 22:04 UTC   9y              no
+  `}
+</CodeBlock>
+
+:::

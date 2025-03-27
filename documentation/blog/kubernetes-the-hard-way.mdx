@@ -51,7 +51,9 @@ import SuperAdminClientMain from '@site/docs/tech-docs/kubernetes/certificates/c
 import KubeControllerKubeAPIClient from '@site/docs/tech-docs/kubernetes/certificates/components/kubeControllerManager/kubeAPIClient/main.mdx'
 
 import ServiceAccount from '@site/docs/tech-docs/kubernetes/certificates/serviceAccountComponent.mdx'
-import Examination from '@site/docs/tech-docs/kubernetes/certificates/examinationComponent.mdx'
+
+import KubeadmExamination from '@site/docs/tech-docs/kubernetes/certificates/examinationKubeadmComponent.mdx'
+import OpensslExamination from '@site/docs/tech-docs/kubernetes/certificates/examinationOpensslComponent.mdx'
 
 import KubeApiSetup from '@site/docs/tech-docs/kubernetes/components/kubeAPI/setupComponent.mdx'
 import KubeControllerManagerSetup from '@site/docs/tech-docs/kubernetes/components/controllerManager/setupComponent.mdx'
@@ -245,6 +247,12 @@ import dedent from 'ts-dedent'
 </p>
 
 <ul>
+  <li><a>1. Введение</a></li>
+  <li><a>2. Почему «The Hard Way»</a></li>
+  <li><a>3. Компоненты Kubernetes</a></li>
+  <li><a>4. Архитектура развертывания</a></li>
+  <li><a>5. Шаги развертывания</a></li>
+
   <li><a href="#6-создание-инфраструктуры">6. Создание инфраструктуры</a></li>
   <li><a href="#7-базовая-настройка-узлов">7. Базовая настройка узлов</a></li>
   <li><a href="#8-загрузка-модулей-ядра">8. Загрузка модулей ядра</a></li>
@@ -730,7 +738,17 @@ import dedent from 'ts-dedent'
 ### 17. Проверка блока сертификатов
 <details open>
 <summary>Проверка блока сертификатов</summary>
-<Examination/>
+<Tabs groupId="install-type">
+
+  <TabItem value='HardWay'>
+    <OpensslExamination/>
+  </TabItem>
+
+  <TabItem value='Kubeadm'>
+    <KubeadmExamination/>
+  </TabItem>
+
+</Tabs>
 </details>
 
 ### 18. Создание static pod-ов
