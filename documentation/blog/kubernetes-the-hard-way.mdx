@@ -80,8 +80,7 @@ import Tabs from '@theme/Tabs'
 import CodeBlock from '@theme/CodeBlock'
 import dedent from 'ts-dedent'
 
-
-### 1. Kubernetes The Hard Way <span style={{ color: '#1cc5ac' }}>#</span>
+<h3> Kubernetes The Hard Way <span style={{ color: '#1cc5ac' }}>#</span></h3>
 
 <p style={{ fontStyle: 'italic', fontWeight: 600 }}>
   Возобновляем серию статей по Kubernetes в новом формате.
@@ -121,7 +120,7 @@ import dedent from 'ts-dedent'
     }}
   >
     <img
-      src={`${getBasePrefix()}/img/commics/monkey-user/k8s.png`}
+      src="/img/commics/monkey-user/k8s.png"
       alt="commics"
       style={{
         width: '90%',
@@ -136,7 +135,7 @@ import dedent from 'ts-dedent'
 {/* truncate */}
 
 
-### 2. Введение
+### 1. Введение
 
 <p>
   <code>Kubernetes</code> стал де-факто стандартом в управлении контейнерами. Инструменты вроде <code>kubeadm</code> значительно упрощают его развертывание, однако для глубокого понимания принципов работы важно знать, как система устроена изнутри. Без этого трудно проектировать устойчивую и предсказуемую автоматизацию.
@@ -147,7 +146,7 @@ import dedent from 'ts-dedent'
 </p>
 
 
-### 3.Почему «The Hard Way»
+### 2.Почему «The Hard Way»
 
 <p>
   Развёртывание Kubernetes вручную требует дополнительных усилий. Однако данный подход обладает следующими преимуществами:
@@ -159,7 +158,7 @@ import dedent from 'ts-dedent'
 </ul>
 
 
-### 4. Компоненты Kubernetes
+### 3. Компоненты Kubernetes
 
 <p>
 Ниже приведён перечень компонентов, необходимых для ручного развёртывания кластера. Для обеспечения совместимости все версии синхронизированы между собой.
@@ -237,6 +236,7 @@ import dedent from 'ts-dedent'
   </tbody>
 </table>
 
+### 4. Архитектура развертывания
 
 ### 5. Шаги развертывания
 
