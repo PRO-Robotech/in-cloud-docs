@@ -39,16 +39,16 @@ import CrictlCheckBIN from '@site/docs/tech-docs/kubernetes/components/crictl/ch
 import CrictlCheckComponent from '@site/docs/tech-docs/kubernetes/components/crictl/checkComponent.mdx'
 import CrictlLifecycleSettingsComponent from '@site/docs/tech-docs/kubernetes/components/crictl/lifecycleSettingsComponent.mdx'
 
-import KubeadmDownloadBIN from '@site/docs/tech-docs/kubernetes/components/kubeadm/downloadBIN.mdx'
+import KubeadmDownloadBIN from '@site/docs/tech-docs/kubernetes/components/kubeadm/lifecycleDownloadComponent.mdx'
 import KubeadmCheckBIN from '@site/docs/tech-docs/kubernetes/components/kubeadm/checkBIN.mdx'
+import KubeadmCheckComponent from '@site/docs/tech-docs/kubernetes/components/kubeadm/checkComponent.mdx'
+import KubeadmLifecycleSettingsComponent from '@site/docs/tech-docs/kubernetes/components/kubeadm/lifecycleSettingsComponent.mdx'
 
 
 import EtcdDownloadBIN from '@site/docs/tech-docs/etcd/components/etcd/downloadBIN.mdx'
 import EtcdCheckBIN from '@site/docs/tech-docs/etcd/components/etcd/checkBIN.mdx'
 
 
-import KubeadmConfigFiles from '@site/docs/tech-docs/kubernetes/components/kubeadm/configFiles.mdx'
-import KubeadmDIR from '@site/docs/tech-docs/kubernetes/components/kubeadm/dir.mdx'
 
 import ComponentsReady from '@site/docs/tech-docs/kubernetes/components/componentsReadyComponent.mdx'
 
@@ -704,29 +704,28 @@ import dedent from 'ts-dedent'
 
   </TabItem>
 
-<TabItem value="crictl">
-  <details>
-    <summary>
-      Настройка crictl
-      <span className="obligatory-note-green">● Не обязателен к применению</span>
-    </summary>
-    <h4> Конфигурация компонента</h4>
-      <CrictlLifecycleSettingsComponent />
-      <CrictlCheckComponent/>
-  </details>
-</TabItem>
+  <TabItem value="crictl">
+    <details>
+      <summary>
+        Настройка crictl
+        <span className="obligatory-note-green">● Не обязателен к применению</span>
+      </summary>
+      <h4> Конфигурация компонента</h4>
+        <CrictlLifecycleSettingsComponent />
+        <CrictlCheckComponent/>
+    </details>
+  </TabItem>
 
-<TabItem value="kubeadm">
-  <details>
-    <summary>
-      Настройка kubeadm
-      <span className="obligatory-note-green">● Не обязателен к применению</span>
-    </summary>
-    <h4> Рабочие директории компонента</h4>
-    <KubeadmDIR />
-    <KubeadmConfigFiles />
-  </details>
-</TabItem>
+  <TabItem value="kubeadm">
+    <details>
+      <summary>
+        Настройка kubeadm
+        <span className="obligatory-note-green">● Не обязателен к применению</span>
+      </summary>
+        <KubeadmLifecycleSettingsComponent />
+        <KubeadmCheckComponent/>
+    </details>
+  </TabItem>
 
 </Tabs>
 
@@ -1167,18 +1166,18 @@ import dedent from 'ts-dedent'
 
 <Tabs groupId="phase">
 
-<TabItem value="init">
-  <details open>
-    <summary>Маркировка и ограничение узла</summary>
-    <MarkingInitComponent />
-  </details>
-</TabItem>
+  <TabItem value="init">
+    <details open>
+      <summary>Маркировка и ограничение узла</summary>
+      <MarkingInitComponent />
+    </details>
+  </TabItem>
 
-<TabItem value="join">
-  <details open>
-    <summary>Маркировка и ограничение узла</summary>
-    <MarkingJoinComponent />
-  </details>
-</TabItem>
+  <TabItem value="join">
+    <details open>
+      <summary>Маркировка и ограничение узла</summary>
+      <MarkingJoinComponent />
+    </details>
+  </TabItem>
 
 </Tabs>
