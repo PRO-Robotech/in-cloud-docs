@@ -2,27 +2,8 @@
 id: lifecycle-settings
 ---
 
-import EnableSystemdUnit from '@site/docs/tech-docs/kubernetes/components/kubelet/systemdUnit/systemdUnitEnable.mdx'
-import SetupSystemdUnit from '@site/docs/tech-docs/kubernetes/components/kubelet/setupSystemdUnit.mdx'
-import ConfigFiles from '@site/docs/tech-docs/kubernetes/components/kubelet/configFiles.mdx'
+import LifecycleSettingsComponent from '@site/docs/tech-docs/kubernetes/components/kubelet/lifecycleSettingsComponent.mdx'
 
 # 5.2.1.3.4. Kubelet
 
-## 5.2.1.3.4.1. Этапы установки компонента
-- Создание рабочих директорий.
-- Настройка Systemd Unit (сервис).
-- Настройка компонента через Конфигурационные файлы существуют.
-- Запуск компонента и добавление сервиса в автозапуск.
-
-## 5.2.1.3.4.2. Настройка Systemd Unit компонента
-<SetupSystemdUnit />
-
-## 5.2.1.3.4.3. Добавить в автозагрузку Systemd Unit
-<EnableSystemdUnit />
-
-## 5.2.1.3.4.4. Кастомная конфигурация компонента
-
-<details>
-  <summary>Kubelet config</summary>
-  <ConfigFiles />
-</details>
+<LifecycleSettingsComponent />

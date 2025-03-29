@@ -25,6 +25,12 @@ import ContainerdLifecycleSettingsComponent from '@site/docs/tech-docs/kubernete
 import RuncDownloadBIN from '@site/docs/tech-docs/kubernetes/components/runc/lifecycleDownloadComponent.mdx'
 import RuncCheckBIN from '@site/docs/tech-docs/kubernetes/components/runc/checkBIN.mdx'
 
+import KubeletDownloadBIN from '@site/docs/tech-docs/kubernetes/components/kubelet/lifecycleDownloadComponent.mdx'
+import KubeletCheckBIN from '@site/docs/tech-docs/kubernetes/components/kubelet/checkBIN.mdx'
+import KubeletCheckComponent from '@site/docs/tech-docs/kubernetes/components/kubelet/checkComponent.mdx'
+import KubeletLifecycleSettingsComponent from '@site/docs/tech-docs/kubernetes/components/kubelet/lifecycleSettingsComponent.mdx'
+
+
 import CrictlDownloadBIN from '@site/docs/tech-docs/kubernetes/components/crictl/downloadBIN.mdx'
 import CrictlCheckBIN from '@site/docs/tech-docs/kubernetes/components/crictl/checkBIN.mdx'
 
@@ -34,17 +40,11 @@ import KubectlCheckBIN from '@site/docs/tech-docs/kubernetes/components/kubectl/
 import KubeadmDownloadBIN from '@site/docs/tech-docs/kubernetes/components/kubeadm/downloadBIN.mdx'
 import KubeadmCheckBIN from '@site/docs/tech-docs/kubernetes/components/kubeadm/checkBIN.mdx'
 
-import KubeletDownloadBIN from '@site/docs/tech-docs/kubernetes/components/kubelet/downloadBIN.mdx'
-import KubeletCheckBIN from '@site/docs/tech-docs/kubernetes/components/kubelet/checkBIN.mdx'
 
 import EtcdDownloadBIN from '@site/docs/tech-docs/etcd/components/etcd/downloadBIN.mdx'
 import EtcdCheckBIN from '@site/docs/tech-docs/etcd/components/etcd/checkBIN.mdx'
 
 import CrictlConfigFiles from '@site/docs/tech-docs/kubernetes/components/crictl/configFiles.mdx'
-
-import KubeletEnableSystemdUnit from '@site/docs/tech-docs/kubernetes/components/kubelet/systemdUnit/systemdUnitEnable.mdx'
-import KubeletSetupSystemdUnit from '@site/docs/tech-docs/kubernetes/components/kubelet/setupSystemdUnit.mdx'
-import KubeletConfigFiles from '@site/docs/tech-docs/kubernetes/components/kubelet/configFiles.mdx'
 
 import KubeadmConfigFiles from '@site/docs/tech-docs/kubernetes/components/kubeadm/configFiles.mdx'
 import KubeadmDIR from '@site/docs/tech-docs/kubernetes/components/kubeadm/dir.mdx'
@@ -83,7 +83,7 @@ import ETCDSetup from '@site/docs/tech-docs/etcd/components/etcd/setupComponent.
 import KubeletInitSystemdUnutStartKubeadm from '@site/docs/tech-docs/kubernetes/components/kubelet/kubeadm/systemdUnitStartInit.mdx'
 import KubeletJoinSystemdUnutStartKubeadm from '@site/docs/tech-docs/kubernetes/components/kubelet/kubeadm/systemdUnitStartJoin.mdx'
 import KubeletSystemdUnutStart from '@site/docs/tech-docs/kubernetes/components/kubelet/systemdUnit/systemdUnitStart.mdx'
-import KubeletConfigFilesDefault from '@site/docs/tech-docs/kubernetes/components/kubelet/configFilesDefault.mdx'
+import KubeletConfigFilesDefault from '@site/docs/tech-docs/kubernetes/components/kubelet/payload/configFilesDefault.mdx'
 
 import KubernetesStatusReady from '@site/docs/tech-docs/kubernetes/statusCluster.mdx'
 import RbacComponent from '@site/docs/tech-docs/kubernetes/additionalSetup/rbacComponent.mdx'
@@ -697,18 +697,8 @@ import dedent from 'ts-dedent'
         Настройка kubelet
         <span className="obligatory-note-orange">● Обязателен к применению</span>
       </summary>
-      <h4> Настройка Systemd Unit компонента</h4>
-      <KubeletSetupSystemdUnit />
-
-      <h4> Старт Systemd Unit</h4>
-      <KubeletEnableSystemdUnit />
-
-      <h4> Конфигурация компонента</h4>
-      <details className="custom-gray-block">
-      <summary>Расширенная конфигурация</summary>
-      <KubeletConfigFiles />
-      </details>
-
+      <KubeletLifecycleSettingsComponent />
+      <KubeletCheckComponent/>
     </details>
 
   </TabItem>

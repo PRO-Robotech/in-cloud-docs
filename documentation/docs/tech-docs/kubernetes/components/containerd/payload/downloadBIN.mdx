@@ -1,137 +1,136 @@
-import dedent                   from 'ts-dedent'
-import CodeBlock                from '@theme/CodeBlock'
-import { CONTAINERD_DOWNLOAD_SCRIPT }     from '@site/docs/tech-docs/kubernetes/components/containerd/scripts/download-script.sh'
+import dedent from 'ts-dedent'
+import CodeBlock from '@theme/CodeBlock'
+import { CONTAINERD_DOWNLOAD_SCRIPT } from '@site/docs/tech-docs/kubernetes/components/containerd/scripts/download-script.sh'
 
-import { DOWNLOAD_VERSION }     from '@site/src/constants/kubernetes/downloads'
-import { COMPONENTS_VERSION }   from '@site/src/constants/kubernetes/componentsVersion'
+import { DOWNLOAD_VERSION } from '@site/src/constants/kubernetes/downloads'
+import { COMPONENTS_VERSION } from '@site/src/constants/kubernetes/componentsVersion'
 import TabItem from '@theme/TabItem'
 import Tabs from '@theme/Tabs'
 
-
 <Tabs groupId="install-type">
 
-    <TabItem value='Bash'>
-        <h4>Создание рабочих директорий</h4>
-        <CodeBlock language="bash">
-            {dedent`
-              mkdir -p /etc/default/containerd
-            `}
-        </CodeBlock>
+  <TabItem value='Bash'>
+      <h4>Создание рабочих директорий</h4>
+      <CodeBlock language="bash">
+        {dedent`
+          mkdir -p /etc/default/containerd
+        `}
+      </CodeBlock>
 
-        <h4>Переменные окружения</h4>
-        <CodeBlock language="bash">
-            {dedent`
-              cat <<EOF > /etc/default/containerd/download.env
-              COMPONENT_VERSION="${COMPONENTS_VERSION.containerd.value}"
-              REPOSITORY="${DOWNLOAD_VERSION.containerd.baseUrl}"
-              EOF
-            `}
-        </CodeBlock>
+      <h4>Переменные окружения</h4>
+      <CodeBlock language="bash">
+        {dedent`
+          cat <<EOF > /etc/default/containerd/download.env
+          COMPONENT_VERSION="${COMPONENTS_VERSION.containerd.value}"
+          REPOSITORY="${DOWNLOAD_VERSION.containerd.baseUrl}"
+          EOF
+        `}
+      </CodeBlock>
 
-        <h4>Инструкция загрузки</h4>
-        <CodeBlock language="bash">
-            {dedent`
-              cat <<"EOF" > /etc/default/containerd/download-script.sh
-              ${CONTAINERD_DOWNLOAD_SCRIPT.data.value}
-              EOF
-            `}
-        </CodeBlock>
+      <h4>Инструкция загрузки</h4>
+      <CodeBlock language="bash">
+        {dedent`
+          cat <<"EOF" > /etc/default/containerd/download-script.sh
+          ${CONTAINERD_DOWNLOAD_SCRIPT.data.value}
+          EOF
+        `}
+      </CodeBlock>
 
-        <h4>Настройка прав</h4>
-        <CodeBlock language="yaml">
-            {dedent`
-              chmod +x /etc/default/containerd/download-script.sh
-            `}
-        </CodeBlock>
+      <h4>Настройка прав</h4>
+      <CodeBlock language="yaml">
+        {dedent`
+          chmod +x /etc/default/containerd/download-script.sh
+        `}
+      </CodeBlock>
 
-        <h4>Сервис загрузки</h4>
-        <CodeBlock language="bash">
-            {dedent`
-              cat <<EOF > /usr/lib/systemd/system/containerd-install.service
-              [Unit]
-              Description=Install and update b-cloud component containerd
-              After=network.target
-              Wants=network-online.target
+      <h4>Сервис загрузки</h4>
+      <CodeBlock language="bash">
+        {dedent`
+          cat <<EOF > /usr/lib/systemd/system/containerd-install.service
+          [Unit]
+          Description=Install and update b-cloud component containerd
+          After=network.target
+          Wants=network-online.target
 
-              [Service]
-              Type=oneshot
-              EnvironmentFile=-/etc/default/containerd/download.env
-              ExecStart=/bin/bash -c "/etc/default/containerd/download-script.sh"
-              RemainAfterExit=yes
+          [Service]
+          Type=oneshot
+          EnvironmentFile=-/etc/default/containerd/download.env
+          ExecStart=/bin/bash -c "/etc/default/containerd/download-script.sh"
+          RemainAfterExit=yes
 
-              [Install]
-              WantedBy=multi-user.target
-              EOF
-            `}
-        </CodeBlock>
+          [Install]
+          WantedBy=multi-user.target
+          EOF
+        `}
+      </CodeBlock>
 
 
-        <h4>Запуск сервиса загрузки</h4>
-        <CodeBlock language="bash">
-            {dedent`
-              systemctl enable containerd-install.service
-              systemctl start containerd-install.service
-            `}
-        </CodeBlock>
+      <h4>Запуск сервиса загрузки</h4>
+      <CodeBlock language="bash">
+        {dedent`
+          systemctl enable containerd-install.service
+          systemctl start containerd-install.service
+        `}
+      </CodeBlock>
 
-    </TabItem>
+  </TabItem>
 
-    <TabItem value='Cloud-init'>
+  <TabItem value='Cloud-init'>
 
-        <h4>Переменные окружения</h4>
-        <CodeBlock language="yaml">
-            {dedent`
-              - path: /etc/default/containerd/download.env
-                owner: root:root
-                permissions: '0644'
-                content: |
-                  COMPONENT_VERSION="${COMPONENTS_VERSION.containerd.value}"
-                  REPOSITORY="${DOWNLOAD_VERSION.containerd.baseUrl}"
-            `}
-        </CodeBlock>
+    <h4>Переменные окружения</h4>
+    <CodeBlock language="yaml">
+      {dedent`
+        - path: /etc/default/containerd/download.env
+          owner: root:root
+          permissions: '0644'
+          content: |
+            COMPONENT_VERSION="${COMPONENTS_VERSION.containerd.value}"
+            REPOSITORY="${DOWNLOAD_VERSION.containerd.baseUrl}"
+      `}
+    </CodeBlock>
 
-        <h4>Инструкция загрузки/Настройка прав</h4>
-        <CodeBlock language="yaml">
-            {dedent`
-              - path: /etc/default/containerd/download-script.sh
-                owner: root:root
-                permissions: '0755'
-                content: |
-                  ${CONTAINERD_DOWNLOAD_SCRIPT.data.value}
-            `}
-        </CodeBlock>
+    <h4>Инструкция загрузки/Настройка прав</h4>
+    <CodeBlock language="yaml">
+      {dedent`
+        - path: /etc/default/containerd/download-script.sh
+          owner: root:root
+          permissions: '0755'
+          content: |
+            ${CONTAINERD_DOWNLOAD_SCRIPT.data.value}
+      `}
+    </CodeBlock>
 
-        <h4>Сервис загрузки</h4>
-        <CodeBlock language="yaml">
-            {dedent`
-              - path: /usr/lib/systemd/system/containerd-install.service
-                owner: root:root
-                permissions: '0644'
-                content: |
-                  [Unit]
-                  Description=Install and update b-cloud component containerd
-                  After=network.target
-                  Wants=network-online.target
+    <h4>Сервис загрузки</h4>
+    <CodeBlock language="yaml">
+      {dedent`
+        - path: /usr/lib/systemd/system/containerd-install.service
+          owner: root:root
+          permissions: '0644'
+          content: |
+            [Unit]
+            Description=Install and update b-cloud component containerd
+            After=network.target
+            Wants=network-online.target
 
-                  [Service]
-                  Type=oneshot
-                  EnvironmentFile=-/etc/default/containerd/download.env
-                  ExecStart=/bin/bash -c "/etc/default/containerd/download-script.sh"
-                  RemainAfterExit=yes
+            [Service]
+            Type=oneshot
+            EnvironmentFile=-/etc/default/containerd/download.env
+            ExecStart=/bin/bash -c "/etc/default/containerd/download-script.sh"
+            RemainAfterExit=yes
 
-                  [Install]
-                  WantedBy=multi-user.target
-            `}
-        </CodeBlock>
+            [Install]
+            WantedBy=multi-user.target
+      `}
+    </CodeBlock>
 
-        <h4>Запуск сервиса загрузки</h4>
-        <CodeBlock language="bash">
-            {dedent`
-              - systemctl enable containerd-install.service
-              - systemctl start containerd-install.service
-            `}
-        </CodeBlock>
+    <h4>Запуск сервиса загрузки</h4>
+    <CodeBlock language="bash">
+      {dedent`
+        - systemctl enable containerd-install.service
+        - systemctl start containerd-install.service
+      `}
+    </CodeBlock>
 
-    </TabItem>
+  </TabItem>
 
 </Tabs>
