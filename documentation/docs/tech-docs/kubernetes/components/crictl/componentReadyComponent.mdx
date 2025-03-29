@@ -1,0 +1,21 @@
+import StatusConfigFiles from '@site/docs/tech-docs/kubernetes/components/containerd/checks/statusConfigFiles.mdx'
+import StatusBinFiles from '@site/docs/tech-docs/kubernetes/components/containerd/checks/statusBinFiles.mdx'
+import StatusBinVersion from '@site/docs/tech-docs/kubernetes/components/containerd/checks/statusBinVersion.mdx'
+
+<h3>Этапы проверки</h3>
+
+- Исполняемые файлы существуют.
+- Конфигурационные файлы существуют.
+- Версия исполняемого файла корректна.
+
+<h3>Исполняемые файлы</h3>
+
+<StatusBinFiles />
+
+<h3>Конфигурационные файлы</h3>
+
+<StatusConfigFiles />
+
+<h3>Версия исполняемого файла</h3>
+
+<StatusBinVersion />

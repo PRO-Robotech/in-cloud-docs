@@ -34,9 +34,10 @@ import KubectlDownloadBIN from '@site/docs/tech-docs/kubernetes/components/kubec
 import KubectlCheckBIN from '@site/docs/tech-docs/kubernetes/components/kubectl/checkBIN.mdx'
 
 
-import CrictlDownloadBIN from '@site/docs/tech-docs/kubernetes/components/crictl/downloadBIN.mdx'
+import CrictlDownloadBIN from '@site/docs/tech-docs/kubernetes/components/crictl/lifecycleDownloadComponent.mdx'
 import CrictlCheckBIN from '@site/docs/tech-docs/kubernetes/components/crictl/checkBIN.mdx'
-
+import CrictlCheckComponent from '@site/docs/tech-docs/kubernetes/components/crictl/checkComponent.mdx'
+import CrictlLifecycleSettingsComponent from '@site/docs/tech-docs/kubernetes/components/crictl/lifecycleSettingsComponent.mdx'
 
 import KubeadmDownloadBIN from '@site/docs/tech-docs/kubernetes/components/kubeadm/downloadBIN.mdx'
 import KubeadmCheckBIN from '@site/docs/tech-docs/kubernetes/components/kubeadm/checkBIN.mdx'
@@ -45,7 +46,6 @@ import KubeadmCheckBIN from '@site/docs/tech-docs/kubernetes/components/kubeadm/
 import EtcdDownloadBIN from '@site/docs/tech-docs/etcd/components/etcd/downloadBIN.mdx'
 import EtcdCheckBIN from '@site/docs/tech-docs/etcd/components/etcd/checkBIN.mdx'
 
-import CrictlConfigFiles from '@site/docs/tech-docs/kubernetes/components/crictl/configFiles.mdx'
 
 import KubeadmConfigFiles from '@site/docs/tech-docs/kubernetes/components/kubeadm/configFiles.mdx'
 import KubeadmDIR from '@site/docs/tech-docs/kubernetes/components/kubeadm/dir.mdx'
@@ -711,7 +711,8 @@ import dedent from 'ts-dedent'
       <span className="obligatory-note-green">● Не обязателен к применению</span>
     </summary>
     <h4> Конфигурация компонента</h4>
-    <CrictlConfigFiles />
+      <CrictlLifecycleSettingsComponent />
+      <CrictlCheckComponent/>
   </details>
 </TabItem>
 
