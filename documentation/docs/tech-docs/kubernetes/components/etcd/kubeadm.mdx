@@ -1,25 +1,22 @@
-
 import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 
 import CodeBlock from '@theme/CodeBlock'
 import dedent from 'ts-dedent'
 
-
 <h4>Генерация манифеста</h4>
 <CodeBlock language="bash">
-    {dedent`
-        kubeadm init phase etcd local \\
-          --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml \\
-          --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/super-admin.conf
-    `}
+  {dedent`
+    kubeadm init phase etcd local \\
+      --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
+  `}
 </CodeBlock>
 
-
 :::note
+
 <CodeBlock language="bash">
-    {dedent`
-        #### Kube API
-        [etcd] Creating static Pod manifest for local etcd in "${CUSTOM_VALUE.kuberneteBaseFolderPath.value}"
-    `}
+  {dedent`
+    #### Kube API
+    [etcd] Creating static Pod manifest for local etcd in "${CUSTOM_VALUE.kuberneteBaseFolderPath.value}"
+  `}
 </CodeBlock>
 :::

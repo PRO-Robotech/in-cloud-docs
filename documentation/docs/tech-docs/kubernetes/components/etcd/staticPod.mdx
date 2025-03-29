@@ -39,7 +39,7 @@ import CodeBlock                  from '@theme/CodeBlock'
     kind: Pod
     metadata:
       annotations:
-        kubeadm.kubernetes.io/etcd.advertise-client-urls: https://$\{MACHINE_LOCAL_ADDRESS}:${CUSTOM_VALUE.kuberneteBaseFolderPath.value}
+        kubeadm.kubernetes.io/etcd.advertise-client-urls: https://$\{MACHINE_LOCAL_ADDRESS}:${PORTS.etcdServer.portNumber}
       creationTimestamp: null
       labels:
         component: etcd

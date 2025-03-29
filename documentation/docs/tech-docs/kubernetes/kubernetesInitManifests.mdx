@@ -24,8 +24,8 @@ import dedent from 'ts-dedent'
   `}
 </CodeBlock>
 
-
 :::note
+
 <CodeBlock language="bash">
   {dedent`
     [control-plane] Using manifest folder "/etc/kubernetes/manifests"
@@ -42,13 +42,12 @@ import dedent from 'ts-dedent'
 <CodeBlock language="bash">
   {dedent`
     kubeadm init phase etcd local \\
-      --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml \\
-      --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/super-admin.conf
+      --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
   `}
 </CodeBlock>
 
-
 :::note
+
 <CodeBlock language="bash">
   {dedent`
     [etcd] Creating static Pod manifest for local etcd in "/etc/kubernetes/manifests"

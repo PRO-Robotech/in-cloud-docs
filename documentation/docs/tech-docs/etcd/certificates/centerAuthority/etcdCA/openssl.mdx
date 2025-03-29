@@ -54,3 +54,29 @@ import dedent           from 'ts-dedent'
         -config ${CERTIFICATES.etcdCA.crtConf}
     `}
 </CodeBlock>
+
+
+<details className="custom-blue-block">
+  <summary>Проверка готовности сертификата</summary>
+  :::warning Обратите ВНИМАНИЕ!
+
+  Данный раздел зависит от следующих разделов:
+  - [SSL Certificate Check](/docs/tech-docs/kubernetes/certificates/examinationOpensslComponent.mdx).
+  :::
+
+  <CodeBlock language="bash">
+    {dedent`
+      ${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/openssl/cert-report.sh ${CERTIFICATES.etcdCA.crtPath}
+    `}
+  </CodeBlock>
+
+  :::note Вывод команды
+  <CodeBlock language="bash">
+    {dedent`
+      CERTIFICATE AUTHORITY   EXPIRES                  RESIDUAL TIME   EXTERNALLY MANAGED
+      etcd-ca                 Oct 20, 2034 22:04 UTC   9y              no
+    `}
+  </CodeBlock>
+  :::
+
+</details>

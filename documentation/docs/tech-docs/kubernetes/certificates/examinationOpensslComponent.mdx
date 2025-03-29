@@ -21,33 +21,31 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
     #!/usr/bin/env bash
     set -euo pipefail
 
-    # Временная директория для извлечённых сертификатов
     TMPDIR=\$(mktemp -d)
     trap 'rm -rf "\$TMPDIR"' EXIT
 
-    # Хэш-карта CN → имя CA-файла
     declare -A CN_TO_CA_NAME
+    declare -A PROCESSED_FINGERPRINTS
     CERT_ROWS=()
     CA_ROWS=()
 
-    # Заголовки таблиц
     CERT_HEADER=\$(printf "%-28s %-25s %-15s %-24s %-20s" \\
       "CERTIFICATE" "EXPIRES" "RESIDUAL TIME" "CERTIFICATE AUTHORITY" "EXTERNALLY MANAGED")
     CA_HEADER=\$(printf "%-24s %-25s %-15s %-20s" \\
       "CERTIFICATE AUTHORITY" "EXPIRES" "RESIDUAL TIME" "EXTERNALLY MANAGED")
 
-    # Путь к файлу сертификата для обработки (если указан)
     CERT_PATH="\${1:-}"
 
     if [ -n "\$CERT_PATH" ]; then
-      # Если путь к файлу передан, обрабатываем только этот файл
       FILES=("\$CERT_PATH")
     else
-      # Если путь не передан, ищем все сертификаты в /etc/kubernetes
-      mapfile -t FILES < <(find /etc/kubernetes -type f \\( -name "*.crt" -o -name "*.pem" -o -name "*.conf" \\) 2>/dev/null)
+      mapfile -t FILES < <(
+        find /etc/kubernetes/ \\
+          -type d -name openssl -prune -o \\
+          -type f \\( -name "*.crt" -o -name "*.pem" -o -name "*.conf" \\) -print 2>/dev/null
+      )
     fi
 
-    # Извлекаем embedded сертификаты из kubeconfig'ов
     extract_cert() {
       local file="\$1"
       local out="\$2"
@@ -58,7 +56,6 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
       fi
     }
 
-    # Подсчёт остатка времени действия
     cert_lifetime() {
       local end="\$1"
       local end_ts now_ts days years
@@ -70,11 +67,10 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
       (( years > 0 )) && echo "\${years}y" || echo "\${days}d"
     }
 
-    # Нормализуем имя сертификата
     cert_name() {
       local path="\$1"
       local base
-      base=\$(basename "\$path" | sed 's/\.\\(crt\\|pem\\)\$//')
+      base=\$(basename "\$path" | sed 's/\\.\\(crt\\|pem\\|conf\\)\$//')
       case "\$path" in
         */etcd/*)         echo "etcd-\$base" ;;
         */front-proxy/*)  echo "front-proxy-\$base" ;;
@@ -82,7 +78,6 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
       esac
     }
 
-    # Первый проход: собираем карту CN → имя CA
     for file in "\${FILES[@]}"; do
       crt="\$TMPDIR/ca.crt"
       extract_cert "\$file" "\$crt" || continue
@@ -91,11 +86,14 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
       [[ -n "\$cn" ]] && CN_TO_CA_NAME["\$cn"]="\$(cert_name "\$file")"
     done
 
-    # Второй проход: составляем таблицы сертификатов и CA
     for file in "\${FILES[@]}"; do
       crt="\$TMPDIR/cert.crt"
       extract_cert "\$file" "\$crt" || continue
       openssl x509 -in "\$crt" -noout >/dev/null 2>&1 || continue
+
+      fp=\$(openssl x509 -in "\$crt" -noout -fingerprint -sha256 | cut -d= -f2)
+      [[ -n "\${PROCESSED_FINGERPRINTS[\$fp]+x}" ]] && continue
+      PROCESSED_FINGERPRINTS[\$fp]=1
 
       name=\$(cert_name "\$file")
       end_raw=\$(openssl x509 -in "\$crt" -noout -enddate | cut -d= -f2)
@@ -111,7 +109,6 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
       fi
     done
 
-    # Вывод финальных таблиц
     echo
     echo "\$CERT_HEADER"
     printf "%s\\n" "\${CERT_ROWS[@]}" | sort
@@ -121,6 +118,7 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
     EOF
   `}
 </CodeBlock>
+
 </details>
 
 <h4>Настройка прав</h4>

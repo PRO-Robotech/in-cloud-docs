@@ -45,7 +45,7 @@ import KubeadmCheckComponent from '@site/docs/tech-docs/kubernetes/components/ku
 import KubeadmLifecycleSettingsComponent from '@site/docs/tech-docs/kubernetes/components/kubeadm/lifecycleSettingsComponent.mdx'
 
 
-import EtcdDownloadBIN from '@site/docs/tech-docs/etcd/components/etcd/downloadBIN.mdx'
+import EtcdDownloadBIN from '@site/docs/tech-docs/etcd/components/etcd/lifecycleDownloadComponent.mdx'
 import EtcdCheckBIN from '@site/docs/tech-docs/etcd/components/etcd/checkBIN.mdx'
 
 
@@ -745,28 +745,9 @@ import dedent from 'ts-dedent'
 
 > В данном разделе рассматриваются правила использования сертификатов в кластере Kubernetes: какие компоненты задействуют сертификаты, кем они подписываются и как осуществляется проверка подлинности.
 
-<div
-  style={{
-    display: 'inline-block',
-    position: 'relative',
-    zIndex: 0,
-  }}
->
-  <div
-    style={{
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      borderRadius: '16px',
-      boxShadow: '0 0 60px 20px rgba(255, 255, 255, 0.4)',
-      zIndex: -1,
-      pointerEvents: 'none',
-    }}
-  />
+
   <FancyboxImage src="/img/certificates/certificates-base.drawio.svg" />
-</div>
+
 
 ### 12. Создание корневых сертификатов
 
@@ -1043,17 +1024,27 @@ import dedent from 'ts-dedent'
 
 ### 18. Создание static pod-ов ETCD кластера TODO
 
-<Tabs groupId="Componenet">
+<Tabs groupId="phase">
 
-<TabItem value="ETCD">
-  <details>
-    <summary>
-      Настройка ETCD
-      <span className="obligatory-note-orange">● Обязателен к применению</span>
-    </summary>
-    <ETCDSetup />
-  </details>
-</TabItem>
+  <TabItem value="init">
+    <details>
+      <summary>
+        Настройка ETCD
+        <span className="obligatory-note-orange">● Обязателен к применению</span>
+      </summary>
+      <ETCDSetup />
+    </details>
+  </TabItem>
+
+  <TabItem value="join -TODO">
+    <details>
+      <summary>
+        Настройка ETCD
+        <span className="obligatory-note-orange">● Обязателен к применению</span>
+      </summary>
+      <ETCDSetup />
+    </details>
+  </TabItem>
 
 </Tabs>
 

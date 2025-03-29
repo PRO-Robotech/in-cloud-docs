@@ -90,7 +90,6 @@ export const KUBERNETES_KUBE_API_ARGS: TCustomValueItems = {
       bind-address: "${KUBE_API_ARGS.bindAddress.value}"
       cert-dir: "${KUBE_API_ARGS.certDir.value}"
       client-ca-file: "${KUBE_API_ARGS.clientCaFile.value}"
-      cloud-provider: "${KUBE_API_ARGS.cloudProvider.value}"
       cloud-provider-gce-l7lb-src-cidrs: "${KUBE_API_ARGS.cloudProviderGceL7lbSrcCidrs.value}"
       cloud-provider-gce-lb-src-cidrs: "${KUBE_API_ARGS.cloudProviderGceLbSrcCidrs.value}"
       contention-profiling: "${KUBE_API_ARGS.contentionProfiling.value}"
@@ -172,6 +171,10 @@ export const KUBERNETES_KUBE_API_ARGS: TCustomValueItems = {
       version: "${KUBE_API_ARGS.version.value}"
       watch-cache: "${KUBE_API_ARGS.watchCache.value}"
 
+      # ЕСЛИ НУЖНО ПОДКЛЮЧИТЬ CLOUD-CONTROLLER-MANAGER
+      # ТРЕБУЕТСЯ РАСКОМЕНТИРОВАТЬ
+      # ->
+      # cloud-provider: "${KUBE_API_ARGS.cloudProvider.value}"
       # Не указывать если значение "" или undefined
       # cloud-config: "${KUBE_API_ARGS.cloudConfig.value}"
       # strict-transport-security-directives: "${KUBE_API_ARGS.strictTransportSecurityDirectives.value}"

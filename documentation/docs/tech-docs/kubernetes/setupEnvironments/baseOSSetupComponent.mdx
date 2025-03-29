@@ -40,7 +40,7 @@ import dedent from 'ts-dedent'
     <CodeBlock language="bash">
       {dedent`
           sudo apt update
-          sudo apt install conntrack socat
+          sudo apt install -y conntrack socat jq tree
         `}
     </CodeBlock>
   </TabItem>
@@ -49,7 +49,7 @@ import dedent from 'ts-dedent'
     <CodeBlock language="bash">
       {dedent`
           sudo yum update
-          sudo yum install conntrack-tools socat
+          sudo yum install -y conntrack-tools socat jq tree
         `}
     </CodeBlock>
   </TabItem>
@@ -58,7 +58,7 @@ import dedent from 'ts-dedent'
     <CodeBlock language="bash">
       {dedent`
           sudo dnf update
-          sudo dnf install conntrack-tools socat
+          sudo dnf install -y conntrack-tools socat jq tree
         `}
     </CodeBlock>
   </TabItem>

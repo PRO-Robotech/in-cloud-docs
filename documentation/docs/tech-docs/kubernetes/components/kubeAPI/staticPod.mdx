@@ -30,8 +30,8 @@ import dedent                 from 'ts-dedent'
 <h4>Генерация манифеста</h4>
 <CodeBlock language="bash">
   {dedent`
-    ---
     cat <<EOF > ${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/manifests/kube-apiserver.yaml
+    ---
     apiVersion: v1
     kind: Pod
     metadata:
@@ -47,6 +47,7 @@ import dedent                 from 'ts-dedent'
       containers:
       - command:
         - kube-apiserver
+        - --advertise-address=$\{MACHINE_LOCAL_ADDRESS}
         - --aggregator-reject-forwarding-redirect=${KUBE_API_ARGS.aggregatorRejectForwardingRedirect.value}
         - --allow-privileged=${KUBE_API_ARGS.allowPrivileged.value}
         - --anonymous-auth=${KUBE_API_ARGS.anonymousAuth.value}
@@ -171,6 +172,11 @@ import dedent                 from 'ts-dedent'
         - --v=${KUBE_API_ARGS.v.value}
         - --version=${KUBE_API_ARGS.version.value}
         - --watch-cache=${KUBE_API_ARGS.watchCache.value}
+
+        # ЕСЛИ НУЖНО ПОДКЛЮЧИТЬ CLOUD-CONTROLLER-MANAGER
+        # ТРЕБУЕТСЯ РАСКОМЕНТИРОВАТЬ
+        # ->
+        # - --cloud-provider: "${KUBE_API_ARGS.cloudProvider.value}"
 
         # Не указывать если значение "" или undefined
         # - --cloud-config=${KUBE_API_ARGS.cloudConfig.value}
