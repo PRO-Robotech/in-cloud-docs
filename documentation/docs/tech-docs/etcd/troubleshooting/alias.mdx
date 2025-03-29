@@ -26,10 +26,11 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 :::
 
 ## 5.1.5.2.1. Поиск ID контейнера
+
 > Данный алиас поможет быстро найти ID контейнера по меткам `io.kubernetes.pod.name` и `io.kubernetes.pod.namespace`
 
 <CodeBlock language="bash">
-    {dedent`
+  {dedent`
       cidsearch() {
         crictl ps \\
           --label io.kubernetes.pod.name="$1" \\
@@ -39,13 +40,12 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
     `}
 </CodeBlock>
 
-
 ## 5.1.5.2.2. Поиск PID контейнера
 
 > Данный алиас поможет быстро найти PID контейнера по меткам `io.kubernetes.container.name` и `io.kubernetes.pod.namespace`
 
 <CodeBlock language="bash">
-    {dedent`
+  {dedent`
       cpidsearch() {
         crictl inspect \\
           $(cidsearch "$1" "$2") | jq .info.pid
@@ -58,6 +58,7 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 > Прямое подключение подходит в ситуациях, когда мы знаем на каком узле находится ETCD инстанс, и сертификаты лежат в хостовой файловой системе.
 
 ### Подключение
+
 <CodeBlock language="bash">
   {dedent`
     alias etcdctl='etcdctl \\
@@ -67,18 +68,20 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
   `}
 </CodeBlock>
 
-
 ### Список участников кластера
+
 <CodeBlock language="bash">
   {dedent`
     etcdctlMembers() {
       etcdctl member list \\
       --write-out=json | jq \\
       -r '[.members[].clientURLs[]] | join(",")'
+    }
   `}
 </CodeBlock>
 
 ### Актуальная ревизия
+
 <CodeBlock language="bash">
   {dedent`
     etcdctlRevision() {
@@ -92,6 +95,7 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 </CodeBlock>
 
 ### Подключение
+
 <CodeBlock language="bash">
   {dedent`
     alias etcdctl='etcdctl \\
@@ -102,6 +106,7 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 </CodeBlock>
 
 ### Уплотение
+
 <CodeBlock language="bash">
   {dedent`
     alias etcdctlCompaction='etcdctl \\
@@ -110,8 +115,8 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
   `}
 </CodeBlock>
 
-
 ### Дефрагментация
+
 <CodeBlock language="bash">
   {dedent`
     alias etcdctlDefrag='etcdctl \\
@@ -119,7 +124,6 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
       defrag'
   `}
 </CodeBlock>
-
 
 ## 5.1.5.2.4. Подключение через crictl
 
@@ -136,6 +140,7 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 :::
 
 ### Поиск ID контейнера
+
 <CodeBlock language="bash">
   {dedent`
     cidsearch() {
@@ -171,6 +176,7 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 </CodeBlock>
 
 ### Подключение
+
 <CodeBlock language="bash">
   {dedent`
     alias ectl='crictl exec \\
@@ -181,6 +187,7 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 </CodeBlock>
 
 ### Список участников кластера
+
 <CodeBlock language="bash">
   {dedent`
     ectlMembers() {
@@ -191,8 +198,8 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
   `}
 </CodeBlock>
 
-
 ### Актуальная ревизия
+
 <CodeBlock language="bash">
   {dedent`
     ectlRevision() {
@@ -206,6 +213,7 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 </CodeBlock>
 
 ### Уплотение
+
 <CodeBlock language="bash">
   {dedent`
     alias ectlCompaction='ectl \\
@@ -214,8 +222,8 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
   `}
 </CodeBlock>
 
-
 ### Дефрагментация
+
 <CodeBlock language="bash">
   {dedent`
     alias ectlDefrag='ectl \\
@@ -266,8 +274,8 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
   `}
 </CodeBlock>
 
-
 ### Список участников кластера
+
 <CodeBlock language="bash">
   {dedent`
     nectlMembers() {
@@ -279,6 +287,7 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 </CodeBlock>
 
 ### Актуальная ревизия
+
 <CodeBlock language="bash">
   {dedent`
     nectlMembers() {
@@ -290,6 +299,7 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 </CodeBlock>
 
 ### Подключение
+
 <CodeBlock language="bash">
   {dedent`
     alias nectl='nsenter \\
@@ -302,8 +312,8 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
   `}
 </CodeBlock>
 
-
 ### Уплотение
+
 <CodeBlock language="bash">
   {dedent`
     alias nectlCompaction='nectl \\
@@ -313,6 +323,7 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 </CodeBlock>
 
 ### Дефрагментация
+
 <CodeBlock language="bash">
   {dedent`
     alias nectlDefrag='nectl \\
@@ -363,6 +374,7 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 </CodeBlock>
 
 ### Подключение
+
 <CodeBlock language="bash">
   {dedent`
     alias kectl='kubectl exec -it \\
@@ -375,6 +387,7 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 </CodeBlock>
 
 ### Список участников кластера
+
 <CodeBlock language="bash">
   {dedent`
     kectlMembers() {
@@ -386,6 +399,7 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 </CodeBlock>
 
 ### Актуальная ревизия
+
 <CodeBlock language="bash">
   {dedent`
     kectlRevision() {
@@ -398,8 +412,8 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
   `}
 </CodeBlock>
 
-
 ### Уплотение
+
 <CodeBlock language="bash">
   {dedent`
     alias kectlCompaction='kectl \\
@@ -409,6 +423,7 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 </CodeBlock>
 
 ### Дефрагментация
+
 <CodeBlock language="bash">
   {dedent`
     alias kectlDefrag='kectl \\
@@ -418,6 +433,7 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 </CodeBlock>
 
 ### Получение пути `data-dir`
+
 <CodeBlock language="bash">
   {dedent`
     kgdatadirpath() {
@@ -426,7 +442,6 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
     }
   `}
 </CodeBlock>
-
 
 ### Загрузка файла резервной копии
 

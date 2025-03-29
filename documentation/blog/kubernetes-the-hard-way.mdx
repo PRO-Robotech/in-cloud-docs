@@ -1,5 +1,5 @@
 ---
-title: "Kubernetes The Hard Way"
+title: 'Kubernetes The Hard Way'
 date: 2025-03-23
 slug: kubernetes-the-hard-way
 authors:
@@ -10,25 +10,39 @@ authors:
     socials:
       github: FR-Solution
 tags: [Kubernetes, Hard-Way]
-
 ---
-
 
 import { PORTS } from '@site/src/constants/kubernetes/ports'
 import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 import { COMPONENTS_VERSION } from '@site/src/constants/kubernetes/componentsVersion'
 import MastersTabs from '@site/docs/tech-docs/kubernetes/setupEnvironments/allMasterTabs.mdx'
-import ContainerdDownloadBIN from '@site/docs/tech-docs/kubernetes/components/containerd/downloadBIN.mdx'
-import RuncDownloadBIN from '@site/docs/tech-docs/kubernetes/components/runc/downloadBIN.mdx'
-import CrictlDownloadBIN from '@site/docs/tech-docs/kubernetes/components/crictl/downloadBIN.mdx'
-import KubectlDownloadBIN from '@site/docs/tech-docs/kubernetes/components/kubectl/downloadBIN.mdx'
-import KubeadmDownloadBIN from '@site/docs/tech-docs/kubernetes/components/kubeadm/downloadBIN.mdx'
-import KubeletDownloadBIN from '@site/docs/tech-docs/kubernetes/components/kubelet/downloadBIN.mdx'
-import EtcdDownloadBIN from '@site/docs/tech-docs/etcd/components/etcd/downloadBIN.mdx'
 
-import ContainerdStartSystemdUnit from '@site/docs/tech-docs/kubernetes/components/containerd/startSystemdUnit.mdx'
-import ContainerdSetupSystemdUnit from '@site/docs/tech-docs/kubernetes/components/containerd/setupSystemdUnit.mdx'
-import ContainerdConfigFiles from '@site/docs/tech-docs/kubernetes/components/containerd/configFiles.mdx'
+import ContainerdDownloadBIN from '@site/docs/tech-docs/kubernetes/components/containerd/lifecycleDownloadComponent.mdx'
+import ContainerdCheckBIN from '@site/docs/tech-docs/kubernetes/components/containerd/checkBIN.mdx'
+import ContainerdCheckComponent from '@site/docs/tech-docs/kubernetes/components/containerd/checkComponent.mdx'
+import ContainerdLifecycleSettingsComponent from '@site/docs/tech-docs/kubernetes/components/containerd/lifecycleSettingsComponent.mdx'
+
+import RuncDownloadBIN from '@site/docs/tech-docs/kubernetes/components/runc/lifecycleDownloadComponent.mdx'
+import RuncCheckBIN from '@site/docs/tech-docs/kubernetes/components/runc/checkBIN.mdx'
+
+import CrictlDownloadBIN from '@site/docs/tech-docs/kubernetes/components/crictl/downloadBIN.mdx'
+import CrictlCheckBIN from '@site/docs/tech-docs/kubernetes/components/crictl/checkBIN.mdx'
+
+import KubectlDownloadBIN from '@site/docs/tech-docs/kubernetes/components/kubectl/downloadBIN.mdx'
+import KubectlCheckBIN from '@site/docs/tech-docs/kubernetes/components/kubectl/checkBIN.mdx'
+
+import KubeadmDownloadBIN from '@site/docs/tech-docs/kubernetes/components/kubeadm/downloadBIN.mdx'
+import KubeadmCheckBIN from '@site/docs/tech-docs/kubernetes/components/kubeadm/checkBIN.mdx'
+
+import KubeletDownloadBIN from '@site/docs/tech-docs/kubernetes/components/kubelet/downloadBIN.mdx'
+import KubeletCheckBIN from '@site/docs/tech-docs/kubernetes/components/kubelet/checkBIN.mdx'
+
+import EtcdDownloadBIN from '@site/docs/tech-docs/etcd/components/etcd/downloadBIN.mdx'
+import EtcdCheckBIN from '@site/docs/tech-docs/etcd/components/etcd/checkBIN.mdx'
+
+// import ContainerdStartSystemdUnit from '@site/docs/tech-docs/kubernetes/components/containerd/payload/startSystemdUnit.mdx'
+// import ContainerdSetupSystemdUnit from '@site/docs/tech-docs/kubernetes/components/containerd/payload/setupSystemdUnit.mdx'
+// import ContainerdConfigFiles      from '@site/docs/tech-docs/kubernetes/components/containerd/payload/configFiles.mdx'
 
 import CrictlConfigFiles from '@site/docs/tech-docs/kubernetes/components/crictl/configFiles.mdx'
 
@@ -36,14 +50,14 @@ import KubeletEnableSystemdUnit from '@site/docs/tech-docs/kubernetes/components
 import KubeletSetupSystemdUnit from '@site/docs/tech-docs/kubernetes/components/kubelet/setupSystemdUnit.mdx'
 import KubeletConfigFiles from '@site/docs/tech-docs/kubernetes/components/kubelet/configFiles.mdx'
 
-import KubeadmConfigFiles        from '@site/docs/tech-docs/kubernetes/components/kubeadm/configFiles.mdx'
-import KubeadmDIR                from '@site/docs/tech-docs/kubernetes/components/kubeadm/dir.mdx'
+import KubeadmConfigFiles from '@site/docs/tech-docs/kubernetes/components/kubeadm/configFiles.mdx'
+import KubeadmDIR from '@site/docs/tech-docs/kubernetes/components/kubeadm/dir.mdx'
 
 import ComponentsReady from '@site/docs/tech-docs/kubernetes/components/componentsReadyComponent.mdx'
 
 import KubernetesCA from '@site/docs/tech-docs/kubernetes/certificates/centerAuthority/kubernetesCA/main.mdx'
 import FrontProxyCA from '@site/docs/tech-docs/kubernetes/certificates/centerAuthority/frontProxyCA/main.mdx'
-import ETCDCA   from '@site/docs/tech-docs/etcd/certificates/centerAuthority/etcdCA/main.mdx'
+import ETCDCA from '@site/docs/tech-docs/etcd/certificates/centerAuthority/etcdCA/main.mdx'
 
 import KubeletServer from '@site/docs/tech-docs/kubernetes/certificates/components/kubelet/kubeletServer/main.mdx'
 import KubeAPIETCDClientMain from '@site/docs/tech-docs/kubernetes/certificates/components/kubeAPI/etcdClient/main.mdx'
@@ -84,7 +98,7 @@ import MarkingJoinComponent from '@site/docs/tech-docs/kubernetes/additionalSetu
 import BaseSetupOS from '@site/docs/tech-docs/kubernetes/setupEnvironments/baseOSSetupComponent.mdx'
 import СoreModulesComponent from '@site/docs/tech-docs/kubernetes/setupEnvironments/coreModulesComponent.mdx'
 import SysctlsComponent from '@site/docs/tech-docs/kubernetes/setupEnvironments/sysctlsComponent.mdx'
-import KubernetesDownloadCA  from '@site/docs/tech-docs/kubernetes/certificates/centerAuthority/downloadCA.mdx'
+import KubernetesDownloadCA from '@site/docs/tech-docs/kubernetes/certificates/centerAuthority/downloadCA.mdx'
 import { FancyboxImage } from '@site/src/components/commonBlocks/FancyboxImage'
 
 import TabItem from '@theme/TabItem'
@@ -93,11 +107,11 @@ import Tabs from '@theme/Tabs'
 import CodeBlock from '@theme/CodeBlock'
 import dedent from 'ts-dedent'
 
-<h3> Kubernetes The Hard Way <span style={{ color: '#1cc5ac' }}>#</span></h3>
+<h3>
+  Kubernetes The Hard Way <span style={{ color: '#1cc5ac' }}>#</span>
+</h3>
 
-<p style={{ fontStyle: 'italic', fontWeight: 600 }}>
-  Возобновляем серию статей по Kubernetes в новом формате.
-</p>
+<p style={{ fontStyle: 'italic', fontWeight: 600 }}>Возобновляем серию статей по Kubernetes в новом формате.</p>
 
 <div
   style={{
@@ -111,17 +125,18 @@ import dedent from 'ts-dedent'
   <div style={{ flex: '1 1 55%', minWidth: '280px' }}>
     <p>
       Данная статья описывает общий опыт ручного развертывания Kubernetes без
-      использования автоматизированных инструментов, таких как{' '}
+      использования автоматизированных инструментов, таких ка
       <code>kubeadm</code>. Представленный подход согласуется с нашей
       документацией, которую мы ведём согласно лучшим практикам и
       методологиям <code>IAC</code>.
     </p>
 
     <p>
-      Вся конфигурация, приведённая далее, в точности повторяет поведение{' '}
+      Вся конфигурация, приведённая далее, в точности повторяет поведени
       <code>kubeadm</code>. В результате итоговый кластер сложно отличить — собран
       ли он с помощью <code>kubeadm</code> или вручную.
     </p>
+
   </div>
 
   <div
@@ -148,22 +163,118 @@ import dedent from 'ts-dedent'
 
 {/* truncate */}
 
-
-### 1. Введение
+### Введение
 
 <p>
-  <code>Kubernetes</code> стал де-факто стандартом в управлении контейнерами. Инструменты вроде <code>kubeadm</code> значительно упрощают его развертывание, однако для глубокого понимания принципов работы важно знать, как система устроена изнутри. Без этого трудно проектировать устойчивую и предсказуемую автоматизацию.
+  <code>Kubernetes</code> стал де-факто стандартом в управлении контейнерами. Инструменты вроде <code>kubeadm</code>
+  значительно упрощают его развертывание, однако для глубокого понимания принципов работы важно знать, как система устроена
+  изнутри. Без этого трудно проектировать устойчивую и предсказуемую автоматизацию.
 </p>
 
 <p>
-  В данной статье рассматривается пошаговая ручная настройка кластера — подход <strong>«The Hard Way»</strong>. Для каждой фазы <code>kubeadm</code> будет показано, как достичь аналогичного результата без использования автоматизированных инструментов, чтобы обеспечить чёткое понимание логики его работы.
+  В данной статье рассматривается пошаговая ручная настройка кластера — подход <strong>«The Hard Way»</strong>. Для
+  каждой фазы <code>kubeadm</code> будет показано, как достичь аналогичного результата без использования
+  автоматизированных инструментов, чтобы обеспечить чёткое понимание логики его работы.
 </p>
 
+<ul>
+  <li>
+    <a>1. Почему «The Hard Way»</a>
+  </li>
+  <li>
+    <a>2. Компоненты Kubernetes</a>
+  </li>
+  <li>
+    <a>3. Архитектура развертывания</a>
+  </li>
+  <li>
+    <a href="#4-создание-инфраструктуры">4. Создание инфраструктуры</a>
+  </li>
+  <li>
+    <a href="#5-базовая-настройка-узлов">5. Базовая настройка узлов</a>
+  </li>
+  <li>
+    <a href="#6-загрузка-модулей-ядра">6. Загрузка модулей ядра</a>
+  </li>
+  <li>
+    <a href="#7-настройка-параметров-sysctl">7. Настройка параметров sysctl</a>
+  </li>
+  <li>
+    <a href="#8-установка-компонентов">8. Установка компонентов</a>
+  </li>
+  <li>
+    <a href="#9-настройка-компонентов">9. Настройка компонентов</a>
+  </li>
+  <li>
+    <a href="#10-проверка-готовности-компонентов">10. Проверка готовности компонентов</a>
+  </li>
+  <li>
+    <a href="#11-работа-с-сертификатами">11. Работа с сертификатами</a>
+  </li>
+  <li>
+    <a href="#12-создание-корневых-сертификатов">12. Создание корневых сертификатов</a>
+  </li>
+  <li>
+    <a href="#13-создание-сертификатов-приложений">13. Создание сертификатов приложений</a>
+  </li>
+  <li>
+    <a href="#14-создание-конфигураций-kubeconfig">14. Создание конфигураций kubeconfig</a>
+  </li>
+  <li>
+    <a href="#15-создание-ключа-подписи-serviceaccount">15. Создание ключа подписи ServiceAccount</a>
+  </li>
+  <li>
+    <a href="#16-проверка-блока-сертификатов">16. Проверка блока сертификатов</a>
+  </li>
+  <li>
+    <a href="#17-создание-static-pod-ов-управляющего-контура">17. Создание static pod-ов управляющего контура</a>
+  </li>
+  <li>
+    <a href="#18-создание-static-pod-ов-etcd-кластера">18. Создание static pod-ов ETCD кластера</a>
+  </li>
+  <li>
+    <a href="#19-запуск-службы-kubelet">19. Запуск службы Kubelet</a>
+  </li>
+  <li>
+    <a href="#20-проверка-состояния-кластера">20. Проверка состояния кластера</a>
+  </li>
+  <li>
+    <a href="#21-настройка-ролевой-модели">21. Настройка ролевой модели</a>
+  </li>
+  <li>
+    <a href="#22-загрузка-конфигурации-в-кластер">22. Загрузка конфигурации в кластер</a>
+  </li>
+  <li>
+    <a href="#23-загрузка-корневых-сертификатов-в-кластер">23. Загрузка корневых сертификатов в кластер</a>
+  </li>
+  <li>
+    <a href="#24-маркировка-и-ограничение-узлов">24. Маркировка и ограничение узлов</a>
+  </li>
+</ul>
 
-### 2.Почему «The Hard Way»
+<div style={{ flex: 4 }}>
+  <img
+    src="/img/commics/monkey-user/aaa-bug.png"
+    alt="Диаграмма установки компонентов Kubernetes"
+    style={{
+      position: 'absolute',
+      top: '1530px',
+      left: '1290px',
+      width: '90%',
+      maxWidth: '330px',
+      filter: 'drop-shadow(0 0 12px rgba(255, 255, 255, 0.2))',
+      transition: 'transform 0.3s ease-in-out',
+      transform: 'rotate(-5deg) scaleX(-1)',
+      zIndex: 10,
+    }}
+  />
+</div>
+
+### 1.Почему «The Hard Way»
 
 <p>
-  Развёртывание Kubernetes вручную требует дополнительных усилий. Однако данный подход обладает следующими преимуществами:
+  Развёртывание Kubernetes вручную требует дополнительных усилий. Однако данный подход обладает следующими
+  преимуществами:
 </p>
 
 <ul>
@@ -171,11 +282,11 @@ import dedent from 'ts-dedent'
   <li>позволяет гибко настраивать каждый компонент кластера в соответствии с техническими требованиями.</li>
 </ul>
 
-
-### 3. Компоненты Kubernetes
+### 2. Компоненты Kubernetes
 
 <p>
-Ниже приведён перечень компонентов, необходимых для ручного развёртывания кластера. Для обеспечения совместимости все версии синхронизированы между собой.
+  Ниже приведён перечень компонентов, необходимых для ручного развёртывания кластера. Для обеспечения совместимости все
+  версии синхронизированы между собой.
 </p>
 
 <table>
@@ -210,7 +321,9 @@ import dedent from 'ts-dedent'
     <tr>
       <td>kubeadm</td>
       <td>{COMPONENTS_VERSION.kubernetes.value}</td>
-      <td>Инструмент для автоматизации установки и конфигурации Kubernetes (используется для валидации конфигурации).</td>
+      <td>
+        Инструмент для автоматизации установки и конфигурации Kubernetes (используется для валидации конфигурации).
+      </td>
     </tr>
     <tr>
       <td>kubelet</td>
@@ -250,66 +363,12 @@ import dedent from 'ts-dedent'
   </tbody>
 </table>
 
-### 4. Архитектура развертывания
+### 3. Архитектура развертывания
 
-### 5. Шаги развертывания
-
-<p>
-Развёртывание Kubernetes вручную (подход «The Hard Way») включает следующие этапы:
-</p>
-
-<ul>
-  <li><a>1. Введение</a></li>
-  <li><a>2. Почему «The Hard Way»</a></li>
-  <li><a>3. Компоненты Kubernetes</a></li>
-  <li><a>4. Архитектура развертывания</a></li>
-  <li><a>5. Шаги развертывания</a></li>
-
-  <li><a href="#6-создание-инфраструктуры">6. Создание инфраструктуры</a></li>
-  <li><a href="#7-базовая-настройка-узлов">7. Базовая настройка узлов</a></li>
-  <li><a href="#8-загрузка-модулей-ядра">8. Загрузка модулей ядра</a></li>
-  <li><a href="#9-настройка-параметров-sysctl">9. Настройка параметров sysctl</a></li>
-  <li><a href="#10-установка-компонентов">10. Установка компонентов</a></li>
-  <li><a href="#11-настройка-компонентов">11. Настройка компонентов</a></li>
-  <li><a href="#12-проверка-готовности-компонентов">12. Проверка готовности компонентов</a></li>
-  <li><a href="#13-работа-с-сертификатами">13. Работа с сертификатами</a></li>
-  <li><a href="#14-создание-корневых-сертификатов">14. Создание корневых сертификатов</a></li>
-  <li><a href="#15-создание-сертификатов-приложений">15. Создание сертификатов приложений</a></li>
-  <li><a href="#16-создание-конфигураций-kubeconfig">16. Создание конфигураций kubeconfig</a></li>
-  <li><a href="#17-создание-ключа-подписи-serviceaccount">17. Создание ключа подписи ServiceAccount</a></li>
-  <li><a href="#18-проверка-блока-сертификатов">18. Проверка блока сертификатов</a></li>
-  <li><a href="#19-создание-static-pod-ов-управляющего-контура">19. Создание static pod-ов управляющего контура</a></li>
-  <li><a href="#20-создание-static-pod-ов-etcd-кластера">20. Создание static pod-ов ETCD кластера</a></li>
-  <li><a href="#20-запуск-службы-kubelet">19. Запуск службы Kubelet</a></li>
-  <li><a href="#20-проверка-состояния-кластера">20. Проверка состояния кластера</a></li>
-  <li><a href="#21-настройка-ролевой-модели">21. Настройка ролевой модели</a></li>
-  <li><a href="#22-загрузка-конфигурации-в-кластер">22. Загрузка конфигурации в кластер</a></li>
-  <li><a href="#23-загрузка-корневых-сертификатов-в-кластер">23. Загрузка корневых сертификатов в кластер</a></li>
-  <li><a href="#24-маркировка-и-ограничение-узлов">24. Маркировка и ограничение узлов</a></li>
-</ul>
-
-  <div style={{ flex: 4 }}>
-    <img
-      src="/img/commics/monkey-user/aaa-bug.png"
-      alt="Диаграмма установки компонентов Kubernetes"
-      style={{
-        position: 'absolute',
-        top: '3110px',
-        left: '1520px',
-        width: '90%',
-        maxWidth: '330px',
-        filter: 'drop-shadow(0 0 12px rgba(255, 255, 255, 0.2))',
-        transition: 'transform 0.3s ease-in-out',
-        transform: 'rotate(-5deg) scaleX(-1)',
-        zIndex: 10,
-      }}
-    />
-  </div>
-
-### 6. Создание инфраструктуры
+### 4. Создание инфраструктуры
 
 <p>
-На этом этапе задаётся базовая архитектура кластера, включая его сетевую схему, управляющие узлы и основные параметры.
+  На этом этапе задаётся базовая архитектура кластера, включая его сетевую схему, управляющие узлы и основные параметры.
 </p>
 
 <h4> Сведения о кластере</h4>
@@ -344,19 +403,25 @@ import dedent from 'ts-dedent'
   </thead>
   <tbody>
     <tr>
-      <td>master-1.{CUSTOM_VALUE.clusterName.value}.{CUSTOM_VALUE.kubernetesBaseDomain.value}</td>
+      <td>
+        master-1.{CUSTOM_VALUE.clusterName.value}.{CUSTOM_VALUE.kubernetesBaseDomain.value}
+      </td>
       <td>10.0.0.16</td>
       <td>ubuntu-24-04-lts</td>
       <td>2CPU / 2RAM / 20GB</td>
     </tr>
     <tr>
-      <td>master-2.{CUSTOM_VALUE.clusterName.value}.{CUSTOM_VALUE.kubernetesBaseDomain.value}</td>
+      <td>
+        master-2.{CUSTOM_VALUE.clusterName.value}.{CUSTOM_VALUE.kubernetesBaseDomain.value}
+      </td>
       <td>10.0.0.22</td>
       <td>ubuntu-24-04-lts</td>
       <td>2CPU / 2RAM / 20GB</td>
     </tr>
     <tr>
-      <td>master-3.{CUSTOM_VALUE.clusterName.value}.{CUSTOM_VALUE.kubernetesBaseDomain.value}</td>
+      <td>
+        master-3.{CUSTOM_VALUE.clusterName.value}.{CUSTOM_VALUE.kubernetesBaseDomain.value}
+      </td>
       <td>10.0.0.14</td>
       <td>ubuntu-24-04-lts</td>
       <td>2CPU / 2RAM / 20GB</td>
@@ -379,9 +444,10 @@ import dedent from 'ts-dedent'
     <tr>
       <td>10.0.0.6</td>
       <td>
-        - 10.0.0.16<br/>
-        - 10.0.0.22<br/>
-        - 10.0.0.14
+        - 10.0.0.16
+        <br />
+        - 10.0.0.22
+        <br />- 10.0.0.14
       </td>
       <td>6443</td>
       <td>6443</td>
@@ -401,22 +467,30 @@ import dedent from 'ts-dedent'
   </thead>
   <tbody>
     <tr>
-      <td>api.{CUSTOM_VALUE.clusterName.value}.{CUSTOM_VALUE.kubernetesBaseDomain.value}</td>
+      <td>
+        api.{CUSTOM_VALUE.clusterName.value}.{CUSTOM_VALUE.kubernetesBaseDomain.value}
+      </td>
       <td>10.0.0.6</td>
       <td>60s</td>
     </tr>
     <tr>
-      <td>master-1.{CUSTOM_VALUE.clusterName.value}.{CUSTOM_VALUE.kubernetesBaseDomain.value}</td>
+      <td>
+        master-1.{CUSTOM_VALUE.clusterName.value}.{CUSTOM_VALUE.kubernetesBaseDomain.value}
+      </td>
       <td>10.0.0.16</td>
       <td>60s</td>
     </tr>
     <tr>
-      <td>master-2.{CUSTOM_VALUE.clusterName.value}.{CUSTOM_VALUE.kubernetesBaseDomain.value}</td>
+      <td>
+        master-2.{CUSTOM_VALUE.clusterName.value}.{CUSTOM_VALUE.kubernetesBaseDomain.value}
+      </td>
       <td>10.0.0.22</td>
       <td>60s</td>
     </tr>
     <tr>
-      <td>master-3.{CUSTOM_VALUE.clusterName.value}.{CUSTOM_VALUE.kubernetesBaseDomain.value}</td>
+      <td>
+        master-3.{CUSTOM_VALUE.clusterName.value}.{CUSTOM_VALUE.kubernetesBaseDomain.value}
+      </td>
       <td>10.0.0.14</td>
       <td>60s</td>
     </tr>
@@ -482,17 +556,18 @@ import dedent from 'ts-dedent'
   </tbody>
 </table>
 
-### 7. Базовая настройка узлов
+### 5. Базовая настройка узлов
+
 <details>
   <summary>
     Базовая настройка узлов
     <span className="obligatory-note-orange">● Обязателен к применению</span>
   </summary>
-  <BaseSetupOS/>
+  <BaseSetupOS />
 </details>
 
+### 6. Загрузка модулей ядра
 
-### 8. Загрузка модулей ядра
 > На этом этапе мы загружаем необходимые модули ядра для работы Kubernetes. Эти модули обеспечивают правильную работу контейнеров и сетевых функций в кластере.
 
 <details>
@@ -502,9 +577,10 @@ import dedent from 'ts-dedent'
 </summary>
 
 <СoreModulesComponent/>
+
 </details>
 
-### 9. Настройка параметров sysctl
+### 7. Настройка параметров sysctl
 
 > Для корректной работы Kubernetes и правильной маршрутизации трафика необходимо настроить параметры ядра операционной системы с помощью sysctl.
 
@@ -513,87 +589,96 @@ import dedent from 'ts-dedent'
     Настройка параметров sysctl
     <span className="obligatory-note-orange">● Обязателен к применению</span>
   </summary>
-  <SysctlsComponent/>
+  <SysctlsComponent />
 </details>
 
-### 10. Установка компонентов
+### 8. Установка компонентов
+
 > В этой части документации описан процесс установки ключевых компонентов, необходимых для функционирования Kubernetes кластера.
 
 <Tabs groupId="component">
 
-  <TabItem value='runc'>
-    <details>
-      <summary>
-        Установка runc
-        <span className="obligatory-note-orange">● Обязателен к применению</span>
-      </summary>
-      <RuncDownloadBIN/>
-    </details>
-  </TabItem>
+<TabItem value="runc">
+  <details>
+    <summary>
+      Установка runc
+      <span className="obligatory-note-orange">● Обязателен к применению</span>
+    </summary>
+    <RuncDownloadBIN />
+    <RuncCheckBIN />
+  </details>
+</TabItem>
 
-  <TabItem value='containerd'>
-    <details>
-      <summary>
-        Установка containerd
-        <span className="obligatory-note-orange">● Обязателен к применению</span>
-      </summary>
-      <ContainerdDownloadBIN/>
-    </details>
-  </TabItem>
+<TabItem value="containerd">
+  <details>
+    <summary>
+      Установка containerd
+      <span className="obligatory-note-orange">● Обязателен к применению</span>
+    </summary>
+    <ContainerdDownloadBIN />
+    <ContainerdCheckBIN />
+  </details>
+</TabItem>
 
-  <TabItem value='kubelet'>
-    <details>
-      <summary>
-        Установка kubelet
-        <span className="obligatory-note-orange">● Обязателен к применению</span>
-      </summary>
-      <KubeletDownloadBIN/>
-    </details>
-  </TabItem>
+<TabItem value="kubelet">
+  <details>
+    <summary>
+      Установка kubelet
+      <span className="obligatory-note-orange">● Обязателен к применению</span>
+    </summary>
+    <KubeletDownloadBIN />
+    <KubeletCheckBIN />
+  </details>
+</TabItem>
 
-  <TabItem value='kubectl'>
-    <details>
-      <summary>
-        Установка kubectl
-        <span className="obligatory-note-green">● Не обязателен к применению</span>
-      </summary>
-      <KubectlDownloadBIN/>
-    </details>
-  </TabItem>
+<TabItem value="kubectl">
+  <details>
+    <summary>
+      Установка kubectl
+      <span className="obligatory-note-green">● Не обязателен к применению</span>
+    </summary>
+    <KubectlDownloadBIN />
+    <KubectlCheckBIN />
+  </details>
+</TabItem>
 
-  <TabItem value='etcd'>
-    <details>
-      <summary>
-        Установка etcd
-        <span className="obligatory-note-green">● Не обязателен к применению</span>
-      </summary>
-      <EtcdDownloadBIN/>
-    </details>
-  </TabItem>
+<TabItem value="etcd">
+  <details>
+    <summary>
+      Установка etcd
+      <span className="obligatory-note-green">● Не обязателен к применению</span>
+    </summary>
+    <EtcdDownloadBIN />
+    <EtcdCheckBIN />
+  </details>
+</TabItem>
 
-  <TabItem value='crictl'>
-    <details>
-      <summary>
-        Установка crictl
-        <span className="obligatory-note-green">● Не обязателен к применению</span>
-      </summary>
-      <CrictlDownloadBIN/>
-    </details>
-  </TabItem>
+<TabItem value="crictl">
+  <details>
+    <summary>
+      Установка crictl
+      <span className="obligatory-note-green">● Не обязателен к применению</span>
+    </summary>
+    <CrictlDownloadBIN />
+    <CrictlCheckBIN />
+  </details>
+</TabItem>
 
-  <TabItem value='kubeadm'>
-    <details>
-      <summary>
-        Установка kubeadm
-        <span className="obligatory-note-green">● Не обязателен к применению</span>
-      </summary>
-      <KubeadmDownloadBIN/>
-    </details>
-  </TabItem>
+<TabItem value="kubeadm">
+  <details>
+    <summary>
+      Установка kubeadm
+      <span className="obligatory-note-green">● Не обязателен к применению</span>
+    </summary>
+    <KubeadmDownloadBIN />
+    <KubeadmCheckBIN />
+  </details>
+</TabItem>
 
 </Tabs>
 
-### 11. Настройка компонентов
+### 9. Настройка компонентов
+
 > В этой части документации описан процесс настройка и конфигурация компонентов Kubernetes, которые обеспечивают корректную работу кластера.
 
 <Tabs groupId="component">
@@ -604,15 +689,10 @@ import dedent from 'ts-dedent'
         Настройка containerd
         <span className="obligatory-note-orange">● Обязателен к применению</span>
       </summary>
-      <h4> Конфигурация компонента</h4>
-      <ContainerdConfigFiles />
-
-      <h4> Настройка Systemd Unit компонента</h4>
-      <ContainerdSetupSystemdUnit />
-
-      <h4> Старт Systemd Unit</h4>
-      <ContainerdStartSystemdUnit />
+      <ContainerdLifecycleSettingsComponent />
+      <ContainerdCheckComponent/>
     </details>
+
   </TabItem>
 
   <TabItem value='kubelet'>
@@ -634,52 +714,76 @@ import dedent from 'ts-dedent'
       </details>
 
     </details>
+
   </TabItem>
 
-  <TabItem value='crictl'>
-    <details>
-      <summary>
-        Настройка crictl
-        <span className="obligatory-note-green">● Не обязателен к применению</span>
-      </summary>
-      <h4> Конфигурация компонента</h4>
-      <CrictlConfigFiles />
-    </details>
-  </TabItem>
+<TabItem value="crictl">
+  <details>
+    <summary>
+      Настройка crictl
+      <span className="obligatory-note-green">● Не обязателен к применению</span>
+    </summary>
+    <h4> Конфигурация компонента</h4>
+    <CrictlConfigFiles />
+  </details>
+</TabItem>
 
-  <TabItem value='kubeadm'>
-    <details>
-      <summary>
-        Настройка kubeadm
-        <span className="obligatory-note-green">● Не обязателен к применению</span>
-      </summary>
-      <h4> Рабочие директории компонента</h4>
-      <KubeadmDIR/>
-      <KubeadmConfigFiles/>
-    </details>
-  </TabItem>
+<TabItem value="kubeadm">
+  <details>
+    <summary>
+      Настройка kubeadm
+      <span className="obligatory-note-green">● Не обязателен к применению</span>
+    </summary>
+    <h4> Рабочие директории компонента</h4>
+    <KubeadmDIR />
+    <KubeadmConfigFiles />
+  </details>
+</TabItem>
 
 </Tabs>
 
-### 12. Проверка готовности компонентов
-> Этот этап включает в себя проверку состояния компонентов Kubernetes перед инициализацией кластера или присоединением новых узлов.
+### 10. Проверка готовности компонентов
+
+> В этой части документации описан процесс проверки состояния компонентов Kubernetes перед инициализацией кластера или присоединением новых узлов.
 
 <details>
   <summary>
     Проверка готовности компонентов
     <span className="obligatory-note-green">● Не обязателен к применению</span>
   </summary>
-  <ComponentsReady/>
+  <ComponentsReady />
 </details>
 
-### 13. Работа с сертификатами
+### 11. Работа с сертификатами
+
 > В данном разделе рассматриваются правила использования сертификатов в кластере Kubernetes: какие компоненты задействуют сертификаты, кем они подписываются и как осуществляется проверка подлинности.
 
-<FancyboxImage src="/img/certificates/certificates-base.drawio.svg" />
+<div
+  style={{
+    display: 'inline-block',
+    position: 'relative',
+    zIndex: 0,
+  }}
+>
+  <div
+    style={{
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      borderRadius: '16px',
+      boxShadow: '0 0 60px 20px rgba(255, 255, 255, 0.4)',
+      zIndex: -1,
+      pointerEvents: 'none',
+    }}
+  />
+  <FancyboxImage src="/img/certificates/certificates-base.drawio.svg" />
+</div>
 
-### 14. Создание корневых сертификатов
+### 12. Создание корневых сертификатов
+
 > В этом разделе описывается процесс генерации корневых (root) сертификатов, которые используются для подписи остальных сертификатов в кластере Kubernetes.
-
 
 <Tabs groupId="phase">
 
@@ -714,167 +818,172 @@ import dedent from 'ts-dedent'
 
     </Tabs>
     </details>
+
   </TabItem>
 
-  <TabItem value='join'>
-    <details open>
-      <summary>Выгрузка ЦА</summary>
-      <KubernetesDownloadCA/>
-    </details>
-  </TabItem>
+<TabItem value="join">
+  <details>
+    <summary>
+      Выгрузка ЦА
+      <span className="obligatory-note-orange">● Обязателен к применению</span>
+    </summary>
+    <KubernetesDownloadCA />
+  </details>
+</TabItem>
 
 </Tabs>
 
-### 15. Создание сертификатов приложений
+### 13. Создание сертификатов приложений
+
 > В этом разделе создаются и подписываются сертификаты, необходимые для различных компонентов Kubernetes, обеспечивая защищённую коммуникацию между ними.
 
-
 <Tabs groupId="Certs-APPS">
 
-<TabItem value='Kubelet Server'>
-    <details>
-      <summary>
-        Kubelet server
-        <span className="obligatory-note-orange">● Обязателен к применению</span>
-      </summary>
-      <KubeletServer />
-    </details>
-  </TabItem>
+<TabItem value="Kubelet Server">
+  <details>
+    <summary>
+      Kubelet server
+      <span className="obligatory-note-orange">● Обязателен к применению</span>
+    </summary>
+    <KubeletServer />
+  </details>
+</TabItem>
 
-  <TabItem value='API -> Etcd'>
-    <details>
-      <summary>
-        K8S-API client > Etcd server
-        <span className="obligatory-note-orange">● Обязателен к применению</span>
-      </summary>
-      <KubeAPIETCDClientMain />
-    </details>
-  </TabItem>
+<TabItem value="API -> Etcd">
+  <details>
+    <summary>
+      K8S-API client > Etcd server
+      <span className="obligatory-note-orange">● Обязателен к применению</span>
+    </summary>
+    <KubeAPIETCDClientMain />
+  </details>
+</TabItem>
 
-  <TabItem value='API -> Kubelet'>
-    <details>
-      <summary>
-        K8S-API client > Kubelet server
-        <span className="obligatory-note-orange">● Обязателен к применению</span>
-      </summary>
-      <KubeletClientMain />
-    </details>
-  </TabItem>
+<TabItem value="API -> Kubelet">
+  <details>
+    <summary>
+      K8S-API client > Kubelet server
+      <span className="obligatory-note-orange">● Обязателен к применению</span>
+    </summary>
+    <KubeletClientMain />
+  </details>
+</TabItem>
 
-  <TabItem value='API Server'>
-    <details>
-      <summary>
-        K8S-API server
-        <span className="obligatory-note-orange">● Обязателен к применению</span>
-      </summary>
-      <KubeAPIServerMain />
-    </details>
-  </TabItem>
+<TabItem value="API Server">
+  <details>
+    <summary>
+      K8S-API server
+      <span className="obligatory-note-orange">● Обязателен к применению</span>
+    </summary>
+    <KubeAPIServerMain />
+  </details>
+</TabItem>
 
-  <TabItem value='Proxy -> API'>
-    <details>
-      <summary>
-        FrontProxy client > K8S-API
-        <span className="obligatory-note-orange">● Обязателен к применению</span>
-      </summary>
-      <FrontProxyClientMain />
-    </details>
-  </TabItem>
+<TabItem value="Proxy -> API">
+  <details>
+    <summary>
+      FrontProxy client > K8S-API
+      <span className="obligatory-note-orange">● Обязателен к применению</span>
+    </summary>
+    <FrontProxyClientMain />
+  </details>
+</TabItem>
 
-  <TabItem value='Etcd Client'>
-    <details>
-      <summary>
-        Etcd client > Etcd
-        <span className="obligatory-note-orange">● Обязателен к применению</span>
-      </summary>
-      <ETCDClientETCDMain />
-    </details>
-  </TabItem>
+<TabItem value="Etcd Client">
+  <details>
+    <summary>
+      Etcd client > Etcd
+      <span className="obligatory-note-orange">● Обязателен к применению</span>
+    </summary>
+    <ETCDClientETCDMain />
+  </details>
+</TabItem>
 
-  <TabItem value='Etcd Server'>
-    <details>
-      <summary>
-        Etcd server
-        <span className="obligatory-note-orange">● Обязателен к применению</span>
-      </summary>
-      <ETCDServerMain />
-    </details>
-  </TabItem>
+<TabItem value="Etcd Server">
+  <details>
+    <summary>
+      Etcd server
+      <span className="obligatory-note-orange">● Обязателен к применению</span>
+    </summary>
+    <ETCDServerMain />
+  </details>
+</TabItem>
 
-  <TabItem value='Etcd Peer'>
-    <details>
-      <summary>
-        Etcd peer > Etcd
-        <span className="obligatory-note-orange">● Обязателен к применению</span>
-      </summary>
-      <ETCDPeerMain />
-    </details>
-  </TabItem>
+<TabItem value="Etcd Peer">
+  <details>
+    <summary>
+      Etcd peer > Etcd
+      <span className="obligatory-note-orange">● Обязателен к применению</span>
+    </summary>
+    <ETCDPeerMain />
+  </details>
+</TabItem>
 
 </Tabs>
 
-### 16. Создание конфигураций kubeconfig
+### 14. Создание конфигураций kubeconfig
+
 > Этот раздел посвящён созданию `kubeconfig`-файлов для различных компонентов и пользователей, обеспечивая безопасное подключение к API-серверу Kubernetes.
 
-
 <Tabs groupId="Certs-APPS">
 
-  <TabItem value='Super Admin'>
-    <details>
-      <summary>
-        Super Admin
-        <span className="obligatory-note-orange">● Обязателен к применению</span>
-      </summary>
-      <SuperAdminClientMain />
-    </details>
-  </TabItem>
+<TabItem value="Super Admin">
+  <details>
+    <summary>
+      Super Admin
+      <span className="obligatory-note-orange">● Обязателен к применению</span>
+    </summary>
+    <SuperAdminClientMain />
+  </details>
+</TabItem>
 
-  <TabItem value='Admin'>
-    <details>
-      <summary>
-        Admin
-        <span className="obligatory-note-orange">● Обязателен к применению</span>
-      </summary>
-      <AdminClientMain />
-    </details>
-  </TabItem>
+<TabItem value="Admin">
+  <details>
+    <summary>
+      Admin
+      <span className="obligatory-note-orange">● Обязателен к применению</span>
+    </summary>
+    <AdminClientMain />
+  </details>
+</TabItem>
 
-  <TabItem value='Controller'>
-    <details>
-      <summary>
-        Kube Controller Manager
-        <span className="obligatory-note-orange">● Обязателен к применению</span>
-      </summary>
-      <KubeControllerKubeAPIClient />
-    </details>
-  </TabItem>
+<TabItem value="Controller">
+  <details>
+    <summary>
+      Kube Controller Manager
+      <span className="obligatory-note-orange">● Обязателен к применению</span>
+    </summary>
+    <KubeControllerKubeAPIClient />
+  </details>
+</TabItem>
 
-  <TabItem value='Scheduler'>
-    <details>
-      <summary>
-        Kube Scheduler
-        <span className="obligatory-note-orange">● Обязателен к применению</span>
-      </summary>
-      <KubeSchedulerCerts />
-    </details>
-  </TabItem>
+<TabItem value="Scheduler">
+  <details>
+    <summary>
+      Kube Scheduler
+      <span className="obligatory-note-orange">● Обязателен к применению</span>
+    </summary>
+    <KubeSchedulerCerts />
+  </details>
+</TabItem>
 
-  <TabItem value='Kubelet'>
-    <details>
-      <summary>
-        Kubelet client
-        <span className="obligatory-note-green">● Не обязателен к применению</span>
-      </summary>
-      :::warning
+<TabItem value="Kubelet">
+  <details>
+    <summary>
+      Kubelet client
+      <span className="obligatory-note-green">● Не обязателен к применению</span>
+    </summary>
+    :::warning Обратите внимание!
       Можно подписать через `kubectl certificate approve`
-      :::
-      <KubeAPIClient />
-    </details>
-  </TabItem>
+    :::
+    <KubeAPIClient />
+  </details>
+</TabItem>
 
 </Tabs>
 
-### 17. Создание ключа подписи ServiceAccount
+### 15. Создание ключа подписи ServiceAccount
+
 > В данном разделе создаётся ключ, с помощью которого Kubernetes будет подписывать токены `ServiceAccount`. Эти токены используются для аутентификации приложений внутри кластера при обращении к API-серверу.
 
 <details>
@@ -882,10 +991,11 @@ import dedent from 'ts-dedent'
     Создание ключа подписи ServiceAccount
     <span className="obligatory-note-orange">● Обязателен к применению</span>
   </summary>
-<ServiceAccount/>
+  <ServiceAccount />
 </details>
 
-### 18. Проверка блока сертификатов
+### 16. Проверка блока сертификатов
+
 > Этот раздел посвящён проверке корректности созданных сертификатов и ключей, а также соответствию между ними. Это важно для устранения ошибок до запуска компонентов Kubernetes.
 
 <details>
@@ -895,78 +1005,79 @@ import dedent from 'ts-dedent'
   </summary>
 <Tabs groupId="install-type">
 
-  <TabItem value='HardWay'>
-    <OpensslExamination/>
-  </TabItem>
+<TabItem value="HardWay">
+  <OpensslExamination />
+</TabItem>
 
-  <TabItem value='Kubeadm'>
-    <KubeadmExamination/>
-  </TabItem>
+<TabItem value="Kubeadm">
+  <KubeadmExamination />
+</TabItem>
 
 </Tabs>
 </details>
 
-### 19. Создание static pod-ов управляющего контура
+### 17. Создание static pod-ов управляющего контура
+
 > В данном разделе описывается ручное создание static pod-манифестов для компонентов управляющего контура Kubernetes.
 
 <Tabs groupId="Componenet">
 
-  <TabItem value='Kube-API'>
-    <details>
+<TabItem value="Kube-API">
+  <details>
     <summary>
       Настройка Kube-API
       <span className="obligatory-note-orange">● Обязателен к применению</span>
     </summary>
-    <KubeApiSetup/>
-    </details>
-  </TabItem>
+    <KubeApiSetup />
+  </details>
+</TabItem>
 
-  <TabItem value='Kube Controller Manager'>
-    <details>
+<TabItem value="Kube Controller Manager">
+  <details>
     <summary>
       Настройка Kube Controller Manager
       <span className="obligatory-note-orange">● Обязателен к применению</span>
     </summary>
-    <KubeControllerManagerSetup/>
-    </details>
-  </TabItem>
+    <KubeControllerManagerSetup />
+  </details>
+</TabItem>
 
-  <TabItem value='Kube Scheduler'>
-    <details>
+<TabItem value="Kube Scheduler">
+  <details>
     <summary>
       Настройка Kube Scheduler
       <span className="obligatory-note-orange">● Обязателен к применению</span>
     </summary>
-    <KubeSchedulerSetup/>
-    </details>
-  </TabItem>
+    <KubeSchedulerSetup />
+  </details>
+</TabItem>
 
 </Tabs>
 
-### 20. Создание static pod-ов ETCD кластера TODO
+### 18. Создание static pod-ов ETCD кластера TODO
 
 <Tabs groupId="Componenet">
 
-  <TabItem value='ETCD'>
-    <details>
+<TabItem value="ETCD">
+  <details>
     <summary>
       Настройка ETCD
       <span className="obligatory-note-orange">● Обязателен к применению</span>
     </summary>
-    <ETCDSetup/>
-    </details>
-  </TabItem>
+    <ETCDSetup />
+  </details>
+</TabItem>
 
 </Tabs>
 
-
 ### 19. Запуск службы Kubelet
+
 <Tabs groupId="phase">
 
   <TabItem value='init'>
     <details>
       <summary>
-        Запуск/Настройка kubele
+        Запуск/Настройка kubelet
         <span className="obligatory-note-orange">● Обязателен к применению</span>
       </summary>
       <Tabs groupId="install-type">
@@ -987,12 +1098,13 @@ import dedent from 'ts-dedent'
 
       </Tabs>
     </details>
+
   </TabItem>
 
   <TabItem value='join'>
     <details>
       <summary>
-        Запуск/Настройка kubele
+        Запуск/Настройка kubelet
         <span className="obligatory-note-orange">● Обязателен к применению</span>
       </summary>
       <Tabs groupId="install-type">
@@ -1012,68 +1124,73 @@ import dedent from 'ts-dedent'
 
       </Tabs>
     </details>
+
   </TabItem>
 
 </Tabs>
 
 ### 20. Проверка состояния кластера
+
 <details open>
-<summary>Проверка состояния кластера</summary>
-<KubernetesStatusReady/>
+  <summary>Проверка состояния кластера</summary>
+  <KubernetesStatusReady />
 </details>
 
 ### 21. Настройка ролевой модели
+
 <Tabs groupId="phase">
 
-  <TabItem value='init'>
-    <details open>
+<TabItem value="init">
+  <details open>
     <summary>Настройка ролевой модели Kubeadm</summary>
-    <RbacComponent/>
-    </details>
-  </TabItem>
+    <RbacComponent />
+  </details>
+</TabItem>
 
 </Tabs>
 
 ### 22. Загрузка конфигурации в кластер
+
 <Tabs groupId="phase">
 
-  <TabItem value='init'>
-    <details open>
+<TabItem value="init">
+  <details open>
     <summary>Настройка ролевой модели Kubeadm</summary>
-    <UploadConfigsInit/>
-    </details>
-  </TabItem>
+    <UploadConfigsInit />
+  </details>
+</TabItem>
 
 </Tabs>
-
 
 ### 23. Загрузка корневых сертификатов в кластер
+
 <Tabs groupId="phase">
 
-  <TabItem value='init'>
-    <details open>
+<TabItem value="init">
+  <details open>
     <summary>Загрузка корневых сертификатов в Kubernetes</summary>
-    <UploadCAInit/>
-    </details>
-  </TabItem>
+    <UploadCAInit />
+  </details>
+</TabItem>
 
 </Tabs>
 
-### 24. Маркировка и ограничение узлов
+### 24 Маркировка и ограничение узлов
+
 <Tabs groupId="phase">
 
-  <TabItem value='init'>
-    <details open>
+<TabItem value="init">
+  <details open>
     <summary>Маркировка и ограничение узла</summary>
-    <MarkingInitComponent/>
-    </details>
-  </TabItem>
+    <MarkingInitComponent />
+  </details>
+</TabItem>
 
-  <TabItem value='join'>
-    <details open>
+<TabItem value="join">
+  <details open>
     <summary>Маркировка и ограничение узла</summary>
-    <MarkingJoinComponent/>
-    </details>
-  </TabItem>
+    <MarkingJoinComponent />
+  </details>
+</TabItem>
 
 </Tabs>

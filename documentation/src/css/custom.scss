@@ -28,6 +28,19 @@
   cursor: pointer;
 }
 
+.custom-blue-block {
+  background-color: #544c9292; /* светло-голубой */
+  border-radius: 6px;
+  padding: 10px;
+  margin-top: 10px;
+}
+
+.custom-blue-block summary {
+  color: #ffffff;
+  font-weight: bold;
+  cursor: pointer;
+}
+
 /* В styles.module.css */
 .headerContainer {
   display: flex;

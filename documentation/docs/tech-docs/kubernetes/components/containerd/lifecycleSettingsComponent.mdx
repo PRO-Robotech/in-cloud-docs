@@ -1,0 +1,28 @@
+import StartSystemdUnit from '@site/docs/tech-docs/kubernetes/components/containerd/payload/startSystemdUnit.mdx'
+import SetupSystemdUnit from '@site/docs/tech-docs/kubernetes/components/containerd/payload/setupSystemdUnit.mdx'
+import ConfigFiles from '@site/docs/tech-docs/kubernetes/components/containerd/payload/configFiles.mdx'
+
+<h3>Этапы настройки компонента</h3>
+
+- Конфигурация компонента
+- Настройка Systemd Unit компонента
+- Старт Systemd Unit
+
+:::warning Обратите внимание!
+Данный раздел зависит от следующих документов:
+
+- [Containerd Install](../containerd/lifecycleDownload.mdx).
+- [Runc Install](../runc/lifecycle.mdx).
+  :::
+
+<h3>Конфигурация компонента</h3>
+
+<ConfigFiles />
+
+<h3>Настройка Systemd Unit компонента</h3>
+
+<SetupSystemdUnit />
+
+<h3>Старт Systemd Unit</h3>
+
+<StartSystemdUnit />

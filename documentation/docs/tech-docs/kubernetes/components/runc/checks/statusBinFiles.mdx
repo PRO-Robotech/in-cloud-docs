@@ -4,7 +4,7 @@ import { COMPONENTS_VERSION } from '@site/src/constants/kubernetes/componentsVer
 
 <CodeBlock language="bash">
   {dedent`
-    journalctl -t crictl-installer
+    journalctl -t runc-installer
   `}
 </CodeBlock>
 
@@ -12,31 +12,31 @@ import { COMPONENTS_VERSION } from '@site/src/constants/kubernetes/componentsVer
 
 <CodeBlock language="text">
   {dedent`
-    ***** [INFO] Checking current crictl version...
-    ***** [INFO] Current: none, Target: ${COMPONENTS_VERSION.crictl.value}
+    ***** [INFO] Checking current runc version...
+    ***** [INFO] Current: none, Target: ${COMPONENTS_VERSION.runc.value}
     ***** [INFO] Download URL: https://*******
-    ***** [INFO] Updating crictl to version ${COMPONENTS_VERSION.crictl.value}...
+    ***** [INFO] Updating runc to version ${COMPONENTS_VERSION.runc.value}...
     ***** [INFO] Working directory: /tmp/tmp.*****
-    ***** [INFO] Downloading crictl...
+    ***** [INFO] Downloading runc...
     ***** [INFO] Downloading checksum file...
     ***** [INFO] Verifying checksum...
-    ***** [INFO] Installing crictl...
-    ***** [INFO] crictl successfully updated to ${COMPONENTS_VERSION.crictl.value}.
+    ***** [INFO] Installing runc...
+    ***** [INFO] runc successfully updated to ${COMPONENTS_VERSION.runc.value}.
   `}
 </CodeBlock>
 :::
 
 <CodeBlock language="bash">
   {dedent`
-    ls -la /usr/local/bin/ | grep 'crictl$'
+    ls -la /usr/local/bin/ | grep 'runc$'
   `}
 </CodeBlock>
 
 :::note Вывод команды
 
-<CodeBlock language="bash">
+<CodeBlock language="text">
   {dedent`
-    -rwxr-xr-x  1 1001  127  58376628 Apr 18  2024 crictl
+    -rwxr-xr-x  1 root root  10709696 Jan 23  2024 runc
   `}
 </CodeBlock>
 :::

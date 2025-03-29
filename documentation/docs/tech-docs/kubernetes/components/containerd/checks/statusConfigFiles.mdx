@@ -3,15 +3,19 @@ import CodeBlock                from '@theme/CodeBlock'
 
 
 <CodeBlock language="bash">
-    {dedent`
-        containerd --version
-    `}
+  {dedent`
+    tree /etc/containerd/
+  `}
 </CodeBlock>
 
-:::info 
+:::info
 <CodeBlock language="bash">
-    {dedent`
-        containerd github.com/containerd/containerd v1.7.19 2bf793ef6dc9a18e00cb12efb64355c2c9d5eb41
-    `}
+  {dedent`
+    /etc/containerd/
+    ├── certs.d
+    ├── conf.d
+    │   └── cloud.toml
+    └── config.toml
+  `}
 </CodeBlock>
 :::

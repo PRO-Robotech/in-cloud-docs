@@ -1,5 +1,3 @@
-
-
 import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 import MastersTabs from '@site/docs/tech-docs/kubernetes/setupEnvironments/allMasterTabs.mdx'
 import TabItem from '@theme/TabItem'
@@ -8,11 +6,12 @@ import CodeBlock from '@theme/CodeBlock'
 import dedent from 'ts-dedent'
 
 #### Базовые настройки узлов
+
 - Переменные окружения узла.
 - Изменение имени узла.
 - Установка зависимостей.
 
-#### 1. Переменные окружения узла
+#### Переменные окружения узла
 
 <MastersTabs />
 
@@ -25,7 +24,7 @@ import dedent from 'ts-dedent'
   `}
 </CodeBlock>
 
-#### 2. Изменение имени узла
+#### Изменение имени узла
 
 <CodeBlock language="bash">
   {dedent`
@@ -33,34 +32,34 @@ import dedent from 'ts-dedent'
   `}
 </CodeBlock>
 
-#### 3. Установка зависимостей
+#### Установка зависимостей
 
 <Tabs groupId="install-pkg">
 
   <TabItem value="apt">
     <CodeBlock language="bash">
       {dedent`
-        sudo apt update
-        sudo apt install conntrack socat
-      `}
+          sudo apt update
+          sudo apt install conntrack socat
+        `}
     </CodeBlock>
   </TabItem>
 
   <TabItem value="yum">
     <CodeBlock language="bash">
       {dedent`
-        sudo yum update
-        sudo yum install conntrack-tools socat
-      `}
+          sudo yum update
+          sudo yum install conntrack-tools socat
+        `}
     </CodeBlock>
   </TabItem>
 
   <TabItem value="dnf">
     <CodeBlock language="bash">
       {dedent`
-        sudo dnf update
-        sudo dnf install conntrack-tools socat
-      `}
+          sudo dnf update
+          sudo dnf install conntrack-tools socat
+        `}
     </CodeBlock>
   </TabItem>
 

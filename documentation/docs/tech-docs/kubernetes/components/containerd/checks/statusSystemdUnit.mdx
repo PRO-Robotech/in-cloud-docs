@@ -1,0 +1,38 @@
+import dedent                   from 'ts-dedent'
+import CodeBlock                from '@theme/CodeBlock'
+
+
+<CodeBlock language="bash">
+  {dedent`
+    systemctl status containerd
+  `}
+</CodeBlock>
+
+:::note Вывод команды
+<CodeBlock language="bash">
+  {dedent`
+    ● containerd.service - containerd container runtime
+          Loaded: loaded (/usr/lib/systemd/system/containerd.service; enabled; preset: enabled)
+          Active: active (running) since Tue 2024-12-31 17:26:21 UTC; 2min 30s ago
+            Docs: https://containerd.io
+        Main PID: 839 (containerd)
+          Tasks: 7 (limit: 2274)
+          Memory: 62.0M (peak: 62.5M)
+            CPU: 375ms
+          CGroup: /system.slice/containerd.service
+                  └─839 /usr/local/bin/containerd
+
+    ***** level=info msg="Start subscribing containerd event"
+    ***** level=info msg="Start recovering state"
+    ***** level=info msg="Start event monitor"
+    ***** level=info msg="Start snapshots syncer"
+    ***** level=info msg="Start cni network conf syncer for default"
+    ***** level=info msg="Start streaming server"
+    ***** level=info msg=serving... address=/run/containerd/containerd.sock.ttrpc
+    ***** level=info msg=serving... address=/run/containerd/containerd.sock
+    ***** level=info msg="containerd successfully booted in 0.065807s"
+    ***** Started containerd.service - containerd container runtime.
+
+  `}
+</CodeBlock>
+:::
