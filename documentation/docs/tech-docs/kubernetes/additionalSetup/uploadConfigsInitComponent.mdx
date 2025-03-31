@@ -11,14 +11,14 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 import { ETCD_ARGS }                  from '@site/src/constants/kubernetes/etcdArgs'
 
 :::warning
-В этом разделе описана инструкция по загрузке актуальной конфигурации `Kubeadm` и `Kubelet` в управляющий контур Kubernetes в виде ресура `ConfigMap`. Этот подход упрощает управление изменениями в конфигурации узлов Kubernetes, охватывая как рабочие (`worker`), так и управляющие (`master`) узлы.
+В этом разделе описана инструкция по загрузке актуальной конфигурации `Kubeadm` и `Kubelet` в управляющий контур Kubernetes в виде ресурса `ConfigMap`. Этот подход упрощает управление изменениями в конфигурации узлов Kubernetes, охватывая как рабочие (`worker`), так и управляющие (`master`) узлы.
 :::
 
 
 <Tabs groupId="install-type">
 
   <TabItem value='HardWay'>
-    <h4>Переменные окружния для шаблона конфигурационного файла</h4>
+    <h4>Переменные окружения для шаблона конфигурационного файла</h4>
     <CodeBlock language="bash">
       {dedent`
         export CLUSTER_NAME='${CUSTOM_VALUE.clusterName.value}'
