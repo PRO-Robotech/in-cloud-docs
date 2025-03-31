@@ -18,7 +18,7 @@ import CodeBlock                  from '@theme/CodeBlock'
 <h4>Рабочая директория</h4>
 <CodeBlock language="bash">
   {dedent`
-    mkdir -p ${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/manifests
+    mkdir -p ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/manifests
   `}
 </CodeBlock>
 
@@ -28,7 +28,7 @@ import CodeBlock                  from '@theme/CodeBlock'
 <h4>Генерация манифеста</h4>
 <CodeBlock language="bash">
   {dedent`
-    cat <<EOF > ${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/manifests/kube-controller-manager.yaml
+    cat <<EOF > ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/manifests/kube-controller-manager.yaml
     apiVersion: v1
     kind: Pod
     metadata:
@@ -230,10 +230,10 @@ import CodeBlock                  from '@theme/CodeBlock'
           readOnly: true
         - mountPath: /usr/libexec/kubernetes/kubelet-plugins/volume/exec/
           name: flexvolume-dir
-        - mountPath: ${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/pki
+        - mountPath: ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/pki
           name: k8s-certs
           readOnly: true
-        - mountPath: ${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/controller-manager.conf
+        - mountPath: ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/controller-manager.conf
           name: kubeconfig
           readOnly: true
         - mountPath: /usr/local/share/ca-certificates
@@ -266,11 +266,11 @@ import CodeBlock                  from '@theme/CodeBlock'
           type: DirectoryOrCreate
         name: flexvolume-dir
       - hostPath:
-          path: ${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/pki
+          path: ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/pki
           type: DirectoryOrCreate
         name: k8s-certs
       - hostPath:
-          path: ${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/controller-manager.conf
+          path: ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/controller-manager.conf
           type: FileOrCreate
         name: kubeconfig
       - hostPath:

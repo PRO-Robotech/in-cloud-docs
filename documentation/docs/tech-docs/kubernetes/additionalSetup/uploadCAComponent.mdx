@@ -17,7 +17,7 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
     <h4>Рабочая директория</h4>
     <CodeBlock language="bash">
       {dedent`
-        mkdir -p ${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/openssl
+        mkdir -p ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/openssl
       `}
     </CodeBlock>
 
@@ -30,7 +30,7 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 
     <CodeBlock language="bash">
       {dedent`
-        cat <<EOF > ${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/openssl/encrypt.py
+        cat <<EOF > ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/openssl/encrypt.py
         #!/usr/bin/env python3
         import sys, base64, os
         from cryptography.hazmat.primitives.ciphers.aead import AESGCM
@@ -53,11 +53,11 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
     </CodeBlock>
     <CodeBlock language="bash">
       {dedent`
-        cat <<EOF > ${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/openssl/upload-certs.sh
+        cat <<EOF > ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/openssl/upload-certs.sh
         #!/bin/bash
         set -euo pipefail
 
-        CERT_PATH="${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/pki"
+        CERT_PATH="${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/pki"
         PY_SCRIPT="$(dirname "$0")/encrypt.py"
 
         declare -A files=(
@@ -107,7 +107,7 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
       {dedent`
         kubeadm init phase  upload-certs \\
           --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml \\
-          --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/super-admin.conf \\
+          --kubeconfig=${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/super-admin.conf \\
           --upload-certs
       `}
     </CodeBlock>

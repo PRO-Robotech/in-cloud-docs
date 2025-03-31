@@ -17,7 +17,7 @@ export const CUSTOM_VALUE: TCustomValueItems = {
   kubernetesClusterDomain: {
     value: 'cluster.local',
   },
-  kuberneteBaseFolderPath: {
+  kubernetesBaseFolderPath: {
     value: '/etc/kubernetes',
   },
   kubeadmBaseConfigPath: {

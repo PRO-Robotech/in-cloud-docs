@@ -8,7 +8,7 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 <h4>Рабочая директория</h4>
 <CodeBlock language="bash">
     {dedent`
-        mkdir -p ${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/openssl
+        mkdir -p ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/openssl
     `}
 </CodeBlock>
 
@@ -17,7 +17,7 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 <summary>Инструкция по созданию скрипта</summary>
 <CodeBlock language="bash">
   {dedent`
-    cat <<'EOF' > ${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/openssl/cert-report.sh
+    cat <<'EOF' > ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/openssl/cert-report.sh
     #!/usr/bin/env bash
     set -euo pipefail
 
@@ -124,7 +124,7 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 <h4>Настройка прав</h4>
 <CodeBlock language="bash">
     {dedent`
-      chmod +x ${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/openssl/cert-report.sh
+      chmod +x ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/openssl/cert-report.sh
     `}
 </CodeBlock>
 
@@ -132,7 +132,7 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 <h4>Запуск инструкции для все сертификатов/kubeconfigs</h4>
 <CodeBlock language="bash">
     {dedent`
-      ${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/openssl/cert-report.sh
+      ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/openssl/cert-report.sh
     `}
 </CodeBlock>
 
@@ -167,7 +167,7 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 <h4>Запуск инструкции для одного сертификата/kubeconfig</h4>
 <CodeBlock language="bash">
     {dedent`
-      ${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/openssl/cert-report.sh ${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/pki/ca.crt
+      ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/openssl/cert-report.sh ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/pki/ca.crt
     `}
 </CodeBlock>
 
