@@ -4,15 +4,15 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 import { TCustomValueItems } from '../../customTypes/customValue'
 
 export const KUBE_CONTROLLER_MANAGER_ARGS: TCustomValueItems = {
-  authenticationKubeconfig: {value: `${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/controller-manager.conf`,},
-  authorizationKubeconfig: {value: `${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/controller-manager.conf`,},
-  kubeconfig: {value: `${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/controller-manager.conf`,},
+  authenticationKubeconfig: {value: `${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/controller-manager.conf`,},
+  authorizationKubeconfig: {value: `${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/controller-manager.conf`,},
+  kubeconfig: {value: `${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/controller-manager.conf`,},
   clientCaFile: {value: `${CERTIFICATES.kubernetesCA.crtPath}`,},
   clusterSigningCertFile: {value: `${CERTIFICATES.kubernetesCA.crtPath}`,},
   clusterSigningKeyFile: {value: `${CERTIFICATES.kubernetesCA.keyPath}`,},
   requestheaderClientCaFile: {value: `${CERTIFICATES.frontProxyCA.crtPath}`,},
   rootCaFile: {value: `${CERTIFICATES.kubernetesCA.crtPath}`,},
-  serviceAccountPrivateKeyFile: {value: `${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/pki/sa.key`,},
+  serviceAccountPrivateKeyFile: {value: `${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/pki/sa.key`,},
   clusterName: {value: '${CLUSTER_NAME}'},
 
   allocateNodeCidrs: { value: 'false' },

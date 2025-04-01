@@ -8,8 +8,8 @@ import dedent           from 'ts-dedent'
 <h4>Рабочая директория</h4>
 <CodeBlock language="bash">
     {dedent`
-        mkdir -p ${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/pki/etcd
-        mkdir -p ${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/openssl/csr
+        mkdir -p ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/pki/etcd
+        mkdir -p ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/openssl/csr
     `}
 </CodeBlock>
 
@@ -84,7 +84,7 @@ import dedent           from 'ts-dedent'
 
   <CodeBlock language="bash">
     {dedent`
-      ${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/openssl/cert-report.sh ${CERTIFICATES.etcdClient.crtPath}
+      ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/openssl/cert-report.sh ${CERTIFICATES.etcdClient.crtPath}
     `}
   </CodeBlock>
 

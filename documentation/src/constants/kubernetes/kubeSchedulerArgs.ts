@@ -6,7 +6,7 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 
 export const KUBE_SCHEDULER_ARGS: TCustomValueItems = {
   authenticationKubeconfig: {
-    value: `${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/scheduler.conf`,
+    value: `${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/scheduler.conf`,
   },
   authenticationSkipLookup: {
     value: 'false',
@@ -21,7 +21,7 @@ export const KUBE_SCHEDULER_ARGS: TCustomValueItems = {
     value: '/healthz,/readyz,/livez,/metrics',
   },
   authorizationKubeconfig: {
-    value: `${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/scheduler.conf`,
+    value: `${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/scheduler.conf`,
   },
   authorizationWebhookCacheAuthorizedTtl: {
     value: '10s',
@@ -51,7 +51,7 @@ export const KUBE_SCHEDULER_ARGS: TCustomValueItems = {
     value: '50',
   },
   kubeconfig: {
-    value: `${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/scheduler.conf`,
+    value: `${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/scheduler.conf`,
   },
   leaderElect: {
     value: 'true',

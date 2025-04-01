@@ -23,7 +23,7 @@ import CodeBlock                  from '@theme/CodeBlock'
 
 <CodeBlock language="bash">
     {dedent`
-        mkdir -p ${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/manifests
+        mkdir -p ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/manifests
     `}
 </CodeBlock>
 
@@ -34,7 +34,7 @@ import CodeBlock                  from '@theme/CodeBlock'
 
 <CodeBlock language="bash">
   {dedent`
-    cat <<EOF > ${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/manifests/etcd.yaml
+    cat <<EOF > ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/manifests/etcd.yaml
     apiVersion: v1
     kind: Pod
     metadata:
@@ -107,7 +107,7 @@ import CodeBlock                  from '@theme/CodeBlock'
         volumeMounts:
         - mountPath: /var/lib/etcd
           name: etcd-data
-        - mountPath: ${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/pki/etcd
+        - mountPath: ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/pki/etcd
           name: etcd-certs
       hostNetwork: true
       priority: 2000001000
@@ -117,7 +117,7 @@ import CodeBlock                  from '@theme/CodeBlock'
           type: RuntimeDefault
       volumes:
       - hostPath:
-          path: ${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/pki/etcd
+          path: ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/pki/etcd
           type: DirectoryOrCreate
         name: etcd-certs
       - hostPath:

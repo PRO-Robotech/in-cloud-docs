@@ -27,7 +27,7 @@ import {KUBE_API_ARGS} from '@site/src/constants/kubernetes/kubeAPIArgs'
 
         {dedent`
           kubectl \\
-            --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/super-admin.conf apply -f - <<EOF
+            --kubeconfig=${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/super-admin.conf apply -f - <<EOF
           ---
           apiVersion: rbac.authorization.k8s.io/v1
           kind: ClusterRole
@@ -175,7 +175,7 @@ import {KUBE_API_ARGS} from '@site/src/constants/kubernetes/kubeAPIArgs'
     <CodeBlock>
       {dedent`
         kubectl \\
-          --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/super-admin.conf \\
+          --kubeconfig=${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/super-admin.conf \\
           apply -f - <<EOF
         ---
         apiVersion: v1
@@ -220,7 +220,7 @@ import {KUBE_API_ARGS} from '@site/src/constants/kubernetes/kubeAPIArgs'
     <CodeBlock>
       {dedent`
         kubectl \\
-          --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/super-admin.conf \\
+          --kubeconfig=${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/super-admin.conf \\
           apply -f - <<EOF
         ---
         apiVersion: v1
@@ -266,7 +266,7 @@ import {KUBE_API_ARGS} from '@site/src/constants/kubernetes/kubeAPIArgs'
       {dedent`
         kubeadm init phase bootstrap-token \\
           --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml \\
-          --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/super-admin.conf
+          --kubeconfig=${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/super-admin.conf
       `}
     </CodeBlock>
 

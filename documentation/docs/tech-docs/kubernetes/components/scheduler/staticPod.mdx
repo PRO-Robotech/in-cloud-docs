@@ -10,7 +10,7 @@ import {KUBE_SCHEDULER_ARGS} from '@site/src/constants/kubernetes/kubeSchedulerA
 <h4>Рабочая директория</h4>
 <CodeBlock language="bash">
   {dedent`
-    mkdir -p ${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/manifests
+    mkdir -p ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/manifests
   `}
 </CodeBlock>
 
@@ -20,7 +20,7 @@ import {KUBE_SCHEDULER_ARGS} from '@site/src/constants/kubernetes/kubeSchedulerA
 <h4>Генерация манифеста</h4>
 <CodeBlock language="bash">
   {dedent`
-    cat <<EOF > ${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/manifests/kube-scheduler.yaml
+    cat <<EOF > ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/manifests/kube-scheduler.yaml
     apiVersion: v1
     kind: Pod
     metadata:
@@ -116,7 +116,7 @@ import {KUBE_SCHEDULER_ARGS} from '@site/src/constants/kubernetes/kubeSchedulerA
           periodSeconds: 10
           timeoutSeconds: 15
         volumeMounts:
-        - mountPath: ${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/scheduler.conf
+        - mountPath: ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/scheduler.conf
           name: kubeconfig
           readOnly: true
       hostNetwork: true
@@ -127,7 +127,7 @@ import {KUBE_SCHEDULER_ARGS} from '@site/src/constants/kubernetes/kubeSchedulerA
           type: RuntimeDefault
       volumes:
       - hostPath:
-          path: ${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/scheduler.conf
+          path: ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/scheduler.conf
           type: FileOrCreate
         name: kubeconfig
     status: {}
