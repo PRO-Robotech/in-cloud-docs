@@ -169,10 +169,9 @@ import dedent from 'ts-dedent'
 </p>
 
 <p>
-  В данной статье рассматривается пошаговая ручная настройка кластера — подход <strong>«The Hard Way»</strong>. Для
-  каждой фазы <code>kubeadm</code> будет показано, как достичь аналогичного результата без использования
-  автоматизированных инструментов, чтобы обеспечить чёткое понимание логики его работы.
+  <strong>Kubernetes The Hard Way</strong> — это руководство по развёртыванию кластера Kubernetes вручную, с опорой на общие принципы и лучшие практики. В качестве ориентира используется типовая конфигурация <code>kubeadm</code>, которая разбирается на отдельные этапы. Каждая фаза <code>kubeadm init</code> и <code>kubeadm join</code> воспроизводится вручную, без использования автоматизированных инструментов.
 </p>
+
 
 <ul>
   <li>
@@ -442,9 +441,8 @@ import dedent from 'ts-dedent'
       <td>10.0.0.6</td>
       <td>
         - 10.0.0.16
-        <br />
         - 10.0.0.22
-        <br />- 10.0.0.14
+        - 10.0.0.14
       </td>
       <td>6443</td>
       <td>6443</td>
@@ -571,10 +569,8 @@ import dedent from 'ts-dedent'
   <summary>
     Загрузка модулей ядра
     <span className="obligatory-note-orange">● Обязателен к применению</span>
-</summary>
-
-<СoreModulesComponent/>
-
+  </summary>
+  <СoreModulesComponent/>
 </details>
 
 ### 7. Настройка параметров sysctl
@@ -745,8 +741,26 @@ import dedent from 'ts-dedent'
 
 > В данном разделе рассматриваются правила использования сертификатов в кластере Kubernetes: какие компоненты задействуют сертификаты, кем они подписываются и как осуществляется проверка подлинности.
 
+<figure style={{ textAlign: 'center', display: 'contents' }}>
+  <FancyboxImage
+    src="/img/certificates/certificates-base.drawio.svg"
+    style={{ width: '100%', maxWidth: 'none' }}
+  />
+  <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
+    Базовая структура сертификатов
+  </figcaption>
+</figure>
 
-  <FancyboxImage src="/img/certificates/certificates-base.drawio.svg" />
+<figure style={{ textAlign: 'center', display: 'contents' }}>
+  <FancyboxImage
+    src="/img/certificates/certificates-transport.svg"
+    style={{ width: '100%', maxWidth: 'none' }}
+  />
+  <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
+    Сетевое общение используя сертификаты
+  </figcaption>
+</figure>
+
 
 
 ### 12. Создание корневых сертификатов
@@ -895,58 +909,58 @@ import dedent from 'ts-dedent'
 
 <Tabs groupId="Certs-APPS">
 
-<TabItem value="Super Admin">
-  <details>
-    <summary>
-      Super Admin
-      <span className="obligatory-note-orange">● Обязателен к применению</span>
-    </summary>
-    <SuperAdminClientMain />
-  </details>
-</TabItem>
+  <TabItem value="Super Admin">
+    <details>
+      <summary>
+        Super Admin
+        <span className="obligatory-note-orange">● Обязателен к применению</span>
+      </summary>
+      <SuperAdminClientMain />
+    </details>
+  </TabItem>
 
-<TabItem value="Admin">
-  <details>
-    <summary>
-      Admin
-      <span className="obligatory-note-orange">● Обязателен к применению</span>
-    </summary>
-    <AdminClientMain />
-  </details>
-</TabItem>
+  <TabItem value="Admin">
+    <details>
+      <summary>
+        Admin
+        <span className="obligatory-note-orange">● Обязателен к применению</span>
+      </summary>
+      <AdminClientMain />
+    </details>
+  </TabItem>
 
-<TabItem value="Controller">
-  <details>
-    <summary>
-      Kube Controller Manager
-      <span className="obligatory-note-orange">● Обязателен к применению</span>
-    </summary>
-    <KubeControllerKubeAPIClient />
-  </details>
-</TabItem>
+  <TabItem value="Controller">
+    <details>
+      <summary>
+        Kube Controller Manager
+        <span className="obligatory-note-orange">● Обязателен к применению</span>
+      </summary>
+      <KubeControllerKubeAPIClient />
+    </details>
+  </TabItem>
 
-<TabItem value="Scheduler">
-  <details>
-    <summary>
-      Kube Scheduler
-      <span className="obligatory-note-orange">● Обязателен к применению</span>
-    </summary>
-    <KubeSchedulerCerts />
-  </details>
-</TabItem>
+  <TabItem value="Scheduler">
+    <details>
+      <summary>
+        Kube Scheduler
+        <span className="obligatory-note-orange">● Обязателен к применению</span>
+      </summary>
+      <KubeSchedulerCerts />
+    </details>
+  </TabItem>
 
-<TabItem value="Kubelet">
-  <details>
-    <summary>
-      Kubelet client
-      <span className="obligatory-note-green">● Не обязателен к применению</span>
-    </summary>
-    :::warning Обратите внимание!
-      Можно подписать через `kubectl certificate approve`
-    :::
-    <KubeAPIClient />
-  </details>
-</TabItem>
+  <TabItem value="Kubelet">
+    <details>
+      <summary>
+        Kubelet client
+        <span className="obligatory-note-orange">● Обязателен к применению</span>
+      </summary>
+      :::warning Обратите внимание!
+        Можно подписать через `kubectl certificate approve`
+      :::
+      <KubeAPIClient />
+    </details>
+  </TabItem>
 
 </Tabs>
 
@@ -973,13 +987,13 @@ import dedent from 'ts-dedent'
   </summary>
 <Tabs groupId="install-type">
 
-<TabItem value="HardWay">
-  <OpensslExamination />
-</TabItem>
+  <TabItem value="HardWay">
+    <OpensslExamination />
+  </TabItem>
 
-<TabItem value="Kubeadm">
-  <KubeadmExamination />
-</TabItem>
+  <TabItem value="Kubeadm">
+    <KubeadmExamination />
+  </TabItem>
 
 </Tabs>
 </details>
@@ -990,35 +1004,35 @@ import dedent from 'ts-dedent'
 
 <Tabs groupId="Componenet">
 
-<TabItem value="Kube-API">
-  <details>
-    <summary>
-      Настройка Kube-API
-      <span className="obligatory-note-orange">● Обязателен к применению</span>
-    </summary>
-    <KubeApiSetup />
-  </details>
-</TabItem>
+  <TabItem value="Kube-API">
+    <details>
+      <summary>
+        Настройка Kube-API
+        <span className="obligatory-note-orange">● Обязателен к применению</span>
+      </summary>
+      <KubeApiSetup />
+    </details>
+  </TabItem>
 
-<TabItem value="Kube Controller Manager">
-  <details>
-    <summary>
-      Настройка Kube Controller Manager
-      <span className="obligatory-note-orange">● Обязателен к применению</span>
-    </summary>
-    <KubeControllerManagerSetup />
-  </details>
-</TabItem>
+  <TabItem value="Kube Controller Manager">
+    <details>
+      <summary>
+        Настройка Kube Controller Manager
+        <span className="obligatory-note-orange">● Обязателен к применению</span>
+      </summary>
+      <KubeControllerManagerSetup />
+    </details>
+  </TabItem>
 
-<TabItem value="Kube Scheduler">
-  <details>
-    <summary>
-      Настройка Kube Scheduler
-      <span className="obligatory-note-orange">● Обязателен к применению</span>
-    </summary>
-    <KubeSchedulerSetup />
-  </details>
-</TabItem>
+  <TabItem value="Kube Scheduler">
+    <details>
+      <summary>
+        Настройка Kube Scheduler
+        <span className="obligatory-note-orange">● Обязателен к применению</span>
+      </summary>
+      <KubeSchedulerSetup />
+    </details>
+  </TabItem>
 
 </Tabs>
 
@@ -1118,12 +1132,12 @@ import dedent from 'ts-dedent'
 
 <Tabs groupId="phase">
 
-<TabItem value="init">
-  <details open>
-    <summary>Настройка ролевой модели Kubeadm</summary>
-    <RbacComponent />
-  </details>
-</TabItem>
+  <TabItem value="init">
+    <details open>
+      <summary>Настройка ролевой модели Kubeadm</summary>
+      <RbacComponent />
+    </details>
+  </TabItem>
 
 </Tabs>
 
@@ -1131,12 +1145,12 @@ import dedent from 'ts-dedent'
 
 <Tabs groupId="phase">
 
-<TabItem value="init">
-  <details open>
-    <summary>Настройка ролевой модели Kubeadm</summary>
-    <UploadConfigsInit />
-  </details>
-</TabItem>
+  <TabItem value="init">
+    <details open>
+      <summary>Настройка ролевой модели Kubeadm</summary>
+      <UploadConfigsInit />
+    </details>
+  </TabItem>
 
 </Tabs>
 
@@ -1144,12 +1158,12 @@ import dedent from 'ts-dedent'
 
 <Tabs groupId="phase">
 
-<TabItem value="init">
-  <details open>
-    <summary>Загрузка корневых сертификатов в Kubernetes</summary>
-    <UploadCAInit />
-  </details>
-</TabItem>
+  <TabItem value="init">
+    <details open>
+      <summary>Загрузка корневых сертификатов в Kubernetes</summary>
+      <UploadCAInit />
+    </details>
+  </TabItem>
 
 </Tabs>
 

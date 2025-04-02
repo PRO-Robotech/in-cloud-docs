@@ -1,14 +1,22 @@
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+import Openssl from '@site/docs/tech-docs/kubernetes/certificates/components/kubeAPI/frontProxyClient/openssl.mdx'
+import Kubeadm from '@site/docs/tech-docs/kubernetes/certificates/components/kubeAPI/frontProxyClient/kubeadm.mdx'
 
-import TabItem                    from '@theme/TabItem'
-import Tabs                       from '@theme/Tabs'
-import FrontProxyClientCert       from '@site/docs/tech-docs/kubernetes/certificates/components/kubeAPI/frontProxyClient/openssl.mdx'
-import FrontProxyClientKubeadm    from '@site/docs/tech-docs/kubernetes/certificates/components/kubeAPI/frontProxyClient/kubeadm.mdx'
+import StatusOpenssl from '@site/docs/tech-docs/kubernetes/certificates/components/kubeAPI/frontProxyClient/checks/statusOpenssl.mdx'
+import StatusKubeadm from '@site/docs/tech-docs/kubernetes/certificates/components/kubeAPI/frontProxyClient/checks/statusKubeadm.mdx'
+
 
 <Tabs groupId="install-type">
-  <TabItem value='HardWay'>
-    <FrontProxyClientCert />
+
+  <TabItem value="HardWay">
+    <Openssl />
+    <StatusOpenssl />
   </TabItem>
-  <TabItem value='Kubeadm'>
-    <FrontProxyClientKubeadm />
+
+  <TabItem value="Kubeadm">
+    <Kubeadm />
+    <StatusKubeadm />
   </TabItem>
+
 </Tabs>

@@ -1,0 +1,29 @@
+import CodeBlock from '@theme/CodeBlock'
+import dedent from 'ts-dedent'
+import { CERTIFICATES } from '@site/src/constants/kubernetes/certs'
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+
+<details className="custom-blue-block">
+  <summary>Проверка готовности сертификата</summary>
+  :::warning Обратите ВНИМАНИЕ!
+
+  Данный раздел зависит от следующих разделов:
+  - [SSL Certificate Check](/docs/tech-docs/kubernetes/certificates/examinationOpensslComponent.mdx).
+  :::
+
+  <CodeBlock language="bash">
+    {dedent`
+      ${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/openssl/cert-report.sh ${CERTIFICATES.kubernetesSuperAdminClient.crtPath}
+    `}
+  </CodeBlock>
+
+  :::note Вывод команды
+  <CodeBlock language="bash">
+    {dedent`
+      CERTIFICATE                EXPIRES                  RESIDUAL TIME   CERTIFICATE AUTHORITY   EXTERNALLY MANAGED
+      super-admin.conf           Oct 22, 2025 22:06 UTC   364d            kubernetes              no
+    `}
+  </CodeBlock>
+  :::
+
+</details>

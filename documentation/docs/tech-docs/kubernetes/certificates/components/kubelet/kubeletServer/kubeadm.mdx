@@ -1,0 +1,76 @@
+import CodeBlock from '@theme/CodeBlock'
+import dedent from 'ts-dedent'
+
+:::warning Обратите внимание!
+`kubeadm` не управляет серверным сертификатом, используемым компонентом `kubelet`.
+
+При запуске systemd-юнита `kubelet` происходит инициализация запроса на выпуск сертификата.
+Для завершения процесса требуется ручное подтверждение с помощью команды:
+`kubectl certificate approve $CERT_NAME`.
+
+<h4>RotateKubeletServerCertificate</h4>
+Для автоматической ротации сертификатов `kubelet` требуется произвести дополнительные настройки:
+:::
+
+<h4>Конфигурация Kube-Apiserver</h4>
+
+- [Static Pod](/docs/tech-docs/kubernetes/components/kubeAPI/setup.mdx)
+
+<CodeBlock language="yaml">
+  {dedent`
+    spec:
+      containers:
+      - command:
+        - --feature-gates=RotateKubeletServerCertificate=true
+  `}
+</CodeBlock>
+
+- [Kubeadm Configs](/docs/tech-docs/kubernetes/components/kubeadm/lifecycleSettings.mdx)
+
+<CodeBlock language="yaml">
+  {dedent`
+    apiServer:
+      extraArgs:
+        feature-gates: "RotateKubeletServerCertificate=true"
+  `}
+</CodeBlock>
+
+<h4>Конфигурация Kube-Controller-Manager</h4>
+
+- [Static Pod](/docs/tech-docs/kubernetes/components/controllerManager/setup.mdx)
+
+<CodeBlock language="yaml">
+  {dedent`
+    spec:
+      containers:
+      - command:
+        - --feature-gates=RotateKubeletServerCertificate=true
+  `}
+</CodeBlock>
+
+- [Kubeadm Configs](/docs/tech-docs/kubernetes/components/kubeadm/lifecycleSettings.mdx)
+
+<CodeBlock language="yaml">
+  {dedent`
+    controllerManager:
+      extraArgs:
+        feature-gates: "RotateKubeletServerCertificate=true"
+  `}
+</CodeBlock>
+
+<h4>Конфигурация Kubelet</h4>
+
+- [Kubelet Custom Config](/docs/tech-docs/kubernetes/components/kubelet/lifecycleSettings.mdx)
+
+<CodeBlock language="yaml">
+  {dedent`
+    rotateCertificates: true
+    featureGates:
+      RotateKubeletServerCertificate: true
+  `}
+</CodeBlock>
+
+:::danger Важно для облачных сред!
+  Если вы используете Cloud Controller Manager (CCM), сертификат не будет выдан до тех пор,
+  пока `CCM` не назначит для `Node` адрес в поле `INTERNAL_IP`.
+:::
