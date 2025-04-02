@@ -24,7 +24,7 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
       {dedent`
         kubeadm join \\
           --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml \\
-          --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/super-admin.conf
+          --kubeconfig=${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/super-admin.conf
       `}
     </CodeBlock>
 

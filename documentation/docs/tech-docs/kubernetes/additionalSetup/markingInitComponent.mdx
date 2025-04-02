@@ -30,7 +30,7 @@ import MastersTabs from '@site/docs/tech-docs/kubernetes/setupEnvironments/initM
     <CodeBlock language="bash">
       {dedent`
         kubectl label node $\{FULL_HOST_NAME} node-role.kubernetes.io/control-plane="" \\
-          --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/super-admin.conf
+          --kubeconfig=${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/super-admin.conf
       `}
     </CodeBlock>
 
@@ -47,7 +47,7 @@ import MastersTabs from '@site/docs/tech-docs/kubernetes/setupEnvironments/initM
       {dedent`
         kubectl taint node $\{FULL_HOST_NAME} node-role.kubernetes.io/control-plane="":NoSchedule \\
           --overwrite \\
-          --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/super-admin.conf
+          --kubeconfig=${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/super-admin.conf
       `}
     </CodeBlock>
 
@@ -67,7 +67,7 @@ import MastersTabs from '@site/docs/tech-docs/kubernetes/setupEnvironments/initM
       {dedent`
         kubeadm init phase mark-control-plane \\
           --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml \\
-          --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/super-admin.conf
+          --kubeconfig=${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/super-admin.conf
       `}
     </CodeBlock>
 

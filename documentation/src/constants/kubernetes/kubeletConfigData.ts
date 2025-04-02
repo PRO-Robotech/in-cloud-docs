@@ -59,7 +59,7 @@ export const KUBELET_COFNIG_DATA: TCustomValueItems = {
       serverTLSBootstrap: true
       shutdownGracePeriod: 15s
       shutdownGracePeriodCriticalPods: 5s
-      staticPodPath: ${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/manifests
+      staticPodPath: ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/manifests
       streamingConnectionIdleTimeout: 0s
       syncFrequency: 0s
       tlsMinVersion: "VersionTLS12"

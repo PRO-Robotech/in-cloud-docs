@@ -196,7 +196,7 @@ export const Master: FC = () => {
           В качестве `data-dir` указана директория, которая монтируется внутрь контейнера ETCD и будет использоваться в качестве хранения файлов БД.
           :::
 
-          7. Проверьте и по необходимости отредактируйте параметры запуска ETCD в файле <code>${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/manifests/etcd.yaml</code>
+          7. Проверьте и по необходимости отредактируйте параметры запуска ETCD в файле <code>${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/manifests/etcd.yaml</code>
           указанные в разделе `spec.containers[0].command`.
           А именно проверьте наличие необходимых полей и их значения, поля не входящие в данный перечень удалять не нужно!
 
@@ -310,7 +310,7 @@ export const Master: FC = () => {
 
           <CodeBlock language="bash">{`rm -rf ${ETCD_ARGS.workDir.value}/*`}</CodeBlock>
 
-          6. Откройте на редактирование файл <code>${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/manifests/etcd.yaml</code>:
+          6. Откройте на редактирование файл <code>${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/manifests/etcd.yaml</code>:
           Найдите и замените значение следующих ключей в разделе `spec.containers[0].command` аналогично примеру ниже
           в соответствии с вашими параметрамии таблицей с описанием:
 
@@ -415,7 +415,7 @@ export const Master: FC = () => {
 
           <CodeBlock language="bash">{`rm -rf ${ETCD_ARGS.workDir.value}/*`}</CodeBlock>
 
-          6. Откройте на редактирование файл <code>${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/manifests/etcd.yaml</code>:
+          6. Откройте на редактирование файл <code>${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/manifests/etcd.yaml</code>:
           Найдите и замените значение следующих ключей в разделе `spec.containers[0].command` аналогично примеру ниже
           в соответствии с вашими параметрамии таблицей с описанием:
 

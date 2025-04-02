@@ -39,7 +39,7 @@ import { DOWNLOAD_VERSION } from '@site/src/constants/kubernetes/downloads'
         cat <<EOF > /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf
         # Note: This dropin only works with kubeadm and kubelet v1.11+
         [Service]
-        Environment="KUBELET_KUBECONFIG_ARGS=--bootstrap-kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/bootstrap-kubelet.conf --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/kubelet.conf"
+        Environment="KUBELET_KUBECONFIG_ARGS=--bootstrap-kubeconfig=${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/bootstrap-kubelet.conf --kubeconfig=${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/kubelet.conf"
         Environment="KUBELET_CONFIG_ARGS=--config=${CUSTOM_VALUE.kuberneteKubeletFolderPath.value}/config.yaml"
         # This is a file that "kubeadm init" and "kubeadm join" generates at runtime, populating the KUBELET_KUBEADM_ARGS variable dynamically
         EnvironmentFile=-${CUSTOM_VALUE.kuberneteKubeletFolderPath.value}/kubeadm-flags.env
@@ -115,7 +115,7 @@ import { DOWNLOAD_VERSION } from '@site/src/constants/kubernetes/downloads'
           content: |
             # Note: This dropin only works with kubeadm and kubelet v1.11+
             [Service]
-            Environment="KUBELET_KUBECONFIG_ARGS=--bootstrap-kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/bootstrap-kubelet.conf --kubeconfig=${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/kubelet.conf"
+            Environment="KUBELET_KUBECONFIG_ARGS=--bootstrap-kubeconfig=${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/bootstrap-kubelet.conf --kubeconfig=${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/kubelet.conf"
             Environment="KUBELET_CONFIG_ARGS=--config=${CUSTOM_VALUE.kuberneteKubeletFolderPath.value}/config.yaml"
             # This is a file that "kubeadm init" and "kubeadm join" generates at runtime, populating the KUBELET_KUBEADM_ARGS variable dynamically
             EnvironmentFile=-${CUSTOM_VALUE.kuberneteKubeletFolderPath.value}/kubeadm-flags.env

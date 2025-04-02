@@ -70,7 +70,7 @@ export const ETCD_k8s_cluster_name    = 'bcloud-k8s-sandbox-test-csko-1'
     <TabItem value='ETCD кластер не работает'>
       6. Если подключение к ETCD кластеру невозможно, сделайте [резервную копию файлов БД](#создание-резервной-копии-файлов-бд).
 
-      7. Откройте на редактирование файл <code>${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/manifests/etcd.yaml</code>.
+      7. Откройте на редактирование файл <code>${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/manifests/etcd.yaml</code>.
       8. В параметрах запуска ETCD указанных в разделе `spec.containers[0].command`
       добавьте ключ:
       <CodeBlock language="bash">{`--force-new-cluster`}</CodeBlock>
@@ -81,7 +81,7 @@ export const ETCD_k8s_cluster_name    = 'bcloud-k8s-sandbox-test-csko-1'
 
       9. Дождитесь, когда пересоздастся под ETCD узла и проверьте его состояние.
 
-      10. В файле <code>${CUSTOM_VALUE.kuberneteBaseFolderPath.value}/manifests/etcd.yaml</code>
+      10. В файле <code>${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/manifests/etcd.yaml</code>
       в параметрах запуска ETCD указанных в разделе `spec.containers[0].command`
       удалите ключ:
       <CodeBlock language="bash">{`--force-new-cluster`}</CodeBlock>
