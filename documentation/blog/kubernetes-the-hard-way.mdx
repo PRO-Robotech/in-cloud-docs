@@ -160,7 +160,7 @@ import dedent from 'ts-dedent'
 
 {/* truncate */}
 
-### Введение
+### 1. Введение
 
 <p>
   <code>Kubernetes</code> стал де-факто стандартом в управлении контейнерами. Инструменты вроде <code>kubeadm</code>
@@ -175,16 +175,16 @@ import dedent from 'ts-dedent'
 
 <ul>
   <li>
-    <a>1. Почему «The Hard Way»</a>
+    <a href="#1-Введение">1. Введение</a>
   </li>
   <li>
-    <a>2. Компоненты Kubernetes</a>
+    <a href="#2-почему-the-hard-way">2. Почему «The Hard Way»</a>
   </li>
   <li>
-    <a>3. Архитектура развертывания</a>
+    <a href="#3-компоненты-kubernetes">3. Компоненты Kubernetes</a>
   </li>
   <li>
-    <a href="#4-создание-инфраструктуры">4. Создание инфраструктуры</a>
+    <a href="#4-архитектура-развертывания">4. Архитектура развертывания</a>
   </li>
   <li>
     <a href="#5-базовая-настройка-узлов">5. Базовая настройка узлов</a>
@@ -266,7 +266,7 @@ import dedent from 'ts-dedent'
   />
 </div>
 
-### 1.Почему «The Hard Way»
+### 2.Почему «The Hard Way»
 
 <p>
   Развёртывание Kubernetes вручную требует дополнительных усилий. Однако данный подход обладает следующими
@@ -278,12 +278,26 @@ import dedent from 'ts-dedent'
   <li>позволяет гибко настраивать каждый компонент кластера в соответствии с техническими требованиями.</li>
 </ul>
 
-### 2. Компоненты Kubernetes
+### 3. Архитектура развертывания
+
+<h4>Уровень компонентов</h4>
+
+<figure style={{ textAlign: 'center', display: 'contents' }}>
+  <FancyboxImage
+    src="/img/components/pie.svg"
+    style={{ width: '100%', maxWidth: 'none' }}
+  />
+  <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
+    Технологический слой.
+  </figcaption>
+</figure>
+
 
 <p>
   Ниже приведён перечень компонентов, необходимых для ручного развёртывания кластера. Для обеспечения совместимости все
   версии синхронизированы между собой.
 </p>
+
 
 <table>
   <thead>
@@ -359,7 +373,155 @@ import dedent from 'ts-dedent'
   </tbody>
 </table>
 
-### 3. Архитектура развертывания
+
+<h4>Уровень коммутации</h4>
+
+<figure style={{ textAlign: 'center', display: 'contents' }}>
+  <FancyboxImage
+    src="/img/control-plane/transport.svg"
+    style={{ width: '100%', maxWidth: 'none' }}
+  />
+  <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
+    Сетевая диаграмма развертывания.
+  </figcaption>
+</figure>
+
+
+<table>
+  <thead>
+    <tr>
+      <th>Компонент</th>
+      <th>Порт</th>
+      <th>Протокол</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>etcd-server</td>
+      <td>{PORTS.etcdServer.portNumber}</td>
+      <td>TCP</td>
+    </tr>
+    <tr>
+      <td>etcd-peer</td>
+      <td>{PORTS.etcdPeer.portNumber}</td>
+      <td>TCP</td>
+    </tr>
+    <tr>
+      <td>etcd-metrics</td>
+      <td>{PORTS.etcdMetricServer.portNumber}</td>
+      <td>TCP</td>
+    </tr>
+    <tr>
+      <td>kube-apiserver</td>
+      <td>{PORTS.kubeAPIServer.portNumber}</td>
+      <td>TCP</td>
+    </tr>
+    <tr>
+      <td>kube-controller-manager</td>
+      <td>{PORTS.kubeControllerManager.portNumber}</td>
+      <td>TCP</td>
+    </tr>
+    <tr>
+      <td>kube-scheduler</td>
+      <td>{PORTS.kubeScheduler.portNumber}</td>
+      <td>TCP</td>
+    </tr>
+    <tr>
+      <td>kubelet-healthz</td>
+      <td>{PORTS.kubeletHealthz.portNumber}</td>
+      <td>TCP</td>
+    </tr>
+    <tr>
+      <td>kubelet-server</td>
+      <td>{PORTS.kubeletServer.portNumber}</td>
+      <td>TCP</td>
+    </tr>
+    <tr>
+      <td>kubelet-read-only-port</td>
+      <td>{PORTS.kubeletReadOnlyPort.portNumber}</td>
+      <td>TCP</td>
+    </tr>
+  </tbody>
+</table>
+
+
+<h4>Уровень балансировки</h4>
+
+<figure style={{ textAlign: 'center', display: 'contents' }}>
+  <FancyboxImage
+    src="/img/control-plane/load-balancer.svg"
+    style={{ width: '100%', maxWidth: 'none' }}
+  />
+  <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
+    Технологический слой.
+  </figcaption>
+</figure>
+
+
+<table>
+  <thead>
+    <tr>
+      <th>IP-адрес</th>
+      <th>Целевая группа</th>
+      <th>Порт</th>
+      <th>Целевой порт</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>VIP-LB</td>
+      <td>
+        - NODE-IP-1
+        - NODE-IP-2
+        - NODE-IP-3
+      </td>
+      <td>6443</td>
+      <td>6443</td>
+    </tr>
+  </tbody>
+</table>
+
+<h4> DNS-записи</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>A-запись</th>
+      <th>IP-адрес</th>
+      <th>TTL</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        api.{CUSTOM_VALUE.clusterName.value}.{CUSTOM_VALUE.kubernetesBaseDomain.value}
+      </td>
+      <td>VIP-LB</td>
+      <td>60s</td>
+    </tr>
+    <tr>
+      <td>
+        master-1.{CUSTOM_VALUE.clusterName.value}.{CUSTOM_VALUE.kubernetesBaseDomain.value}
+      </td>
+      <td>NODE-IP-1</td>
+      <td>60s</td>
+    </tr>
+    <tr>
+      <td>
+        master-2.{CUSTOM_VALUE.clusterName.value}.{CUSTOM_VALUE.kubernetesBaseDomain.value}
+      </td>
+      <td>NODE-IP-2</td>
+      <td>60s</td>
+    </tr>
+    <tr>
+      <td>
+        master-3.{CUSTOM_VALUE.clusterName.value}.{CUSTOM_VALUE.kubernetesBaseDomain.value}
+      </td>
+      <td>NODE-IP-3</td>
+      <td>60s</td>
+    </tr>
+  </tbody>
+</table>
 
 ### 4. Создание инфраструктуры
 
@@ -425,131 +587,7 @@ import dedent from 'ts-dedent'
   </tbody>
 </table>
 
-<h4> Балансировщик для kube-apiserver</h4>
 
-<table>
-  <thead>
-    <tr>
-      <th>IP-адрес</th>
-      <th>Целевая группа</th>
-      <th>Порт</th>
-      <th>Целевой порт</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>10.0.0.6</td>
-      <td>
-        - 10.0.0.16
-        - 10.0.0.22
-        - 10.0.0.14
-      </td>
-      <td>6443</td>
-      <td>6443</td>
-    </tr>
-  </tbody>
-</table>
-
-<h4> DNS-записи</h4>
-
-<table>
-  <thead>
-    <tr>
-      <th>A-запись</th>
-      <th>IP-адрес</th>
-      <th>TTL</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>
-        api.{CUSTOM_VALUE.clusterName.value}.{CUSTOM_VALUE.kubernetesBaseDomain.value}
-      </td>
-      <td>10.0.0.6</td>
-      <td>60s</td>
-    </tr>
-    <tr>
-      <td>
-        master-1.{CUSTOM_VALUE.clusterName.value}.{CUSTOM_VALUE.kubernetesBaseDomain.value}
-      </td>
-      <td>10.0.0.16</td>
-      <td>60s</td>
-    </tr>
-    <tr>
-      <td>
-        master-2.{CUSTOM_VALUE.clusterName.value}.{CUSTOM_VALUE.kubernetesBaseDomain.value}
-      </td>
-      <td>10.0.0.22</td>
-      <td>60s</td>
-    </tr>
-    <tr>
-      <td>
-        master-3.{CUSTOM_VALUE.clusterName.value}.{CUSTOM_VALUE.kubernetesBaseDomain.value}
-      </td>
-      <td>10.0.0.14</td>
-      <td>60s</td>
-    </tr>
-  </tbody>
-</table>
-
-<h4> Разрешённые порты на управляющих узлах</h4>
-
-<table>
-  <thead>
-    <tr>
-      <th>Компонент</th>
-      <th>Порт</th>
-      <th>Протокол</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>etcd-server</td>
-      <td>{PORTS.etcdServer.portNumber}</td>
-      <td>TCP</td>
-    </tr>
-    <tr>
-      <td>etcd-peer</td>
-      <td>{PORTS.etcdPeer.portNumber}</td>
-      <td>TCP</td>
-    </tr>
-    <tr>
-      <td>etcd-metrics</td>
-      <td>{PORTS.etcdMetricServer.portNumber}</td>
-      <td>TCP</td>
-    </tr>
-    <tr>
-      <td>kube-apiserver</td>
-      <td>{PORTS.kubeAPIServer.portNumber}</td>
-      <td>TCP</td>
-    </tr>
-    <tr>
-      <td>kube-controller-manager</td>
-      <td>{PORTS.kubeControllerManager.portNumber}</td>
-      <td>TCP</td>
-    </tr>
-    <tr>
-      <td>kube-scheduler</td>
-      <td>{PORTS.kubeScheduler.portNumber}</td>
-      <td>TCP</td>
-    </tr>
-    <tr>
-      <td>kubelet-healthz</td>
-      <td>{PORTS.kubeletHealthz.portNumber}</td>
-      <td>TCP</td>
-    </tr>
-    <tr>
-      <td>kubelet-server</td>
-      <td>{PORTS.kubeletServer.portNumber}</td>
-      <td>TCP</td>
-    </tr>
-    <tr>
-      <td>kubelet-read-only-port</td>
-      <td>{PORTS.kubeletReadOnlyPort.portNumber}</td>
-      <td>TCP</td>
-    </tr>
-  </tbody>
-</table>
 
 ### 5. Базовая настройка узлов
 
