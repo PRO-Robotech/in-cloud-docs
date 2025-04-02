@@ -1,74 +1,71 @@
 import { CERTIFICATES } from '@site/src/constants/kubernetes/certs'
 import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 
-import CodeBlock        from '@theme/CodeBlock'
-import dedent           from 'ts-dedent'
-
+import CodeBlock from '@theme/CodeBlock'
+import dedent from 'ts-dedent'
 
 <h4>Рабочая директория</h4>
 <CodeBlock language="bash">
-    {dedent`
-        mkdir -p ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/pki/etcd
-        mkdir -p ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/openssl/csr
-    `}
+  {dedent`
+    mkdir -p ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/pki/etcd
+    mkdir -p ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/openssl/csr
+  `}
 </CodeBlock>
-
 
 <h4>Конфигурация</h4>
 <CodeBlock language="bash">
-    {dedent`
-      cat <<EOF > ${CERTIFICATES.etcdClient.crtConf}
-      [ req ]
-      default_bits        = ${CERTIFICATES.etcdClient.keySize}
-      prompt              = no
-      default_md          = sha256
-      distinguished_name  = dn
+  {dedent`
+    cat <<EOF > ${CERTIFICATES.etcdClient.crtConf}
+    [ req ]
+    default_bits        = ${CERTIFICATES.etcdClient.keySize}
+    prompt              = no
+    default_md          = sha256
+    distinguished_name  = dn
 
-      [ dn ]
-      CN = ${CERTIFICATES.etcdClient.cname}
+    [ dn ]
+    CN = ${CERTIFICATES.etcdClient.cname}
 
-      [ v3_ext ]
-      authorityKeyIdentifier=keyid,issuer:always
-      basicConstraints=CA:FALSE
-      keyUsage=keyEncipherment,dataEncipherment
-      extendedKeyUsage=clientAuth
-      EOF
-    `}
+    [ v3_ext ]
+    authorityKeyIdentifier=keyid,issuer:always
+    basicConstraints=CA:FALSE
+    keyUsage=keyEncipherment,dataEncipherment
+    extendedKeyUsage=clientAuth
+    EOF
+  `}
 </CodeBlock>
 
 <h4>Генерация приватного ключа</h4>
 <CodeBlock language="bash">
-    {dedent`
-      openssl genrsa \\
-          -out ${CERTIFICATES.etcdClient.keyPath} ${CERTIFICATES.etcdClient.keySize}
-    `}
+  {dedent`
+    openssl genrsa \\
+      -out ${CERTIFICATES.etcdClient.keyPath} ${CERTIFICATES.etcdClient.keySize}
+  `}
 </CodeBlock>
 
 <h4>Генерация CSR</h4>
 <CodeBlock language="bash">
-    {dedent`
-      openssl req \\
-        -new \\
-        -key ${CERTIFICATES.etcdClient.keyPath} \\
-        -out ${CERTIFICATES.etcdClient.csrPath} \\
-        -config ${CERTIFICATES.etcdClient.crtConf}
+  {dedent`
+    openssl req \\
+      -new \\
+      -key ${CERTIFICATES.etcdClient.keyPath} \\
+      -out ${CERTIFICATES.etcdClient.csrPath} \\
+      -config ${CERTIFICATES.etcdClient.crtConf}
     `}
 </CodeBlock>
 
-
 <h4>Подпись CSR</h4>
 <CodeBlock language="bash">
-    {dedent`
-      openssl x509 \\
-        -req \\
-        -days 365 \\
-        -sha256 \\
-        -CA ${CERTIFICATES.etcdCA.crtPath} \\
-        -CAkey ${CERTIFICATES.etcdCA.keyPath} \\
-        -CAcreateserial \\
-        -in ${CERTIFICATES.etcdClient.csrPath} \\
-        -out ${CERTIFICATES.etcdClient.crtPath} \\
-        -extensions v3_ext \\
-        -extfile ${CERTIFICATES.etcdClient.crtConf}
+  {dedent`
+    openssl x509 \\
+      -req \\
+      -days 365 \\
+      -sha256 \\
+      -CA ${CERTIFICATES.etcdCA.crtPath} \\
+      -CAkey ${CERTIFICATES.etcdCA.keyPath} \\
+      -CAcreateserial \\
+      -in ${CERTIFICATES.etcdClient.csrPath} \\
+      -out ${CERTIFICATES.etcdClient.crtPath} \\
+      -extensions v3_ext \\
+      -extfile ${CERTIFICATES.etcdClient.crtConf}
     `}
 </CodeBlock>
