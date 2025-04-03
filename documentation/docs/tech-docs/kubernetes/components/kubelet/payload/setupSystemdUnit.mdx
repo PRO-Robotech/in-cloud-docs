@@ -75,8 +75,14 @@ import { DOWNLOAD_VERSION } from '@site/src/constants/kubernetes/downloads'
           `}
         </CodeBlock>
       </TabItem>
-
     </Tabs>
+
+    <h3>Добавить в автозагрузку Systemd Unit</h3>
+    <CodeBlock language="bash">
+      {dedent`
+        systemctl enable kubelet
+      `}
+    </CodeBlock>
 
   </TabItem>
 
@@ -85,6 +91,7 @@ import { DOWNLOAD_VERSION } from '@site/src/constants/kubernetes/downloads'
     <h4>Systemd Unit ENV</h4>
     <CodeBlock language="yaml">
       {dedent`
+        # write_files:
         - path: /usr/lib/systemd/system/kubelet.service
           owner: root:root
           permissions: '0644'
@@ -109,6 +116,7 @@ import { DOWNLOAD_VERSION } from '@site/src/constants/kubernetes/downloads'
     <h4>Инструкция загрузки</h4>
     <CodeBlock language="yaml">
       {dedent`
+        # write_files:
         - path: /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf
           owner: root:root
           permissions: '0644'
@@ -130,6 +138,7 @@ import { DOWNLOAD_VERSION } from '@site/src/constants/kubernetes/downloads'
     <h4>Systemd Unit Download</h4>
     <CodeBlock language="yaml">
       {dedent`
+        # write_files:
         - path: /etc/default/kubelet/extra-args.env
           owner: root:root
           permissions: '0644'
@@ -143,6 +152,7 @@ import { DOWNLOAD_VERSION } from '@site/src/constants/kubernetes/downloads'
     Данный блок конфигурации применим **только** при установке Kubernetes вручную (методом _«Kubernetes the Hard Way»_). При использовании утилиты **kubeadm** конфигурационный файл будет создан автоматически на основе спецификации, указанной в файле `kubeadm-config`.
     <CodeBlock language="bash">
       {dedent`
+        # write_files:
         - path: ${CUSTOM_VALUE.kuberneteKubeletFolderPath.value}/kubeadm-flags.env
           owner: root:root
           permissions: '0644'
@@ -151,6 +161,15 @@ import { DOWNLOAD_VERSION } from '@site/src/constants/kubernetes/downloads'
       `}
     </CodeBlock>
     :::
+
+    <h3>Добавить в автозагрузку Systemd Unit</h3>
+    <CodeBlock language="bash">
+      {dedent`
+        # runcmd:
+        - systemctl enable kubelet
+      `}
+    </CodeBlock>
+
 
   </TabItem>
 

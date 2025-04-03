@@ -36,11 +36,20 @@ import Tabs from '@theme/Tabs'
       `}
     </CodeBlock>
 
+    <CodeBlock language="bash">
+      {dedent`
+        systemctl enable containerd
+        systemctl start containerd
+      `}
+    </CodeBlock>
+
+
   </TabItem>
 
   <TabItem value='Cloud-init'>
     <CodeBlock language="yaml">
         {dedent`
+          # write_files:
           - path: /usr/lib/systemd/system/containerd.service
             owner: root:root
             permissions: '0644'
@@ -69,6 +78,14 @@ import Tabs from '@theme/Tabs'
               [Install]
               WantedBy=multi-user.target
         `}
+    </CodeBlock>
+
+    <CodeBlock language="bash">
+      {dedent`
+        #runcmd:
+        - systemctl enable containerd
+        - systemctl start containerd
+      `}
     </CodeBlock>
 
   </TabItem>
