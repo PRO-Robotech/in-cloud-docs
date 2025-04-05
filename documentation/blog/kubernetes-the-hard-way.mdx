@@ -97,6 +97,7 @@ import СoreModulesComponent from '@site/docs/tech-docs/kubernetes/setupEnvironm
 import SysctlsComponent from '@site/docs/tech-docs/kubernetes/setupEnvironments/sysctlsComponent.mdx'
 import KubernetesDownloadCA from '@site/docs/tech-docs/kubernetes/certificates/centerAuthority/downloadCA.mdx'
 import { FancyboxImage } from '@site/src/components/commonBlocks/FancyboxImage'
+import AboutAllCertificates from '@site/docs/tech-docs/kubernetes/certificates/aboutAllComponent.mdx'
 
 import TabItem from '@theme/TabItem'
 import Tabs from '@theme/Tabs'
@@ -232,19 +233,19 @@ import dedent from 'ts-dedent'
     <a href="#19-запуск-службы-kubelet">19. Запуск службы Kubelet</a>
   </li>
   <li>
-    <a href="#20-проверка-состояния-кластера">21. Проверка состояния кластера</a>
+    <a href="#20-проверка-состояния-кластера">20. Проверка состояния кластера</a>
   </li>
   <li>
-    <a href="#22-настройка-ролевой-модели">22. Настройка ролевой модели</a>
+    <a href="#21-настройка-ролевой-модели">21. Настройка ролевой модели</a>
   </li>
   <li>
-    <a href="#23-загрузка-конфигурации-в-кластер">23. Загрузка конфигурации в кластер</a>
+    <a href="#22-загрузка-конфигурации-в-кластер">22. Загрузка конфигурации в кластер</a>
   </li>
   <li>
-    <a href="#24-загрузка-корневых-сертификатов-в-кластер">24. Загрузка корневых сертификатов в кластер</a>
+    <a href="#23-загрузка-корневых-сертификатов-в-кластер">23. Загрузка корневых сертификатов в кластер</a>
   </li>
   <li>
-    <a href="#25-маркировка-и-ограничение-узлов">25. Маркировка и ограничение узлов</a>
+    <a href="#24-маркировка-и-ограничение-узлов">24. Маркировка и ограничение узлов</a>
   </li>
 </ul>
 
@@ -591,6 +592,9 @@ import dedent from 'ts-dedent'
 
 ### 5. Базовая настройка узлов
 
+> Этот раздел посвящён базовой подготовке узлов Kubernetes перед установкой компонентов.
+В нём описывается настройка переменных окружения, смена имени хоста и установка необходимых системных утилит. Эти шаги являются обязательными для корректной работы kubelet и других компонентов управляющего контура.
+
 <details>
   <summary>
     Базовая настройка узлов
@@ -601,7 +605,8 @@ import dedent from 'ts-dedent'
 
 ### 6. Загрузка модулей ядра
 
-> На этом этапе мы загружаем необходимые модули ядра для работы Kubernetes. Эти модули обеспечивают правильную работу контейнеров и сетевых функций в кластере.
+> Этот раздел посвящён загрузке модулей ядра, необходимых для корректной работы Kubernetes.
+Настройка включает конфигурацию modprobe и активацию модулей overlay и br_netfilter, обеспечивающих поддержку контейнерной файловой системы и сетевых функций. Эти действия обязательны для функционирования сетевых политик, iptables и контейнерных рантаймов.
 
 <details>
   <summary>
@@ -613,7 +618,8 @@ import dedent from 'ts-dedent'
 
 ### 7. Настройка параметров sysctl
 
-> Для корректной работы Kubernetes и правильной маршрутизации трафика необходимо настроить параметры ядра операционной системы с помощью sysctl.
+> Этот раздел посвящён настройке параметров ядра с помощью sysctl, необходимых для сетевой работы Kubernetes.
+Вносятся изменения, обеспечивающие маршрутизацию трафика между подами и корректную работу iptables для мостов. Эти параметры обязательны для включения пересылки IP-пакетов и фильтрации сетевых потоков в кластере.
 
 <details>
   <summary>
@@ -625,92 +631,93 @@ import dedent from 'ts-dedent'
 
 ### 8. Установка компонентов
 
-> В этой части документации описан процесс установки ключевых компонентов, необходимых для функционирования Kubernetes кластера.
+> В этом разделе описан процесс установки основных компонентов, необходимых для работы Kubernetes-кластера.
+Установка выполняется вручную и позволяет подготовить окружение для последующих этапов инициализации и настройки управляющего контура.
 
 <Tabs groupId="component">
 
-<TabItem value="runc">
-  <details>
-    <summary>
-      Установка runc
-      <span className="obligatory-note-orange">● Обязателен к применению</span>
-    </summary>
-    <RuncDownloadBIN />
-    <RuncCheckBIN />
-  </details>
-</TabItem>
+  <TabItem value="runc">
+    <details>
+      <summary>
+        Установка runc
+        <span className="obligatory-note-orange">● Обязателен к применению</span>
+      </summary>
+      <RuncDownloadBIN />
+      <RuncCheckBIN />
+    </details>
+  </TabItem>
 
-<TabItem value="containerd">
-  <details>
-    <summary>
-      Установка containerd
-      <span className="obligatory-note-orange">● Обязателен к применению</span>
-    </summary>
-    <ContainerdDownloadBIN />
-    <ContainerdCheckBIN />
-  </details>
-</TabItem>
+  <TabItem value="containerd">
+    <details>
+      <summary>
+        Установка containerd
+        <span className="obligatory-note-orange">● Обязателен к применению</span>
+      </summary>
+      <ContainerdDownloadBIN />
+      <ContainerdCheckBIN />
+    </details>
+  </TabItem>
 
-<TabItem value="kubelet">
-  <details>
-    <summary>
-      Установка kubelet
-      <span className="obligatory-note-orange">● Обязателен к применению</span>
-    </summary>
-    <KubeletDownloadBIN />
-    <KubeletCheckBIN />
-  </details>
-</TabItem>
+  <TabItem value="kubelet">
+    <details>
+      <summary>
+        Установка kubelet
+        <span className="obligatory-note-orange">● Обязателен к применению</span>
+      </summary>
+      <KubeletDownloadBIN />
+      <KubeletCheckBIN />
+    </details>
+  </TabItem>
 
-<TabItem value="kubectl">
-  <details>
-    <summary>
-      Установка kubectl
-      <span className="obligatory-note-green">● Не обязателен к применению</span>
-    </summary>
-    <KubectlDownloadBIN />
-    <KubectlCheckBIN />
-  </details>
-</TabItem>
+  <TabItem value="etcd">
+    <details>
+      <summary>
+        Установка etcd
+        <span className="obligatory-note-orange">● Обязателен к применению</span>
+      </summary>
+      <EtcdDownloadBIN />
+      <EtcdCheckBIN />
+    </details>
+  </TabItem>
 
-<TabItem value="etcd">
-  <details>
-    <summary>
-      Установка etcd
-      <span className="obligatory-note-green">● Не обязателен к применению</span>
-    </summary>
-    <EtcdDownloadBIN />
-    <EtcdCheckBIN />
-  </details>
-</TabItem>
+  <TabItem value="kubectl">
+    <details>
+      <summary>
+        Установка kubectl
+        <span className="obligatory-note-green">● Не обязателен к применению</span>
+      </summary>
+      <KubectlDownloadBIN />
+      <KubectlCheckBIN />
+    </details>
+  </TabItem>
 
-<TabItem value="crictl">
-  <details>
-    <summary>
-      Установка crictl
-      <span className="obligatory-note-green">● Не обязателен к применению</span>
-    </summary>
-    <CrictlDownloadBIN />
-    <CrictlCheckBIN />
-  </details>
-</TabItem>
+  <TabItem value="crictl">
+    <details>
+      <summary>
+        Установка crictl
+        <span className="obligatory-note-green">● Не обязателен к применению</span>
+      </summary>
+      <CrictlDownloadBIN />
+      <CrictlCheckBIN />
+    </details>
+  </TabItem>
 
-<TabItem value="kubeadm">
-  <details>
-    <summary>
-      Установка kubeadm
-      <span className="obligatory-note-green">● Не обязателен к применению</span>
-    </summary>
-    <KubeadmDownloadBIN />
-    <KubeadmCheckBIN />
-  </details>
-</TabItem>
+  <TabItem value="kubeadm">
+    <details>
+      <summary>
+        Установка kubeadm
+        <span className="obligatory-note-green">● Не обязателен к применению</span>
+      </summary>
+      <KubeadmDownloadBIN />
+      <KubeadmCheckBIN />
+    </details>
+  </TabItem>
 
 </Tabs>
 
 ### 9. Настройка компонентов
 
-> В этой части документации описан процесс настройка и конфигурация компонентов Kubernetes, которые обеспечивают корректную работу кластера.
+> В этом разделе описан процесс настройка и конфигурация компонентов Kubernetes, которые обеспечивают корректную работу кластера.
 
 <Tabs groupId="component">
 
@@ -765,7 +772,7 @@ import dedent from 'ts-dedent'
 
 ### 10. Проверка готовности компонентов
 
-> В этой части документации описан процесс проверки состояния компонентов Kubernetes перед инициализацией кластера или присоединением новых узлов.
+> Этот раздел описывает процесс проверки готовности компонентов Kubernetes до инициализации кластера или присоединения новых узлов.
 
 <details>
   <summary>
@@ -777,33 +784,11 @@ import dedent from 'ts-dedent'
 
 ### 11. Работа с сертификатами
 
-> В данном разделе рассматриваются правила использования сертификатов в кластере Kubernetes: какие компоненты задействуют сертификаты, кем они подписываются и как осуществляется проверка подлинности.
-
-<figure style={{ textAlign: 'center', display: 'contents' }}>
-  <FancyboxImage
-    src="/img/certificates/certificates-base.drawio.svg"
-    style={{ width: '100%', maxWidth: 'none' }}
-  />
-  <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
-    Базовая структура сертификатов
-  </figcaption>
-</figure>
-
-<figure style={{ textAlign: 'center', display: 'contents' }}>
-  <FancyboxImage
-    src="/img/certificates/certificates-transport.svg"
-    style={{ width: '100%', maxWidth: 'none' }}
-  />
-  <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
-    Сетевое общение используя сертификаты
-  </figcaption>
-</figure>
-
-
+<AboutAllCertificates/>
 
 ### 12. Создание корневых сертификатов
 
-> В этом разделе описывается процесс генерации корневых (root) сертификатов, которые используются для подписи остальных сертификатов в кластере Kubernetes.
+> В этом разделе описывается процесс полечения корневых (root) сертификатов, которые используются для подписи остальных сертификатов в кластере Kubernetes.
 
 <Tabs groupId="phase">
 
@@ -841,15 +826,15 @@ import dedent from 'ts-dedent'
 
   </TabItem>
 
-<TabItem value="join">
-  <details>
-    <summary>
-      Выгрузка ЦА
-      <span className="obligatory-note-orange">● Обязателен к применению</span>
-    </summary>
-    <KubernetesDownloadCA />
-  </details>
-</TabItem>
+  <TabItem value="join">
+    <details>
+      <summary>
+        Выгрузка ЦА
+        <span className="obligatory-note-orange">● Обязателен к применению</span>
+      </summary>
+      <KubernetesDownloadCA />
+    </details>
+  </TabItem>
 
 </Tabs>
 
@@ -859,85 +844,85 @@ import dedent from 'ts-dedent'
 
 <Tabs groupId="Certs-APPS">
 
-<TabItem value="Kubelet Server">
-  <details>
-    <summary>
-      Kubelet server
-      <span className="obligatory-note-orange">● Обязателен к применению</span>
-    </summary>
-    <KubeletServer />
-  </details>
-</TabItem>
+  <TabItem value="Kubelet Server">
+    <details>
+      <summary>
+        Kubelet server
+        <span className="obligatory-note-orange">● Обязателен к применению</span>
+      </summary>
+      <KubeletServer />
+    </details>
+  </TabItem>
 
-<TabItem value="API -> Etcd">
-  <details>
-    <summary>
-      K8S-API client > Etcd server
-      <span className="obligatory-note-orange">● Обязателен к применению</span>
-    </summary>
-    <KubeAPIETCDClientMain />
-  </details>
-</TabItem>
+  <TabItem value="API -> Etcd">
+    <details>
+      <summary>
+        K8S-API client > Etcd server
+        <span className="obligatory-note-orange">● Обязателен к применению</span>
+      </summary>
+      <KubeAPIETCDClientMain />
+    </details>
+  </TabItem>
 
-<TabItem value="API -> Kubelet">
-  <details>
-    <summary>
-      K8S-API client > Kubelet server
-      <span className="obligatory-note-orange">● Обязателен к применению</span>
-    </summary>
-    <KubeletClientMain />
-  </details>
-</TabItem>
+  <TabItem value="API -> Kubelet">
+    <details>
+      <summary>
+        K8S-API client > Kubelet server
+        <span className="obligatory-note-orange">● Обязателен к применению</span>
+      </summary>
+      <KubeletClientMain />
+    </details>
+  </TabItem>
 
-<TabItem value="API Server">
-  <details>
-    <summary>
-      K8S-API server
-      <span className="obligatory-note-orange">● Обязателен к применению</span>
-    </summary>
-    <KubeAPIServerMain />
-  </details>
-</TabItem>
+  <TabItem value="API Server">
+    <details>
+      <summary>
+        K8S-API server
+        <span className="obligatory-note-orange">● Обязателен к применению</span>
+      </summary>
+      <KubeAPIServerMain />
+    </details>
+  </TabItem>
 
-<TabItem value="Proxy -> API">
-  <details>
-    <summary>
-      FrontProxy client > K8S-API
-      <span className="obligatory-note-orange">● Обязателен к применению</span>
-    </summary>
-    <FrontProxyClientMain />
-  </details>
-</TabItem>
+  <TabItem value="Proxy -> API">
+    <details>
+      <summary>
+        FrontProxy client > K8S-API
+        <span className="obligatory-note-orange">● Обязателен к применению</span>
+      </summary>
+      <FrontProxyClientMain />
+    </details>
+  </TabItem>
 
-<TabItem value="Etcd Client">
-  <details>
-    <summary>
-      Etcd client > Etcd
-      <span className="obligatory-note-orange">● Обязателен к применению</span>
-    </summary>
-    <ETCDClientETCDMain />
-  </details>
-</TabItem>
+  <TabItem value="Etcd Client">
+    <details>
+      <summary>
+        Etcd client > Etcd
+        <span className="obligatory-note-orange">● Обязателен к применению</span>
+      </summary>
+      <ETCDClientETCDMain />
+    </details>
+  </TabItem>
 
-<TabItem value="Etcd Server">
-  <details>
-    <summary>
-      Etcd server
-      <span className="obligatory-note-orange">● Обязателен к применению</span>
-    </summary>
-    <ETCDServerMain />
-  </details>
-</TabItem>
+  <TabItem value="Etcd Server">
+    <details>
+      <summary>
+        Etcd server
+        <span className="obligatory-note-orange">● Обязателен к применению</span>
+      </summary>
+      <ETCDServerMain />
+    </details>
+  </TabItem>
 
-<TabItem value="Etcd Peer">
-  <details>
-    <summary>
-      Etcd peer > Etcd
-      <span className="obligatory-note-orange">● Обязателен к применению</span>
-    </summary>
-    <ETCDPeerMain />
-  </details>
-</TabItem>
+  <TabItem value="Etcd Peer">
+    <details>
+      <summary>
+        Etcd peer > Etcd
+        <span className="obligatory-note-orange">● Обязателен к применению</span>
+      </summary>
+      <ETCDPeerMain />
+    </details>
+  </TabItem>
 
 </Tabs>
 
@@ -1074,7 +1059,9 @@ import dedent from 'ts-dedent'
 
 </Tabs>
 
-### 18. Создание static pod-ов ETCD кластера TODO
+### 18. Создание static pod-ов ETCD кластера
+
+> В данном разделе описывается ручное создание static pod-манифестов для ETCD.
 
 <Tabs groupId="phase">
 
@@ -1101,6 +1088,8 @@ import dedent from 'ts-dedent'
 </Tabs>
 
 ### 19. Запуск службы Kubelet
+
+>  данном разделе рассматривается ручной запуск Kubelet с настройкой systemd unit. Описывается создание базового конфигурационного файла kubelet, настройка переменных окружения для службы kubelet.service, а также запуск самого сервиса.
 
 <Tabs groupId="phase">
 
@@ -1161,18 +1150,28 @@ import dedent from 'ts-dedent'
 
 ### 20. Проверка состояния кластера
 
-<details open>
-  <summary>Проверка состояния кластера</summary>
+> Этот раздел посвящён проверке состояния компонентов кластера после запуска kubelet. Здесь описываются команды для контроля загрузки образов, запуска контейнеров и успешной инициализации кластерных ресурсов. Это позволяет убедиться, что кластер стартовал корректно до перехода к следующим этапам.
+
+<details>
+  <summary>
+    Проверка состояния кластера
+    <span className="obligatory-note-green">● Не обязателен к применению</span>
+  </summary>
   <KubernetesStatusReady />
 </details>
 
 ### 21. Настройка ролевой модели
 
+> Этот раздел посвящён настройке ролевой модели (RBAC), необходимой для корректной работы механизма kubeadm join. Здесь описываются Roles/ClusterRoles, RoleBindings/ClusterRoleBindings и Bootstrap-токен, которые позволяют новым узлам безопасно подключаться к кластеру, запрашивать сертификаты и получать информацию о конфигурации API-сервера.
+
 <Tabs groupId="phase">
 
   <TabItem value="init">
-    <details open>
-      <summary>Настройка ролевой модели Kubeadm</summary>
+    <details>
+      <summary>
+        Настройка ролевой модели Kubeadm
+        <span className="obligatory-note-orange">● Обязателен к применению</span>
+        </summary>
       <RbacComponent />
     </details>
   </TabItem>
@@ -1181,11 +1180,17 @@ import dedent from 'ts-dedent'
 
 ### 22. Загрузка конфигурации в кластер
 
+> Этот раздел посвящён загрузке актуальной конфигурации `kubeadm` и `kubelet` в кластер в виде `ConfigMap`. Такая конфигурация необходима для корректного выполнения команды `kubeadm join`, так как она используется при инициализации новых узлов управляющего контура.
+Загрузка конфигурации централизует управление параметрами кластера и обеспечивает единообразие между всеми нодами, включая как `master`, так и `worker`-узлы.
+
 <Tabs groupId="phase">
 
   <TabItem value="init">
-    <details open>
-      <summary>Настройка ролевой модели Kubeadm</summary>
+    <details>
+      <summary>
+        Загрузка конфигурации в кластер
+        <span className="obligatory-note-orange">● Обязателен к применению</span>
+      </summary>
       <UploadConfigsInit />
     </details>
   </TabItem>
@@ -1194,11 +1199,18 @@ import dedent from 'ts-dedent'
 
 ### 23. Загрузка корневых сертификатов в кластер
 
+> Этот раздел посвящён загрузке корневых сертификатов в кластер Kubernetes в зашифрованном виде.
+Секрет kubeadm-certs создаётся вручную и содержит зашифрованные ключи и сертификаты, необходимые для последующего автоматического расшаривания при добавлении новых управляющих узлов (`kubeadm join`).
+Такой подход позволяет безопасно передавать чувствительные данные между узлами управляющего контура.
+
 <Tabs groupId="phase">
 
   <TabItem value="init">
-    <details open>
-      <summary>Загрузка корневых сертификатов в Kubernetes</summary>
+    <details>
+      <summary>
+        Загрузка корневых сертификатов в Kubernetes
+        <span className="obligatory-note-green">● Не обязателен к применению</span>
+      </summary>
       <UploadCAInit />
     </details>
   </TabItem>
@@ -1207,18 +1219,28 @@ import dedent from 'ts-dedent'
 
 ### 24 Маркировка и ограничение узлов
 
+> Этот раздел посвящён маркировке и ограничению узлов управляющего контура.
+Здесь описывается, как задать роль control-plane для узла и применить taint, запрещающий планирование рабочих подов на мастер-ноды.
+Эти действия необходимы для обеспечения изоляции управляющих компонентов и соблюдения архитектурной модели кластера.
+
 <Tabs groupId="phase">
 
   <TabItem value="init">
-    <details open>
-      <summary>Маркировка и ограничение узла</summary>
+    <details>
+      <summary>
+        Маркировка и ограничение узла
+        <span className="obligatory-note-orange">● Обязателен к применению</span>
+      </summary>
       <MarkingInitComponent />
     </details>
   </TabItem>
 
   <TabItem value="join">
-    <details open>
-      <summary>Маркировка и ограничение узла</summary>
+    <details>
+      <summary>
+        Маркировка и ограничение узла
+        <span className="obligatory-note-orange">● Обязателен к применению</span>
+      </summary>
       <MarkingJoinComponent />
     </details>
   </TabItem>

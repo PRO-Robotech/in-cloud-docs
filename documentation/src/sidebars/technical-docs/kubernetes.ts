@@ -204,6 +204,10 @@ export const kubernetes = [
       {
         type: 'category',
         label: '5.2.2.0. Все серт-ы',
+        link: {
+          type: 'doc',
+          id: 'tech-docs/kubernetes/certificates/about-all',
+        },
         items: [
           {
             type: 'doc',

@@ -31,49 +31,52 @@ import { ETCD_ARGS }                  from '@site/src/constants/kubernetes/etcdA
     </CodeBlock>
 
     <details className="custom-gray-block">
-    <summary>kubeadm-config</summary>
-    <CodeBlock>
+      <summary>kubeadm-config</summary>
 
-      {dedent`
-        kubectl \\
-          --kubeconfig=${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/super-admin.conf \\
-          apply -f - <<EOF
-        ---
-        apiVersion: v1
-        kind: ConfigMap
-        metadata:
-          name: kubeadm-config
-          namespace: kube-system
-        data:
-          ClusterConfiguration: |
-            ${KUBEADM_COFNIG_DATA.data.value}
-        EOF
-      `}
+      > Данный блок необходим, чтобы при выполнении `kubeadm join` узел получил актуальный `ClusterConfiguration` от управляющего кластера и корректно присоединился узел к control-plane.
 
-    </CodeBlock>
+      <CodeBlock>
+        {dedent`
+          kubectl \\
+            --kubeconfig=${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/super-admin.conf \\
+            apply -f - <<EOF
+          ---
+          apiVersion: v1
+          kind: ConfigMap
+          metadata:
+            name: kubeadm-config
+            namespace: kube-system
+          data:
+            ClusterConfiguration: |
+              ${KUBEADM_COFNIG_DATA.data.value}
+          EOF
+        `}
+
+      </CodeBlock>
     </details>
 
     <details className="custom-gray-block">
-    <summary>kubelet-config</summary>
-    <CodeBlock>
+      <summary>kubelet-config</summary>
 
-      {dedent`
-        kubectl \\
-          --kubeconfig=${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/super-admin.conf \\
-          apply -f - <<EOF
-        ---
-        apiVersion: v1
-        kind: ConfigMap
-        metadata:
-          name: kubelet-config
-          namespace: kube-system
-        data:
-          kubelet: |
-            ${KUBELET_COFNIG_DATA.data.value}
-        EOF
-      `}
+      > Данный блок необходим, чтобы при выполнении `kubeadm join` узел получил актуальный `kubelet-config` от управляющего кластера и корректно присоединился узел к control-plane.
 
-    </CodeBlock>
+      <CodeBlock>
+        {dedent`
+          kubectl \\
+            --kubeconfig=${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/super-admin.conf \\
+            apply -f - <<EOF
+          ---
+          apiVersion: v1
+          kind: ConfigMap
+          metadata:
+            name: kubelet-config
+            namespace: kube-system
+          data:
+            kubelet: |
+              ${KUBELET_COFNIG_DATA.data.value}
+          EOF
+        `}
+      </CodeBlock>
     </details>
 
   </TabItem>

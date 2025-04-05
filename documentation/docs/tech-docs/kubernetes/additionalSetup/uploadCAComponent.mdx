@@ -53,7 +53,7 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
     </CodeBlock>
     <CodeBlock language="bash">
       {dedent`
-        cat <<EOF > ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/openssl/upload-certs.sh
+        cat <<'EOF' > ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/openssl/upload-certs.sh
         #!/bin/bash
         set -euo pipefail
 
@@ -71,13 +71,18 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
           ["sa.pub"]="$CERT_PATH/sa.pub"
         )
 
-        KEY=$\{CERTIFICATE_UPLOAD_KEY}
-        echo "[INFO] certificate-key: $KEY"
+        KEY="$\{CERTIFICATE_UPLOAD_KEY:-}"
+        if [[ -z "$KEY" ]]; then
+          echo "[ERROR] CERTIFICATE_UPLOAD_KEY is not set"
+          exit 1
+        fi
+
+        echo "[INFO] Using certificate key: $KEY"
 
         TMP_DIR=$(mktemp -d)
         SECRET_FILE="$TMP_DIR/secret.yaml"
 
-        cat <<EOF > "$SECRET_FILE"
+        cat <<EOF_SECRET > "$SECRET_FILE"
         apiVersion: v1
         kind: Secret
         metadata:
@@ -85,19 +90,60 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
           namespace: kube-system
         type: Opaque
         data:
-        EOF
+        EOF_SECRET
 
         for name in "$\{!files[@]}"; do
           path="$\{files[$name]}"
+          if [[ ! -f "$path" ]]; then
+            echo "[WARN] Skipping missing file: $path"
+            continue
+          fi
+          echo "[INFO] Encrypting $name..."
           b64=$(python3 "$PY_SCRIPT" "$KEY" "$path")
           echo "  $name: $b64" >> "$SECRET_FILE"
         done
 
         echo "[INFO] Applying secret to cluster..."
         kubectl apply -f "$SECRET_FILE"
+
+        echo "[INFO] Secret successfully uploaded."
         EOF
       `}
     </CodeBlock>
+
+    <h4>Настройка прав</h4>
+    <CodeBlock language="yaml">
+      {dedent`
+        chmod +x ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/openssl/upload-certs.sh
+      `}
+    </CodeBlock>
+
+    <h4>Запуск скрипта</h4>
+    <CodeBlock language="yaml">
+      {dedent`
+        ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/openssl/upload-certs.sh
+      `}
+    </CodeBlock>
+
+    :::note Вывод команды
+    <CodeBlock language="yaml">
+      {dedent`
+        [INFO] Using certificate key: 0c00c2fd5c67c37656c00d78a9d7e1f2eb794ef8e4fc3e2a4b532eb14323cd59
+        [INFO] Encrypting front-proxy-ca.key...
+        [INFO] Encrypting sa.key...
+        [INFO] Encrypting front-proxy-ca.crt...
+        [INFO] Encrypting etcd-ca.crt...
+        [INFO] Encrypting sa.pub...
+        [INFO] Encrypting ca.key...
+        [INFO] Encrypting ca.crt...
+        [INFO] Encrypting etcd-ca.key...
+        [INFO] Applying secret to cluster...
+        secret/kubeadm-certs configured
+        [INFO] Secret successfully uploaded.
+      `}
+    </CodeBlock>
+    :::
+
   </TabItem>
 
   <TabItem value='Kubeadm'>
