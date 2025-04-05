@@ -3,6 +3,7 @@ import CodeBlock                from '@theme/CodeBlock'
 import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 import TabItem from '@theme/TabItem'
 import Tabs from '@theme/Tabs'
+import StatusSystemdUnit from '@site/docs/tech-docs/kubernetes/components/kubelet/checks/statusSystemdUnitRunning.mdx'
 
 <h4>Переменные окружения</h4>
 
@@ -45,21 +46,9 @@ import Tabs from '@theme/Tabs'
     `}
 </CodeBlock>
 
-:::note
-<CodeBlock language="bash">
-    {dedent`
-        ● kubelet.service - kubelet: The Kubernetes Node Agent
-                Loaded: loaded (/usr/lib/systemd/system/kubelet.service; enabled; preset: enabled)
-            Drop-In: /usr/lib/systemd/system/kubelet.service.d
-                        └─10-kubeadm.conf
-                Active: active (running) since Sat 2025-02-22 10:33:54 UTC; 17min ago
-                Docs: https://kubernetes.io/docs/
-            Main PID: 13779 (kubelet)
-                Tasks: 14 (limit: 7069)
-                Memory: 34.0M (peak: 35.3M)
-                CPU: 27.131s
-                CGroup: /system.slice/kubelet.service
-                        └─13779 /usr/local/bin/kubelet --bootstrap-kubeconfig=/etc/kubernetes/bootstrap-kubelet.conf --kubeconfig=/etc/kubernetes/kubelet.conf --config=/var/lib/kubelet/config.yaml
-    `}
-</CodeBlock>
-:::
+<h3>Статус Systemd Unit</h3>
+
+<details className="custom-blue-block">
+  <summary>Проверка готовности systemd unit</summary>
+  <StatusSystemdUnit />
+</details>
