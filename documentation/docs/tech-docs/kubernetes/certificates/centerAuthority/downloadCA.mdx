@@ -1,13 +1,8 @@
-
-import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
-
-import CodeBlock from '@theme/CodeBlock'
-import dedent from 'ts-dedent'
 import DownloadCAOpensslComponent from '@site/docs/tech-docs/kubernetes/certificates/centerAuthority/downloadCAOpensslComponent.mdx'
+import DownloadCAKubeadmComponent from '@site/docs/tech-docs/kubernetes/certificates/centerAuthority/downloadCAKubeadmComponent.mdx'
 
-import TabItem                from '@theme/TabItem'
-import Tabs                   from '@theme/Tabs'
-
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
 
 <Tabs groupId="install-type">
   <TabItem value='HardWay'>
@@ -15,30 +10,6 @@ import Tabs                   from '@theme/Tabs'
   </TabItem>
 
   <TabItem value='Kubeadm'>
-    :::warning Обратите внимание!
-    Данный раздел зависит от следующих разделов:
-    - [Kubeadm Configs](/docs/tech-docs/kubernetes/components/kubeadm/lifecycleSettings.mdx).
-    :::
-
-    <h4>Генерация манифеста</h4>
-    <CodeBlock language="bash">
-      {dedent`
-        kubeadm join phase control-plane-prepare download-certs \\
-          --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
-      `}
-    </CodeBlock>
-
-
-    :::note
-    <CodeBlock language="bash">
-      {dedent`
-        [preflight] Reading configuration from the cluster...
-        [preflight] FYI: You can look at this config file with 'kubectl -n kube-system get cm kubeadm-config -o yaml'
-        [download-certs] Downloading the certificates in Secret "kubeadm-certs" in the "kube-system" Namespace
-        [download-certs] Saving the certificates to the folder: "/etc/kubernetes/pki"
-      `}
-    </CodeBlock>
-    :::
-
+     <DownloadCAKubeadmComponent/>
   </TabItem>
 </Tabs>

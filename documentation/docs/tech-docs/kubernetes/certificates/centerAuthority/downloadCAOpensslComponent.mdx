@@ -1,7 +1,3 @@
-
-import TabItem from '@theme/TabItem'
-import Tabs from '@theme/Tabs'
-
 import CodeBlock from '@theme/CodeBlock'
 import dedent from 'ts-dedent'
 
@@ -10,7 +6,6 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 :::warning
 В этом разделе приведена инструкция по загрузке корневых сертификатов в управляющий контур Kubernetes. Сертификаты загружаются в зашифрованном виде как ресурс `Secret`, что позволяет их безопасно передавать и расшифровывать на другом узле для управления жизненным циклом узлов УК.
 :::
-
 
 <h4>Рабочая директория</h4>
 <CodeBlock language="bash">
@@ -22,6 +17,12 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 </CodeBlock>
 
 <h4>Переменные окружения</h4>
+
+:::danger Внимание!
+  Под каждую ноду в продуктивной среде рекомендуется создавать отдельный bootstrap-токен.
+  Однако для целей демонстрации (и в рамках данной документации) мы упростили процесс и используем один общий токен для всех узлов управляющего контура.
+:::
+
 <CodeBlock language="bash">
   {dedent`
     export CERTIFICATE_UPLOAD_KEY=0c00c2fd5c67c37656c00d78a9d7e1f2eb794ef8e4fc3e2a4b532eb14323cd59
@@ -45,8 +46,11 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
     plain = aesgcm.decrypt(nonce, ct, None)
     sys.stdout.buffer.write(plain)
     EOF
-  `}
+
+`}
+
 </CodeBlock>
+
 <CodeBlock language="bash">
   {dedent`
     cat <<'EOF' > ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/openssl/download-certs.sh
@@ -96,9 +100,10 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 
     echo "[INFO] Certificates unpacked."
     EOF
-  `}
-</CodeBlock>
 
+`}
+
+</CodeBlock>
 
 <h4>Настройка прав</h4>
 <CodeBlock language="yaml">
@@ -115,6 +120,7 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 </CodeBlock>
 
 :::note Вывод команды
+
 <CodeBlock language="yaml">
   {dedent`
     [INFO] Using certificate key: 0c00c2fd5c67c37656c00d78a9d7e1f2eb794ef8e4fc3e2a4b532eb14323cd59
