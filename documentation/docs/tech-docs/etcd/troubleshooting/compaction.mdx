@@ -4,12 +4,12 @@ toc_min_heading_level: 2
 toc_max_heading_level: 2
 ---
 
-import TabItem                  from '@theme/TabItem'
-import Tabs                     from '@theme/Tabs'
-import dedent                   from 'ts-dedent'
-import CodeBlock                from '@theme/CodeBlock'
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+import dedent from 'ts-dedent'
+import CodeBlock from '@theme/CodeBlock'
 
-# 5.1.5.4.1.  Уплотнение (Compaction)
+# 5.1.5.4.1. Уплотнение (Compaction)
 
 > Уплотнение в etcd – это процесс удаления старых версий данных (ревизий) из хранилища. В etcd все операции записи создают новые ревизии ключей, позволяя клиентам получать доступ к историческим данным. Однако со временем накопление этих ревизий приводит к увеличению объема используемого дискового пространства.
 
@@ -30,44 +30,47 @@ import CodeBlock                from '@theme/CodeBlock'
 - Слишком большое количество ревизий может замедлить работу etcd, особенно при выполнении запросов к историческим данным.
 
 ## 5.1.5.4.1.3. Инструкция
+
 :::warning
 Просьба обратить внимание что есть внешняя зависимость от alias.
 :::
 
 <Tabs groupId="install-type">
 
-    <TabItem value='etcdctl'>
-      <CodeBlock language="bash">
-          {dedent`
-              etcdctlCompaction
-          `}
-      </CodeBlock>
-    </TabItem>
+  <TabItem value='etcdctl'>
+    <CodeBlock language="bash">
+      {dedent`
+        etcdctlCompaction
+      `}
+    </CodeBlock>
+  </TabItem>
 
-    <TabItem value='ectl'>
-      <CodeBlock language="bash">
-          {dedent`
-              ectlCompaction
-          `}
-      </CodeBlock>
-    </TabItem>
+  <TabItem value='ectl'>
+    <CodeBlock language="bash">
+      {dedent`
+        ectlCompaction
+      `}
+    </CodeBlock>
+  </TabItem>
 
-    <TabItem value='nectl'>
-      <CodeBlock language="bash">
-          {dedent`
-              nectlCompaction
-          `}
-      </CodeBlock>
-    </TabItem>
+  <TabItem value='nectl'>
+    <CodeBlock language="bash">
+      {dedent`
+        nectlCompaction
+      `}
+    </CodeBlock>
+  </TabItem>
 
 </Tabs>
 
-:::info
+:::note Вывод команды
+
 > При удачном выполнении команды получим следующего вида сообщение.
 
 <CodeBlock language="bash">
-    {dedent`
-        compacted revision 75704
-    `}
+  {dedent`
+    compacted revision 75704
+  `}
 </CodeBlock>
+
 :::
