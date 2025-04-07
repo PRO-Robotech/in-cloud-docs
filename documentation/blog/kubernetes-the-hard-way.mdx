@@ -769,8 +769,10 @@ import dedent from 'ts-dedent'
   <TabItem value="kubeadm">
     <details>
       <summary>
-        <p style={{ marginBottom: 0 }}>Установка kubeadm</p>
-        <p className="obligatory-note-green">● Не обязателен к применению</p>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Установка kubeadm</p>
+          <p className="obligatory-note-green">● Не обязателен к применению</p>
+        </div>
       </summary>
       <KubeadmDownloadBIN />
       <KubeadmCheckBIN />
@@ -844,8 +846,10 @@ import dedent from 'ts-dedent'
 
 <details>
   <summary>
-    <p style={{ marginBottom: 0 }}>Проверка готовности компонентов</p>
-    <p className="obligatory-note-green">● Не обязателен к применению</p>
+    <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+      <p style={{ marginBottom: 0 }}>Проверка готовности компонентов</p>
+      <p className="obligatory-note-green">● Не обязателен к применению</p>
+    </div>
   </summary>
   <ComponentsReady />
 </details>
