@@ -71,14 +71,15 @@
   height: auto;
   border-radius: 2px;
   box-shadow: 0 4px 10px rgba(255, 255, 255, 0.2);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .logoContainer:hover .logo {
   transform: translateY(-2px); /* Поднимаем логотип при наведении */
   box-shadow: 0 8px 20px rgba(255, 255, 255, 0.3); /* Увеличиваем тень при наведении */
 }
-
 
 /* Контейнер для текста и логотипа */
 .text {
@@ -116,7 +117,9 @@
   height: 120px; /* Устанавливаем фиксированную высоту для круглой формы */
   object-fit: contain; /* Убедитесь, что изображение сохраняет пропорции */
   margin-right: 10px; /* Уменьшаем отступ между логотипом и текстом */
-  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Плавный переход для эффектов */
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease; /* Плавный переход для эффектов */
   border-radius: 50%; /* Логотип круглый */
 
   /* Начальная подсветка */
@@ -129,19 +132,19 @@
   box-shadow: 0 0 10px 3px rgba(255, 255, 255, 0.8); /* Усиленное свечение при наведении */
 }
 
-
 .obligatory-note-orange {
-  position: absolute;
-  right: 0;
+  // position: absolute;
+  // right: 0;
   color: orange;
   font-weight: bold;
   font-size: 15px;
+  margin-bottom: 0;
   margin-top: 0px;
 }
 
 .obligatory-note-green {
-  position: absolute;
-  right: 0;
+  // position: absolute;
+  // right: 0;
   color: rgb(0, 171, 43);
   font-weight: bold;
   font-size: 15px;
