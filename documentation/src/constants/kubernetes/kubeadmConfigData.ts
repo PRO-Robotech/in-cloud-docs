@@ -12,7 +12,10 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 export const KUBEADM_COFNIG_DATA: TCustomValueItems = {
   data: {
     value: dedent`
+      apiVersion: kubeadm.k8s.io/v1beta3
+      kind: ClusterConfiguration
       clusterName: "$\{CLUSTER_NAME}"
+      certificatesDir: ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/pki
       controlPlaneEndpoint: $\{INTERNAL_API}:${KUBE_API_ARGS.securePort.value}
       imageRepository: "${CUSTOM_VALUE.baseDockerRegistry.value}"
       networking:

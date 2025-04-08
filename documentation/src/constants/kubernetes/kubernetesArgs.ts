@@ -1,7 +1,4 @@
 /* eslint-disable no-template-curly-in-string */
-import { CERTIFICATES } from '@site/src/constants/kubernetes/certs'
-import { PORTS } from '@site/src/constants/kubernetes/ports'
-import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 import { TCustomValueItems } from '../../customTypes/customValue'
 import dedent from 'ts-dedent'
 
@@ -170,7 +167,6 @@ export const KUBERNETES_KUBE_API_ARGS: TCustomValueItems = {
       v: "${KUBE_API_ARGS.v.value}"
       version: "${KUBE_API_ARGS.version.value}"
       watch-cache: "${KUBE_API_ARGS.watchCache.value}"
-
       # ЕСЛИ НУЖНО ПОДКЛЮЧИТЬ CLOUD-CONTROLLER-MANAGER
       # ТРЕБУЕТСЯ РАСКОМЕНТИРОВАТЬ
       # ->
@@ -346,7 +342,6 @@ export const KUBERNETES_KUBE_CONTROLLER_MANAGER_ARGS: TCustomValueItems = {
       v: "${KUBE_CONTROLLER_MANAGER_ARGS.v.value}"
       version: "${KUBE_CONTROLLER_MANAGER_ARGS.version.value}"
       volume-host-allow-local-loopback: "${KUBE_CONTROLLER_MANAGER_ARGS.volumeHostAllowLocalLoopback.value}"
-
       # Не указывать если значение "" или undefined
       # cluster-signing-kube-apiserver-client-cert-file: "${KUBE_CONTROLLER_MANAGER_ARGS.clusterSigningKubeApiserverClientCertFile.value}"
       # cluster-signing-kube-apiserver-client-key-file: "${KUBE_CONTROLLER_MANAGER_ARGS.clusterSigningKubeApiserverClientKeyFile.value}"
@@ -424,7 +419,6 @@ export const KUBERNETES_KUBE_SCHEDULER_ARGS: TCustomValueItems = {
       secure-port: "${KUBE_SCHEDULER_ARGS.securePort.value}"
       v: "${KUBE_SCHEDULER_ARGS.v.value}"
       version: "${KUBE_SCHEDULER_ARGS.version.value}"
-
       # allow-metric-labels: "${KUBE_SCHEDULER_ARGS.allowMetricLabels.value}"
       # allow-metric-labels-manifest: "${KUBE_SCHEDULER_ARGS.allowMetricLabelsManifest.value}"
       # cert-dir: "${KUBE_SCHEDULER_ARGS.certDir.value}"

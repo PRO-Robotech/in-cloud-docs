@@ -172,12 +172,10 @@ import dedent                 from 'ts-dedent'
         - --v=${KUBE_API_ARGS.v.value}
         - --version=${KUBE_API_ARGS.version.value}
         - --watch-cache=${KUBE_API_ARGS.watchCache.value}
-
         # ЕСЛИ НУЖНО ПОДКЛЮЧИТЬ CLOUD-CONTROLLER-MANAGER
         # ТРЕБУЕТСЯ РАСКОМЕНТИРОВАТЬ
         # ->
         # - --cloud-provider: "${KUBE_API_ARGS.cloudProvider.value}"
-
         # Не указывать если значение "" или undefined
         # - --cloud-config=${KUBE_API_ARGS.cloudConfig.value}
         # - --strict-transport-security-directives=${KUBE_API_ARGS.strictTransportSecurityDirectives.value}

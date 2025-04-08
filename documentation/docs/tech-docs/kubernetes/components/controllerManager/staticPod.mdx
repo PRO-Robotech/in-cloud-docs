@@ -158,12 +158,10 @@ import CodeBlock                  from '@theme/CodeBlock'
         - --v=${KUBE_CONTROLLER_MANAGER_ARGS.v.value}
         - --version=${KUBE_CONTROLLER_MANAGER_ARGS.version.value}
         - --volume-host-allow-local-loopback=${KUBE_CONTROLLER_MANAGER_ARGS.volumeHostAllowLocalLoopback.value}
-
         # ЕСЛИ НУЖНО ПОДКЛЮЧИТЬ CLOUD-CONTROLLER-MANAGER
         # ТРЕБУЕТСЯ РАСКОМЕНТИРОВАТЬ
         # ->
         # - --cloud-provider: "${KUBE_CONTROLLER_MANAGER_ARGS.cloudProvider.value}"
-
         # Не указывать если значение "" или undefined
         # - --cluster-signing-kube-apiserver-client-cert-file=${KUBE_CONTROLLER_MANAGER_ARGS.clusterSigningKubeApiserverClientCertFile.value}
         # - --cluster-signing-kube-apiserver-client-key-file=${KUBE_CONTROLLER_MANAGER_ARGS.clusterSigningKubeApiserverClientKeyFile.value}

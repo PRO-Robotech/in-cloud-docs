@@ -27,11 +27,55 @@ import { ETCD_ARGS }                  from '@site/src/constants/kubernetes/etcdA
         export INTERNAL_API=api.${CUSTOM_VALUE.kubernetesClusterExternalDomain.value}
         export MACHINE_LOCAL_ADDRESS=${CUSTOM_VALUE.virtualMachineLocalAddress.value}
         export ETCD_INITIAL_CLUSTER="$\{FULL_HOST_NAME}=${ETCD_ARGS.initialAdvertisePeerUrls.value}"
+        export AUTH_EXTRA_GROUPS="system:bootstrappers:kubeadm:default-node-token"
       `}
     </CodeBlock>
 
     <details className="custom-gray-block">
       <summary>kubeadm-config</summary>
+
+      > Данный блок необходим, чтобы разрешить нодам читать ConfigMap `kubeadm-config` в пространстве имён `kube-system`:
+
+      <CodeBlock>
+        {dedent`
+          kubectl \\
+            --kubeconfig=${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/super-admin.conf \\
+            apply -f - <<EOF
+          ---
+          apiVersion: rbac.authorization.k8s.io/v1
+          kind: Role
+          metadata:
+            name: kubeadm:nodes-kubeadm-config
+            namespace: kube-system
+          rules:
+          - apiGroups:
+            - ""
+            resourceNames:
+            - kubeadm-config
+            resources:
+            - configmaps
+            verbs:
+            - get
+          ---
+          apiVersion: rbac.authorization.k8s.io/v1
+          kind: RoleBinding
+          metadata:
+            name: kubeadm:nodes-kubeadm-config
+            namespace: kube-system
+          roleRef:
+            apiGroup: rbac.authorization.k8s.io
+            kind: Role
+            name: kubeadm:nodes-kubeadm-config
+          subjects:
+          - apiGroup: rbac.authorization.k8s.io
+            kind: Group
+            name: $\{AUTH_EXTRA_GROUPS}
+          - apiGroup: rbac.authorization.k8s.io
+            kind: Group
+            name: system:nodes
+          EOF
+        `}
+      </CodeBlock>
 
       > Данный блок необходим, чтобы при выполнении `kubeadm join` узел получил актуальный `ClusterConfiguration` от управляющего кластера и корректно присоединился узел к control-plane.
 
@@ -57,6 +101,49 @@ import { ETCD_ARGS }                  from '@site/src/constants/kubernetes/etcdA
 
     <details className="custom-gray-block">
       <summary>kubelet-config</summary>
+
+      > Данный блок необходим, чтобы разрешить нодам читать ConfigMap `kubelet-config` в пространстве имён `kube-system`:
+
+      <CodeBlock>
+        {dedent`
+          kubectl \\
+            --kubeconfig=${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/super-admin.conf \\
+            apply -f - <<EOF
+          ---
+          apiVersion: rbac.authorization.k8s.io/v1
+          kind: Role
+          metadata:
+            name: kubeadm:kubelet-config
+            namespace: kube-system
+          rules:
+          - apiGroups:
+            - ""
+            resourceNames:
+            - kubelet-config
+            resources:
+            - configmaps
+            verbs:
+            - get
+          ---
+          apiVersion: rbac.authorization.k8s.io/v1
+          kind: RoleBinding
+          metadata:
+            name: kubeadm:kubelet-config
+            namespace: kube-system
+          roleRef:
+            apiGroup: rbac.authorization.k8s.io
+            kind: Role
+            name: kubeadm:kubelet-config
+          subjects:
+          - apiGroup: rbac.authorization.k8s.io
+            kind: Group
+            name: system:nodes
+          - apiGroup: rbac.authorization.k8s.io
+            kind: Group
+            name: $\{AUTH_EXTRA_GROUPS}
+          EOF
+        `}
+      </CodeBlock>
 
       > Данный блок необходим, чтобы при выполнении `kubeadm join` узел получил актуальный `kubelet-config` от управляющего кластера и корректно присоединился узел к control-plane.
 

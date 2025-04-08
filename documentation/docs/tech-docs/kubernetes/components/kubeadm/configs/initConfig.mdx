@@ -69,8 +69,6 @@ import Tabs from '@theme/Tabs'
               - FileAvailable--etc-kubernetes-manifests-kube-scheduler.yaml
               - FileAvailable--etc-kubernetes-manifests-etcd.yaml
           ---
-          apiVersion: kubeadm.k8s.io/v1beta3
-          kind: ClusterConfiguration
           ${KUBEADM_COFNIG_DATA.data.value}
           EOF
         `}
@@ -151,7 +149,6 @@ import Tabs from '@theme/Tabs'
                 - name: "k8s-audit"
                   hostPath: "/var/log/kubernetes/audit/"
                   mountPath: "/var/log/kubernetes/audit/"
-                  readOnly: false
                   pathType: DirectoryOrCreate
                 certSANs:
                   - "127.0.0.1"
