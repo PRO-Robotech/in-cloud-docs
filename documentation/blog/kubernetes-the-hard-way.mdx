@@ -16,7 +16,6 @@ import Admonition from '@theme/Admonition'
 import { PORTS } from '@site/src/constants/kubernetes/ports'
 import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 import { COMPONENTS_VERSION } from '@site/src/constants/kubernetes/componentsVersion'
-import MastersTabs from '@site/docs/tech-docs/kubernetes/setupEnvironments/allMasterTabs.mdx'
 
 import ContainerdDownloadBIN from '@site/docs/tech-docs/kubernetes/components/containerd/lifecycleDownloadComponent.mdx'
 import ContainerdCheckBIN from '@site/docs/tech-docs/kubernetes/components/containerd/checkBIN.mdx'
@@ -99,9 +98,6 @@ import AboutAllCertificates from '@site/docs/tech-docs/kubernetes/certificates/a
 
 import TabItem from '@theme/TabItem'
 import Tabs from '@theme/Tabs'
-
-import CodeBlock from '@theme/CodeBlock'
-import dedent from 'ts-dedent'
 
 <h3>
   Kubernetes The Hard Way <span style={{ color: '#1cc5ac' }}>#</span>
@@ -896,96 +892,113 @@ import dedent from 'ts-dedent'
 
 > В этом разделе создаются и подписываются сертификаты, необходимые для различных компонентов Kubernetes, обеспечивая защищённую коммуникацию между ними.
 
-<Tabs groupId="Certs-APPS">
-  <TabItem value="Kubelet Server">
+
+<Tabs groupId="phase">
+  <TabItem value="init">
     <details>
       <summary>
         <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <p style={{ marginBottom: 0 }}>Kubelet server</p>
+          <p style={{ marginBottom: 0 }}>Создание сертификатов приложений</p>
           <p className="obligatory-note-orange">● Обязателен к применению</p>
         </div>
       </summary>
-      <KubeletServer />
+      <Tabs groupId="Certs-APPS">
+        <TabItem value="Kubelet Server">
+          <details open className="custom-gray-block">
+            <summary>
+              <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+                <p style={{ marginBottom: 0 }}>Kubelet server</p>
+              </div>
+            </summary>
+            <KubeletServer />
+          </details>
+        </TabItem>
+        <TabItem value="API -> Etcd">
+          <details open className="custom-gray-block">
+            <summary>
+              <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+                <p style={{ marginBottom: 0 }}>K8S-API client > Etcd server</p>
+              </div>
+            </summary>
+            <KubeAPIETCDClientMain />
+          </details>
+        </TabItem>
+        <TabItem value="API -> Kubelet">
+          <details open className="custom-gray-block">
+            <summary>
+              <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+                <p style={{ marginBottom: 0 }}>K8S-API client > Kubelet server</p>
+              </div>
+            </summary>
+            <KubeletClientMain />
+          </details>
+        </TabItem>
+        <TabItem value="API Server">
+          <details open className="custom-gray-block">
+            <summary>
+              <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+                <p style={{ marginBottom: 0 }}>K8S-API server</p>
+              </div>
+            </summary>
+            <KubeAPIServerMain />
+          </details>
+        </TabItem>
+        <TabItem value="Proxy -> API">
+          <details open className="custom-gray-block">
+            <summary>
+              <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+                <p style={{ marginBottom: 0 }}>FrontProxy client > K8S-API</p>
+              </div>
+            </summary>
+            <FrontProxyClientMain />
+          </details>
+        </TabItem>
+        <TabItem value="Etcd Client">
+          <details open className="custom-gray-block">
+            <summary>
+              <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+                <p style={{ marginBottom: 0 }}>Etcd client > Etcd</p>
+              </div>
+            </summary>
+            <ETCDClientETCDMain />
+          </details>
+        </TabItem>
+        <TabItem value="Etcd Server">
+          <details open className="custom-gray-block">
+            <summary>
+              <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+                <p style={{ marginBottom: 0 }}>Etcd server</p>
+              </div>
+            </summary>
+            <ETCDServerMain />
+          </details>
+        </TabItem>
+        <TabItem value="Etcd Peer">
+          <details open className="custom-gray-block">
+            <summary>
+              <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+                <p style={{ marginBottom: 0 }}>Etcd peer > Etcd</p>
+              </div>
+            </summary>
+            <ETCDPeerMain />
+          </details>
+        </TabItem>
+      </Tabs>
     </details>
   </TabItem>
-  <TabItem value="API -> Etcd">
+  <TabItem value="join">
     <details>
       <summary>
         <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <p style={{ marginBottom: 0 }}>K8S-API client > Etcd server</p>
+          <p style={{ marginBottom: 0 }}>Создание сертификатов приложений</p>
           <p className="obligatory-note-orange">● Обязателен к применению</p>
         </div>
       </summary>
-      <KubeAPIETCDClientMain />
-    </details>
-  </TabItem>
-  <TabItem value="API -> Kubelet">
-    <details>
-      <summary>
-        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <p style={{ marginBottom: 0 }}>K8S-API client > Kubelet server</p>
-          <p className="obligatory-note-orange">● Обязателен к применению</p>
-        </div>
-      </summary>
-      <KubeletClientMain />
-    </details>
-  </TabItem>
-  <TabItem value="API Server">
-    <details>
-      <summary>
-        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <p style={{ marginBottom: 0 }}>K8S-API server</p>
-          <p className="obligatory-note-orange">● Обязателен к применению</p>
-        </div>
-      </summary>
-      <KubeAPIServerMain />
-    </details>
-  </TabItem>
-  <TabItem value="Proxy -> API">
-    <details>
-      <summary>
-        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <p style={{ marginBottom: 0 }}>FrontProxy client > K8S-API</p>
-          <p className="obligatory-note-orange">● Обязателен к применению</p>
-        </div>
-      </summary>
-      <FrontProxyClientMain />
-    </details>
-  </TabItem>
-  <TabItem value="Etcd Client">
-    <details>
-      <summary>
-        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <p style={{ marginBottom: 0 }}>Etcd client > Etcd</p>
-          <p className="obligatory-note-orange">● Обязателен к применению</p>
-        </div>
-      </summary>
-      <ETCDClientETCDMain />
-    </details>
-  </TabItem>
-  <TabItem value="Etcd Server">
-    <details>
-      <summary>
-        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <p style={{ marginBottom: 0 }}>Etcd server</p>
-          <p className="obligatory-note-orange">● Обязателен к применению</p>
-        </div>
-      </summary>
-      <ETCDServerMain />
-    </details>
-  </TabItem>
-  <TabItem value="Etcd Peer">
-    <details>
-      <summary>
-        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <p style={{ marginBottom: 0 }}>Etcd peer > Etcd</p>
-          <p className="obligatory-note-orange">● Обязателен к применению</p>
-        </div>
-      </summary>
-      <ETCDPeerMain />
+      TODO
     </details>
   </TabItem>
 </Tabs>
+
 
 ---
 
@@ -993,61 +1006,80 @@ import dedent from 'ts-dedent'
 
 > Этот раздел посвящён созданию `kubeconfig`-файлов для различных компонентов и пользователей, обеспечивая безопасное подключение к API-серверу Kubernetes.
 
-<Tabs groupId="Certs-APPS">
-  <TabItem value="Super Admin">
+
+<Tabs groupId="phase">
+  <TabItem value="init">
     <details>
       <summary>
         <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <p style={{ marginBottom: 0 }}>Super Admin</p>
+          <p style={{ marginBottom: 0 }}>Создание конфигураций kubeconfig/сертификатов</p>
           <p className="obligatory-note-orange">● Обязателен к применению</p>
         </div>
       </summary>
-      <SuperAdminClientMain />
+      <Tabs groupId="Certs-APPS">
+        <TabItem value="Super Admin">
+          <details open className="custom-gray-block">
+            <summary>
+              <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+                <p style={{ marginBottom: 0 }}>Super Admin</p>
+              </div>
+            </summary>
+            <SuperAdminClientMain />
+          </details>
+        </TabItem>
+        <TabItem value="Admin">
+          <details open className="custom-gray-block">
+            <summary>
+              <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+                <p style={{ marginBottom: 0 }}>Admin</p>
+              </div>
+            </summary>
+            <AdminClientMain />
+          </details>
+        </TabItem>
+        <TabItem value="Controller">
+          <details open className="custom-gray-block">
+            <summary>
+              <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+                <p style={{ marginBottom: 0 }}>Kube Controller Manager</p>
+              </div>
+            </summary>
+            <KubeControllerKubeAPIClient />
+          </details>
+        </TabItem>
+        <TabItem value="Scheduler">
+          <details open className="custom-gray-block">
+            <summary>
+              <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+                <p style={{ marginBottom: 0 }}>Kube Scheduler</p>
+              </div>
+            </summary>
+            <KubeSchedulerCerts />
+          </details>
+        </TabItem>
+        <TabItem value="Kubelet">
+          <details open className="custom-gray-block">
+            <summary>
+              <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+                <p style={{ marginBottom: 0 }}>Kubelet client</p>
+              </div>
+            </summary>
+            <Admonition type="warning">Обратите внимание! Можно подписать через `kubectl certificate approve`</Admonition>
+            <KubeAPIClient />
+          </details>
+        </TabItem>
+      </Tabs>
     </details>
   </TabItem>
-  <TabItem value="Admin">
+  <TabItem value="join">
     <details>
       <summary>
         <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <p style={{ marginBottom: 0 }}>Admin</p>
+          <p style={{ marginBottom: 0 }}>Создание конфигураций kubeconfig/сертификатов</p>
           <p className="obligatory-note-orange">● Обязателен к применению</p>
         </div>
       </summary>
-      <AdminClientMain />
-    </details>
-  </TabItem>
-  <TabItem value="Controller">
-    <details>
-      <summary>
-        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <p style={{ marginBottom: 0 }}>Kube Controller Manager</p>
-          <p className="obligatory-note-orange">● Обязателен к применению</p>
-        </div>
-      </summary>
-      <KubeControllerKubeAPIClient />
-    </details>
-  </TabItem>
-  <TabItem value="Scheduler">
-    <details>
-      <summary>
-        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <p style={{ marginBottom: 0 }}>Kube Scheduler</p>
-          <p className="obligatory-note-orange">● Обязателен к применению</p>
-        </div>
-      </summary>
-      <KubeSchedulerCerts />
-    </details>
-  </TabItem>
-  <TabItem value="Kubelet">
-    <details>
-      <summary>
-        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <p style={{ marginBottom: 0 }}>Kubelet client</p>
-          <p className="obligatory-note-orange">● Обязателен к применению</p>
-        </div>
-      </summary>
-      <Admonition type="warning">Обратите внимание! Можно подписать через `kubectl certificate approve`</Admonition>
-      <KubeAPIClient />
+      TODO
     </details>
   </TabItem>
 </Tabs>
@@ -1058,15 +1090,31 @@ import dedent from 'ts-dedent'
 
 > В данном разделе создаётся ключ, с помощью которого Kubernetes будет подписывать токены `ServiceAccount`. Эти токены используются для аутентификации приложений внутри кластера при обращении к API-серверу.
 
-<details>
-  <summary>
-    <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-      <p style={{ marginBottom: 0 }}>Создание ключа подписи ServiceAccount</p>
-      <p className="obligatory-note-orange">● Обязателен к применению</p>
-    </div>
-  </summary>
-  <ServiceAccount />
-</details>
+
+<Tabs groupId="phase">
+  <TabItem value="init">
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Создание ключа подписи ServiceAccount</p>
+          <p className="obligatory-note-orange">● Обязателен к применению</p>
+        </div>
+      </summary>
+      <ServiceAccount />
+    </details>
+  </TabItem>
+  <TabItem value="join">
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Выгрузка ключа подписи ServiceAccount</p>
+          <p className="obligatory-note-orange">● Обязателен к применению</p>
+        </div>
+      </summary>
+      TODO
+    </details>
+  </TabItem>
+</Tabs>
 
 ---
 
