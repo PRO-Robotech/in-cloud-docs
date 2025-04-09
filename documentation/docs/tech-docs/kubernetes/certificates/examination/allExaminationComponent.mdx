@@ -1,0 +1,23 @@
+import KubeadmExamination from '@site/docs/tech-docs/kubernetes/certificates/examination/examinationKubeadmComponent.mdx'
+import OpensslExamination from '@site/docs/tech-docs/kubernetes/certificates/examination/examinationOpensslComponent.mdx'
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+> Этот раздел посвящён проверке корректности созданных сертификатов и ключей, а также соответствию между ними. Это важно для устранения ошибок до запуска компонентов Kubernetes.
+
+<details>
+  <summary>
+    <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+      <p style={{ marginBottom: 0 }}>Проверка блока сертификатов</p>
+      <p className="obligatory-note-green">● Не обязателен к применению</p>
+    </div>
+  </summary>
+  <Tabs groupId="install-type">
+    <TabItem value="HardWay">
+      <OpensslExamination />
+    </TabItem>
+    <TabItem value="Kubeadm">
+      <KubeadmExamination />
+    </TabItem>
+  </Tabs>
+</details>

@@ -1,0 +1,41 @@
+import JoinCertsGen from '@site/docs/tech-docs/kubernetes/certificates/components/_kubeadm/joinAllCertsGen.mdx'
+import InitCertsGen from '@site/docs/tech-docs/kubernetes/certificates/components/_kubeadm/initAllCertsGen.mdx'
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+> Этот раздел описывает генерацию всех сертификатов.
+
+:::caution
+Если вы **не проходили ручную генерацию сертификатов**, примените данный блок для автоматического создания необходимых файлов.
+:::
+
+<Tabs groupId="current-master">
+  <TabItem value="Init" label="Init">
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Генерация всех сертификатов</p>
+          <p className="obligatory-note-green">● Не обязателен к применению</p>
+        </div>
+      </summary>
+      <InitCertsGen />
+    </details>
+  </TabItem>
+
+  <TabItem value="Join" label="Join">
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Генерация всех сертификатов</p>
+          <p className="obligatory-note-green">● Не обязателен к применению</p>
+        </div>
+      </summary>
+      :::warning Обратите ВНИМАНИЕ!
+
+      Данный раздел зависит от следующих разделов:
+      - [CA Download](/tech-docs/kubernetes/certificates/center-authority/all-ca).
+      :::
+      <JoinCertsGen />
+    </details>
+  </TabItem>
+</Tabs>

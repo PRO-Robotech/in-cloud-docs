@@ -35,27 +35,33 @@ export const kubernetes = [
     type: 'category',
     label: '5.2.2. Аутентификация',
     collapsed: true,
+    link: {
+      type: 'doc',
+      id: 'tech-docs/kubernetes/certificates/all-certificates',
+    },
     items: [
-      {
-        type: 'category',
-        label: '5.2.2.0. Все серт-ы',
-        link: {
-          type: 'doc',
-          id: 'tech-docs/kubernetes/certificates/about-all',
-        },
-        items: [
-          {
-            type: 'doc',
-            label: '5.2.2.0.1. Init',
-            id: 'tech-docs/kubernetes/certificates/init-all',
-          },
-          {
-            type: 'doc',
-            label: '5.2.2.0.2. Join',
-            id: 'tech-docs/kubernetes/certificates/join-all',
-          },
-        ],
-      },
+      // {
+      //   // type: 'category',
+      //   type: 'doc',
+      //   label: '5.2.2.0. Все серт-ы',
+      //   id: 'tech-docs/kubernetes/certificates/all-certificates',
+      //   // link: {
+      //   //   type: 'doc',
+      //   //   id: 'tech-docs/kubernetes/certificates/about-all',
+      //   // },
+      //   // items: [
+      //   //   {
+      //   //     type: 'doc',
+      //   //     label: '5.2.2.0.1. Init',
+      //   //     id: 'tech-docs/kubernetes/certificates/init-all',
+      //   //   },
+      //   //   {
+      //   //     type: 'doc',
+      //   //     label: '5.2.2.0.2. Join',
+      //   //     id: 'tech-docs/kubernetes/certificates/join-all',
+      //   //   },
+      //   // ],
+      // },
       {
         type: 'doc',
         label: '5.2.2.1. ЦА',
@@ -79,7 +85,7 @@ export const kubernetes = [
       {
         type: 'doc',
         label: '5.2.2.5. Проверка',
-        id: 'tech-docs/kubernetes/certificates/examination',
+        id: 'tech-docs/kubernetes/certificates/examination/all-examination',
       },
     ],
   },

@@ -19,8 +19,8 @@ import { COMPONENTS_VERSION } from '@site/src/constants/kubernetes/componentsVer
 import AllInstallComponent from '@site/docs/tech-docs/kubernetes/components/allInstallComponent.mdx'
 import AllSetupComponent from '@site/docs/tech-docs/kubernetes/components/allSetupComponent.mdx'
 import AllCAComponent from '@site/docs/tech-docs/kubernetes/certificates/center-authority/allCAComponent.mdx'
-import AllCertificatesComponent from '@site/docs/tech-docs/kubernetes/certificates/components/allCertificatesComponent.mdx'
-import AllKubeconfigsComponent from '@site/docs/tech-docs/kubernetes/certificates/components/allKubeconfigsComponent.mdx'
+import AllComponentsCertificatesComponent from '@site/docs/tech-docs/kubernetes/certificates/components/allCertificatesComponent.mdx'
+import AllComponentsKubeconfigsComponent from '@site/docs/tech-docs/kubernetes/certificates/components/allKubeconfigsComponent.mdx'
 import AllSysctlsComponent from '@site/docs/tech-docs/kubernetes/setup-environments/sysctls/allSysctls.mdx'
 import AllMarkingComponent from '@site/docs/tech-docs/kubernetes/additional-setup/marking/allMarkingComponent.mdx'
 import AllUploadCA from '@site/docs/tech-docs/kubernetes/additional-setup/upload-ca/allUploadCAComponent.mdx'
@@ -30,10 +30,11 @@ import AllStaticPodsCPComponent from '@site/docs/tech-docs/kubernetes/components
 import AllStaticPodsETCDComponent from '@site/docs/tech-docs/kubernetes/components/allStaticPodsETCDComponent.mdx'
 import AllComponentsReady from '@site/docs/tech-docs/kubernetes/components/allComponentsReadyComponent.mdx'
 import AllServiceAccountComponent from '@site/docs/tech-docs/kubernetes/certificates/service-account/allServiceAccountComponent.mdx'
+import AllExaminationComponent from '@site/docs/tech-docs/kubernetes/certificates/examination/allExaminationComponent.mdx'
+import AllCertificatesComponent from '@site/docs/tech-docs/kubernetes/certificates/allCertificatesComponent.mdx'
+import AllKubeconfigsComponent from '@site/docs/tech-docs/kubernetes/certificates/allKubeconfigsComponent.mdx'
 
 
-import KubeadmExamination from '@site/docs/tech-docs/kubernetes/certificates/examinationKubeadmComponent.mdx'
-import OpensslExamination from '@site/docs/tech-docs/kubernetes/certificates/examinationOpensslComponent.mdx'
 import KubeletInitSystemdUnitStartKubeadm from '@site/docs/tech-docs/kubernetes/components/kubelet/kubeadm/systemdUnitStartInit.mdx'
 import KubeletJoinSystemdUnitStartKubeadm from '@site/docs/tech-docs/kubernetes/components/kubelet/kubeadm/systemdUnitStartJoin.mdx'
 import KubeletSystemdUnitStart from '@site/docs/tech-docs/kubernetes/components/kubelet/systemdUnit/systemdUnitStart.mdx'
@@ -650,7 +651,7 @@ import Tabs from '@theme/Tabs'
 
 ### 13. Создание сертификатов приложений
 
-<AllCertificatesComponent />
+<AllComponentsCertificatesComponent />
 
 ---
 
@@ -662,43 +663,25 @@ import Tabs from '@theme/Tabs'
 
 ### 15*. Создание всех сертификатов
 
-TODO
+<AllCertificatesComponent />
 
 ---
 
 ### 16. Создание конфигураций kubeconfig
 
-<AllKubeconfigsComponent />
+<AllComponentsKubeconfigsComponent />
 
 ---
 
 ### 17*. Создание всех kubeconfig
 
-TODO
+<AllKubeconfigsComponent />
 
 ---
 
-
 ### 18. Проверка блока сертификатов
 
-> Этот раздел посвящён проверке корректности созданных сертификатов и ключей, а также соответствию между ними. Это важно для устранения ошибок до запуска компонентов Kubernetes.
-
-<details>
-  <summary>
-    <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-      <p style={{ marginBottom: 0 }}>Проверка блока сертификатов</p>
-      <p className="obligatory-note-green">● Не обязателен к применению</p>
-    </div>
-  </summary>
-  <Tabs groupId="install-type">
-    <TabItem value="HardWay">
-      <OpensslExamination />
-    </TabItem>
-    <TabItem value="Kubeadm">
-      <KubeadmExamination />
-    </TabItem>
-  </Tabs>
-</details>
+<AllExaminationComponent />
 
 ---
 
