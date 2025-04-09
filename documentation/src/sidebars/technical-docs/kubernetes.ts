@@ -7,192 +7,27 @@ export const kubernetes = [
       {
         type: 'doc',
         label: '5.2.1.1. Настройка ОС',
-        id: 'tech-docs/kubernetes/setupEnvironments/os-setup',
+        id: 'tech-docs/kubernetes/setup-environments/os-setup',
       },
       {
-        type: 'category',
+        type: 'doc',
         label: '5.2.1.2. Установка ПО',
-        collapsed: true,
-        items: [
-          {
-            type: 'doc',
-            label: '5.2.1.2.1. Containerd',
-            id: 'tech-docs/kubernetes/components/containerd/lifecycle',
-          },
-          {
-            type: 'doc',
-            label: '5.2.1.2.2. Runc',
-            id: 'tech-docs/kubernetes/components/runc/lifecycle',
-          },
-          {
-            type: 'doc',
-            label: '5.2.1.2.3. Crictl',
-            id: 'tech-docs/kubernetes/components/crictl/lifecycle',
-          },
-          {
-            type: 'doc',
-            label: '5.2.1.2.4. Kubectl',
-            id: 'tech-docs/kubernetes/components/kubectl/lifecycle',
-          },
-          {
-            type: 'doc',
-            label: '5.2.1.2.5. Kubeadm',
-            id: 'tech-docs/kubernetes/components/kubeadm/lifecycle',
-          },
-
-          {
-            type: 'doc',
-            label: '5.2.1.2.6. Kubelet',
-            id: 'tech-docs/kubernetes/components/kubelet/lifecycle',
-          },
-          {
-            type: 'doc',
-            label: '5.2.1.2.7. Etcd',
-            id: 'tech-docs/kubernetes/components/etcd/lifecycle',
-          },
-        ],
+        id: 'tech-docs/kubernetes/components/all-install',
       },
       {
-        type: 'category',
+        type: 'doc',
         label: '5.2.1.3. Настройка ПО',
-        collapsed: true,
-        items: [
-          {
-            type: 'doc',
-            label: '5.2.1.3.1. Containerd',
-            id: 'tech-docs/kubernetes/components/containerd/lifecycle-settings',
-          },
-          {
-            type: 'doc',
-            label: '5.2.1.3.2. Crictl',
-            id: 'tech-docs/kubernetes/components/crictl/lifecycle-settings',
-          },
-          {
-            type: 'doc',
-            label: '5.2.1.3.3. Kubeadm',
-            id: 'tech-docs/kubernetes/components/kubeadm/lifecycle-settings',
-          },
-
-          {
-            type: 'doc',
-            label: '5.2.1.3.4. Kubelet',
-            id: 'tech-docs/kubernetes/components/kubelet/lifecycle-settings',
-          },
-          {
-            type: 'category',
-            label: '5.2.1.3.5. УК',
-            collapsed: true,
-            items: [
-              {
-                type: 'category',
-                label: '5.2.1.3.5.1. Init',
-
-                collapsed: true,
-                link: {
-                  type: 'doc',
-                  id: 'tech-docs/kubernetes/k8s-init-manifests',
-                  // title: '5.2.1.3.5.1. Init',
-                },
-                items: [
-                  {
-                    type: 'doc',
-                    label: '5.2.1.3.5.1.1. API',
-                    id: 'tech-docs/kubernetes/components/kubeAPI/api-settings',
-                  },
-                  {
-                    type: 'doc',
-                    label: '5.2.1.3.5.1.2. Controller',
-                    id: 'tech-docs/kubernetes/components/controllerManager/controller-settings',
-                  },
-                  {
-                    type: 'doc',
-                    label: '5.2.1.3.5.1.3. Scheduler',
-                    id: 'tech-docs/kubernetes/components/scheduler/scheduler-settings',
-                  },
-                  {
-                    type: 'doc',
-                    label: '5.2.1.3.5.1.4. ETCD',
-                    id: 'tech-docs/kubernetes/components/etcd/etcd-settings',
-                  },
-                ],
-              },
-              {
-                type: 'doc',
-                label: '5.2.1.3.5.2. Join',
-                // title: '5.2.1.3.5.1. Join',
-                id: 'tech-docs/kubernetes/k8s-join-manifests',
-              },
-            ],
-          },
-        ],
+        id: 'tech-docs/kubernetes/components/all-setup',
       },
       {
-        type: 'category',
-        label: '5.2.1.4. Проверка',
-        // id: 'tech-docs/kubernetes/components/components-ready',
-        items: [
-          {
-            type: 'doc',
-            label: '5.2.1.4.1. Containerd',
-            id: 'tech-docs/kubernetes/components/containerd/component-ready',
-          },
-          {
-            type: 'doc',
-            label: '5.2.1.4.2. Runc',
-            id: 'tech-docs/kubernetes/components/runc/component-ready',
-          },
-          {
-            type: 'doc',
-            label: '5.2.1.4.3. Crictl',
-            id: 'tech-docs/kubernetes/components/crictl/component-ready',
-          },
-          {
-            type: 'doc',
-            label: '5.2.1.4.4. Kubectl',
-            id: 'tech-docs/kubernetes/components/kubectl/component-ready',
-          },
-          {
-            type: 'doc',
-            label: '5.2.1.4.5. Kubeadm',
-            id: 'tech-docs/kubernetes/components/kubeadm/component-ready',
-          },
-          {
-            type: 'doc',
-            label: '5.2.1.4.6. Kubelet',
-            id: 'tech-docs/kubernetes/components/kubelet/component-ready',
-          },
-          {
-            type: 'category',
-            label: '5.2.1.4.7. УК',
-            collapsed: true,
-            link: {
-              type: 'doc',
-              id: 'tech-docs/kubernetes/components/components-ready',
-            },
-            items: [
-              {
-                type: 'doc',
-                label: '5.2.1.4.7.1. API',
-                id: 'tech-docs/kubernetes/components/kubeAPI/component-ready',
-              },
-              {
-                type: 'doc',
-                label: '5.2.1.4.7.2. Controller',
-                id: 'tech-docs/kubernetes/components/controllerManager/component-ready',
-              },
-              {
-                type: 'doc',
-                label: '5.2.1.4.7.3. Scheduler',
-                id: 'tech-docs/kubernetes/components/scheduler/component-ready',
-              },
-              {
-                type: 'doc',
-                label: '5.2.1.4.7.4. ETCD',
-                id: 'tech-docs/kubernetes/components/etcd/component-ready',
-              },
-            ],
-          },
-        ],
+        type: 'doc',
+        label: '5.2.1.4. Настройка SP',
+        id: 'tech-docs/kubernetes/components/all-static-pods-cp',
+      },
+      {
+        type: 'doc',
+        label: '5.2.1.5. Проверка',
+        id: 'tech-docs/kubernetes/components/all-components-ready',
       },
     ],
   },
@@ -222,66 +57,24 @@ export const kubernetes = [
         ],
       },
       {
-        type: 'category',
+        type: 'doc',
         label: '5.2.2.1. ЦА',
-        items: [
-          {
-            type: 'doc',
-            label: '5.2.2.1.1. Init',
-            id: 'tech-docs/kubernetes/certificates/centerAuthority/init-ca',
-          },
-          {
-            type: 'doc',
-            label: '5.2.2.1.2. Join',
-            id: 'tech-docs/kubernetes/certificates/centerAuthority/join-ca',
-          },
-        ],
+        id: 'tech-docs/kubernetes/certificates/center-authority/all-ca',
       },
       {
-        type: 'category',
+        type: 'doc',
         label: '5.2.2.2. Сертификаты',
-        collapsed: true,
-        items: [
-          {
-            type: 'doc',
-            label: '5.2.2.2.1. Init',
-            id: 'tech-docs/kubernetes/certificates/components/init-certificates',
-          },
-          {
-            type: 'doc',
-            label: '5.2.2.2.2. Join',
-            id: 'tech-docs/kubernetes/certificates/components/join-certificates',
-          },
-        ],
+        id: 'tech-docs/kubernetes/certificates/components/all-certificates',
       },
       {
-        type: 'category',
+        type: 'doc',
         label: '5.2.2.3. Kubeconfigs',
-        collapsed: true,
-        items: [
-          {
-            type: 'doc',
-            label: '5.2.2.3.1. Init',
-            id: 'tech-docs/kubernetes/certificates/components/init-kubeconfigs',
-          },
-          // {
-          //   type: 'doc',
-          //   label: '5.2.2.2.2. Join',
-          //   id: 'tech-docs/kubernetes/certificates/components/join-certificates',
-          // },
-        ],
+        id: 'tech-docs/kubernetes/certificates/components/all-kubeconfigs',
       },
       {
-        type: 'category',
+        type: 'doc',
         label: '5.2.2.4. Сервис Аккаунт',
-        collapsed: true,
-        items: [
-          {
-            type: 'doc',
-            label: '5.2.2.4.1. Init',
-            id: 'tech-docs/kubernetes/certificates/service-account',
-          },
-        ],
+        id: 'tech-docs/kubernetes/certificates/service-account/all-service-account',
       },
       {
         type: 'doc',
@@ -344,48 +137,24 @@ export const kubernetes = [
         label: '5.2.4.1. Пост обработка',
         items: [
           {
-            type: 'category',
+            type: 'doc',
             label: '5.2.4.1.1. Маркировка',
-            collapsed: true,
-            items: [
-              {
-                type: 'doc',
-                label: '5.2.4.1.1.1. Init',
-                id: 'tech-docs/kubernetes/additionalSetup/marking-init',
-              },
-              {
-                type: 'doc',
-                label: '5.2.4.1.1.2. Join',
-                id: 'tech-docs/kubernetes/additionalSetup/marking-join',
-              },
-            ],
+            id: 'tech-docs/kubernetes/additional-setup/marking/all-marking',
           },
           {
             type: 'doc',
             label: '5.2.4.1.2. RBAC',
-            id: 'tech-docs/kubernetes/additionalSetup/rbac',
+            id: 'tech-docs/kubernetes/additional-setup/upload-rbac/all-rbac',
           },
           {
-            type: 'category',
+            type: 'doc',
             label: '5.2.4.1.3. Загрузка CFG',
-            collapsed: true,
-            items: [
-              {
-                type: 'doc',
-                label: '5.2.4.1.3.1. Init',
-                id: 'tech-docs/kubernetes/additionalSetup/upload-configs-all-init',
-              },
-              {
-                type: 'doc',
-                label: '5.2.4.1.3.2. Join',
-                id: 'tech-docs/kubernetes/additionalSetup/upload-configs-all-join',
-              },
-            ],
+            id: 'tech-docs/kubernetes/additional-setup/upload-configs/all-configs',
           },
           {
             type: 'doc',
             label: '5.2.4.1.4. Загрузка ЦА',
-            id: 'tech-docs/kubernetes/additionalSetup/upload-ca',
+            id: 'tech-docs/kubernetes/additional-setup/upload-ca/all-ca',
           },
         ],
       },

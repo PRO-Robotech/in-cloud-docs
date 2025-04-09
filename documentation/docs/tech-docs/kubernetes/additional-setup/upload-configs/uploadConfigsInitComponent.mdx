@@ -1,0 +1,190 @@
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+import CodeBlock from '@theme/CodeBlock'
+import dedent from 'ts-dedent'
+
+import { KUBEADM_COFNIG_DATA } from '@site/src/constants/kubernetes/kubeadmConfigData'
+import { KUBELET_COFNIG_DATA } from '@site/src/constants/kubernetes/kubeletConfigData'
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+import { ETCD_ARGS } from '@site/src/constants/kubernetes/etcdArgs'
+
+:::warning
+В этом разделе описана инструкция по загрузке актуальной конфигурации `Kubeadm` и `Kubelet` в управляющий контур Kubernetes в виде ресурса `ConfigMap`. Этот подход упрощает управление изменениями в конфигурации узлов Kubernetes, охватывая как рабочие (`worker`), так и управляющие (`master`) узлы.
+:::
+
+<Tabs groupId="install-type">
+
+  <TabItem value='HardWay'>
+    <h4>Переменные окружения для шаблона конфигурационного файла</h4>
+    <CodeBlock language="bash">
+      {dedent`
+        export CLUSTER_NAME='${CUSTOM_VALUE.clusterName.value}'
+        export BASE_DOMAIN='${CUSTOM_VALUE.kubernetesBaseDomain.value}'
+        export FULL_HOST_NAME=${CUSTOM_VALUE.virtualMachineFullName.value}
+        export INTERNAL_API=api.${CUSTOM_VALUE.kubernetesClusterExternalDomain.value}
+        export MACHINE_LOCAL_ADDRESS=${CUSTOM_VALUE.virtualMachineLocalAddress.value}
+        export ETCD_INITIAL_CLUSTER="$\{FULL_HOST_NAME}=${ETCD_ARGS.initialAdvertisePeerUrls.value}"
+        export AUTH_EXTRA_GROUPS="system:bootstrappers:kubeadm:default-node-token"
+      `}
+    </CodeBlock>
+
+    <details className="custom-gray-block">
+      <summary>kubeadm-config</summary>
+
+      > Данный блок необходим, чтобы разрешить нодам читать ConfigMap `kubeadm-config` в пространстве имён `kube-system`:
+
+      <CodeBlock>
+        {dedent`
+          kubectl \\
+            --kubeconfig=${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/super-admin.conf \\
+            apply -f - <<EOF
+          ---
+          apiVersion: rbac.authorization.k8s.io/v1
+          kind: Role
+          metadata:
+            name: kubeadm:nodes-kubeadm-config
+            namespace: kube-system
+          rules:
+          - apiGroups:
+            - ""
+            resourceNames:
+            - kubeadm-config
+            resources:
+            - configmaps
+            verbs:
+            - get
+          ---
+          apiVersion: rbac.authorization.k8s.io/v1
+          kind: RoleBinding
+          metadata:
+            name: kubeadm:nodes-kubeadm-config
+            namespace: kube-system
+          roleRef:
+            apiGroup: rbac.authorization.k8s.io
+            kind: Role
+            name: kubeadm:nodes-kubeadm-config
+          subjects:
+          - apiGroup: rbac.authorization.k8s.io
+            kind: Group
+            name: $\{AUTH_EXTRA_GROUPS}
+          - apiGroup: rbac.authorization.k8s.io
+            kind: Group
+            name: system:nodes
+          EOF
+        `}
+      </CodeBlock>
+
+      > Данный блок необходим, чтобы при выполнении `kubeadm join` узел получил актуальный `ClusterConfiguration` от управляющего кластера и корректно присоединился узел к control-plane.
+
+      <CodeBlock>
+        {dedent`
+          kubectl \\
+            --kubeconfig=${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/super-admin.conf \\
+            apply -f - <<EOF
+          ---
+          apiVersion: v1
+          kind: ConfigMap
+          metadata:
+            name: kubeadm-config
+            namespace: kube-system
+          data:
+            ClusterConfiguration: |
+              ${KUBEADM_COFNIG_DATA.data.value}
+          EOF
+        `}
+
+      </CodeBlock>
+    </details>
+
+    <details className="custom-gray-block">
+      <summary>kubelet-config</summary>
+
+      > Данный блок необходим, чтобы разрешить нодам читать ConfigMap `kubelet-config` в пространстве имён `kube-system`:
+
+      <CodeBlock>
+        {dedent`
+          kubectl \\
+            --kubeconfig=${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/super-admin.conf \\
+            apply -f - <<EOF
+          ---
+          apiVersion: rbac.authorization.k8s.io/v1
+          kind: Role
+          metadata:
+            name: kubeadm:kubelet-config
+            namespace: kube-system
+          rules:
+          - apiGroups:
+            - ""
+            resourceNames:
+            - kubelet-config
+            resources:
+            - configmaps
+            verbs:
+            - get
+          ---
+          apiVersion: rbac.authorization.k8s.io/v1
+          kind: RoleBinding
+          metadata:
+            name: kubeadm:kubelet-config
+            namespace: kube-system
+          roleRef:
+            apiGroup: rbac.authorization.k8s.io
+            kind: Role
+            name: kubeadm:kubelet-config
+          subjects:
+          - apiGroup: rbac.authorization.k8s.io
+            kind: Group
+            name: system:nodes
+          - apiGroup: rbac.authorization.k8s.io
+            kind: Group
+            name: $\{AUTH_EXTRA_GROUPS}
+          EOF
+        `}
+      </CodeBlock>
+
+      > Данный блок необходим, чтобы при выполнении `kubeadm join` узел получил актуальный `kubelet-config` от управляющего кластера и корректно присоединился узел к control-plane.
+
+      <CodeBlock>
+        {dedent`
+          kubectl \\
+            --kubeconfig=${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/super-admin.conf \\
+            apply -f - <<EOF
+          ---
+          apiVersion: v1
+          kind: ConfigMap
+          metadata:
+            name: kubelet-config
+            namespace: kube-system
+          data:
+            kubelet: |
+              ${KUBELET_COFNIG_DATA.data.value}
+          EOF
+        `}
+      </CodeBlock>
+    </details>
+
+  </TabItem>
+
+  <TabItem value='Kubeadm'>
+
+    <h4>Обновление конфигурации</h4>
+    <CodeBlock language="bash">
+      {dedent`
+        kubeadm init phase upload-config all \\
+          --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml \\
+          --kubeconfig=${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/super-admin.conf
+      `}
+    </CodeBlock>
+
+    :::note
+    <CodeBlock language="bash">
+      {dedent`
+        [upload-config] Storing the configuration used in ConfigMap "kubeadm-config" in the "kube-system" Namespace
+        [kubelet] Creating a ConfigMap "kubelet-config" in namespace kube-system with the configuration for the kubelets in the cluster
+      `}
+    </CodeBlock>
+    :::
+
+  </TabItem>
+</Tabs>

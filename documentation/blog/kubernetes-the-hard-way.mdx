@@ -12,90 +12,39 @@ authors:
 tags: [Kubernetes, Hard-Way]
 ---
 
-import Admonition from '@theme/Admonition'
 import { PORTS } from '@site/src/constants/kubernetes/ports'
 import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 import { COMPONENTS_VERSION } from '@site/src/constants/kubernetes/componentsVersion'
 
-import ContainerdDownloadBIN from '@site/docs/tech-docs/kubernetes/components/containerd/lifecycleDownloadComponent.mdx'
-import ContainerdCheckBIN from '@site/docs/tech-docs/kubernetes/components/containerd/checkBIN.mdx'
-import ContainerdCheckComponent from '@site/docs/tech-docs/kubernetes/components/containerd/checkComponent.mdx'
-import ContainerdLifecycleSettingsComponent from '@site/docs/tech-docs/kubernetes/components/containerd/lifecycleSettingsComponent.mdx'
+import AllInstallComponent from '@site/docs/tech-docs/kubernetes/components/allInstallComponent.mdx'
+import AllSetupComponent from '@site/docs/tech-docs/kubernetes/components/allSetupComponent.mdx'
+import AllCAComponent from '@site/docs/tech-docs/kubernetes/certificates/center-authority/allCAComponent.mdx'
+import AllCertificatesComponent from '@site/docs/tech-docs/kubernetes/certificates/components/allCertificatesComponent.mdx'
+import AllKubeconfigsComponent from '@site/docs/tech-docs/kubernetes/certificates/components/allKubeconfigsComponent.mdx'
+import AllSysctlsComponent from '@site/docs/tech-docs/kubernetes/setup-environments/sysctls/allSysctls.mdx'
+import AllMarkingComponent from '@site/docs/tech-docs/kubernetes/additional-setup/marking/allMarkingComponent.mdx'
+import AllUploadCA from '@site/docs/tech-docs/kubernetes/additional-setup/upload-ca/allUploadCAComponent.mdx'
+import AllUploadConfigs from '@site/docs/tech-docs/kubernetes/additional-setup/upload-configs/allUploadConfigsComponent.mdx'
+import AllUploadRbac from '@site/docs/tech-docs/kubernetes/additional-setup/upload-rbac/allUploadRbacComponent.mdx'
+import AllStaticPodsCPComponent from '@site/docs/tech-docs/kubernetes/components/allStaticPodsCPComponent.mdx'
+import AllStaticPodsETCDComponent from '@site/docs/tech-docs/kubernetes/components/allStaticPodsETCDComponent.mdx'
+import AllComponentsReady from '@site/docs/tech-docs/kubernetes/components/allComponentsReadyComponent.mdx'
+import AllServiceAccountComponent from '@site/docs/tech-docs/kubernetes/certificates/service-account/allServiceAccountComponent.mdx'
 
-import RuncDownloadBIN from '@site/docs/tech-docs/kubernetes/components/runc/lifecycleDownloadComponent.mdx'
-import RuncCheckBIN from '@site/docs/tech-docs/kubernetes/components/runc/checkBIN.mdx'
-
-import KubeletDownloadBIN from '@site/docs/tech-docs/kubernetes/components/kubelet/lifecycleDownloadComponent.mdx'
-import KubeletCheckBIN from '@site/docs/tech-docs/kubernetes/components/kubelet/checkBIN.mdx'
-import KubeletCheckComponent from '@site/docs/tech-docs/kubernetes/components/kubelet/checkComponent.mdx'
-import KubeletLifecycleSettingsComponent from '@site/docs/tech-docs/kubernetes/components/kubelet/lifecycleSettingsComponent.mdx'
-
-import KubectlDownloadBIN from '@site/docs/tech-docs/kubernetes/components/kubectl/lifecycleDownloadComponent.mdx'
-import KubectlCheckBIN from '@site/docs/tech-docs/kubernetes/components/kubectl/checkBIN.mdx'
-
-import CrictlDownloadBIN from '@site/docs/tech-docs/kubernetes/components/crictl/lifecycleDownloadComponent.mdx'
-import CrictlCheckBIN from '@site/docs/tech-docs/kubernetes/components/crictl/checkBIN.mdx'
-import CrictlCheckComponent from '@site/docs/tech-docs/kubernetes/components/crictl/checkComponent.mdx'
-import CrictlLifecycleSettingsComponent from '@site/docs/tech-docs/kubernetes/components/crictl/lifecycleSettingsComponent.mdx'
-
-import KubeadmDownloadBIN from '@site/docs/tech-docs/kubernetes/components/kubeadm/lifecycleDownloadComponent.mdx'
-import KubeadmCheckBIN from '@site/docs/tech-docs/kubernetes/components/kubeadm/checkBIN.mdx'
-import KubeadmCheckComponent from '@site/docs/tech-docs/kubernetes/components/kubeadm/checkComponent.mdx'
-import KubeadmLifecycleSettingsComponent from '@site/docs/tech-docs/kubernetes/components/kubeadm/lifecycleSettingsComponent.mdx'
-
-import EtcdDownloadBIN from '@site/docs/tech-docs/etcd/components/etcd/lifecycleDownloadComponent.mdx'
-import EtcdCheckBIN from '@site/docs/tech-docs/etcd/components/etcd/checkBIN.mdx'
-
-import ComponentsReady from '@site/docs/tech-docs/kubernetes/components/componentsReadyComponent.mdx'
-
-import KubernetesCA from '@site/docs/tech-docs/kubernetes/certificates/centerAuthority/kubernetesCA/main.mdx'
-import FrontProxyCA from '@site/docs/tech-docs/kubernetes/certificates/centerAuthority/frontProxyCA/main.mdx'
-import ETCDCA from '@site/docs/tech-docs/etcd/certificates/centerAuthority/etcdCA/main.mdx'
-
-import KubeletServer from '@site/docs/tech-docs/kubernetes/certificates/components/kubelet/kubeletServer/main.mdx'
-import KubeAPIETCDClientMain from '@site/docs/tech-docs/kubernetes/certificates/components/kubeAPI/etcdClient/main.mdx'
-import KubeletClientMain from '@site/docs/tech-docs/kubernetes/certificates/components/kubeAPI/kubeletClient/main.mdx'
-import FrontProxyClientMain from '@site/docs/tech-docs/kubernetes/certificates/components/kubeAPI/frontProxyClient/main.mdx'
-import KubeAPIServerMain from '@site/docs/tech-docs/kubernetes/certificates/components/kubeAPI/kubeAPIServer/main.mdx'
-import ETCDClientETCDMain from '@site/docs/tech-docs/etcd/certificates/components/etcd/etcdClient/main.mdx'
-import ETCDServerMain from '@site/docs/tech-docs/etcd/certificates/components/etcd/etcdServer/main.mdx'
-import ETCDPeerMain from '@site/docs/tech-docs/etcd/certificates/components/etcd/etcdPeer/main.mdx'
-
-import KubeSchedulerCerts from '@site/docs/tech-docs/kubernetes/certificates/components/kubeScheduler/main.mdx'
-import KubeAPIClient from '@site/docs/tech-docs/kubernetes/certificates/components/kubelet/kubeAPIClient/main.mdx'
-import AdminClientMain from '@site/docs/tech-docs/kubernetes/certificates/components/admin/adminClient/main.mdx'
-import SuperAdminClientMain from '@site/docs/tech-docs/kubernetes/certificates/components/admin/superAdminClient/main.mdx'
-import KubeControllerKubeAPIClient from '@site/docs/tech-docs/kubernetes/certificates/components/kubeControllerManager/kubeAPIClient/main.mdx'
-
-import ServiceAccount from '@site/docs/tech-docs/kubernetes/certificates/serviceAccountComponent.mdx'
 
 import KubeadmExamination from '@site/docs/tech-docs/kubernetes/certificates/examinationKubeadmComponent.mdx'
 import OpensslExamination from '@site/docs/tech-docs/kubernetes/certificates/examinationOpensslComponent.mdx'
-
-import KubeApiSetup from '@site/docs/tech-docs/kubernetes/components/kubeAPI/setupComponent.mdx'
-import KubeControllerManagerSetup from '@site/docs/tech-docs/kubernetes/components/controllerManager/setupComponent.mdx'
-import KubeSchedulerSetup from '@site/docs/tech-docs/kubernetes/components/scheduler/setupComponent.mdx'
-import ETCDSetup from '@site/docs/tech-docs/etcd/components/etcd/setupComponent.mdx'
-
-import KubeletInitSystemdUnutStartKubeadm from '@site/docs/tech-docs/kubernetes/components/kubelet/kubeadm/systemdUnitStartInit.mdx'
-import KubeletJoinSystemdUnutStartKubeadm from '@site/docs/tech-docs/kubernetes/components/kubelet/kubeadm/systemdUnitStartJoin.mdx'
-import KubeletSystemdUnutStart from '@site/docs/tech-docs/kubernetes/components/kubelet/systemdUnit/systemdUnitStart.mdx'
+import KubeletInitSystemdUnitStartKubeadm from '@site/docs/tech-docs/kubernetes/components/kubelet/kubeadm/systemdUnitStartInit.mdx'
+import KubeletJoinSystemdUnitStartKubeadm from '@site/docs/tech-docs/kubernetes/components/kubelet/kubeadm/systemdUnitStartJoin.mdx'
+import KubeletSystemdUnitStart from '@site/docs/tech-docs/kubernetes/components/kubelet/systemdUnit/systemdUnitStart.mdx'
 import KubeletConfigFilesDefault from '@site/docs/tech-docs/kubernetes/components/kubelet/payload/configFilesDefault.mdx'
-
 import KubernetesStatusReady from '@site/docs/tech-docs/kubernetes/statusCluster.mdx'
-import RbacComponent from '@site/docs/tech-docs/kubernetes/additionalSetup/rbacComponent.mdx'
-import UploadConfigsInit from '@site/docs/tech-docs/kubernetes/additionalSetup/uploadConfigsInitComponent.mdx'
-import UploadCAInit from '@site/docs/tech-docs/kubernetes/additionalSetup/uploadCAComponent.mdx'
-import MarkingInitComponent from '@site/docs/tech-docs/kubernetes/additionalSetup/markingInitComponent.mdx'
-import MarkingJoinComponent from '@site/docs/tech-docs/kubernetes/additionalSetup/markingJoinComponent.mdx'
-import BaseSetupOS from '@site/docs/tech-docs/kubernetes/setupEnvironments/baseOSSetupComponent.mdx'
-import СoreModulesComponent from '@site/docs/tech-docs/kubernetes/setupEnvironments/coreModulesComponent.mdx'
-import SysctlsComponent from '@site/docs/tech-docs/kubernetes/setupEnvironments/sysctlsComponent.mdx'
-import KubernetesDownloadCA from '@site/docs/tech-docs/kubernetes/certificates/centerAuthority/downloadCA.mdx'
-import { FancyboxImage } from '@site/src/components/commonBlocks/FancyboxImage'
-import { AaaBug } from '@site/src/components/AaaBug'
+import BaseSetupOS from '@site/docs/tech-docs/kubernetes/setup-environments/baseOSSetupComponent.mdx'
+import СoreModulesComponent from '@site/docs/tech-docs/kubernetes/setup-environments/coreModulesComponent.mdx'
 import AboutAllCertificates from '@site/docs/tech-docs/kubernetes/certificates/aboutAllComponent.mdx'
 
+import { FancyboxImage } from '@site/src/components/commonBlocks/FancyboxImage'
+import { AaaBug } from '@site/src/components/AaaBug'
 import TabItem from '@theme/TabItem'
 import Tabs from '@theme/Tabs'
 
@@ -264,37 +213,46 @@ import Tabs from '@theme/Tabs'
     <a href="#13-создание-сертификатов-приложений">13. Создание сертификатов приложений</a>
   </li>
   <li>
-    <a href="#14-создание-конфигураций-kubeconfig">14. Создание конфигураций kubeconfig</a>
+    <a href="#14-создание-ключа-подписи-serviceaccount">14. Создание ключа подписи ServiceAccount</a>
   </li>
   <li>
-    <a href="#15-создание-ключа-подписи-serviceaccount">15. Создание ключа подписи ServiceAccount</a>
+    <a href="#15-создание-всех-kubeconfig">15*. Создание всех сертификатов</a>
   </li>
   <li>
-    <a href="#16-проверка-блока-сертификатов">16. Проверка блока сертификатов</a>
+    <a href="#16-создание-конфигураций-kubeconfig">16. Создание конфигураций kubeconfig</a>
   </li>
   <li>
-    <a href="#17-создание-static-pod-ов-управляющего-контура">17. Создание static pod-ов управляющего контура</a>
+    <a href="#17-создание-всех-kubeconfig">17*. Создание всех kubeconfig</a>
   </li>
   <li>
-    <a href="#18-создание-static-pod-ов-etcd-кластера">18. Создание static pod-ов ETCD кластера</a>
+    <a href="#18-проверка-блока-сертификатов">18. Проверка блока сертификатов</a>
   </li>
   <li>
-    <a href="#19-запуск-службы-kubelet">19. Запуск службы Kubelet</a>
+    <a href="#19-создание-static-pod-ов-управляющего-контура">19. Создание static pod-ов управляющего контура</a>
   </li>
   <li>
-    <a href="#20-проверка-состояния-кластера">20. Проверка состояния кластера</a>
+    <a href="#20-создание-всех-static-pod-ов-управляющего-контура">20*. Создание всех static pod-ов управляющего контура</a>
   </li>
   <li>
-    <a href="#21-настройка-ролевой-модели">21. Настройка ролевой модели</a>
+    <a href="#21-создание-static-pod-ов-etcd-кластера">21. Создание static pod-ов ETCD кластера</a>
   </li>
   <li>
-    <a href="#22-загрузка-конфигурации-в-кластер">22. Загрузка конфигурации в кластер</a>
+    <a href="#22-запуск-службы-kubelet">22. Запуск службы Kubelet</a>
   </li>
   <li>
-    <a href="#23-загрузка-корневых-сертификатов-в-кластер">23. Загрузка корневых сертификатов в кластер</a>
+    <a href="#23-проверка-состояния-кластера">23. Проверка состояния кластера</a>
   </li>
   <li>
-    <a href="#24-маркировка-и-ограничение-узлов">24. Маркировка и ограничение узлов</a>
+    <a href="#24-настройка-ролевой-модели">24. Настройка ролевой модели</a>
+  </li>
+  <li>
+    <a href="#25-загрузка-конфигурации-в-кластер">25. Загрузка конфигурации в кластер</a>
+  </li>
+  <li>
+    <a href="#26-загрузка-корневых-сертификатов-в-кластер">26. Загрузка корневых сертификатов в кластер</a>
+  </li>
+  <li>
+    <a href="#27-маркировка-и-ограничение-узлов">27. Маркировка и ограничение узлов</a>
   </li>
 </ul>
 
@@ -547,6 +505,7 @@ import Tabs from '@theme/Tabs'
     </tbody>
   </table>
 </div>
+
 ---
 
 ### 4. Создание инфраструктуры
@@ -633,6 +592,7 @@ import Tabs from '@theme/Tabs'
   </summary>
   <BaseSetupOS />
 </details>
+
 ---
 
 ### 6. Загрузка модулей ядра
@@ -649,186 +609,30 @@ import Tabs from '@theme/Tabs'
   </summary>
   <СoreModulesComponent />
 </details>
+
 ---
 
 ### 7. Настройка параметров sysctl
 
-> Этот раздел посвящён настройке параметров ядра с помощью sysctl, необходимых для сетевой работы Kubernetes.
-> Вносятся изменения, обеспечивающие маршрутизацию трафика между подами и корректную работу iptables для мостов. Эти параметры обязательны для включения пересылки IP-пакетов и фильтрации сетевых потоков в кластере.
-
-<details>
-  <summary>
-    <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-      <p style={{ marginBottom: 0 }}>Настройка параметров sysctl</p>
-      <p className="obligatory-note-orange">● Обязателен к применению</p>
-    </div>
-  </summary>
-  <SysctlsComponent />
-</details>
+<AllSysctlsComponent/>
 
 ---
 
 ### 8. Установка компонентов
 
-> В этом разделе описан процесс установки основных компонентов, необходимых для работы Kubernetes-кластера.
-> Установка выполняется вручную и позволяет подготовить окружение для последующих этапов инициализации и настройки управляющего контура.
-
-<Tabs groupId="component">
-  <TabItem value="runc">
-    <details>
-      <summary>
-        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <p style={{ marginBottom: 0 }}>Установка runc</p>
-          <p className="obligatory-note-orange">● Обязателен к применению</p>
-        </div>
-      </summary>
-      <RuncDownloadBIN />
-      <RuncCheckBIN />
-    </details>
-  </TabItem>
-  <TabItem value="containerd">
-    <details>
-      <summary>
-        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <p style={{ marginBottom: 0 }}>Установка containerd</p>
-          <p className="obligatory-note-orange">● Обязателен к применению</p>
-        </div>
-      </summary>
-      <ContainerdDownloadBIN />
-      <ContainerdCheckBIN />
-    </details>
-  </TabItem>
-  <TabItem value="kubelet">
-    <details>
-      <summary>
-        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <p style={{ marginBottom: 0 }}>Установка kubelet</p>
-          <p className="obligatory-note-orange">● Обязателен к применению</p>
-        </div>
-      </summary>
-      <KubeletDownloadBIN />
-      <KubeletCheckBIN />
-    </details>
-  </TabItem>
-  <TabItem value="etcd">
-    <details>
-      <summary>
-        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <p style={{ marginBottom: 0 }}>Установка etcd</p>
-          <p className="obligatory-note-orange">● Обязателен к применению</p>
-        </div>
-      </summary>
-      <EtcdDownloadBIN />
-      <EtcdCheckBIN />
-    </details>
-  </TabItem>
-  <TabItem value="kubectl">
-    <details>
-      <summary>
-        <p style={{ marginBottom: 0 }}>Установка kubectl</p>
-        <p className="obligatory-note-green">● Не обязателен к применению</p>
-      </summary>
-      <KubectlDownloadBIN />
-      <KubectlCheckBIN />
-    </details>
-  </TabItem>
-  <TabItem value="crictl">
-    <details>
-      <summary>
-        <p style={{ marginBottom: 0 }}>Установка crictl</p>
-        <p className="obligatory-note-green">● Не обязателен к применению</p>
-      </summary>
-      <CrictlDownloadBIN />
-      <CrictlCheckBIN />
-    </details>
-  </TabItem>
-  <TabItem value="kubeadm">
-    <details>
-      <summary>
-        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <p style={{ marginBottom: 0 }}>Установка kubeadm</p>
-          <p className="obligatory-note-green">● Не обязателен к применению</p>
-        </div>
-      </summary>
-      <KubeadmDownloadBIN />
-      <KubeadmCheckBIN />
-    </details>
-  </TabItem>
-</Tabs>
+<AllInstallComponent />
 
 ---
 
 ### 9. Настройка компонентов
 
-> В этом разделе описан процесс настройка и конфигурация компонентов Kubernetes, которые обеспечивают корректную работу кластера.
-
-<Tabs groupId="component">
-  <TabItem value="containerd">
-    <details>
-      <summary>
-        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <p style={{ marginBottom: 0 }}>Настройка containerd</p>
-          <p className="obligatory-note-orange">● Обязателен к применению</p>
-        </div>
-      </summary>
-      <ContainerdLifecycleSettingsComponent />
-      <ContainerdCheckComponent />
-    </details>
-  </TabItem>
-  <TabItem value="kubelet">
-    <details>
-      <summary>
-        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <p style={{ marginBottom: 0 }}>Настройка kubelet</p>
-          <p className="obligatory-note-orange">● Обязателен к применению</p>
-        </div>
-      </summary>
-      <KubeletLifecycleSettingsComponent />
-      <KubeletCheckComponent />
-    </details>
-  </TabItem>
-  <TabItem value="crictl">
-    <details>
-      <summary>
-        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <p style={{ marginBottom: 0 }}>Настройка crictl</p>
-          <p className="obligatory-note-green">● Не обязателен к применению</p>
-        </div>
-      </summary>
-      <h4> Конфигурация компонента</h4>
-      <CrictlLifecycleSettingsComponent />
-      <CrictlCheckComponent />
-    </details>
-  </TabItem>
-  <TabItem value="kubeadm">
-    <details>
-      <summary>
-        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <p style={{ marginBottom: 0 }}>Настройка kubeadm</p>
-          <p className="obligatory-note-green">● Не обязателен к применению</p>
-        </div>
-      </summary>
-      <KubeadmLifecycleSettingsComponent />
-      <KubeadmCheckComponent />
-    </details>
-  </TabItem>
-</Tabs>
+<AllSetupComponent />
 
 ---
 
 ### 10. Проверка готовности компонентов
 
-> Этот раздел описывает процесс проверки готовности компонентов Kubernetes до инициализации кластера или присоединения новых узлов.
-
-<details>
-  <summary>
-    <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-      <p style={{ marginBottom: 0 }}>Проверка готовности компонентов</p>
-      <p className="obligatory-note-green">● Не обязателен к применению</p>
-    </div>
-  </summary>
-  <ComponentsReady />
-</details>
+<AllComponentsReady />
 
 ---
 
@@ -840,285 +644,42 @@ import Tabs from '@theme/Tabs'
 
 ### 12. Создание корневых сертификатов
 
-> В этом разделе описывается процесс полечения корневых (root) сертификатов, которые используются для подписи остальных сертификатов в кластере Kubernetes.
-
-<Tabs groupId="phase">
-  <TabItem value="init">
-    <details>
-      <summary>
-        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <p style={{ marginBottom: 0 }}>Создание корневых сертификатов</p>
-          <p className="obligatory-note-orange">● Обязателен к применению</p>
-        </div>
-      </summary>
-      <Tabs groupId="CA">
-        <TabItem value="Kubernetes ЦА">
-          <details open className="custom-gray-block">
-            <summary>Kubernetes ЦА</summary>
-            <KubernetesCA />
-          </details>
-        </TabItem>
-        <TabItem value="FrontProxy ЦА">
-          <details open className="custom-gray-block">
-            <summary>FrontProxy ЦА</summary>
-            <FrontProxyCA />
-          </details>
-        </TabItem>
-        <TabItem value="ETCD ЦА">
-          <details open className="custom-gray-block">
-            <summary>ETCD ЦА</summary>
-            <ETCDCA />
-          </details>
-        </TabItem>
-      </Tabs>
-    </details>
-  </TabItem>
-  <TabItem value="join">
-    <details>
-      <summary>
-        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <p style={{ marginBottom: 0 }}>Выгрузка ЦА</p>
-          <p className="obligatory-note-orange">● Обязателен к применению</p>
-        </div>
-      </summary>
-      <KubernetesDownloadCA />
-    </details>
-  </TabItem>
-</Tabs>
+<AllCAComponent />
 
 ---
 
 ### 13. Создание сертификатов приложений
 
-> В этом разделе создаются и подписываются сертификаты, необходимые для различных компонентов Kubernetes, обеспечивая защищённую коммуникацию между ними.
-
-
-<Tabs groupId="phase">
-  <TabItem value="init">
-    <details>
-      <summary>
-        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <p style={{ marginBottom: 0 }}>Создание сертификатов приложений</p>
-          <p className="obligatory-note-orange">● Обязателен к применению</p>
-        </div>
-      </summary>
-      <Tabs groupId="Certs-APPS">
-        <TabItem value="Kubelet Server">
-          <details open className="custom-gray-block">
-            <summary>
-              <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-                <p style={{ marginBottom: 0 }}>Kubelet server</p>
-              </div>
-            </summary>
-            <KubeletServer />
-          </details>
-        </TabItem>
-        <TabItem value="API -> Etcd">
-          <details open className="custom-gray-block">
-            <summary>
-              <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-                <p style={{ marginBottom: 0 }}>K8S-API client > Etcd server</p>
-              </div>
-            </summary>
-            <KubeAPIETCDClientMain />
-          </details>
-        </TabItem>
-        <TabItem value="API -> Kubelet">
-          <details open className="custom-gray-block">
-            <summary>
-              <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-                <p style={{ marginBottom: 0 }}>K8S-API client > Kubelet server</p>
-              </div>
-            </summary>
-            <KubeletClientMain />
-          </details>
-        </TabItem>
-        <TabItem value="API Server">
-          <details open className="custom-gray-block">
-            <summary>
-              <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-                <p style={{ marginBottom: 0 }}>K8S-API server</p>
-              </div>
-            </summary>
-            <KubeAPIServerMain />
-          </details>
-        </TabItem>
-        <TabItem value="Proxy -> API">
-          <details open className="custom-gray-block">
-            <summary>
-              <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-                <p style={{ marginBottom: 0 }}>FrontProxy client > K8S-API</p>
-              </div>
-            </summary>
-            <FrontProxyClientMain />
-          </details>
-        </TabItem>
-        <TabItem value="Etcd Client">
-          <details open className="custom-gray-block">
-            <summary>
-              <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-                <p style={{ marginBottom: 0 }}>Etcd client > Etcd</p>
-              </div>
-            </summary>
-            <ETCDClientETCDMain />
-          </details>
-        </TabItem>
-        <TabItem value="Etcd Server">
-          <details open className="custom-gray-block">
-            <summary>
-              <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-                <p style={{ marginBottom: 0 }}>Etcd server</p>
-              </div>
-            </summary>
-            <ETCDServerMain />
-          </details>
-        </TabItem>
-        <TabItem value="Etcd Peer">
-          <details open className="custom-gray-block">
-            <summary>
-              <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-                <p style={{ marginBottom: 0 }}>Etcd peer > Etcd</p>
-              </div>
-            </summary>
-            <ETCDPeerMain />
-          </details>
-        </TabItem>
-      </Tabs>
-    </details>
-  </TabItem>
-  <TabItem value="join">
-    <details>
-      <summary>
-        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <p style={{ marginBottom: 0 }}>Создание сертификатов приложений</p>
-          <p className="obligatory-note-orange">● Обязателен к применению</p>
-        </div>
-      </summary>
-      TODO
-    </details>
-  </TabItem>
-</Tabs>
-
+<AllCertificatesComponent />
 
 ---
 
-### 14. Создание конфигураций kubeconfig
+### 14. Создание ключа подписи ServiceAccount
 
-> Этот раздел посвящён созданию `kubeconfig`-файлов для различных компонентов и пользователей, обеспечивая безопасное подключение к API-серверу Kubernetes.
-
-
-<Tabs groupId="phase">
-  <TabItem value="init">
-    <details>
-      <summary>
-        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <p style={{ marginBottom: 0 }}>Создание конфигураций kubeconfig/сертификатов</p>
-          <p className="obligatory-note-orange">● Обязателен к применению</p>
-        </div>
-      </summary>
-      <Tabs groupId="Certs-APPS">
-        <TabItem value="Super Admin">
-          <details open className="custom-gray-block">
-            <summary>
-              <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-                <p style={{ marginBottom: 0 }}>Super Admin</p>
-              </div>
-            </summary>
-            <SuperAdminClientMain />
-          </details>
-        </TabItem>
-        <TabItem value="Admin">
-          <details open className="custom-gray-block">
-            <summary>
-              <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-                <p style={{ marginBottom: 0 }}>Admin</p>
-              </div>
-            </summary>
-            <AdminClientMain />
-          </details>
-        </TabItem>
-        <TabItem value="Controller">
-          <details open className="custom-gray-block">
-            <summary>
-              <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-                <p style={{ marginBottom: 0 }}>Kube Controller Manager</p>
-              </div>
-            </summary>
-            <KubeControllerKubeAPIClient />
-          </details>
-        </TabItem>
-        <TabItem value="Scheduler">
-          <details open className="custom-gray-block">
-            <summary>
-              <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-                <p style={{ marginBottom: 0 }}>Kube Scheduler</p>
-              </div>
-            </summary>
-            <KubeSchedulerCerts />
-          </details>
-        </TabItem>
-        <TabItem value="Kubelet">
-          <details open className="custom-gray-block">
-            <summary>
-              <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-                <p style={{ marginBottom: 0 }}>Kubelet client</p>
-              </div>
-            </summary>
-            <Admonition type="warning">Обратите внимание! Можно подписать через `kubectl certificate approve`</Admonition>
-            <KubeAPIClient />
-          </details>
-        </TabItem>
-      </Tabs>
-    </details>
-  </TabItem>
-  <TabItem value="join">
-    <details>
-      <summary>
-        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <p style={{ marginBottom: 0 }}>Создание конфигураций kubeconfig/сертификатов</p>
-          <p className="obligatory-note-orange">● Обязателен к применению</p>
-        </div>
-      </summary>
-      TODO
-    </details>
-  </TabItem>
-</Tabs>
+<AllServiceAccountComponent />
 
 ---
 
-### 15. Создание ключа подписи ServiceAccount
+### 15*. Создание всех сертификатов
 
-> В данном разделе создаётся ключ, с помощью которого Kubernetes будет подписывать токены `ServiceAccount`. Эти токены используются для аутентификации приложений внутри кластера при обращении к API-серверу.
-
-
-<Tabs groupId="phase">
-  <TabItem value="init">
-    <details>
-      <summary>
-        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <p style={{ marginBottom: 0 }}>Создание ключа подписи ServiceAccount</p>
-          <p className="obligatory-note-orange">● Обязателен к применению</p>
-        </div>
-      </summary>
-      <ServiceAccount />
-    </details>
-  </TabItem>
-  <TabItem value="join">
-    <details>
-      <summary>
-        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <p style={{ marginBottom: 0 }}>Выгрузка ключа подписи ServiceAccount</p>
-          <p className="obligatory-note-orange">● Обязателен к применению</p>
-        </div>
-      </summary>
-      TODO
-    </details>
-  </TabItem>
-</Tabs>
+TODO
 
 ---
 
-### 16. Проверка блока сертификатов
+### 16. Создание конфигураций kubeconfig
+
+<AllKubeconfigsComponent />
+
+---
+
+### 17*. Создание всех kubeconfig
+
+TODO
+
+---
+
+
+### 18. Проверка блока сертификатов
 
 > Этот раздел посвящён проверке корректности созданных сертификатов и ключей, а также соответствию между ними. Это важно для устранения ошибок до запуска компонентов Kubernetes.
 
@@ -1141,80 +702,25 @@ import Tabs from '@theme/Tabs'
 
 ---
 
-### 17. Создание static pod-ов управляющего контура
+### 19. Создание static pod-ов управляющего контура
 
-> В данном разделе описывается ручное создание static pod-манифестов для компонентов управляющего контура Kubernetes.
-
-<Tabs groupId="Componenet">
-  <TabItem value="Kube-API">
-    <details>
-      <summary>
-        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <p style={{ marginBottom: 0 }}>Настройка Kube-API</p>
-          <p className="obligatory-note-orange">● Обязателен к применению</p>
-        </div>
-      </summary>
-      <KubeApiSetup />
-    </details>
-  </TabItem>
-  <TabItem value="Kube Controller Manager">
-    <details>
-      <summary>
-        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <p style={{ marginBottom: 0 }}>Настройка Kube Controller Manager</p>
-          <p className="obligatory-note-orange">● Обязателен к применению</p>
-        </div>
-      </summary>
-      <KubeControllerManagerSetup />
-    </details>
-  </TabItem>
-  <TabItem value="Kube Scheduler">
-    <details>
-      <summary>
-        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <p style={{ marginBottom: 0 }}>Настройка Kube Scheduler</p>
-          <p className="obligatory-note-orange">● Обязателен к применению</p>
-        </div>
-      </summary>
-      <KubeSchedulerSetup />
-    </details>
-  </TabItem>
-</Tabs>
+<AllStaticPodsCPComponent />
 
 ---
 
-### 18. Создание static pod-ов ETCD кластера
+### 20*. Создание всех static pod-ов управляющего контура
 
-> В данном разделе описывается ручное создание static pod-манифестов для ETCD.
-
-<Tabs groupId="phase">
-  <TabItem value="init">
-    <details>
-      <summary>
-        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <p style={{ marginBottom: 0 }}>Настройка ETCD</p>
-          <p className="obligatory-note-orange">● Обязателен к применению</p>
-        </div>
-      </summary>
-      <ETCDSetup />
-    </details>
-  </TabItem>
-  <TabItem value="join -TODO">
-    <details>
-      <summary>
-        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <p style={{ marginBottom: 0 }}>Настройка ETCD</p>
-          <p className="obligatory-note-orange">● Обязателен к применению</p>
-        </div>
-      </summary>
-      <ETCDSetup />
-    </details>
-  </TabItem>
-</Tabs>
+TODO
 
 ---
 
-### 19. Запуск службы Kubelet
+### 21. Создание static pod-ов ETCD кластера
+
+<AllStaticPodsETCDComponent />
+
+---
+
+### 22. Запуск службы Kubelet
 
 > данном разделе рассматривается ручной запуск Kubelet с настройкой systemd unit. Описывается создание базового конфигурационного файла kubelet, настройка переменных окружения для службы kubelet.service, а также запуск самого сервиса.
 
@@ -1234,10 +740,10 @@ import Tabs from '@theme/Tabs'
             <summary>Kubelet default config</summary>
             <KubeletConfigFilesDefault />
           </details>
-          <KubeletSystemdUnutStart />
+          <KubeletSystemdUnitStart />
         </TabItem>
         <TabItem value="Kubeadm">
-          <KubeletInitSystemdUnutStartKubeadm />
+          <KubeletInitSystemdUnitStartKubeadm />
         </TabItem>
       </Tabs>
     </details>
@@ -1256,10 +762,10 @@ import Tabs from '@theme/Tabs'
             <summary>Kubelet default config</summary>
             <KubeletConfigFilesDefault />
           </details>
-          <KubeletSystemdUnutStart />
+          <KubeletSystemdUnitStart />
         </TabItem>
         <TabItem value="Kubeadm">
-          <KubeletJoinSystemdUnutStartKubeadm />
+          <KubeletJoinSystemdUnitStartKubeadm />
         </TabItem>
       </Tabs>
     </details>
@@ -1268,7 +774,7 @@ import Tabs from '@theme/Tabs'
 
 ---
 
-### 20. Проверка состояния кластера
+### 23. Проверка состояния кластера
 
 > Этот раздел посвящён проверке состояния компонентов кластера после запуска kubelet. Здесь описываются команды для контроля загрузки образов, запуска контейнеров и успешной инициализации кластерных ресурсов. Это позволяет убедиться, что кластер стартовал корректно до перехода к следующим этапам.
 
@@ -1284,98 +790,26 @@ import Tabs from '@theme/Tabs'
 
 ---
 
-### 21. Настройка ролевой модели
+### 24. Настройка ролевой модели
 
-> Этот раздел посвящён настройке ролевой модели (RBAC), необходимой для корректной работы механизма kubeadm join. Здесь описываются Roles/ClusterRoles, RoleBindings/ClusterRoleBindings и Bootstrap-токен, которые позволяют новым узлам безопасно подключаться к кластеру, запрашивать сертификаты и получать информацию о конфигурации API-сервера.
-
-<Tabs groupId="phase">
-  <TabItem value="init">
-    <details>
-      <summary>
-        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <p style={{ marginBottom: 0 }}>Настройка ролевой модели Kubeadm</p>
-          <p className="obligatory-note-orange">● Обязателен к применению</p>
-        </div>
-      </summary>
-      <RbacComponent />
-    </details>
-  </TabItem>
-</Tabs>
+<AllUploadRbac />
 
 ---
 
-### 22. Загрузка конфигурации в кластер
+### 25. Загрузка конфигурации в кластер
 
-> Этот раздел посвящён загрузке актуальной конфигурации `kubeadm` и `kubelet` в кластер в виде `ConfigMap`. Такая конфигурация необходима для корректного выполнения команды `kubeadm join`, так как она используется при инициализации новых узлов управляющего контура.
-> Загрузка конфигурации централизует управление параметрами кластера и обеспечивает единообразие между всеми нодами, включая как `master`, так и `worker`-узлы.
-
-<Tabs groupId="phase">
-  <TabItem value="init">
-    <details>
-      <summary>
-        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <p style={{ marginBottom: 0 }}>Загрузка конфигурации в кластер</p>
-          <p className="obligatory-note-orange">● Обязателен к применению</p>
-        </div>
-      </summary>
-      <UploadConfigsInit />
-    </details>
-  </TabItem>
-</Tabs>
+<AllUploadConfigs />
 
 ---
 
-### 23. Загрузка корневых сертификатов в кластер
+### 26. Загрузка корневых сертификатов в кластер
 
-> Этот раздел посвящён загрузке корневых сертификатов в кластер Kubernetes в зашифрованном виде.
-> Секрет kubeadm-certs создаётся вручную и содержит зашифрованные ключи и сертификаты, необходимые для последующего автоматического расшаривания при добавлении новых управляющих узлов (`kubeadm join`).
-> Такой подход позволяет безопасно передавать чувствительные данные между узлами управляющего контура.
-
-<Tabs groupId="phase">
-  <TabItem value="init">
-    <details>
-      <summary>
-        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <p style={{ marginBottom: 0 }}>Загрузка корневых сертификатов в Kubernetes</p>
-          <p className="obligatory-note-green">● Не обязателен к применению</p>
-        </div>
-      </summary>
-      <UploadCAInit />
-    </details>
-  </TabItem>
-</Tabs>
+<AllUploadCA />
 
 ---
 
-### 24 Маркировка и ограничение узлов
+### 27 Маркировка и ограничение узлов
 
-> Этот раздел посвящён маркировке и ограничению узлов управляющего контура.
-> Здесь описывается, как задать роль control-plane для узла и применить taint, запрещающий планирование рабочих подов на мастер-ноды.
-> Эти действия необходимы для обеспечения изоляции управляющих компонентов и соблюдения архитектурной модели кластера.
-
-<Tabs groupId="phase">
-  <TabItem value="init">
-    <details>
-      <summary>
-        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <p style={{ marginBottom: 0 }}>Маркировка и ограничение узла</p>
-          <p className="obligatory-note-orange">● Обязателен к применению</p>
-        </div>
-      </summary>
-      <MarkingInitComponent />
-    </details>
-  </TabItem>
-  <TabItem value="join">
-    <details>
-      <summary>
-        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <p style={{ marginBottom: 0 }}>Маркировка и ограничение узла</p>
-          <p className="obligatory-note-orange">● Обязателен к применению</p>
-        </div>
-      </summary>
-      <MarkingJoinComponent />
-    </details>
-  </TabItem>
-</Tabs>
+<AllMarkingComponent/>
 
 ---

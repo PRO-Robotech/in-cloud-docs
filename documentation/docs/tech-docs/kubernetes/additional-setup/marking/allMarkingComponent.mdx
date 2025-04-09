@@ -1,0 +1,34 @@
+import MarkingInitComponent from '@site/docs/tech-docs/kubernetes/additional-setup/marking/markingInitComponent.mdx'
+import MarkingJoinComponent from '@site/docs/tech-docs/kubernetes/additional-setup/marking/markingJoinComponent.mdx'
+
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+> Этот раздел посвящён маркировке и ограничению узлов управляющего контура.
+> Здесь описывается, как задать роль control-plane для узла и применить taint, запрещающий планирование рабочих подов на мастер-ноды.
+> Эти действия необходимы для обеспечения изоляции управляющих компонентов и соблюдения архитектурной модели кластера.
+
+<Tabs groupId="phase">
+  <TabItem value="init">
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Маркировка и ограничение узла</p>
+          <p className="obligatory-note-orange">● Обязателен к применению</p>
+        </div>
+      </summary>
+      <MarkingInitComponent />
+    </details>
+  </TabItem>
+  <TabItem value="join">
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Маркировка и ограничение узла</p>
+          <p className="obligatory-note-orange">● Обязателен к применению</p>
+        </div>
+      </summary>
+      <MarkingJoinComponent />
+    </details>
+  </TabItem>
+</Tabs>

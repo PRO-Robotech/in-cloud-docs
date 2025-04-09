@@ -96,7 +96,7 @@ export const main = [
       {
         type: 'doc',
         label: '5.0. Настройка ОС',
-        id: 'tech-docs/kubernetes/setupEnvironments/base-os-setup',
+        id: 'tech-docs/kubernetes/setup-environments/base-os-setup',
       },
       {
         type: 'category',

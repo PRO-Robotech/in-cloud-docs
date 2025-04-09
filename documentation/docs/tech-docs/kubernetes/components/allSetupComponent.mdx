@@ -1,0 +1,68 @@
+import ContainerdCheckComponent from '@site/docs/tech-docs/kubernetes/components/containerd/checkComponent.mdx'
+import ContainerdLifecycleSettingsComponent from '@site/docs/tech-docs/kubernetes/components/containerd/lifecycleSettingsComponent.mdx'
+
+import KubeletCheckComponent from '@site/docs/tech-docs/kubernetes/components/kubelet/checkComponent.mdx'
+import KubeletLifecycleSettingsComponent from '@site/docs/tech-docs/kubernetes/components/kubelet/lifecycleSettingsComponent.mdx'
+
+import CrictlCheckComponent from '@site/docs/tech-docs/kubernetes/components/crictl/checkComponent.mdx'
+import CrictlLifecycleSettingsComponent from '@site/docs/tech-docs/kubernetes/components/crictl/lifecycleSettingsComponent.mdx'
+
+import KubeadmCheckComponent from '@site/docs/tech-docs/kubernetes/components/kubeadm/checkComponent.mdx'
+import KubeadmLifecycleSettingsComponent from '@site/docs/tech-docs/kubernetes/components/kubeadm/lifecycleSettingsComponent.mdx'
+
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+> В этом разделе описан процесс настройка и конфигурация компонентов Kubernetes, которые обеспечивают корректную работу кластера.
+
+<Tabs groupId="component">
+  <TabItem value="containerd">
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Настройка containerd</p>
+          <p className="obligatory-note-orange">● Обязателен к применению</p>
+        </div>
+      </summary>
+      <ContainerdLifecycleSettingsComponent />
+      <ContainerdCheckComponent />
+    </details>
+  </TabItem>
+  <TabItem value="kubelet">
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Настройка kubelet</p>
+          <p className="obligatory-note-orange">● Обязателен к применению</p>
+        </div>
+      </summary>
+      <KubeletLifecycleSettingsComponent />
+      <KubeletCheckComponent />
+    </details>
+  </TabItem>
+  <TabItem value="crictl">
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Настройка crictl</p>
+          <p className="obligatory-note-green">● Не обязателен к применению</p>
+        </div>
+      </summary>
+      <h4> Конфигурация компонента</h4>
+      <CrictlLifecycleSettingsComponent />
+      <CrictlCheckComponent />
+    </details>
+  </TabItem>
+  <TabItem value="kubeadm">
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Настройка kubeadm</p>
+          <p className="obligatory-note-green">● Не обязателен к применению</p>
+        </div>
+      </summary>
+      <KubeadmLifecycleSettingsComponent />
+      <KubeadmCheckComponent />
+    </details>
+  </TabItem>
+</Tabs>

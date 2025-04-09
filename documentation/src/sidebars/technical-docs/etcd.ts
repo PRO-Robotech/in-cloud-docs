@@ -7,7 +7,7 @@ export const etcd = [
       {
         type: 'doc',
         label: '5.1.1.1. Настройка ОС',
-        id: 'tech-docs/etcd/setupEnvironments/os-setup',
+        id: 'tech-docs/etcd/setup-environments/os-setup',
       },
       {
         type: 'category',

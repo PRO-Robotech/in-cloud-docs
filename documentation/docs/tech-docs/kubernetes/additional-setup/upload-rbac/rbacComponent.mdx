@@ -1,0 +1,352 @@
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+import CodeBlock from '@theme/CodeBlock'
+import dedent from 'ts-dedent'
+
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+import { KUBE_API_ARGS } from '@site/src/constants/kubernetes/kubeAPIArgs'
+
+<Tabs groupId="install-type">
+
+  <TabItem value='HardWay'>
+    <details className="custom-gray-block">
+    <summary>Role bindings</summary>
+
+    <h4>Переменные окружения</h4>
+    <CodeBlock language="bash">
+      {dedent`
+        export AUTH_EXTRA_GROUPS="system:bootstrappers:kubeadm:default-node-token"
+      `}
+    </CodeBlock>
+
+    <h4>Роли и связи</h4>
+
+    > Этот блок необходим, чтобы kubeadm мог проверить, зарегистрирована ли нода с таким именем в кластере или нет.
+
+    <CodeBlock language="bash">
+      {dedent`
+        kubectl \\
+          --kubeconfig=${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/super-admin.conf apply -f - <<EOF
+        ---
+        apiVersion: rbac.authorization.k8s.io/v1
+        kind: ClusterRole
+        metadata:
+          name: kubeadm:get-nodes
+        rules:
+        - apiGroups:
+          - ""
+          resources:
+          - nodes
+          verbs:
+          - get
+        ---
+        apiVersion: rbac.authorization.k8s.io/v1
+        kind: ClusterRoleBinding
+        metadata:
+          name: kubeadm:get-nodes
+        roleRef:
+          apiGroup: rbac.authorization.k8s.io
+          kind: ClusterRole
+          name: kubeadm:get-nodes
+        subjects:
+        - apiGroup: rbac.authorization.k8s.io
+          kind: Group
+          name: $\{AUTH_EXTRA_GROUPS}
+        EOF
+      `}
+    </CodeBlock>
+
+    > Этот блок необходим для того, чтобы анонимные клиенты (например, kubeadm на этапе discovery) могли получить ConfigMap с информацией о кластере (cluster-info) из пространства kube-public. Это позволяет загрузить начальные параметры подключения к API-серверу и проверить подпись bootstrap-токена до установления полноценной аутентификации.
+
+    <CodeBlock language="bash">
+      {dedent`
+        kubectl \\
+          --kubeconfig=${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/super-admin.conf apply -f - <<EOF
+        ---
+        apiVersion: rbac.authorization.k8s.io/v1
+        kind: Role
+        metadata:
+          name: kubeadm:bootstrap-signer-clusterinfo
+          namespace: kube-public
+        rules:
+        - apiGroups:
+          - ""
+          resourceNames:
+          - cluster-info
+          resources:
+          - configmaps
+          verbs:
+          - get
+        ---
+        apiVersion: rbac.authorization.k8s.io/v1
+        kind: RoleBinding
+        metadata:
+          name: kubeadm:bootstrap-signer-clusterinfo
+          namespace: kube-public
+        roleRef:
+          apiGroup: rbac.authorization.k8s.io
+          kind: Role
+          name: kubeadm:bootstrap-signer-clusterinfo
+        subjects:
+        - apiGroup: rbac.authorization.k8s.io
+          kind: User
+          name: system:anonymous
+        EOF
+      `}
+    </CodeBlock>
+
+    > Данный блок необходим для назначения прав cluster-admin всем пользователям, входящим в группу kubeadm:cluster-admins. Это позволяет предоставить полный доступ к кластеру с возможностью централизованного управления правами — в отличие от группы system:masters, отозвать доступ из которой невозможно через механизмы RBAC. Такой подход упрощает настройку административных ролей и интеграцию с внешними системами авторизации.
+
+    <CodeBlock language="bash">
+      {dedent`
+        kubectl \\
+          --kubeconfig=${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/super-admin.conf apply -f - <<EOF
+        ---
+        apiVersion: rbac.authorization.k8s.io/v1
+        kind: ClusterRoleBinding
+        metadata:
+          name: kubeadm:cluster-admins
+        roleRef:
+          apiGroup: rbac.authorization.k8s.io
+          kind: ClusterRole
+          name: cluster-admin
+        subjects:
+        - apiGroup: rbac.authorization.k8s.io
+          kind: Group
+          name: kubeadm:cluster-admins
+        EOF
+      `}
+    </CodeBlock>
+
+    > Данный блок требуется для того, чтобы участники группы $\{AUTH_EXTRA_GROUPS} (например, system:bootstrappers) могли использовать bootstrap-токен для инициализации подключения kubelet к кластеру. Привязка к роли system:node-bootstrapper позволяет таким субъектам запрашивать TLS-сертификаты для узлов через CSR (CertificateSigningRequest), что является необходимым шагом в процессе kubeadm join.
+
+    <CodeBlock language="bash">
+      {dedent`
+        kubectl \\
+          --kubeconfig=${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/super-admin.conf apply -f - <<EOF
+        ---
+        apiVersion: rbac.authorization.k8s.io/v1
+        kind: ClusterRoleBinding
+        metadata:
+          name: kubeadm:kubelet-bootstrap
+        roleRef:
+          apiGroup: rbac.authorization.k8s.io
+          kind: ClusterRole
+          name: system:node-bootstrapper
+        subjects:
+        - apiGroup: rbac.authorization.k8s.io
+          kind: Group
+          name: $\{AUTH_EXTRA_GROUPS}
+        EOF
+      `}
+    </CodeBlock>
+
+    > Данный блок требуется для автоматического одобрения запросов на выдачу клиентских сертификатов от узлов, присоединяющихся к кластеру через bootstrap-токен. Он назначает группе $\{AUTH_EXTRA_GROUPS} (например, system:bootstrappers) роль system:certificates.k8s.io:certificatesigningrequests:nodeclient, что позволяет kube-controller-manager автоматически подписывать CSR от kubelet во время выполнения kubeadm join.
+
+    <CodeBlock language="bash">
+      {dedent`
+        kubectl \\
+          --kubeconfig=${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/super-admin.conf apply -f - <<EOF
+        ---
+        apiVersion: rbac.authorization.k8s.io/v1
+        kind: ClusterRoleBinding
+        metadata:
+          name: kubeadm:node-autoapprove-bootstrap
+        roleRef:
+          apiGroup: rbac.authorization.k8s.io
+          kind: ClusterRole
+          name: system:certificates.k8s.io:certificatesigningrequests:nodeclient
+        subjects:
+        - apiGroup: rbac.authorization.k8s.io
+          kind: Group
+          name: $\{AUTH_EXTRA_GROUPS}
+        EOF
+      `}
+    </CodeBlock>
+
+    > Данный блок требуется для автоматического одобрения запросов на продление клиентских сертификатов kubelet. Он предоставляет группе system:nodes права, позволяющие повторно запрашивать и автоматически получать новые сертификаты через CertificateSigningRequest. Это необходимо для корректной работы механизма ротации сертификатов узлов без ручного вмешательства.
+
+    <CodeBlock language="bash">
+      {dedent`
+        kubectl \\
+          --kubeconfig=${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/super-admin.conf apply -f - <<EOF
+        ---
+        apiVersion: rbac.authorization.k8s.io/v1
+        kind: ClusterRoleBinding
+        metadata:
+          name: kubeadm:node-autoapprove-certificate-rotation
+        roleRef:
+          apiGroup: rbac.authorization.k8s.io
+          kind: ClusterRole
+          name: system:certificates.k8s.io:certificatesigningrequests:selfnodeclient
+        subjects:
+        - apiGroup: rbac.authorization.k8s.io
+          kind: Group
+          name: system:nodes
+        EOF
+      `}
+    </CodeBlock>
+
+    :::note
+    <CodeBlock language="bash">
+        {dedent`
+            clusterrole.rbac.authorization.k8s.io/kubeadm:get-nodes created
+            role.rbac.authorization.k8s.io/kubeadm:bootstrap-signer-clusterinfo created
+            rolebinding.rbac.authorization.k8s.io/kubeadm:bootstrap-signer-clusterinfo created
+            clusterrolebinding.rbac.authorization.k8s.io/kubeadm:cluster-admins created
+            clusterrolebinding.rbac.authorization.k8s.io/kubeadm:get-nodes created
+            clusterrolebinding.rbac.authorization.k8s.io/kubeadm:kubelet-bootstrap created
+            clusterrolebinding.rbac.authorization.k8s.io/kubeadm:node-autoapprove-bootstrap created
+            clusterrolebinding.rbac.authorization.k8s.io/kubeadm:node-autoapprove-certificate-rotation created
+        `}
+    </CodeBlock>
+    :::
+    </details>
+
+  <details className="custom-gray-block">
+    <summary>Bootstrap tokens</summary>
+    <h4>Переменные окружения</h4>
+    <CodeBlock language="bash">
+        {dedent`
+            export AUTH_EXTRA_GROUPS="system:bootstrappers:kubeadm:default-node-token"
+            export DESCRIPTION="kubeadm bootstrap token"
+            export EXPIRATION=$(date -d '24 hours' "+%Y-%m-%dT%H:%M:%SZ")
+            export TOKEN_ID="fjt9ex"
+            export TOKEN_SECRET="lwzqgdlvoxtqk4yw"
+            export USAGE_BOOTSTRAP_AUTHENTIFICATION="true"
+            export USAGE_BOOTSTRAP_SIGNING="true"
+        `}
+    </CodeBlock>
+
+    <h4>Создание токена доступа</h4>
+
+    > Этот токен — bootstrap-токен, и он нужен для того, чтобы разрешить новой ноде безопасно присоединиться к Kubernetes-кластеру через kubeadm join, пока у неё ещё нет собственных сертификатов и доверенного kubeconfig-а.
+
+    :::danger Внимание!
+      Под каждую ноду в продуктивной среде рекомендуется создавать отдельный bootstrap-токен.
+      Однако для целей демонстрации (и в рамках данной документации) мы упростили процесс и используем один общий токен для всех узлов управляющего контура.
+    :::
+
+    <CodeBlock>
+      {dedent`
+        kubectl \\
+          --kubeconfig=${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/super-admin.conf \\
+          apply -f - <<EOF
+        ---
+        apiVersion: v1
+        kind: Secret
+        metadata:
+          name: bootstrap-token-$\{TOKEN_ID}
+          namespace: kube-system
+        data:
+          auth-extra-groups: $(echo -n "$AUTH_EXTRA_GROUPS" | base64)
+          description: $(echo -n "$DESCRIPTION" | base64)
+          expiration: $(echo -n "$EXPIRATION" | base64)
+          token-id: $(echo -n "$TOKEN_ID" | base64)
+          token-secret: $(echo -n "$TOKEN_SECRET" | base64)
+          usage-bootstrap-authentication: $(echo -n "$USAGE_BOOTSTRAP_AUTHENTIFICATION" | base64)
+          usage-bootstrap-signing: $(echo -n "$USAGE_BOOTSTRAP_SIGNING" | base64)
+        type: bootstrap.kubernetes.io/token
+        EOF
+      `}
+
+    </CodeBlock>
+
+    :::note
+    <CodeBlock language="bash">
+        {dedent`
+            secret/bootstrap-token-fjt9ex configured
+        `}
+    </CodeBlock>
+    :::
+
+  </details>
+
+  <details className="custom-gray-block">
+    <summary>Cluster-Info</summary>
+    <h4>Переменные окружения</h4>
+    <CodeBlock language="bash">
+      {dedent`
+          export KUBE_CA_CRT_BASE64=$(base64 -w 0 /etc/kubernetes/pki/ca.crt)
+          export CLUSTER_API_URL=https://api.${CUSTOM_VALUE.clusterName.value}.${CUSTOM_VALUE.kubernetesBaseDomain.value}
+      `}
+    </CodeBlock>
+
+    <h4>Обновление Сluster-info</h4>
+
+    > cluster-info — это публичный источник базовой информации о кластере, необходимый для безопасного bootstrap-присоединения новых узлов через kubeadm.
+      - 🔐 Содержит публичный kubeconfig с CA и адресом API.
+      - 📥 Используется kubeadm join для discovery.
+      - 🌐 Доступен анонимно через kube-public.
+      - ✅ Позволяет ноде проверить подлинность API-сервера до аутентификации.
+
+    <CodeBlock>
+      {dedent`
+        kubectl \\
+          --kubeconfig=${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/super-admin.conf \\
+          apply -f - <<EOF
+        ---
+        apiVersion: v1
+        data:
+          kubeconfig: |
+            apiVersion: v1
+            clusters:
+            - cluster:
+                certificate-authority-data: $\{KUBE_CA_CRT_BASE64}
+                server: $\{CLUSTER_API_URL}:${KUBE_API_ARGS.securePort.value}
+              name: ""
+            contexts: null
+            current-context: ""
+            kind: Config
+            preferences: {}
+            users: null
+        kind: ConfigMap
+        metadata:
+          name: cluster-info
+          namespace: kube-public
+
+        EOF
+      `}
+
+    </CodeBlock>
+
+    :::note
+    <CodeBlock language="bash">
+        {dedent`
+            configmap/cluster-info created
+        `}
+    </CodeBlock>
+    :::
+
+    </details>
+
+  </TabItem>
+
+  <TabItem value='Kubeadm'>
+
+    <h4>Генерация ролевой модели</h4>
+    <CodeBlock language="bash">
+      {dedent`
+        kubeadm init phase bootstrap-token \\
+          --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml \\
+          --kubeconfig=${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/super-admin.conf
+      `}
+    </CodeBlock>
+
+    :::note
+    <CodeBlock language="bash">
+      {dedent`
+        [bootstrap-token] Using token: fjt9ex.lwzqgdlvoxtqk4yw
+        [bootstrap-token] Configuring bootstrap tokens, cluster-info ConfigMap, RBAC Roles
+        [bootstrap-token] Configured RBAC rules to allow Node Bootstrap tokens to get nodes
+        [bootstrap-token] Configured RBAC rules to allow Node Bootstrap tokens to post CSRs in order for nodes to get long term certificate credentials
+        [bootstrap-token] Configured RBAC rules to allow the csrapprover controller automatically approve CSRs from a Node Bootstrap Token
+        [bootstrap-token] Configured RBAC rules to allow certificate rotation for all node client certificates in the cluster
+        [bootstrap-token] Creating the "cluster-info" ConfigMap in the "kube-public" namespace
+      `}
+    </CodeBlock>
+    :::
+
+  </TabItem>
+</Tabs>

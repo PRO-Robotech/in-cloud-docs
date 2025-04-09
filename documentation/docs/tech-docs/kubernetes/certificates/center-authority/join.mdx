@@ -1,15 +1,17 @@
 ---
-id: all-center-authority
-toc_min_heading_level: 2
-toc_max_heading_level: 2
+id: join-ca
 ---
 
-import ETCDCA from '@site/docs/tech-docs/etcd/certificates/center-authority/main.mdx'
-// import DownloadCA from '@site/docs/tech-docs/kubernetes/certificates/center-authority/downloadCA.mdx'
+import DownloadCA from '@site/docs/tech-docs/kubernetes/certificates/center-authority/downloadCA.mdx'
 
-# 5.1.2.1. Инициализация ЦА
+# 5.2.2.1.2. Выгрузка ЦА
 
 > Центр аутентификации — это удостоверяющий центр (Certificate Authority, CA), который выпускает и управляет корневыми сертификатами. Корневые сертификаты служат доверенным источником для установления защищённых соединений между компонентами кластера Kubernetes. Они обеспечивают аутентификацию и шифрование коммуникаций между узлами, сервисами и клиентами, гарантируя целостность и конфиденциальность передаваемых данных.
 
-<ETCDCA />
-{/* <DownloadCA /> */}
+:::warning Обратите внимание!
+Данный раздел описывает процесс выгрузки корневых сертификатов на мастер-узел из существующего управляющего контура Kubernetes с целью расширения кластера.
+:::
+
+## 5.2.2.1.2.1. Выгрузка ЦА
+
+<DownloadCA />
