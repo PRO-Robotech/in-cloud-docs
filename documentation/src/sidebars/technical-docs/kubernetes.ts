@@ -95,20 +95,15 @@ export const kubernetes = [
     collapsed: true,
     items: [
       {
-        type: 'category',
+        type: 'doc',
+        // type: 'category',
         label: '5.2.3.1. Инициализация',
-        collapsed: true,
-        link: {
-          type: 'doc',
-          id: 'tech-docs/kubernetes/k8s-init',
-        },
-        items: [
-          {
-            type: 'doc',
-            label: '5.2.3.1.1. Kubelet',
-            id: 'tech-docs/kubernetes/components/kubelet/kubelet-init-start',
-          },
-        ],
+        id: 'tech-docs/kubernetes/k8s-init',
+        // collapsed: true,
+        // link: {
+        //   type: 'doc',
+        //   id: 'tech-docs/kubernetes/k8s-init',
+        // },
       },
       {
         type: 'category',
@@ -121,15 +116,15 @@ export const kubernetes = [
         items: [
           {
             type: 'doc',
-            label: '5.2.3.2.1. Kubelet',
-            id: 'tech-docs/kubernetes/components/kubelet/kubelet-join-start',
-          },
-          {
-            type: 'doc',
             label: '5.2.3.2.2. ETCD',
             id: 'tech-docs/kubernetes/etcd-join',
           },
         ],
+      },
+      {
+        type: 'doc',
+        label: '5.2.3.3. Kubelet Start',
+        id: 'tech-docs/kubernetes/components/kubelet/all-kubelet-start',
       },
     ],
   },
@@ -138,32 +133,32 @@ export const kubernetes = [
     label: '5.2.4. Настройка УК',
     collapsed: true,
     items: [
-      {
-        type: 'category',
-        label: '5.2.4.1. Пост обработка',
-        items: [
+      // {
+      //   type: 'category',
+      //   label: '5.2.4.1. Пост обработка',
+      //   items: [
           {
             type: 'doc',
-            label: '5.2.4.1.1. Маркировка',
+            label: '5.2.4.1. Маркировка',
             id: 'tech-docs/kubernetes/additional-setup/marking/all-marking',
           },
           {
             type: 'doc',
-            label: '5.2.4.1.2. RBAC',
+            label: '5.2.4.2. Ролевая модель',
             id: 'tech-docs/kubernetes/additional-setup/upload-rbac/all-rbac',
           },
           {
             type: 'doc',
-            label: '5.2.4.1.3. Загрузка CFG',
+            label: '5.2.4.3. Загрузка CFG',
             id: 'tech-docs/kubernetes/additional-setup/upload-configs/all-configs',
           },
           {
             type: 'doc',
-            label: '5.2.4.1.4. Загрузка ЦА',
+            label: '5.2.4.4. Загрузка ЦА',
             id: 'tech-docs/kubernetes/additional-setup/upload-ca/all-ca',
           },
-        ],
-      },
+      //   ],
+      // },
     ],
   },
   // {

@@ -33,21 +33,16 @@ import AllServiceAccountComponent from '@site/docs/tech-docs/kubernetes/certific
 import AllExaminationComponent from '@site/docs/tech-docs/kubernetes/certificates/examination/allExaminationComponent.mdx'
 import AllCertificatesComponent from '@site/docs/tech-docs/kubernetes/certificates/allCertificatesComponent.mdx'
 import AllKubeconfigsComponent from '@site/docs/tech-docs/kubernetes/certificates/allKubeconfigsComponent.mdx'
+import AllModprobeComponent from '@site/docs/tech-docs/kubernetes/setup-environments/modprobe/allModprobe.mdx'
+import AllBaseOSSetupComponent from '@site/docs/tech-docs/kubernetes/setup-environments/base-os/allBaseOSSetupComponent.mdx'
+import AllServiceStartComponent from '@site/docs/tech-docs/kubernetes/components/kubelet/allServiceStartComponent.mdx'
 
 
-import KubeletInitSystemdUnitStartKubeadm from '@site/docs/tech-docs/kubernetes/components/kubelet/kubeadm/systemdUnitStartInit.mdx'
-import KubeletJoinSystemdUnitStartKubeadm from '@site/docs/tech-docs/kubernetes/components/kubelet/kubeadm/systemdUnitStartJoin.mdx'
-import KubeletSystemdUnitStart from '@site/docs/tech-docs/kubernetes/components/kubelet/systemdUnit/systemdUnitStart.mdx'
-import KubeletConfigFilesDefault from '@site/docs/tech-docs/kubernetes/components/kubelet/payload/configFilesDefault.mdx'
 import KubernetesStatusReady from '@site/docs/tech-docs/kubernetes/statusCluster.mdx'
-import BaseSetupOS from '@site/docs/tech-docs/kubernetes/setup-environments/baseOSSetupComponent.mdx'
-import СoreModulesComponent from '@site/docs/tech-docs/kubernetes/setup-environments/coreModulesComponent.mdx'
 import AboutAllCertificates from '@site/docs/tech-docs/kubernetes/certificates/aboutAllComponent.mdx'
 
 import { FancyboxImage } from '@site/src/components/commonBlocks/FancyboxImage'
 import { AaaBug } from '@site/src/components/AaaBug'
-import TabItem from '@theme/TabItem'
-import Tabs from '@theme/Tabs'
 
 <h3>
   Kubernetes The Hard Way <span style={{ color: '#1cc5ac' }}>#</span>
@@ -175,7 +170,7 @@ import Tabs from '@theme/Tabs'
 
 <ul>
   <li>
-    <a href="#1-Введение">1. Введение</a>
+    <a href="#1-введение">1. Введение</a>
   </li>
   <li>
     <a href="#2-почему-the-hard-way">2. Почему «The Hard Way»</a>
@@ -217,7 +212,7 @@ import Tabs from '@theme/Tabs'
     <a href="#14-создание-ключа-подписи-serviceaccount">14. Создание ключа подписи ServiceAccount</a>
   </li>
   <li>
-    <a href="#15-создание-всех-kubeconfig">15*. Создание всех сертификатов</a>
+    <a href="#15-создание-всех-сертификатов">15*. Создание всех сертификатов</a>
   </li>
   <li>
     <a href="#16-создание-конфигураций-kubeconfig">16. Создание конфигураций kubeconfig</a>
@@ -455,7 +450,11 @@ import Tabs from '@theme/Tabs'
     <tbody>
       <tr>
         <td>VIP-LB</td>
-        <td>- NODE-IP-1 - NODE-IP-2 - NODE-IP-3</td>
+        <td>
+          - NODE-IP-1
+          - NODE-IP-2
+          - NODE-IP-3
+        </td>
         <td>6443</td>
         <td>6443</td>
       </tr>
@@ -581,35 +580,13 @@ import Tabs from '@theme/Tabs'
 
 ### 5. Базовая настройка узлов
 
-> Этот раздел посвящён базовой подготовке узлов Kubernetes перед установкой компонентов.
-> В нём описывается настройка переменных окружения, смена имени хоста и установка необходимых системных утилит. Эти шаги являются обязательными для корректной работы kubelet и других компонентов управляющего контура.
-
-<details>
-  <summary>
-    <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-      <p style={{ marginBottom: 0 }}>Базовая настройка узлов</p>
-      <p className="obligatory-note-orange">● Обязателен к применению</p>
-    </div>
-  </summary>
-  <BaseSetupOS />
-</details>
+<AllBaseOSSetupComponent />
 
 ---
 
 ### 6. Загрузка модулей ядра
 
-> Этот раздел посвящён загрузке модулей ядра, необходимых для корректной работы Kubernetes.
-> Настройка включает конфигурацию modprobe и активацию модулей overlay и br_netfilter, обеспечивающих поддержку контейнерной файловой системы и сетевых функций. Эти действия обязательны для функционирования сетевых политик, iptables и контейнерных рантаймов.
-
-<details>
-  <summary>
-    <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-      <p style={{ marginBottom: 0 }}>Загрузка модулей ядра</p>
-      <p className="obligatory-note-orange">● Обязателен к применению</p>
-    </div>
-  </summary>
-  <СoreModulesComponent />
-</details>
+<AllModprobeComponent />
 
 ---
 
@@ -705,55 +682,7 @@ TODO
 
 ### 22. Запуск службы Kubelet
 
-> данном разделе рассматривается ручной запуск Kubelet с настройкой systemd unit. Описывается создание базового конфигурационного файла kubelet, настройка переменных окружения для службы kubelet.service, а также запуск самого сервиса.
-
-<Tabs groupId="phase">
-  <TabItem value="init">
-    <details>
-      <summary>
-        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <p style={{ marginBottom: 0 }}>Запуск/Настройка kubelet</p>
-          <p className="obligatory-note-orange">● Обязателен к применению</p>
-        </div>
-      </summary>
-      <Tabs groupId="install-type">
-        <TabItem value="HardWay">
-          > Данный конфигурационный файл требуется, что бы запустился `Kubelet`.
-          <details className="custom-gray-block">
-            <summary>Kubelet default config</summary>
-            <KubeletConfigFilesDefault />
-          </details>
-          <KubeletSystemdUnitStart />
-        </TabItem>
-        <TabItem value="Kubeadm">
-          <KubeletInitSystemdUnitStartKubeadm />
-        </TabItem>
-      </Tabs>
-    </details>
-  </TabItem>
-  <TabItem value="join">
-    <details>
-      <summary>
-        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <p style={{ marginBottom: 0 }}>Запуск/Настройка kubelet</p>
-          <p className="obligatory-note-orange">● Обязателен к применению</p>
-        </div>
-      </summary>
-      <Tabs groupId="install-type">
-        <TabItem value="HardWay">
-          <details className="custom-gray-block">
-            <summary>Kubelet default config</summary>
-            <KubeletConfigFilesDefault />
-          </details>
-          <KubeletSystemdUnitStart />
-        </TabItem>
-        <TabItem value="Kubeadm">
-          <KubeletJoinSystemdUnitStartKubeadm />
-        </TabItem>
-      </Tabs>
-    </details>
-  </TabItem>
-</Tabs>
+<AllServiceStartComponent/>
 
 ---
 

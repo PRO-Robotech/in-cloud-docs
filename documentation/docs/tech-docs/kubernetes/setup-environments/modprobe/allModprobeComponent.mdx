@@ -1,0 +1,14 @@
+import СoreModulesComponent from '@site/docs/tech-docs/kubernetes/setup-environments/modprobe/coreModulesComponent.mdx'
+
+> Этот раздел посвящён загрузке модулей ядра, необходимых для корректной работы Kubernetes.
+> Настройка включает конфигурацию modprobe и активацию модулей overlay и br_netfilter, обеспечивающих поддержку контейнерной файловой системы и сетевых функций. Эти действия обязательны для функционирования сетевых политик, iptables и контейнерных рантаймов.
+
+<details>
+  <summary>
+    <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+      <p style={{ marginBottom: 0 }}>Загрузка модулей ядра</p>
+      <p className="obligatory-note-orange">● Обязателен к применению</p>
+    </div>
+  </summary>
+  <СoreModulesComponent />
+</details>
