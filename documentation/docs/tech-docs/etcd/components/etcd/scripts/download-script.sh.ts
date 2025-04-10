@@ -22,13 +22,14 @@ export const ETCD_DOWNLOAD_SCRIPT: TCustomValueItems = {
 
       logger -t "$LOG_TAG" "[INFO] Checking current etcd version..."
 
-      CURRENT_VERSION=$(etcd --version 2>/dev/null | awk '{print $3}' | sed 's/v//') || CURRENT_VERSION="none"
+      CURRENT_VERSION=$($INSTALL_PATH/etcd --version 2>/dev/null | grep 'etcd Version:' | awk '{print $3}' | sed 's/v//') || CURRENT_VERSION="none"
+      COMPONENT_VERSION_CLEAN=$(echo "$COMPONENT_VERSION" | sed 's/^v//')
 
-      logger -t "$LOG_TAG" "[INFO] Current: $CURRENT_VERSION, Target: $COMPONENT_VERSION"
-      logger -t "$LOG_TAG" "[INFO] Download URL: $PATH_BIN"
+      logger -t "$LOG_TAG" "[INFO] Current: $CURRENT_VERSION, Target: $COMPONENT_VERSION_CLEAN"
 
-      if [[ "$CURRENT_VERSION" != "$COMPONENT_VERSION" ]]; then
-        logger -t "$LOG_TAG" "[INFO] Updating etcd to version $COMPONENT_VERSION..."
+      if [[ "$CURRENT_VERSION" != "$COMPONENT_VERSION_CLEAN" ]]; then
+        logger -t "$LOG_TAG" "[INFO] Download URL: $PATH_BIN"
+        logger -t "$LOG_TAG" "[INFO] Updating etcd to version $COMPONENT_VERSION_CLEAN..."
 
         cd "$TMP_DIR"
         logger -t "$LOG_TAG" "[INFO] Working directory: $PWD"
@@ -50,7 +51,7 @@ export const ETCD_DOWNLOAD_SCRIPT: TCustomValueItems = {
         install -m 755 "$TMP_DIR/etcd-$\{COMPONENT_VERSION}-linux-amd64/etcdctl" $INSTALL_PATH
         install -m 755 "$TMP_DIR/etcd-$\{COMPONENT_VERSION}-linux-amd64/etcdutl" $INSTALL_PATH
 
-        logger -t "$LOG_TAG" "[INFO] etcd successfully updated to $COMPONENT_VERSION."
+        logger -t "$LOG_TAG" "[INFO] etcd successfully updated to $COMPONENT_VERSION_CLEAN."
         rm -rf "$TMP_DIR"
 
       else

@@ -22,12 +22,13 @@ export const RUNC_DOWNLOAD_SCRIPT: TCustomValueItems = {
 
       logger -t "$LOG_TAG" "[INFO] Checking current runc version..."
 
-      CURRENT_VERSION=$("$INSTALL_PATH" --version 2>/dev/null | head -n1 | awk '{print $NF}') || CURRENT_VERSION="none"
+      CURRENT_VERSION=$($INSTALL_PATH --version 2>/dev/null | head -n1 | awk '{print $NF}') || CURRENT_VERSION="none"
+      COMPONENT_VERSION_CLEAN=$(echo "$COMPONENT_VERSION" | sed 's/^v//')
 
-      logger -t "$LOG_TAG" "[INFO] Current: $CURRENT_VERSION, Target: $COMPONENT_VERSION"
-      logger -t "$LOG_TAG" "[INFO] Download URL: $PATH_BIN"
+      logger -t "$LOG_TAG" "[INFO] Current: $CURRENT_VERSION, Target: $COMPONENT_VERSION_CLEAN"
 
-      if [[ "$CURRENT_VERSION" != "$\{COMPONENT_VERSION#v}" ]]; then
+      if [[ "$CURRENT_VERSION" != "$COMPONENT_VERSION_CLEAN" ]]; then
+        logger -t "$LOG_TAG" "[INFO] Download URL: $PATH_BIN"
         logger -t "$LOG_TAG" "[INFO] Updating runc to version $COMPONENT_VERSION..."
 
         cd "$TMP_DIR"

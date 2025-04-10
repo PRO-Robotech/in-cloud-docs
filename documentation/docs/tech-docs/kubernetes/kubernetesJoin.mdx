@@ -10,116 +10,103 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 
 # 5.2.3.2. Расширение
 
+> Данная команда выполняет расширение кластера Kubernetes, включая создание необходимых манифестов, сертификатов, конфигурационных файлов, запуск сервисов, а также мониторинг состояния кластера и его постобработку.
 
-<Tabs groupId="install-type">
+:::warning Обратите внимание!
+Для расширения кластера используется заранее подготовленный конфигурационный файл ```kubeadm``` с предуказанным токеном для будущих мастер-нод, что упрощает установку. В промышленной эксплуатации рекомендуется генерировать уникальный токен для каждого узла с ограниченным временем жизни для повышения безопасности.
+:::
 
-  <TabItem value='Kubeadm join'>
-    > Данная команда выполняет добавление мастер ноды в Kubernetes кластер, включая создание необходимых манифестов, сертификатов, конфигурационных файлов, запуск сервисов, а так же добавление узла в etcd кластер.
+Данная команда впитывает в себя разделы:
+- [Проверка готовности узла](/tech-docs/kubernetes/components/all-components-ready).
+- [Выгрузка ЦА](/tech-docs/kubernetes/certificates/center-authority/all-ca).
+- [Генерация Сертификатов](/tech-docs/kubernetes/certificates/components/all-certificates).
+- [Генерация Kubeconfigs](/tech-docs/kubernetes/certificates/components/all-kubeconfigs).
+- [Генерация манифестов для управляющего контура](/tech-docs/kubernetes/components/all-static-pods-cp).
+- [Kubelet Start](/tech-docs/kubernetes/components/kubelet/all-kubelet-start).
+- [Расширение etcd](/tech-docs/kubernetes/etcd-join).
+- [Kubelet Start](/tech-docs/kubernetes/components/kubelet/all-kubelet-start).
+- [Маркировка узлов](/tech-docs/kubernetes/additional-setup/marking/all-marking).
 
-    :::warning
-    Обратите внимание: для расширения ноды используется заранее подготовленный конфигурационный файл ```kubeadm``` с предуказанным токеном. В промышленной эксплуатации рекомендуется генерировать уникальный токен для каждого узла с ограниченным временем жизни для повышения безопасности.
-    :::
+> Данная команда выполняет добавление мастер ноды в Kubernetes кластер, включая создание необходимых манифестов, сертификатов, конфигурационных файлов, запуск сервисов, а так же добавление узла в etcd кластер.
 
-    <CodeBlock language="bash">
-      {dedent`
-        kubeadm join \\
-          --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml \\
-          --kubeconfig=${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/super-admin.conf
-      `}
-    </CodeBlock>
+:::warning
+  Обратите внимание: для расширения ноды используется заранее подготовленный конфигурационный файл ```kubeadm``` с предуказанным токеном. В промышленной эксплуатации рекомендуется генерировать уникальный токен для каждого узла с ограниченным временем жизни для повышения безопасности.
+:::
 
-    :::note Вывод команды
-    <CodeBlock language="bash">
-      {dedent`
-        [preflight] Running pre-flight checks
-        [preflight] Reading configuration from the cluster...
-        [preflight] FYI: You can look at this config file with 'kubectl -n kube-system get cm kubeadm-config -o yaml'
-        W0221 22:27:30.974959    1886 configset.go:78] Warning: No kubeproxy.config.k8s.io/v1alpha1 config is loaded. Continuing without it: configmaps "kube-proxy" is forbidden: User "system:bootstrap:fjt9ex" cannot get resource "configmaps" in API group "" in the namespace "kube-system"
-        [preflight] Running pre-flight checks before initializing the new control plane instance
-        [preflight] Pulling images required for setting up a Kubernetes cluster
-        [preflight] This might take a minute or two, depending on the speed of your internet connection
-        [preflight] You can also perform this action in beforehand using 'kubeadm config images pull'
-        [download-certs] Downloading the certificates in Secret "kubeadm-certs" in the "kube-system" Namespace
-        [download-certs] Saving the certificates to the folder: "/etc/kubernetes/pki"
-        [certs] Using certificateDir folder "/etc/kubernetes/pki"
-        [certs] Generating "apiserver" certificate and key
-        [certs] apiserver serving cert is signed for DNS names [api.my-first-cluster.example.com kubernetes kubernetes.default kubernetes.default.svc kubernetes.default.svc.my-first-cluster.example.com master-2.my-first-cluster.example.com] and IPs [29.64.0.1 83.222.26.71 31.129.111.153 127.0.0.1]
-        [certs] Generating "apiserver-kubelet-client" certificate and key
-        [certs] Generating "etcd/server" certificate and key
-        [certs] etcd/server serving cert is signed for DNS names [localhost master-1.my-first-cluster.example.com master-2.my-first-cluster.example.com] and IPs [83.222.26.71 127.0.0.1 ::1 31.129.111.153]
-        [certs] Generating "etcd/peer" certificate and key
-        [certs] etcd/peer serving cert is signed for DNS names [localhost master-1.my-first-cluster.example.com master-2.my-first-cluster.example.com] and IPs [83.222.26.71 127.0.0.1 ::1 31.129.111.153]
-        [certs] Generating "etcd/healthcheck-client" certificate and key
-        [certs] Generating "apiserver-etcd-client" certificate and key
-        [certs] Generating "front-proxy-client" certificate and key
-        [certs] Valid certificates and keys now exist in "/etc/kubernetes/pki"
-        [certs] Using the existing "sa" key
-        [kubeconfig] Generating kubeconfig files
-        [kubeconfig] Using kubeconfig folder "/etc/kubernetes"
-        [kubeconfig] Writing "admin.conf" kubeconfig file
-        [kubeconfig] Writing "controller-manager.conf" kubeconfig file
-        [kubeconfig] Writing "scheduler.conf" kubeconfig file
-        [control-plane] Using manifest folder "/etc/kubernetes/manifests"
-        [control-plane] Creating static Pod manifest for "kube-apiserver"
-        [control-plane] Creating static Pod manifest for "kube-controller-manager"
-        [control-plane] Creating static Pod manifest for "kube-scheduler"
-        [check-etcd] Checking that the etcd cluster is healthy
-        [kubelet-start] Writing kubelet configuration to file "/var/lib/kubelet/config.yaml"
-        [kubelet-start] Writing kubelet environment file with flags to file "/var/lib/kubelet/kubeadm-flags.env"
-        [kubelet-start] Starting the kubelet
-        [kubelet-check] Waiting for a healthy kubelet at http://127.0.0.1:10248/healthz. This can take up to 4m0s
-        [kubelet-check] The kubelet is healthy after 502.189678ms
-        [kubelet-start] Waiting for the kubelet to perform the TLS Bootstrap
-        [etcd] Announced new etcd member joining to the existing etcd cluster
-        [etcd] Creating static Pod manifest for "etcd"
-        {"level":"warn","ts":"2025-02-21T22:27:55.448925Z","logger":"etcd-client","caller":"v3@v3.5.10/retry_interceptor.go:62","msg":"retrying of unary invoker failed","target":"etcd-endpoints://0xc000ab8c40/31.129.111.153:2379","attempt":0,"error":"rpc error: code = FailedPrecondition desc = etcdserver: can only promote a learner member which is in sync with leader"}
-        {"level":"warn","ts":"2025-02-21T22:27:55.949698Z","logger":"etcd-client","caller":"v3@v3.5.10/retry_interceptor.go:62","msg":"retrying of unary invoker failed","target":"etcd-endpoints://0xc000ab8c40/31.129.111.153:2379","attempt":0,"error":"rpc error: code = FailedPrecondition desc = etcdserver: can only promote a learner member which is in sync with leader"}
-        {"level":"warn","ts":"2025-02-21T22:27:56.476514Z","logger":"etcd-client","caller":"v3@v3.5.10/retry_interceptor.go:62","msg":"retrying of unary invoker failed","target":"etcd-endpoints://0xc000ab8c40/31.129.111.153:2379","attempt":0,"error":"rpc error: code = FailedPrecondition desc = etcdserver: can only promote a learner member which is in sync with leader"}
-        [etcd] Waiting for the new etcd member to join the cluster. This can take up to 40s
+<CodeBlock language="bash">
+  {dedent`
+    kubeadm join \\
+      --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml \\
+      --kubeconfig=${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/super-admin.conf
+  `}
+</CodeBlock>
 
-        The 'update-status' phase is deprecated and will be removed in a future release. Currently it performs no operation
-        [mark-control-plane] Marking the node master-2.my-first-cluster.example.com as control-plane by adding the labels: [node-role.kubernetes.io/control-plane node.kubernetes.io/exclude-from-external-load-balancers]
-        [mark-control-plane] Marking the node master-2.my-first-cluster.example.com as control-plane by adding the taints [node-role.kubernetes.io/control-plane:NoSchedule]
+:::note Вывод команды
+<CodeBlock language="bash">
+  {dedent`
+    [preflight] Running pre-flight checks
+    [preflight] Reading configuration from the cluster...
+    [preflight] FYI: You can look at this config file with 'kubectl -n kube-system get cm kubeadm-config -o yaml'
+    W0221 22:27:30.974959    1886 configset.go:78] Warning: No kubeproxy.config.k8s.io/v1alpha1 config is loaded. Continuing without it: configmaps "kube-proxy" is forbidden: User "system:bootstrap:fjt9ex" cannot get resource "configmaps" in API group "" in the namespace "kube-system"
+    [preflight] Running pre-flight checks before initializing the new control plane instance
+    [preflight] Pulling images required for setting up a Kubernetes cluster
+    [preflight] This might take a minute or two, depending on the speed of your internet connection
+    [preflight] You can also perform this action in beforehand using 'kubeadm config images pull'
+    [download-certs] Downloading the certificates in Secret "kubeadm-certs" in the "kube-system" Namespace
+    [download-certs] Saving the certificates to the folder: "/etc/kubernetes/pki"
+    [certs] Using certificateDir folder "/etc/kubernetes/pki"
+    [certs] Generating "apiserver" certificate and key
+    [certs] apiserver serving cert is signed for DNS names [api.my-first-cluster.example.com kubernetes kubernetes.default kubernetes.default.svc kubernetes.default.svc.my-first-cluster.example.com master-2.my-first-cluster.example.com] and IPs [29.64.0.1 83.222.26.71 31.129.111.153 127.0.0.1]
+    [certs] Generating "apiserver-kubelet-client" certificate and key
+    [certs] Generating "etcd/server" certificate and key
+    [certs] etcd/server serving cert is signed for DNS names [localhost master-1.my-first-cluster.example.com master-2.my-first-cluster.example.com] and IPs [83.222.26.71 127.0.0.1 ::1 31.129.111.153]
+    [certs] Generating "etcd/peer" certificate and key
+    [certs] etcd/peer serving cert is signed for DNS names [localhost master-1.my-first-cluster.example.com master-2.my-first-cluster.example.com] and IPs [83.222.26.71 127.0.0.1 ::1 31.129.111.153]
+    [certs] Generating "etcd/healthcheck-client" certificate and key
+    [certs] Generating "apiserver-etcd-client" certificate and key
+    [certs] Generating "front-proxy-client" certificate and key
+    [certs] Valid certificates and keys now exist in "/etc/kubernetes/pki"
+    [certs] Using the existing "sa" key
+    [kubeconfig] Generating kubeconfig files
+    [kubeconfig] Using kubeconfig folder "/etc/kubernetes"
+    [kubeconfig] Writing "admin.conf" kubeconfig file
+    [kubeconfig] Writing "controller-manager.conf" kubeconfig file
+    [kubeconfig] Writing "scheduler.conf" kubeconfig file
+    [control-plane] Using manifest folder "/etc/kubernetes/manifests"
+    [control-plane] Creating static Pod manifest for "kube-apiserver"
+    [control-plane] Creating static Pod manifest for "kube-controller-manager"
+    [control-plane] Creating static Pod manifest for "kube-scheduler"
+    [check-etcd] Checking that the etcd cluster is healthy
+    [kubelet-start] Writing kubelet configuration to file "/var/lib/kubelet/config.yaml"
+    [kubelet-start] Writing kubelet environment file with flags to file "/var/lib/kubelet/kubeadm-flags.env"
+    [kubelet-start] Starting the kubelet
+    [kubelet-check] Waiting for a healthy kubelet at http://127.0.0.1:10248/healthz. This can take up to 4m0s
+    [kubelet-check] The kubelet is healthy after 502.189678ms
+    [kubelet-start] Waiting for the kubelet to perform the TLS Bootstrap
+    [etcd] Announced new etcd member joining to the existing etcd cluster
+    [etcd] Creating static Pod manifest for "etcd"
+    {"level":"warn","ts":"2025-02-21T22:27:55.448925Z","logger":"etcd-client","caller":"v3@v3.5.10/retry_interceptor.go:62","msg":"retrying of unary invoker failed","target":"etcd-endpoints://0xc000ab8c40/31.129.111.153:2379","attempt":0,"error":"rpc error: code = FailedPrecondition desc = etcdserver: can only promote a learner member which is in sync with leader"}
+    {"level":"warn","ts":"2025-02-21T22:27:55.949698Z","logger":"etcd-client","caller":"v3@v3.5.10/retry_interceptor.go:62","msg":"retrying of unary invoker failed","target":"etcd-endpoints://0xc000ab8c40/31.129.111.153:2379","attempt":0,"error":"rpc error: code = FailedPrecondition desc = etcdserver: can only promote a learner member which is in sync with leader"}
+    {"level":"warn","ts":"2025-02-21T22:27:56.476514Z","logger":"etcd-client","caller":"v3@v3.5.10/retry_interceptor.go:62","msg":"retrying of unary invoker failed","target":"etcd-endpoints://0xc000ab8c40/31.129.111.153:2379","attempt":0,"error":"rpc error: code = FailedPrecondition desc = etcdserver: can only promote a learner member which is in sync with leader"}
+    [etcd] Waiting for the new etcd member to join the cluster. This can take up to 40s
 
-        This node has joined the cluster and a new control plane instance was created:
-        * Certificate signing request was sent to apiserver and approval was received.
-        * The Kubelet was informed of the new secure connection details.
-        * Control plane label and taint were applied to the new node.
-        * The Kubernetes control plane instances scaled up.
-        * A new etcd member was added to the local/stacked etcd cluster.
+    The 'update-status' phase is deprecated and will be removed in a future release. Currently it performs no operation
+    [mark-control-plane] Marking the node master-2.my-first-cluster.example.com as control-plane by adding the labels: [node-role.kubernetes.io/control-plane node.kubernetes.io/exclude-from-external-load-balancers]
+    [mark-control-plane] Marking the node master-2.my-first-cluster.example.com as control-plane by adding the taints [node-role.kubernetes.io/control-plane:NoSchedule]
 
-        To start administering your cluster from this node, you need to run the following as a regular user:
-          mkdir -p $HOME/.kube
-          sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-          sudo chown $(id -u):$(id -g) $HOME/.kube/config
+    This node has joined the cluster and a new control plane instance was created:
+    * Certificate signing request was sent to apiserver and approval was received.
+    * The Kubelet was informed of the new secure connection details.
+    * Control plane label and taint were applied to the new node.
+    * The Kubernetes control plane instances scaled up.
+    * A new etcd member was added to the local/stacked etcd cluster.
 
-        Run 'kubectl get nodes' to see this node join the cluster.
-      `}
-    </CodeBlock>
-    :::
-  </TabItem>
+    To start administering your cluster from this node, you need to run the following as a regular user:
+      mkdir -p $HOME/.kube
+      sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+      sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
-
-  <TabItem value='Kubeadm Phases'>
-    > Данная команда выполняет добавление мастер ноды в Kubernetes кластер, включая создание необходимых манифестов, сертификатов, конфигурационных файлов, запуск сервисов, а так же добавление узла в etcd кластер.
-
-    :::warning
-    Обратите внимание: для расширения ноды используется заранее подготовленный конфигурационный файл ```kubeadm``` с предуказанным токеном. В промышленной эксплуатации рекомендуется генерировать уникальный токен для каждого узла с ограниченным временем жизни для повышения безопасности.
-    :::
-
-    <CodeBlock language="bash">
-      {dedent`
-        kubeadm join phase control-plane-join etcd \\
-          --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
-      `}
-    </CodeBlock>
-
-    :::note
-    <CodeBlock language="bash">
-      {dedent`
-      `}
-    </CodeBlock>
-    :::
-  </TabItem>
-
-</Tabs>
+    Run 'kubectl get nodes' to see this node join the cluster.
+  `}
+</CodeBlock>
+:::

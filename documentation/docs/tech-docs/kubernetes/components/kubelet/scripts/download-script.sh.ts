@@ -22,13 +22,14 @@ export const KUBELET_DOWNLOAD_SCRIPT: TCustomValueItems = {
 
       logger -t "$LOG_TAG" "[INFO] Checking current kubelet version..."
 
-      CURRENT_VERSION=$(kubelet version --client --short 2>/dev/null | awk '{print $3}' | sed 's/v//') || CURRENT_VERSION="none"
+      CURRENT_VERSION=$($INSTALL_PATH --version 2>/dev/null | awk '{print $2}' | sed 's/v//') || CURRENT_VERSION="none"
+      COMPONENT_VERSION_CLEAN=$(echo "$COMPONENT_VERSION" | sed 's/^v//')
 
       logger -t "$LOG_TAG" "[INFO] Current: $CURRENT_VERSION, Target: $COMPONENT_VERSION"
-      logger -t "$LOG_TAG" "[INFO] Download URL: $PATH_BIN"
 
-      if [[ "$CURRENT_VERSION" != "$COMPONENT_VERSION" ]]; then
-        logger -t "$LOG_TAG" "[INFO] Updating kubelet to version $COMPONENT_VERSION..."
+      if [[ "$CURRENT_VERSION" != "$COMPONENT_VERSION_CLEAN" ]]; then
+        logger -t "$LOG_TAG" "[INFO] Download URL: $PATH_BIN"
+        logger -t "$LOG_TAG" "[INFO] Updating kubelet to version $COMPONENT_VERSION_CLEAN..."
 
         cd "$TMP_DIR"
         logger -t "$LOG_TAG" "[INFO] Working directory: $PWD"
@@ -45,7 +46,7 @@ export const KUBELET_DOWNLOAD_SCRIPT: TCustomValueItems = {
         logger -t "$LOG_TAG" "[INFO] Installing kubelet..."
         install -m 755 kubelet "$INSTALL_PATH"
 
-        logger -t "$LOG_TAG" "[INFO] kubelet successfully updated to $COMPONENT_VERSION."
+        logger -t "$LOG_TAG" "[INFO] kubelet successfully updated to $COMPONENT_VERSION_CLEAN."
         rm -rf "$TMP_DIR"
 
       else

@@ -1,0 +1,44 @@
+import CodeBlock from '@theme/CodeBlock'
+import dedent from 'ts-dedent'
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+
+<CodeBlock language="bash">
+  {dedent`
+    kubeadm join phase preflight --dry-run \\
+      --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
+  `}
+</CodeBlock>
+
+:::note
+
+  > Если все установлено корректно, команда выполнится без ошибок, и вы увидите следующий вывод:
+
+  <CodeBlock language="bash">
+    {dedent`
+      [preflight] Running pre-flight checks
+      [preflight] Reading configuration from the cluster...
+      [preflight] FYI: You can look at this config file with 'kubectl -n kube-system get cm kubeadm-config -o yaml'
+      [preflight] Running pre-flight checks before initializing the new control plane instance
+      [preflight] Would pull the required images (like 'kubeadm config images pull')
+    `}
+  </CodeBlock>
+:::
+
+:::note
+
+  > Если процесс был разделен на полуавтоматический режим то допустимый вывод может выглядеть вот так:
+
+  <CodeBlock language="bash">
+    {dedent`
+      [WARNING FileAvailable--etc-kubernetes-manifests-kube-apiserver.yaml]: /etc/kubernetes/manifests/kube-apiserver.yaml already exists
+      [WARNING FileAvailable--etc-kubernetes-manifests-kube-controller-manager.yaml]: /etc/kubernetes/manifests/kube-controller-manager.yaml already exists
+      [WARNING FileAvailable--etc-kubernetes-manifests-kube-scheduler.yaml]: /etc/kubernetes/manifests/kube-scheduler.yaml already exists
+      [WARNING FileAvailable--etc-kubernetes-manifests-etcd.yaml]: /etc/kubernetes/manifests/etcd.yaml already exists
+      [preflight] Running pre-flight checks
+      [preflight] Reading configuration from the cluster...
+      [preflight] FYI: You can look at this config file with 'kubectl -n kube-system get cm kubeadm-config -o yaml'
+      [preflight] Running pre-flight checks before initializing the new control plane instance
+      [preflight] Would pull the required images (like 'kubeadm config images pull')
+    `}
+  </CodeBlock>
+:::

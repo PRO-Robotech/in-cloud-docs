@@ -1,17 +1,19 @@
-
 import TabItem from '@theme/TabItem'
 import Tabs from '@theme/Tabs'
+
 import KubernetesCA from '@site/docs/tech-docs/kubernetes/certificates/center-authority/kubernetesCA/main.mdx'
 import FrontProxyCA from '@site/docs/tech-docs/kubernetes/certificates/center-authority/frontProxyCA/main.mdx'
 import ETCDCA from '@site/docs/tech-docs/etcd/certificates/center-authority/etcdCA/main.mdx'
 import KubernetesDownloadCA from '@site/docs/tech-docs/kubernetes/certificates/center-authority/downloadCA.mdx'
 
-> Центр аутентификации — это удостоверяющий центр (Certificate Authority, CA), который выпускает и управляет корневыми сертификатами. Корневые сертификаты служат доверенным источником для установления защищённых соединений между компонентами кластера Kubernetes. Они обеспечивают аутентификацию и шифрование коммуникаций между узлами, сервисами и клиентами, гарантируя целостность и конфиденциальность передаваемых данных.
+> **Центр сертификации (CA)** — это доверенный источник, выпускающий корневые сертификаты, которые используются для подписи всех остальных сертификатов внутри кластера Kubernetes.
+
+> Сертификаты CA играют ключевую роль в установлении доверия между компонентами, обеспечивая **аутентификацию**, **шифрование** и **целостность** коммуникаций.
 
 > В этом разделе описывается процесс получения корневых (root) сертификатов, которые используются для подписи остальных сертификатов в кластере Kubernetes.
 
 <Tabs groupId="phase">
-  <TabItem value="init">
+  <TabItem value="init" label="Init">
     <details>
       <summary>
         <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
@@ -20,32 +22,33 @@ import KubernetesDownloadCA from '@site/docs/tech-docs/kubernetes/certificates/c
         </div>
       </summary>
       <Tabs groupId="CA">
-        <TabItem value="Kubernetes ЦА">
+        <TabItem value="Kubernetes ЦА" label="Kubernetes ЦА">
           <details open className="custom-gray-block">
-            <summary>Kubernetes ЦА</summary>
+            <summary>Kubernetes CA</summary>
             <KubernetesCA />
           </details>
         </TabItem>
-        <TabItem value="FrontProxy ЦА">
+        <TabItem value="FrontProxy ЦА" label="FrontProxy ЦА">
           <details open className="custom-gray-block">
-            <summary>FrontProxy ЦА</summary>
+            <summary>FrontProxy CA</summary>
             <FrontProxyCA />
           </details>
         </TabItem>
-        <TabItem value="ETCD ЦА">
+        <TabItem value="ETCD ЦА" label="ETCD ЦА">
           <details open className="custom-gray-block">
-            <summary>ETCD ЦА</summary>
+            <summary>ETCD CA</summary>
             <ETCDCA />
           </details>
         </TabItem>
       </Tabs>
     </details>
   </TabItem>
-  <TabItem value="join">
+
+  <TabItem value="join" label="Join">
     <details>
       <summary>
         <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <p style={{ marginBottom: 0 }}>Выгрузка ЦА</p>
+          <p style={{ marginBottom: 0 }}>Выгрузка существующих CA</p>
           <p className="obligatory-note-orange">● Обязателен к применению</p>
         </div>
       </summary>

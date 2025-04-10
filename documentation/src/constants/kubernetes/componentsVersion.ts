@@ -8,7 +8,7 @@ export const COMPONENTS_VERSION: TComponentsVersionItems = {
     value: '3.5.12-0',
   },
   etcdctl: {
-    value: 'v3.5.5',
+    value: 'v3.5.12',
   },
   runc: {
     value: 'v1.1.12',
