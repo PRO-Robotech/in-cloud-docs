@@ -1,4 +1,6 @@
-import ETCDSetup from '@site/docs/tech-docs/etcd/components/etcd/setupComponent.mdx'
+import SetupInitComponent from '@site/docs/tech-docs/etcd/components/etcd/setupInitComponent.mdx'
+import SetupJoinComponent from '@site/docs/tech-docs/etcd/components/etcd/setupJoinComponent.mdx'
+
 import TabItem from '@theme/TabItem'
 import Tabs from '@theme/Tabs'
 
@@ -9,22 +11,22 @@ import Tabs from '@theme/Tabs'
     <details>
       <summary>
         <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <p style={{ marginBottom: 0 }}>Настройка ETCD</p>
+          <p style={{ marginBottom: 0 }}>Настройка Static Pods</p>
           <p className="obligatory-note-orange">● Обязателен к применению</p>
         </div>
       </summary>
-      <ETCDSetup />
+      <SetupInitComponent />
     </details>
   </TabItem>
-  <TabItem value="join -TODO">
+  <TabItem value="join">
     <details>
       <summary>
         <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <p style={{ marginBottom: 0 }}>Настройка ETCD</p>
+          <p style={{ marginBottom: 0 }}>Настройка Static Pods</p>
           <p className="obligatory-note-orange">● Обязателен к применению</p>
         </div>
       </summary>
-      <ETCDSetup />
+      <SetupJoinComponent />
     </details>
   </TabItem>
 </Tabs>

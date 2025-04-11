@@ -1,21 +1,32 @@
 import { CUSTOM_VALUE }           from '@site/src/constants/kubernetes/customValue'
-import { CERTIFICATES }           from '@site/src/constants/kubernetes/certs'
 import { PORTS }                  from '@site/src/constants/kubernetes/ports'
 import { COMPONENTS_VERSION }     from '@site/src/constants/kubernetes/componentsVersion'
 import {ETCD_ARGS}                from '@site/src/constants/kubernetes/etcdArgs'
 
 import dedent                     from 'ts-dedent'
 import CodeBlock                  from '@theme/CodeBlock'
+import SecondaryMasterTabs from '@site/docs/tech-docs/kubernetes/setup-environments/secondaryMasters.mdx'
+
 
 <h4>Переменные окружния</h4>
+
+<SecondaryMasterTabs />
+
 <CodeBlock language="bash">
-    {dedent`
-      export CLUSTER_NAME=${CUSTOM_VALUE.clusterName.value}
-      export BASE_DOMAIN=${CUSTOM_VALUE.kubernetesBaseDomain.value}
-      export MACHINE_LOCAL_ADDRESS=${CUSTOM_VALUE.virtualMachineLocalAddress.value}
-      export FULL_HOST_NAME="${CUSTOM_VALUE.virtualMachineFullName.value}"
-      export ETCD_INITIAL_CLUSTER="$\{FULL_HOST_NAME}=${ETCD_ARGS.initialAdvertisePeerUrls.value}"
-    `}
+  {dedent`
+    export CLUSTER_NAME=${CUSTOM_VALUE.clusterName.value}
+    export BASE_DOMAIN=${CUSTOM_VALUE.kubernetesBaseDomain.value}
+    export MACHINE_LOCAL_ADDRESS=${CUSTOM_VALUE.virtualMachineLocalAddress.value}
+    export FULL_HOST_NAME="${CUSTOM_VALUE.virtualMachineFullName.value}"
+
+    export ETCD_INITIAL_CLUSTER=$(kubectl get pods \\
+      --kubeconfig=/etc/kubernetes/admin.conf \\
+      -n kube-system -l component=etcd \\
+      -o jsonpath='{range .items[*]}{.metadata.name}{"="}{.status.podIP}{":2380,"}{end}' \\
+      | sed -E 's/etcd-([^=]+)=/\\1=https:\\/\\//g' \\
+      | sed 's/,\$//'
+    )
+  `}
 </CodeBlock>
 
 
@@ -61,6 +72,7 @@ import CodeBlock                  from '@theme/CodeBlock'
         - --heartbeat-interval=${ETCD_ARGS.heartbeatInterval.value}
         - --initial-advertise-peer-urls=${ETCD_ARGS.initialAdvertisePeerUrls.value}
         - --initial-cluster=${ETCD_ARGS.initialCluster.value}
+        - --initial-cluster-state=existing
         - --key-file=${ETCD_ARGS.keyFile.value}
         - --listen-client-urls=${ETCD_ARGS.listenClientUrls.value}
         - --listen-metrics-urls=${ETCD_ARGS.listenMetricsUrls.value}
@@ -82,7 +94,7 @@ import CodeBlock                  from '@theme/CodeBlock'
         livenessProbe:
           failureThreshold: 8
           httpGet:
-            host: 127.0.0.1
+            host: 0.0.0.0
             path: /health?exclude=NOSPACE&serializable=true
             port: ${PORTS.etcdMetricServer.portNumber}
             scheme: HTTP
@@ -97,7 +109,7 @@ import CodeBlock                  from '@theme/CodeBlock'
         startupProbe:
           failureThreshold: 24
           httpGet:
-            host: 127.0.0.1
+            host: 0.0.0.0
             path: /health?serializable=false
             port: ${PORTS.etcdMetricServer.portNumber}
             scheme: HTTP
@@ -129,3 +141,62 @@ import CodeBlock                  from '@theme/CodeBlock'
   `}
 </CodeBlock>
 </details>
+
+
+<details className="custom-blue-block">
+<summary>Расширение ETCD кластера</summary>
+
+<h4>Добавление узла</h4>
+
+<CodeBlock language="bash">
+  {dedent`
+    alias etcdctl='etcdctl \\
+      --cert=/etc/kubernetes/pki/etcd/peer.crt \\
+      --key=/etc/kubernetes/pki/etcd/peer.key \\
+      --cacert=/etc/kubernetes/pki/etcd/ca.crt'
+  `}
+</CodeBlock>
+
+<CodeBlock language="bash">
+  {dedent`
+    etcdctlMembers() {
+      etcdctl member list \\
+      --write-out=json | jq \\
+      -r '[.members[].clientURLs[]] \|
+      join(",")'
+    }
+  `}
+</CodeBlock>
+
+<CodeBlock language="bash">
+  {dedent`
+    etcdctlRevision() {
+      etcdctl \\
+        --endpoints=$(etcdctlMembers) \\
+        endpoint status \\
+        -w json \|
+        jq \\
+        -r .[].Status.header.revision
+    }
+  `}
+</CodeBlock>
+
+<CodeBlock language="bash">
+  {dedent`
+    etcdctl \\
+      --endpoints=$(etcdctlMembers) member list \\
+      -w table
+  `}
+</CodeBlock>
+
+<CodeBlock language="bash">
+  {dedent`
+    etcdctl \\
+      --endpoints=$(etcdctlMembers) member add  $\{HOST_4} \\
+      --peer-urls=https://$\{HOST_4}:2380
+  `}
+</CodeBlock>
+
+</details>
+
+

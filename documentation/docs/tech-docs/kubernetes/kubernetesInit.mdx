@@ -32,8 +32,7 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
   {dedent`
     kubeadm init \\
       --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml \\
-      --upload-certs \\
-      --kubeconfig=${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/super-admin.conf
+      --upload-certs
   `}
 </CodeBlock>
 
