@@ -10,7 +10,6 @@ import {KUBE_SCHEDULER_ARGS} from '@site/src/constants/kubernetes/kubeSchedulerA
 export const KUBERNETES_ETCD_API_ARGS: TCustomValueItems = {
   data: {
     value: dedent`
-      advertise-client-urls: "${ETCD_ARGS.advertiseClientUrls.value}"
       auto-compaction-retention: "${ETCD_ARGS.autoCompactionRetention.value}"
       cert-file: "${ETCD_ARGS.certFile.value}"
       client-cert-auth: "${ETCD_ARGS.clientCertAuth.value}"

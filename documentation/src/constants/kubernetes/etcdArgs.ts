@@ -84,7 +84,7 @@ export const ETCD_ARGS: TCustomValueItems = {
     value: 'zap',
   },
   advertiseClientUrls: {
-    value: `https://$\{MACHINE_LOCAL_ADDRESS}:${PORTS.etcdPeer.portNumber}`,
+    value: `https://$\{MACHINE_LOCAL_ADDRESS}:${PORTS.etcdServer.portNumber}`,
   },
 
   workDir: {

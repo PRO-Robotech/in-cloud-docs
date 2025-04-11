@@ -26,7 +26,9 @@ import AllMarkingComponent from '@site/docs/tech-docs/kubernetes/additional-setu
 import AllUploadCA from '@site/docs/tech-docs/kubernetes/additional-setup/upload-ca/allUploadCAComponent.mdx'
 import AllUploadConfigs from '@site/docs/tech-docs/kubernetes/additional-setup/upload-configs/allUploadConfigsComponent.mdx'
 import AllUploadRbac from '@site/docs/tech-docs/kubernetes/additional-setup/upload-rbac/allUploadRbacComponent.mdx'
+import AllStaticPodsCPPhasesComponent from '@site/docs/tech-docs/kubernetes/components/allStaticPodsCPPhasesComponent.mdx'
 import AllStaticPodsCPComponent from '@site/docs/tech-docs/kubernetes/components/allStaticPodsCPComponent.mdx'
+
 import AllStaticPodsETCDComponent from '@site/docs/tech-docs/kubernetes/components/allStaticPodsETCDComponent.mdx'
 import AllComponentsReady from '@site/docs/tech-docs/kubernetes/components/allComponentsReadyComponent.mdx'
 import AllServiceAccountComponent from '@site/docs/tech-docs/kubernetes/certificates/service-account/allServiceAccountComponent.mdx'
@@ -664,13 +666,13 @@ import { AaaBug } from '@site/src/components/AaaBug'
 
 ### 19. Создание static pod-ов управляющего контура
 
-<AllStaticPodsCPComponent />
+<AllStaticPodsCPPhasesComponent />
 
 ---
 
 ### 20*. Создание всех static pod-ов управляющего контура
 
-TODO
+<AllStaticPodsCPComponent />
 
 ---
 
@@ -725,3 +727,16 @@ TODO
 <AllMarkingComponent/>
 
 ---
+
+## 🍀 Вывод
+
+Путь **Kubernetes The Hard Way** — это как собрать двигатель вручную, без инструкций, регистрации и смс.
+Только вы и конфигурация Kubernetes.
+
+🔧 Этот путь — не про скорость, а про **понимание**, **уверенность** и **полный контроль**.
+Теперь каждый сгенерированный `сертификат`, каждая строчка `kubeconfig` — не магия, а **осознанный выбор**.
+
+:::tip Что дальше?
+Теперь, когда вы увидели, **как всё устроено под капотом**,
+можно позволить себе автоматизацию — но уже **на ваших условиях**. 😉
+:::

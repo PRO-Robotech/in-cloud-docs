@@ -1,0 +1,43 @@
+import KubeApiSetup from '@site/docs/tech-docs/kubernetes/components/kubeAPI/setupInitComponent.mdx'
+import KubeControllerManagerSetup from '@site/docs/tech-docs/kubernetes/components/controllerManager/setupInitComponent.mdx'
+import KubeSchedulerSetup from '@site/docs/tech-docs/kubernetes/components/scheduler/setupInitComponent.mdx'
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+> В данном разделе описывается ручное создание static pod-манифестов для компонентов управляющего контура Kubernetes.
+
+<Tabs groupId="Componenet">
+  <TabItem value="Kube-API">
+    <details open className="custom-gray-block">
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Настройка Kube-API</p>
+          <p className="obligatory-note-orange">● Обязателен к применению</p>
+        </div>
+      </summary>
+      <KubeApiSetup />
+    </details>
+  </TabItem>
+  <TabItem value="Kube Controller Manager">
+    <details open className="custom-gray-block">
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Настройка Kube Controller Manager</p>
+          <p className="obligatory-note-orange">● Обязателен к применению</p>
+        </div>
+      </summary>
+      <KubeControllerManagerSetup />
+    </details>
+  </TabItem>
+  <TabItem value="Kube Scheduler">
+    <details open className="custom-gray-block">
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Настройка Kube Scheduler</p>
+          <p className="obligatory-note-orange">● Обязателен к применению</p>
+        </div>
+      </summary>
+      <KubeSchedulerSetup />
+    </details>
+  </TabItem>
+</Tabs>
