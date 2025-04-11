@@ -1,21 +1,22 @@
-
 import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 
 import CodeBlock from '@theme/CodeBlock'
 import dedent from 'ts-dedent'
 
+:::danger ВНИМАНИЕ!
+Имейте в виду: на этапе Join нельзя выбрать, какие сертификаты генерировать — kubeadm создаёт их все сразу, в полном объёме.
+:::
 
 <h4>Генерация сертификатов</h4>
 <CodeBlock language="bash">
   {dedent`
     kubeadm join phase control-plane-prepare certs \\
-      --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml \\
-      --kubeconfig=${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/admin.conf
+      --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
   `}
 </CodeBlock>
 
-
 :::note
+
 <CodeBlock language="bash">
   {dedent`
     [preflight] Reading configuration from the cluster...

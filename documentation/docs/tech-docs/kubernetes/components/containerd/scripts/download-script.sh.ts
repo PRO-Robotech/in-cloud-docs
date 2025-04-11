@@ -25,11 +25,11 @@ export const CONTAINERD_DOWNLOAD_SCRIPT: TCustomValueItems = {
       CURRENT_VERSION=$($INSTALL_PATH/containerd --version 2>/dev/null | awk '{print $3}' | sed 's/v//') || CURRENT_VERSION="none"
       COMPONENT_VERSION_CLEAN=$(echo "$COMPONENT_VERSION" | sed 's/^v//')
 
-      logger -t "$LOG_TAG" "[INFO] Current: $CURRENT_VERSION, Target: $COMPONENT_VERSION"
+      logger -t "$LOG_TAG" "[INFO] Current: $CURRENT_VERSION, Target: $COMPONENT_VERSION_CLEAN"
 
       if [[ "$CURRENT_VERSION" != "$COMPONENT_VERSION_CLEAN" ]]; then
         logger -t "$LOG_TAG" "[INFO] Download URL: $PATH_BIN"
-        logger -t "$LOG_TAG" "[INFO] Updating containerd to version $COMPONENT_VERSION..."
+        logger -t "$LOG_TAG" "[INFO] Updating containerd to version $COMPONENT_VERSION_CLEAN..."
 
         cd "$TMP_DIR"
         logger -t "$LOG_TAG" "[INFO] Working directory: $PWD"

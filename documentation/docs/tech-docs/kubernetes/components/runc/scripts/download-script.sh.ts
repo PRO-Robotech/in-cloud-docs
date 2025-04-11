@@ -16,7 +16,6 @@ export const RUNC_DOWNLOAD_SCRIPT: TCustomValueItems = {
       PATH_SHA256="$\{REPOSITORY}/${DOWNLOAD_VERSION.runc.templateUrlBinCheckSum}"
       INSTALL_PATH="${DOWNLOAD_VERSION.runc.path}"
 
-
       LOG_TAG="runc-installer"
       TMP_DIR="$(mktemp -d)"
 

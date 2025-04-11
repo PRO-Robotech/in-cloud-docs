@@ -11,9 +11,7 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 
   <CodeBlock language="bash">
     {dedent`
-      kubeadm certs check-expiration \\
-        --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml \\
-        --kubeconfig=${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/super-admin.conf
+      kubeadm certs check-expiration
     `}
   </CodeBlock>
 

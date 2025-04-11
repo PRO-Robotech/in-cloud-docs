@@ -13,6 +13,14 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 <Tabs groupId="install-type">
 
   <TabItem value='HardWay'>
+
+    <h4>Переменные окружения для шаблона конфигурационного файла</h4>
+    <CodeBlock language="bash">
+      {dedent`
+        export AUTH_EXTRA_GROUPS="system:bootstrappers:kubeadm:default-node-token"
+      `}
+    </CodeBlock>
+
     <h4>Подготовка ролевой модели</h4>
 
     > Данный блок подготавливает ролевую модель для выдачи доступа к секрету kubeadm-certs. Это необходимо, чтобы узлы управляющего контура могли безопасно получить корневые сертификаты через Kubernetes API при присоединении к кластеру. Роль связывается с группой $\{AUTH_EXTRA_GROUPS}, под которую обычно подпадает kubeadm при join.
@@ -21,6 +29,21 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
       {dedent`
         kubectl \\
           --kubeconfig=${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/super-admin.conf apply -f - <<EOF
+        ---
+        apiVersion: rbac.authorization.k8s.io/v1
+        kind: Role
+        metadata:
+          name: kubeadm:kubeadm-certs
+          namespace: kube-system
+        rules:
+        - apiGroups:
+          - ""
+          resourceNames:
+          - kubeadm-certs
+          resources:
+          - secrets
+          verbs:
+          - get
         ---
         apiVersion: rbac.authorization.k8s.io/v1
         kind: RoleBinding
