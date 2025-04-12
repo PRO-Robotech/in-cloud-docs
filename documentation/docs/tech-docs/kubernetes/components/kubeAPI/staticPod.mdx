@@ -91,7 +91,8 @@ import dedent                 from 'ts-dedent'
         - --bind-address=${KUBE_API_ARGS.bindAddress.value}
         - --cert-dir=${KUBE_API_ARGS.certDir.value}
         - --client-ca-file=${KUBE_API_ARGS.clientCaFile.value}
-        - --cloud-provider=${KUBE_API_ARGS.cloudProvider.value}
+        # -> Включить, если управляете состоянием через Cloud Controller Manager
+        # - --cloud-provider=${KUBE_API_ARGS.cloudProvider.value}
         - --cloud-provider-gce-l7lb-src-cidrs=${KUBE_API_ARGS.cloudProviderGceL7lbSrcCidrs.value}
         - --cloud-provider-gce-lb-src-cidrs=${KUBE_API_ARGS.cloudProviderGceLbSrcCidrs.value}
         - --contention-profiling=${KUBE_API_ARGS.contentionProfiling.value}

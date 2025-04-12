@@ -236,7 +236,8 @@ export const KUBERNETES_KUBE_CONTROLLER_MANAGER_ARGS: TCustomValueItems = {
       bind-address: "${KUBE_CONTROLLER_MANAGER_ARGS.bindAddress.value}"
       cidr-allocator-type: "${KUBE_CONTROLLER_MANAGER_ARGS.cidrAllocatorType.value}"
       client-ca-file: "${KUBE_CONTROLLER_MANAGER_ARGS.clientCaFile.value}"
-      cloud-provider: "${KUBE_CONTROLLER_MANAGER_ARGS.cloudProvider.value}"
+      # -> Включить, если управляете состоянием через Cloud Controller Manager
+      # cloud-provider: "${KUBE_CONTROLLER_MANAGER_ARGS.cloudProvider.value}"
       cloud-provider-gce-lb-src-cidrs: "${KUBE_CONTROLLER_MANAGER_ARGS.cloudProviderGceLbSrcCidrs.value}"
       cluster-signing-cert-file: "${KUBE_CONTROLLER_MANAGER_ARGS.clusterSigningCertFile.value}"
       cluster-signing-duration: "${KUBE_CONTROLLER_MANAGER_ARGS.clusterSigningDuration.value}"

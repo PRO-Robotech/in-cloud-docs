@@ -54,7 +54,8 @@ import Tabs from '@theme/Tabs'
             imagePullPolicy: IfNotPresent
             taints: null
             kubeletExtraArgs:
-              cloud-provider: external
+              # -> Включить, если управляете состоянием через Cloud Controller Manager
+              # cloud-provider: external
               config: "${CUSTOM_VALUE.kuberneteKubeletFolderPath.value}/config-custom.yaml"
               cluster-domain: ${CUSTOM_VALUE.kubernetesClusterDomain.value}
               cluster-dns: "${CUSTOM_VALUE.kubernetesDNSAddress.value}"

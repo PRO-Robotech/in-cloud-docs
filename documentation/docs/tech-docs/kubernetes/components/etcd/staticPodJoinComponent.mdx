@@ -13,21 +13,49 @@ import SecondaryMasterTabs from '@site/docs/tech-docs/kubernetes/setup-environme
 <SecondaryMasterTabs />
 
 <CodeBlock language="bash">
-  {dedent`
+  {dedent(`
     export CLUSTER_NAME=${CUSTOM_VALUE.clusterName.value}
     export BASE_DOMAIN=${CUSTOM_VALUE.kubernetesBaseDomain.value}
     export MACHINE_LOCAL_ADDRESS=${CUSTOM_VALUE.virtualMachineLocalAddress.value}
-    export FULL_HOST_NAME="${CUSTOM_VALUE.virtualMachineFullName.value}"
+    export FULL_HOST_NAME=${CUSTOM_VALUE.virtualMachineFullName.value}
 
-    export ETCD_INITIAL_CLUSTER=$(kubectl get pods \\
+    # Получаем список существующих etcd-нод
+    mapfile -t ETCD_PODS < <(kubectl get pods \\
       --kubeconfig=/etc/kubernetes/admin.conf \\
       -n kube-system -l component=etcd \\
-      -o jsonpath='{range .items[*]}{.metadata.name}{"="}{.status.podIP}{":2380,"}{end}' \\
-      | sed -E 's/etcd-([^=]+)=/\\1=https:\\/\\//g' \\
-      | sed 's/,\$//'
-    )
-  `}
+      -o jsonpath="{range .items[*]}{.metadata.name} {.status.podIP}{'\\n'}{end}")
+
+    ETCD_EXISTING_NODES=""
+    ETCD_ENDPOINTS=""
+
+    for entry in "\${ETCD_PODS[@]}"; do
+      read -r podname podip <<< "\$entry"
+      nodename="\${podname#etcd-}"
+      ETCD_EXISTING_NODES+="\${nodename}=https://\${podip}:2380,"
+      ETCD_ENDPOINTS+="https://\${podip}:2379,"
+    done
+
+    ETCD_EXISTING_NODES="\${ETCD_EXISTING_NODES%,}"
+    ETCD_ENDPOINTS="\${ETCD_ENDPOINTS%,}"
+
+    # Добавляем текущий узел, если его нет в списке
+    ETCD_CURRENT_NODE="\${FULL_HOST_NAME}=https://\${MACHINE_LOCAL_ADDRESS}:2380"
+
+    if [[ "\$ETCD_EXISTING_NODES" == *"\${FULL_HOST_NAME}="* ]]; then
+      export ETCD_INITIAL_CLUSTER="\$ETCD_EXISTING_NODES"
+    else
+      if [[ -n "\$ETCD_EXISTING_NODES" ]]; then
+        export ETCD_INITIAL_CLUSTER="\${ETCD_EXISTING_NODES},\${ETCD_CURRENT_NODE}"
+      else
+        export ETCD_INITIAL_CLUSTER="\${ETCD_CURRENT_NODE}"
+      fi
+    fi
+
+    export ETCD_ENDPOINTS
+  `)}
 </CodeBlock>
+
+
 
 
 <h4>Рабочая директория</h4>
@@ -142,11 +170,12 @@ import SecondaryMasterTabs from '@site/docs/tech-docs/kubernetes/setup-environme
 </CodeBlock>
 </details>
 
-
 <details className="custom-blue-block">
 <summary>Расширение ETCD кластера</summary>
 
 <h4>Добавление узла</h4>
+
+> Объявляем alias для `etcdctl` с использованием нужных сертификатов
 
 <CodeBlock language="bash">
   {dedent`
@@ -157,29 +186,20 @@ import SecondaryMasterTabs from '@site/docs/tech-docs/kubernetes/setup-environme
   `}
 </CodeBlock>
 
+> Функция для получения списка client-URL'ов всех текущих членов кластера
+
 <CodeBlock language="bash">
   {dedent`
     etcdctlMembers() {
       etcdctl member list \\
-      --write-out=json | jq \\
-      -r '[.members[].clientURLs[]] \|
-      join(",")'
+        --endpoints="$ETCD_ENDPOINTS" \\
+        --write-out=json | jq \\
+        -r '[.members[].clientURLs[]] | join(",")'
     }
   `}
 </CodeBlock>
 
-<CodeBlock language="bash">
-  {dedent`
-    etcdctlRevision() {
-      etcdctl \\
-        --endpoints=$(etcdctlMembers) \\
-        endpoint status \\
-        -w json \|
-        jq \\
-        -r .[].Status.header.revision
-    }
-  `}
-</CodeBlock>
+> Просмотр текущих членов кворума
 
 <CodeBlock language="bash">
   {dedent`
@@ -189,14 +209,20 @@ import SecondaryMasterTabs from '@site/docs/tech-docs/kubernetes/setup-environme
   `}
 </CodeBlock>
 
+> Добавление нового узла в ETCD кластер
+
 <CodeBlock language="bash">
   {dedent`
     etcdctl \\
-      --endpoints=$(etcdctlMembers) member add  $\{HOST_4} \\
-      --peer-urls=https://$\{HOST_4}:2380
+      --endpoints=$(etcdctlMembers) \\
+      member add $\{FULL_HOST_NAME} \\
+      --peer-urls=https://$\{MACHINE_LOCAL_ADDRESS}:2380
   `}
 </CodeBlock>
 
+:::danger ВНИМАНИЕ!
+  После добавления второй ноды в ETCD-кворум, первый мастер может стать **недоступным**, пока второй узел ETCD не будет запущен.
+  Обязательно запустите ETCD на новой ноде с помощью `kubelet` (см. шаг ниже), прежде чем продолжать.
+:::
+
 </details>
-
-

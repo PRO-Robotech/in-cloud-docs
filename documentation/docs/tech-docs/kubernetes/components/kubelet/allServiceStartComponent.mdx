@@ -4,8 +4,10 @@ import KubeletSystemdUnitStart from '@site/docs/tech-docs/kubernetes/components/
 import KubeletConfigFilesDefault from '@site/docs/tech-docs/kubernetes/components/kubelet/payload/configFilesDefault.mdx'
 import TabItem from '@theme/TabItem'
 import Tabs from '@theme/Tabs'
+import dedent                     from 'ts-dedent'
+import CodeBlock                  from '@theme/CodeBlock'
 
-> данном разделе рассматривается ручной запуск Kubelet с настройкой systemd unit. Описывается создание базового конфигурационного файла kubelet, настройка переменных окружения для службы kubelet.service, а также запуск самого сервиса.
+> В данном разделе рассматривается ручной запуск Kubelet с настройкой systemd unit. Описывается создание базового конфигурационного файла kubelet, настройка переменных окружения для службы kubelet.service, а также запуск самого сервиса.
 
 <Tabs groupId="phase">
   <TabItem value="init">
@@ -46,6 +48,30 @@ import Tabs from '@theme/Tabs'
             <summary>Kubelet default config</summary>
             <KubeletConfigFilesDefault />
           </details>
+          <CodeBlock language="bash">
+            {dedent`
+              cat <<EOF > /etc/kubernetes/bootstrap-kubelet.conf
+              apiVersion: v1
+              clusters:
+              - cluster:
+                  certificate-authority-data: $(base64 -w 0 /etc/kubernetes/pki/ca.crt)
+                  server: https://api.my-first-cluster.example.com:6443
+                name: my-first-cluster
+              contexts:
+              - context:
+                  cluster: my-first-cluster
+                  user: tls-bootstrap-token-user
+                name: tls-bootstrap-token-user@kubernetes
+              current-context: tls-bootstrap-token-user@kubernetes
+              kind: Config
+              preferences: {}
+              users:
+              - name: tls-bootstrap-token-user
+                user:
+                  token: fjt9ex.lwzqgdlvoxtqk4yw
+              EOF
+            `}
+          </CodeBlock>
           <KubeletSystemdUnitStart />
         </TabItem>
         <TabItem value="Kubeadm">
