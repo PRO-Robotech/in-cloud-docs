@@ -2,7 +2,7 @@
 
 # dependencies
 /.docusaurus
-/node_modules
+documentation/node_modules
 /.pnp
 .pnp.js
 

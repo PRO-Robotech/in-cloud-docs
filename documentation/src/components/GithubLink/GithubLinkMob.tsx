@@ -15,7 +15,7 @@ export const GithubLinkMob: FC = () => {
     <>
       <a
         className="menu__link header-github-link header-github-link-mob"
-        href="https://github.com/PRO-Robotech/b-cloud-docs"
+        href={process.env.Docusaurus_GIT_URL}
         target="_blank"
         rel="noopener noreferrer"
         aria-label="GitHub repository"

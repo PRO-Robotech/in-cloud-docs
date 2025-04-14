@@ -1,8 +1,8 @@
 import React, { FC } from 'react'
 import Link from '@docusaurus/Link'
-import BrowserOnly from '@docusaurus/BrowserOnly'; // Импортируем компонент BrowserOnly
+import BrowserOnly from '@docusaurus/BrowserOnly' // Импортируем компонент BrowserOnly
 import styles from './styles.module.css'
-import {getBasePrefix} from '@site/src/utils/getBasePrefix'
+import { getBasePrefix } from '@site/src/utils/getBasePrefix'
 
 // Компонент Header
 export const Header: FC = () => (
@@ -15,7 +15,7 @@ export const Header: FC = () => (
               <Link to={`${getBasePrefix()}tech-docs/kubernetes/about`}>
                 <img src={`${getBasePrefix()}img/paws2.svg`} alt="Logo" className="logo2" />
               </Link>
-            );
+            )
           }}
         </BrowserOnly>
         B-Cloud

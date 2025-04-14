@@ -22,7 +22,7 @@ export const GithubLink: FC = () => {
 
   return (
     <a
-      href="https://github.com/PRO-Robotech/b-cloud-docs"
+      href={process.env.Docusaurus_GIT_URL}
       target="_blank"
       rel="noopener noreferrer"
       className="navbar__item navbar__link header-github-link"

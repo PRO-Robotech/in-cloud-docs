@@ -30,6 +30,9 @@ jobs:
       - name: Build documentation
         env:
           BASEURL:  "/"
+          Docusaurus_GIT_API_URL_STAR: https://api.github.com/repos/PRO-Robotech/b-cloud-docs
+          Docusaurus_GIT_API_URL_TAG: https://api.github.com/repos/PRO-Robotech/b-cloud-docs/tags
+          Docusaurus_GIT_URL: https://github.com/PRO-Robotech/b-cloud-docs
           URL:    "http://example.com"
           TITLE: ""
           DOC_INCLUDE_CURRENT_VERSION: false

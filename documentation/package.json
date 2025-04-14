@@ -29,6 +29,7 @@
     "astroturf": "1.2.0",
     "axios": "^1.6.7",
     "clsx": "2.1.0",
+    "cross-env": "^7.0.3",
     "dedent": "^1.5.3",
     "docusaurus2-dotenv-2": "^1.4.1",
     "prism-react-renderer": "2.3.1",

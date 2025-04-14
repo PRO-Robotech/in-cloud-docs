@@ -2,22 +2,30 @@
 id: about
 ---
 
-import BrowserOnly from '@docusaurus/BrowserOnly'; // Импортируем компонент BrowserOnly
-import Link from '@docusaurus/Link';
-import {getBasePrefix} from '@site/src/utils/getBasePrefix'
+import BrowserOnly from '@docusaurus/BrowserOnly' // Импортируем компонент BrowserOnly
+import Link from '@docusaurus/Link'
+import { getBasePrefix } from '@site/src/utils/getBasePrefix'
 
 # 0. Введение
 
 <div className="headerContainer">
   <div className="textContainer">
-    <p>Данная документация предназначена для инженеров, занимающихся эксплуатацией, развертыванием и настройкой платформы B-Cloud, построенной на базе Kubernetes. Основной целью документации является предоставление детализированных инструкций по созданию, настройке и управлению платформой B-Cloud, а также описание ключевых компонентов и механизмов работы контрольной плоскости (Control Plane), использующих Kubernetes как основу.</p>
-    <p>Платформа B-Cloud является решением с открытым исходным кодом, предназначенным для автоматизации развертывания, масштабирования и управления контейнеризованными приложениями в облачной инфраструктуре...</p>
+    <p>
+      Данная документация предназначена для инженеров, занимающихся эксплуатацией, развертыванием и настройкой платформы
+      B-Cloud, построенной на базе Kubernetes. Основной целью документации является предоставление детализированных
+      инструкций по созданию, настройке и управлению платформой B-Cloud, а также описание ключевых компонентов и
+      механизмов работы контрольной плоскости (Control Plane), использующих Kubernetes как основу.
+    </p>
+    <p>
+      Платформа B-Cloud является решением с открытым исходным кодом, предназначенным для автоматизации развертывания,
+      масштабирования и управления контейнеризованными приложениями в облачной инфраструктуре...
+    </p>
   </div>
   <div className="logoContainer">
     <BrowserOnly>
       {() => (
         <Link to={`${getBasePrefix()}tech-docs/kubernetes/about`}>
-          <img src={`${getBasePrefix()}img/paws2.svg`} alt="Logo" className="logo2" />
+          <img src={`${getBasePrefix()}img/paws2.svg`} alt="Logo" className="logo" />
         </Link>
       )}
     </BrowserOnly>

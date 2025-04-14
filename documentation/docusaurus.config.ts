@@ -3,12 +3,12 @@ import type { Config } from '@docusaurus/types'
 import type * as Preset from '@docusaurus/preset-classic'
 
 const config: Config = {
-  title: process.env.TITLE || "B-Cloud",
+  title: process.env.TITLE || 'B-Cloud',
   favicon: 'img/favicon.ico',
 
   // Set the production url of your site here
-  url: process.env.URL || "http://localhost",
-  baseUrl: process.env.BASEURL || "/infrastructure/bcloud-docs",
+  url: process.env.URL || 'http://localhost',
+  baseUrl: process.env.BASEURL || '/infrastructure/bcloud-docs/',
 
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
@@ -32,10 +32,10 @@ const config: Config = {
           priority: 0.5,
           ignorePatterns: ['/tags/**'],
           filename: 'sitemap.xml',
-          createSitemapItems: async (params) => {
-            const {defaultCreateSitemapItems, ...rest} = params;
-            const items = await defaultCreateSitemapItems(rest);
-            return items.filter((item) => !item.url.includes('/page/'));
+          createSitemapItems: async params => {
+            const { defaultCreateSitemapItems, ...rest } = params
+            const items = await defaultCreateSitemapItems(rest)
+            return items.filter(item => !item.url.includes('/page/'))
           },
         },
         docs: {
@@ -75,7 +75,7 @@ const config: Config = {
     require.resolve('./plugins/medusa'),
     'docusaurus-plugin-astroturf',
     [
-      "docusaurus2-dotenv-2",
+      'docusaurus2-dotenv-2',
       {
         systemvars: true,
       },
@@ -110,7 +110,7 @@ const config: Config = {
           position: 'left',
           label: 'Техническая документация',
         },
-        {to: 'blog', label: 'Blog', position: 'left'}, // or position: 'right'
+        { to: 'blog', label: 'Blog', position: 'left' }, // or position: 'right'
       ],
     },
 
@@ -121,14 +121,13 @@ const config: Config = {
 
     footer: {
       style: 'dark',
-      links: [
-        ],
-      },
-      prism: {
+      links: [],
+    },
+    prism: {
       theme: prismThemes.github,
       darkTheme: prismThemes.dracula,
       additionalLanguages: ['bash', 'hcl', 'json', 'docker'],
-      defaultLanguage: "bash"
+      defaultLanguage: 'bash',
     },
   } satisfies Preset.ThemeConfig,
 

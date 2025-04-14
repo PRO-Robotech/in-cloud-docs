@@ -39,10 +39,9 @@ import AllModprobeComponent from '@site/docs/tech-docs/kubernetes/setup-environm
 import AllBaseOSSetupComponent from '@site/docs/tech-docs/kubernetes/setup-environments/base-os/allBaseOSSetupComponent.mdx'
 import AllServiceStartComponent from '@site/docs/tech-docs/kubernetes/components/kubelet/allServiceStartComponent.mdx'
 
-
 import KubernetesStatusReady from '@site/docs/tech-docs/kubernetes/statusCluster.mdx'
 import AboutAllCertificates from '@site/docs/tech-docs/kubernetes/certificates/aboutAllComponent.mdx'
-import {getBasePrefix} from '@site/src/utils/getBasePrefix'
+import { getBasePrefix } from '@site/src/utils/getBasePrefix'
 
 import { FancyboxImage } from '@site/src/components/commonBlocks/FancyboxImage'
 import { AaaBug } from '@site/src/components/AaaBug'
@@ -162,9 +161,9 @@ import { AaaBug } from '@site/src/components/AaaBug'
 
 :::danger Важно
 
-  Без строго определённой последовательности такая система не заработает.
-  Именно поэтому существуют инструменты вроде <code>kubeadm</code>, которые устраняют проблему
-  «курицы и яйца» и задают корректный порядок развёртывания.
+Без строго определённой последовательности такая система не заработает.
+Именно поэтому существуют инструменты вроде <code>kubeadm</code>, которые устраняют проблему
+«курицы и яйца» и задают корректный порядок развёртывания.
 
 :::
 
@@ -230,7 +229,9 @@ import { AaaBug } from '@site/src/components/AaaBug'
     <a href="#19-создание-static-pod-ов-управляющего-контура">19. Создание static pod-ов управляющего контура</a>
   </li>
   <li>
-    <a href="#20-создание-всех-static-pod-ов-управляющего-контура">20*. Создание всех static pod-ов управляющего контура</a>
+    <a href="#20-создание-всех-static-pod-ов-управляющего-контура">
+      20*. Создание всех static pod-ов управляющего контура
+    </a>
   </li>
   <li>
     <a href="#21-создание-static-pod-ов-etcd-кластера">21. Создание static pod-ов ETCD кластера</a>
@@ -366,7 +367,10 @@ import { AaaBug } from '@site/src/components/AaaBug'
 <h4>Уровень коммутации</h4>
 
 <figure style={{ textAlign: 'center', display: 'contents' }}>
-  <FancyboxImage src={`${getBasePrefix()}img/control-plane/transport.svg`} style={{ width: '100%', maxWidth: 'none' }} />
+  <FancyboxImage
+    src={`${getBasePrefix()}img/control-plane/transport.svg`}
+    style={{ width: '100%', maxWidth: 'none' }}
+  />
   <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
     Сетевая диаграмма развертывания.
   </figcaption>
@@ -434,7 +438,10 @@ import { AaaBug } from '@site/src/components/AaaBug'
 <h4>Уровень балансировки</h4>
 
 <figure style={{ textAlign: 'center', display: 'contents' }}>
-  <FancyboxImage src={`${getBasePrefix()}img/control-plane/load-balancer.svg`} style={{ width: '100%', maxWidth: 'none' }} />
+  <FancyboxImage
+    src={`${getBasePrefix()}img/control-plane/load-balancer.svg`}
+    style={{ width: '100%', maxWidth: 'none' }}
+  />
   <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
     Технологический слой.
   </figcaption>
@@ -453,11 +460,7 @@ import { AaaBug } from '@site/src/components/AaaBug'
     <tbody>
       <tr>
         <td>VIP-LB</td>
-        <td>
-          - NODE-IP-1
-          - NODE-IP-2
-          - NODE-IP-3
-        </td>
+        <td>- NODE-IP-1 - NODE-IP-2 - NODE-IP-3</td>
         <td>6443</td>
         <td>6443</td>
       </tr>
@@ -595,7 +598,7 @@ import { AaaBug } from '@site/src/components/AaaBug'
 
 ### 7. Настройка параметров sysctl
 
-<AllSysctlsComponent/>
+<AllSysctlsComponent />
 
 ---
 
@@ -641,7 +644,7 @@ import { AaaBug } from '@site/src/components/AaaBug'
 
 ---
 
-### 15*. Создание всех сертификатов
+### 15\*. Создание всех сертификатов
 
 <AllCertificatesComponent />
 
@@ -653,7 +656,7 @@ import { AaaBug } from '@site/src/components/AaaBug'
 
 ---
 
-### 17*. Создание всех kubeconfig
+### 17\*. Создание всех kubeconfig
 
 <AllKubeconfigsComponent />
 
@@ -671,7 +674,7 @@ import { AaaBug } from '@site/src/components/AaaBug'
 
 ---
 
-### 20*. Создание всех static pod-ов управляющего контура
+### 20\*. Создание всех static pod-ов управляющего контура
 
 <AllStaticPodsCPComponent />
 
@@ -685,7 +688,7 @@ import { AaaBug } from '@site/src/components/AaaBug'
 
 ### 22. Запуск службы Kubelet
 
-<AllServiceStartComponent/>
+<AllServiceStartComponent />
 
 ---
 
@@ -725,7 +728,7 @@ import { AaaBug } from '@site/src/components/AaaBug'
 
 ### 27 Маркировка и ограничение узлов
 
-<AllMarkingComponent/>
+<AllMarkingComponent />
 
 ---
 

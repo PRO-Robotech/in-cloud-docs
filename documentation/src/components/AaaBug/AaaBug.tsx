@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import styles from './styles.module.css'
-import {getBasePrefix} from '@site/src/utils/getBasePrefix'
+import { getBasePrefix } from '@site/src/utils/getBasePrefix'
 
 export const AaaBug: FC = () => {
   return (
