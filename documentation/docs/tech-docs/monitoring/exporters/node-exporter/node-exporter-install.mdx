@@ -1,0 +1,152 @@
+---
+id: node-exporter-install
+title: Установка Node Exporter
+---
+
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+import CodeBlock from '@theme/CodeBlock'
+import dedent from 'ts-dedent'
+import { COMPONENTS_VERSION } from '@site/src/constants/monitoring/componentsVersion'
+
+# 5.5.1.2.1. Node Exporter
+
+`Node Exporter` устанавливается как обычное Kubernetes-приложение, описанное с помощью Helm Chart, которое можно установить либо из b-cloud manifests либо через helm.
+
+<Tabs>
+    <TabItem value='helm'>
+## Установка с помощью helm
+### Установите Helm
+
+Если у вас еще нет Helm, сначала установите его. Вы можете скачать Helm с [официального сайта](https://helm.sh/docs/intro/install/). Следуйте инструкциям для вашей операционной системы.
+
+### Добавьте репозиторий с Helm chart
+
+Вам нужно добавить репозиторий с charts, в котором находится Node Exporter. Например, можно использовать официальный репозиторий Prometheus Community:
+
+```bash
+helm repo add prom https://prometheus-community.github.io/helm-charts
+```
+
+Обновите список charts:
+
+```bash
+helm repo update
+```
+
+### Установите Node Exporter
+
+Теперь вы можете установить `Node Exporter` с помощью Helm. Для этого выполните следующую команду:
+
+```bash
+helm install prometheus-node-exporter prom/prometheus-node-exporter --namespace bcloud-monitoring-nodes --create-namespace -f values.yaml
+```
+
+Команда создаст релиз с именем `node-exporter` и развернет `Node Exporter` на вашем кластере Kubernetes в неймспейсе `bcloud-monitoring-nodes`.
+
+      <div className="parent-div" style={{ minHeight: '420px' }}>
+
+        <div className="child-block">
+          <h4 className="center">Enivironments</h4>
+        </div>
+
+        <div className="child-block">
+          <h4 className="center">Values</h4>
+            <CodeBlock language="yaml">
+              {dedent`
+                ---
+                extraArgs:
+                  - --collector.filesystem.ignored-mount-points=^/(dev|proc|sys|var/lib/docker/.+|var/lib/kubelet/.+)($|/)
+                  - --collector.filesystem.ignored-fs-types=^(autofs|binfmt_misc|bpf|cgroup2?|configfs|debugfs|devpts|devtmpfs|fusectl|hugetlbfs|iso9660|mqueue|nsfs|overlay|proc|procfs|pstore|rpc_pipefs|securityfs|selinuxfs|squashfs|sysfs|tracefs)$
+                  - --collector.dmi
+                containerSecurityContext:
+                  # C-0013 - Non-root containers
+                  runAsNonRoot: true
+                  # C-0017 - Immutable container filesystem
+                  readOnlyRootFilesystem: true
+                  # C-0197 - Minimize the admission of containers with allowPrivilegeEscalation
+                  allowPrivilegeEscalation: false
+                resources:
+                  requests:
+                    # C-0050 - Resources CPU limit and request
+                    cpu: 100m
+                    # C-0004 - Resources memory limit and request
+                    memory: 64Mi
+                  limits:
+                    # C-0050 - Resources CPU limit and request
+                    cpu: 512m
+                    # C-0004 - Resources memory limit and request
+                    memory: 256Mi
+                serviceAccount:
+                  create: true
+                priorityClassName: system-node-critical
+              `}
+            </CodeBlock>
+
+        </div>
+      </div>
+
+    </TabItem>
+
+
+
+    <TabItem value='b-cloud/manifests'>
+## Установка с помощью bcloud manifests
+    `Node Exporter` устанавливается как обычное Kubernetes-приложение, описанное с помощью Helm Chart.
+      <div className="parent-div" style={{ minHeight: '420px' }}>
+
+        <div className="child-block">
+          <h4 className="center">Enivironments</h4>
+            <CodeBlock language="bash">
+              {dedent`
+                export PROMETHEUS_NODE_EXPORTER_VERSION="${COMPONENTS_VERSION.nodeExporter.value}"
+              `}
+            </CodeBlock>
+        </div>
+
+        <div className="child-block">
+          <h4 className="center">Values</h4>
+            <CodeBlock language="yaml">
+              {dedent`
+                ---
+                extraArgs:
+                  - --collector.filesystem.ignored-mount-points=^/(dev|proc|sys|var/lib/docker/.+|var/lib/kubelet/.+)($|/)
+                  - --collector.filesystem.ignored-fs-types=^(autofs|binfmt_misc|bpf|cgroup2?|configfs|debugfs|devpts|devtmpfs|fusectl|hugetlbfs|iso9660|mqueue|nsfs|overlay|proc|procfs|pstore|rpc_pipefs|securityfs|selinuxfs|squashfs|sysfs|tracefs)$
+                  - --collector.dmi
+                containerSecurityContext:
+                  # C-0013 - Non-root containers
+                  runAsNonRoot: true
+                  # C-0017 - Immutable container filesystem
+                  readOnlyRootFilesystem: true
+                  # C-0197 - Minimize the admission of containers with allowPrivilegeEscalation
+                  allowPrivilegeEscalation: false
+                resources:
+                  requests:
+                    # C-0050 - Resources CPU limit and request
+                    cpu: 100m
+                    # C-0004 - Resources memory limit and request
+                    memory: 64Mi
+                  limits:
+                    # C-0050 - Resources CPU limit and request
+                    cpu: 512m
+                    # C-0004 - Resources memory limit and request
+                    memory: 256Mi
+                serviceAccount:
+                  create: true
+                priorityClassName: system-node-critical
+              `}
+            </CodeBlock>
+
+
+        </div>
+      </div>
+После этого выполните команду установки с указанием вашего конфигурационного файла:
+
+    <CodeBlock language="bash">
+      {dedent`helmfile -e $\{PROMETHEUS_NODE_EXPORTER_VERSION} -l bcloud-collections=prometheus-node-exporter bcloud-monitoring-stack=client | kubectl apply -f - `}
+    </CodeBlock>
+
+    </TabItem>
+</Tabs>
+
+

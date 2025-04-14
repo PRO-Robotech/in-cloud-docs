@@ -1,0 +1,126 @@
+---
+id: metrics-server-install
+title: Установка Metrics Server
+---
+
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+import CodeBlock from '@theme/CodeBlock'
+import dedent from 'ts-dedent'
+import { COMPONENTS_VERSION } from '@site/src/constants/monitoring/componentsVersion'
+
+# 5.5.1.2.5. Metrics Server
+
+`Metrics Server` устанавливается как обычное Kubernetes-приложение, описанное с помощью Helm Chart, которое можно установить либо из b-cloud manifests либо через helm.
+
+<Tabs>
+    <TabItem value='helm'>
+## Установка с помощью helm
+### Установите Helm
+
+Если у вас еще нет Helm, сначала установите его. Вы можете скачать Helm с [официального сайта](https://helm.sh/docs/intro/install/). Следуйте инструкциям для вашей операционной системы.
+
+### Добавьте репозиторий с Helm chart
+
+Вам нужно добавить репозиторий с charts, в котором находится `Metrics Server`. Например, можно использовать официальный репозиторий Prometheus Community:
+
+```bash
+helm repo add metrics-server https://kubernetes-sigs.github.io/metrics-server/
+```
+
+Обновите список charts:
+
+```bash
+helm repo update
+```
+
+### Установите Metrics Server
+
+Теперь вы можете установить `Metrics Server` с помощью Helm. Для этого выполните следующую команду:
+
+```bash
+helm install --name metrics-server metrics-server/metrics-server --namespace bcloud-monitoring-metrics --create-namespace -f values.yaml
+```
+
+Команда создаст релиз с именем `metrics-server` и развернет `Metrics Server` на вашем кластере Kubernetes в неймспейсе `bcloud-monitoring-metrics`.
+
+      <div className="parent-div" style={{ minHeight: '420px' }}>
+
+        <div className="child-block">
+          <h4 className="center">Enivironments</h4>
+        </div>
+
+        <div className="child-block">
+          <h4 className="center">Values</h4>
+            <CodeBlock language="yaml">
+              {dedent`
+                resources:
+                  requests:
+                    cpu: 200m
+                    memory: 256Mi
+                  limits:
+                    cpu: 500m
+                    memory: 256Mi
+                tolerations:
+                  - key: node-role.kubernetes.io/master
+                    effect: NoSchedule
+                  - key: node-role.kubernetes.io/control-plane
+                    effect: NoSchedule
+                  - key: node-role.kubernetes.io/b-cloud-infra
+                    effect: NoSchedule
+              `}
+            </CodeBlock>
+
+        </div>
+      </div>
+
+    </TabItem>
+
+
+
+    <TabItem value='b-cloud/manifests'>
+## Установка с помощью bcloud manifests
+    `Metrics Server` устанавливается как обычное Kubernetes-приложение, описанное с помощью Helm Chart.
+      <div className="parent-div" style={{ minHeight: '420px' }}>
+
+        <div className="child-block">
+          <h4 className="center">Enivironments</h4>
+            <CodeBlock language="bash">
+              {dedent`
+                export METRICS_SERVER_VERSION="${COMPONENTS_VERSION.kubeStateMetrics.value}"
+              `}
+            </CodeBlock>
+        </div>
+
+        <div className="child-block">
+          <h4 className="center">Values</h4>
+            <CodeBlock language="yaml">
+              {dedent`
+                resources:
+                  requests:
+                    cpu: 200m
+                    memory: 256Mi
+                  limits:
+                    cpu: 500m
+                    memory: 256Mi
+                tolerations:
+                  - key: node-role.kubernetes.io/master
+                    effect: NoSchedule
+                  - key: node-role.kubernetes.io/control-plane
+                    effect: NoSchedule
+                  - key: node-role.kubernetes.io/b-cloud-infra
+                    effect: NoSchedule
+              `}
+            </CodeBlock>
+        </div>
+      </div>
+После этого выполните команду установки с указанием вашего конфигурационного файла:
+
+    <CodeBlock language="bash">
+      {dedent`helmfile -e $\{METRICS_SERVER_VERSION} -l bcloud-collections=metrics-server bcloud-monitoring-stack=client | kubectl apply -f - `}
+    </CodeBlock>
+
+    </TabItem>
+</Tabs>
+
+

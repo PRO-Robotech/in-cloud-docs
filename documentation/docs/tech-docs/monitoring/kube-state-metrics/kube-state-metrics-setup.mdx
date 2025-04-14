@@ -1,0 +1,43 @@
+---
+id: kube-state-metrics-setup
+---
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+import CodeBlock from '@theme/CodeBlock'
+import dedent from 'ts-dedent'
+
+# 5.5.3.4. Kube State Metrics
+
+### 5.5.3.4.1. Подключение к мониторингу
+:::info
+Для подключения данного компонента к системе мониторинга необходимо настроить сбор метрик с использованием агента кластера, соответствующего вашему технологическому стеку. Ниже приведены варианты настройки.
+:::
+<Tabs>
+    <TabItem value='VictoriaMetrics'>
+        <CodeBlock language="bash">
+          {dedent`
+            ---
+            apiVersion: operator.victoriametrics.com/v1beta1
+            kind: VMServiceScrape
+            metadata:
+              name: "kube-state-metrics"
+              namespace: "bcloud-monitoring-metrics"
+            spec:
+              selector:
+                matchLabels:
+                  app.kubernetes.io/name: "kube-state-metrics"
+                  app.kubernetes.io/instance: "kube-state-metrics"
+              endpoints:
+                - port: http
+                  honorLabels: true
+                  metricRelabelConfigs:
+                    - action: labeldrop
+                      regex: (uid|container_id|image_id)
+              jobLabel: app.kubernetes.io/name
+          `}
+        </CodeBlock>
+    </TabItem>
+</Tabs>
+
+### 5.5.3.4.2. Настройка сетевых политик
+

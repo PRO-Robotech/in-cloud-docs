@@ -1,0 +1,164 @@
+---
+id: blackbox-exporter-install
+title: Установка Blackbox Exporter
+---
+
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+import CodeBlock from '@theme/CodeBlock'
+import dedent from 'ts-dedent'
+import { COMPONENTS_VERSION } from '@site/src/constants/monitoring/componentsVersion'
+
+# 5.5.1.2.2. Blackbox Exporter
+
+`Blackbox Exporter` устанавливается как обычное Kubernetes-приложение, описанное с помощью Helm Chart, которое можно установить либо из b-cloud manifests либо через helm.
+
+<Tabs>
+    <TabItem value='helm'>
+## Установка с помощью helm
+### Установите Helm
+
+Если у вас еще нет Helm, сначала установите его. Вы можете скачать Helm с [официального сайта](https://helm.sh/docs/intro/install/). Следуйте инструкциям для вашей операционной системы.
+
+### Добавьте репозиторий с Helm chart
+
+Вам нужно добавить репозиторий с charts, в котором находится Blackbox Exporter. Например, можно использовать официальный репозиторий Prometheus Community:
+
+```bash
+helm repo add prom https://prometheus-community.github.io/helm-charts
+```
+
+Обновите список charts:
+
+```bash
+helm repo update
+```
+
+### Установите Blackbox Exporter
+
+Теперь вы можете установить `Blackbox Exporter` с помощью Helm. Для этого выполните следующую команду:
+
+```bash
+helm install prometheus-blackbox-exporter prom/prometheus-blackbox-exporter --namespace bcloud-monitoring-blackboxs --create-namespace -f values.yaml
+```
+
+Команда создаст релиз с именем `blackbox-exporter` и развернет `Blackbox Exporter` на вашем кластере Kubernetes в неймспейсе `bcloud-monitoring-blackboxs`.
+
+      <div className="parent-div" style={{ minHeight: '420px' }}>
+
+        <div className="child-block">
+          <h4 className="center">Enivironments</h4>
+        </div>
+
+        <div className="child-block">
+          <h4 className="center">Values</h4>
+            <CodeBlock language="yaml">
+              {dedent`
+                releaseLabel: true
+                serviceAccount:
+                  create: true
+                vmServiceScrape:
+                  enabled: true
+                config:
+                  modules:
+                    http_2xx:
+                      prober: http
+                      timeout: 5s
+                      http:
+                        valid_status_codes: [200, 302, 301, 304, 401, 403]
+                        valid_http_versions: ["HTTP/1.1", "HTTP/2.0"]
+                        follow_redirects: true
+                        preferred_ip_protocol: "ip4"
+                tolerations:
+                  - key: node-role.kubernetes.io/master
+                    effect: NoSchedule
+                  - key: node-role.kubernetes.io/control-plane
+                    effect: NoSchedule
+                  - key: node-role.kubernetes.io/data-plane
+                    effect: NoSchedule
+                  - key: node-role.kubernetes.io/b-cloud-infra
+                    effect: NoSchedule
+                resources:
+                  limits:
+                    memory: 128Mi
+                    cpu: 100m
+                  requests:
+                    memory: 32Mi
+                    cpu: 10m
+                priorityClassName: system-cluster-critical
+              `}
+            </CodeBlock>
+
+        </div>
+      </div>
+
+    </TabItem>
+
+
+
+    <TabItem value='b-cloud/manifests'>
+## Установка с помощью bcloud manifests
+    `Blackbox Exporter` устанавливается как обычное Kubernetes-приложение, описанное с помощью Helm Chart.
+      <div className="parent-div" style={{ minHeight: '420px' }}>
+
+        <div className="child-block">
+          <h4 className="center">Enivironments</h4>
+            <CodeBlock language="bash">
+              {dedent`
+                export PROMETHEUS_BLACKBOX_EXPORTER_VERSION="${COMPONENTS_VERSION.blackboxExporter.value}"
+              `}
+            </CodeBlock>
+        </div>
+
+        <div className="child-block">
+          <h4 className="center">Values</h4>
+            <CodeBlock language="yaml">
+              {dedent`
+                releaseLabel: true
+                serviceAccount:
+                  create: true
+                vmServiceScrape:
+                  enabled: true
+                config:
+                  modules:
+                    http_2xx:
+                      prober: http
+                      timeout: 5s
+                      http:
+                        valid_status_codes: [200, 302, 301, 304, 401, 403]
+                        valid_http_versions: ["HTTP/1.1", "HTTP/2.0"]
+                        follow_redirects: true
+                        preferred_ip_protocol: "ip4"
+                tolerations:
+                  - key: node-role.kubernetes.io/master
+                    effect: NoSchedule
+                  - key: node-role.kubernetes.io/control-plane
+                    effect: NoSchedule
+                  - key: node-role.kubernetes.io/data-plane
+                    effect: NoSchedule
+                  - key: node-role.kubernetes.io/b-cloud-infra
+                    effect: NoSchedule
+                resources:
+                  limits:
+                    memory: 128Mi
+                    cpu: 100m
+                  requests:
+                    memory: 32Mi
+                    cpu: 10m
+                priorityClassName: system-cluster-critical
+              `}
+            </CodeBlock>
+
+
+        </div>
+      </div>
+После этого выполните команду установки с указанием вашего конфигурационного файла:
+
+    <CodeBlock language="bash">
+      {dedent`helmfile -e $\{PROMETHEUS_BLACKBOX_EXPORTER_VERSION} -l bcloud-collections=prometheus-blackbox-exporter bcloud-monitoring-stack=client | kubectl apply -f - `}
+    </CodeBlock>
+
+    </TabItem>
+</Tabs>
+
+

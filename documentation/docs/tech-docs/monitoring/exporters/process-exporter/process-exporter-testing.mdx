@@ -1,0 +1,57 @@
+---
+id: process-exporter-testing
+---
+
+# 5.5.2.1.3. Process Exporter
+
+## Проверьте установку
+
+Чтобы убедиться, что `Process Exporter` установлен и работает, выполните следующую команду:
+
+```bash
+kubectl get pods -l app=prometheus-process-exporter --namespace bcloud-monitoring-nodes
+```
+
+Вы должны увидеть запущенные поды `Process Exporter`.
+```
+NAME                                READY   STATUS    RESTARTS   AGE
+prometheus-process-exporter-45zvs   1/1     Running   0          22h
+prometheus-process-exporter-4m94n   1/1     Running   0          22h
+prometheus-process-exporter-5d5fg   1/1     Running   0          22h
+prometheus-process-exporter-5h95b   1/1     Running   0          22h
+prometheus-process-exporter-5mj46   1/1     Running   0          22h
+prometheus-process-exporter-7fngh   1/1     Running   0          22h
+prometheus-process-exporter-7wtxz   1/1     Running   0          22h
+prometheus-process-exporter-8drzv   1/1     Running   0          22h
+prometheus-process-exporter-bfglj   1/1     Running   0          22h
+prometheus-process-exporter-ccks9   1/1     Running   0          22h
+prometheus-process-exporter-f2v5z   1/1     Running   0          22h
+prometheus-process-exporter-fk4vw   1/1     Running   0          22h
+prometheus-process-exporter-gfsxc   1/1     Running   0          22h
+prometheus-process-exporter-gtvtn   1/1     Running   0          22h
+prometheus-process-exporter-gxlxk   1/1     Running   0          22h
+prometheus-process-exporter-ht5fp   1/1     Running   0          22h
+prometheus-process-exporter-j2p9j   1/1     Running   0          22h
+prometheus-process-exporter-kbtz4   1/1     Running   0          22h
+prometheus-process-exporter-kwck6   1/1     Running   0          22h
+prometheus-process-exporter-lhw79   1/1     Running   0          22h
+prometheus-process-exporter-q88w5   1/1     Running   0          22h
+prometheus-process-exporter-tfd4g   1/1     Running   0          22h
+```
+
+## Доступ к метрикам
+
+Чтобы получить доступ к метрикам, вам нужно получить IP-адрес или имя вашего пода `Process Exporter` и порт, на котором он работает (по умолчанию 9101). Вы можете сделать это с помощью:
+
+```bash
+kubectl get endpoints/prometheus-process-exporter --namespace bcloud-monitoring-nodes  -o json
+
+```
+Выберите нужный под, к примеру `prometheus-process-exporter-bwwdg` и запустите:
+
+```bash
+kubectl port-forward pod/prometheus-process-exporter-bwwdg 9101:9101 --namespace bcloud-monitoring-nodes
+```
+
+Теперь вы можете перейти по адресу [http://localhost:9101/metrics](http://localhost:9101/metrics) в вашем веб-браузере, чтобы видеть метрики, собираемые `Process Exporter`.
+

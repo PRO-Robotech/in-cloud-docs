@@ -1,0 +1,34 @@
+---
+id: victoria-metrics-operator-testing
+---
+
+# 5.5.2.1.6. VictoriaMetrics Operator
+
+## Проверьте установку
+
+Чтобы убедиться, что `VictoriaMetrics Operator` установлен и работает, выполните следующую команду:
+
+```bash
+kubectl get pods -l app.kubernetes.io/name=victoria-metrics-operator --namespace bcloud-vmcluster
+```
+
+Вы должны увидеть запущенные поды `VictoriaMetrics Operator`.
+```
+NAME                              READY   STATUS    RESTARTS   AGE
+victoria-metrics-operator-6c65f6987f-v6djh   1/1     Running   0          18d
+```
+## Доступ к метрикам
+
+Чтобы получить доступ к метрикам, вам нужно получить IP-адрес или имя вашего пода `VictoriaMetrics Operator` и порт, на котором он работает (по умолчанию 10250). Вы можете сделать это с помощью:
+
+```bash
+kubectl get endpoints/victoria-metrics-operator --namespace bcloud-vmcluster  -o json
+
+```
+Выберите нужный под, к примеру `victoria-metrics-operator-6c65f6987f-v6djh` и запустите:
+
+```bash
+kubectl port-forward pod/victoria-metrics-operator-6c65f6987f-v6djh 10250:10250 --namespace bcloud-vmcluster
+```
+
+Теперь вы можете перейти по адресу [https://localhost:10250/metrics](https://localhost:10250/metrics) в вашем веб-браузере, чтобы видеть метрики, собираемые `VictoriaMetrics Operator`.

@@ -11,8 +11,8 @@ test:
   stage: test
   script:
   - cd documentation
-  - npm install dedent --registry=https://nexus.berekebank.kz/repository/SberbankTechProxy/ --strict-ssl=false
-  - npm install --registry=https://nexus.berekebank.kz/repository/SberbankTechProxy/ --strict-ssl=false
+  - npm install dedent --registry=https://${URL_REPOSITORY}/repository/${NPM_REPO}/ --strict-ssl=false
+  - npm install --registry=https://${URL_REPOSITORY}/repository/${NPM_REPO}/ --strict-ssl=false
   - export DOC_INCLUDE_CURRENT_VERSION=false
   - npm run build
   rules:
@@ -24,8 +24,8 @@ pages:
   stage: deploy
   script:
   - cd documentation
-  - npm install dedent --registry=https://nexus.berekebank.kz/repository/SberbankTechProxy/ --strict-ssl=false
-  - npm install --registry=https://nexus.berekebank.kz/repository/SberbankTechProxy/ --strict-ssl=false
+  - npm install dedent --registry=https://${URL_REPOSITORY}/repository/${NPM_REPOSITORY}/ --strict-ssl=false
+  - npm install --registry=https://${URL_REPOSITORY}/repository/${NPM_REPOSITORY}/ --strict-ssl=false
   - export DOC_INCLUDE_CURRENT_VERSION=false
   - npm run build
   - mv ./build ../public
