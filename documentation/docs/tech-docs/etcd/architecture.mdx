@@ -38,7 +38,7 @@ _Запись_ - Все операции записи должны быть об
 :::
 
 <div className="center">
-  <img src={`${getBasePrefix()}/img/etcd/etcd-server.svg`} />
+  <img src={`${getBasePrefix()}img/etcd/etcd-server.svg`} />
 </div>
 
 ### Синхронизация
@@ -46,7 +46,7 @@ _Запись_ - Все операции записи должны быть об
 Когда происходит операция записи, узел (Leader) обрабатывает её и распространяет изменения на остальные узлы (Followers) кластера, сохраняя согласованность данных. Для репликации узлы взаимодействуют между собой по сети через порт 2380/TCP.
 
 <div className="center">
-  <img src={`${getBasePrefix()}/img/etcd/etcd-peer.svg`} />
+  <img src={`${getBasePrefix()}img/etcd/etcd-peer.svg`} />
 </div>
 
 ### Метрики
@@ -54,7 +54,7 @@ _Запись_ - Все операции записи должны быть об
 Порт метрик ETCD — это сетевой порт, на котором etcd предоставляет метрики о своём состоянии и производительности. Используется для мониторинга и анализа работы кластера с помощью инструментов наблюдения.
 
 <div className="center">
-  <img src={`${getBasePrefix()}/img/etcd/etcd-metrics.svg`} />
+  <img src={`${getBasePrefix()}img/etcd/etcd-metrics.svg`} />
 </div>
 
 ## Обслуживание
@@ -72,7 +72,7 @@ _Запись_ - Все операции записи должны быть об
 :::
 
 <div className="center">
-  <img src={`${getBasePrefix()}/img/etcd/etcd-backup.svg`} />
+  <img src={`${getBasePrefix()}img/etcd/etcd-backup.svg`} />
 </div>
 
 ## Управление сертификатами
@@ -80,7 +80,7 @@ _Запись_ - Все операции записи должны быть об
 Ротация сертификатов (Certificate Rotation): Для поддержания безопасности и работоспособности кластера необходимо регулярно обновлять сертификаты. Это включает перевыпуск сертификатов узлов (peer certificates), клиентских сертификатов (client certificates), серверных сертификатов (server certificates), а при необходимости и сертификатов центра сертификации (ЦА certificates). Регулярная ротация сертификатов предотвращает потенциальные уязвимости и обеспечивает актуальность механизмов шифрования и аутентификации.
 
 <div className="center">
-  <img src={`${getBasePrefix()}/img/etcd/etcd-certificates.svg`} />
+  <img src={`${getBasePrefix()}img/etcd/etcd-certificates.svg`} />
 </div>
 
 :::warning

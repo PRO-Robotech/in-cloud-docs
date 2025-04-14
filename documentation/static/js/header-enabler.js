@@ -2,7 +2,7 @@ const getBasePrefix = () => window.BASEURL || ''
 
 const createMedusScript = () => {
   const script = document.createElement('script')
-  script.src = `${getBasePrefix()}/js/header.bundle.js`
+  script.src = `${getBasePrefix()}js/header.bundle.js`
   script.type = 'text/javascript'
   document.body.appendChild(script)
 }

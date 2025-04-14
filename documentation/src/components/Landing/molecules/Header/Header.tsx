@@ -12,8 +12,8 @@ export const Header: FC = () => (
         <BrowserOnly>
           {() => {
             return (
-              <Link to={`${getBasePrefix()}/tech-docs/kubernetes/about`}>
-                <img src={`${getBasePrefix()}/img/paws2.svg`} alt="Logo" className="logo2" />
+              <Link to={`${getBasePrefix()}tech-docs/kubernetes/about`}>
+                <img src={`${getBasePrefix()}img/paws2.svg`} alt="Logo" className="logo2" />
               </Link>
             );
           }}

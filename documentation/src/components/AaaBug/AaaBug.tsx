@@ -6,7 +6,7 @@ export const AaaBug: FC = () => {
   return (
     <div className={styles.container}>
       <img
-        src={`${getBasePrefix()}/img/commics/monkey-user/aaa-bug.png`}
+        src={`${getBasePrefix()}img/commics/monkey-user/aaa-bug.png`}
         alt="Диаграмма установки компонентов Kubernetes"
         className={styles.image}
       />
