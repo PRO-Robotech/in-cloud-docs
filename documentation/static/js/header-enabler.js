@@ -1,4 +1,4 @@
-const getBasePrefix = () => window.BASE_PREFIX || ''
+const getBasePrefix = () => window.BASEURL || ''
 
 const createMedusScript = () => {
   const script = document.createElement('script')

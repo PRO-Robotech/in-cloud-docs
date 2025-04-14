@@ -2,6 +2,10 @@
 id: about
 ---
 
+import BrowserOnly from '@docusaurus/BrowserOnly'; // Импортируем компонент BrowserOnly
+import Link from '@docusaurus/Link';
+import {getBasePrefix} from '@site/src/utils/getBasePrefix'
+
 # 0. Введение
 
 <div className="headerContainer">
@@ -10,6 +14,12 @@ id: about
     <p>Платформа B-Cloud является решением с открытым исходным кодом, предназначенным для автоматизации развертывания, масштабирования и управления контейнеризованными приложениями в облачной инфраструктуре...</p>
   </div>
   <div className="logoContainer">
-    <img src="/img/paws2.svg" alt="Logo" className="logo"/>
+    <BrowserOnly>
+      {() => (
+        <Link to={`${getBasePrefix()}/tech-docs/kubernetes/about`}>
+          <img src={`${getBasePrefix()}/img/paws2.svg`} alt="Logo" className="logo2" />
+        </Link>
+      )}
+    </BrowserOnly>
   </div>
 </div>

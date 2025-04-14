@@ -3,6 +3,7 @@ import { FancyboxImage } from '@site/src/components/commonBlocks/FancyboxImage'
 
 import TabItem from '@theme/TabItem'
 import Tabs from '@theme/Tabs'
+import {getBasePrefix} from '@site/src/utils/getBasePrefix'
 
 > В данном разделе рассматриваются правила использования сертификатов в кластере Kubernetes: какие компоненты задействуют сертификаты, кем они подписываются и как осуществляется проверка подлинности.
 
@@ -11,7 +12,7 @@ import Tabs from '@theme/Tabs'
   <TabItem value="masters">
     <figure style={{ textAlign: 'center', display: 'contents' }}>
       <FancyboxImage
-        src="/img/certificates/certificates-masters.svg"
+        src={`${getBasePrefix()}/img/certificates/certificates-masters.svg`}
         style={{ width: '100%', maxWidth: 'none' }}
       />
       <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
@@ -21,7 +22,7 @@ import Tabs from '@theme/Tabs'
 
     <figure style={{ textAlign: 'center', display: 'contents' }}>
       <FancyboxImage
-        src="/img/certificates/certificates-masters-transport.svg"
+        src={`${getBasePrefix()}/img/certificates/certificates-masters-transport.svg`}
         style={{ width: '100%', maxWidth: 'none' }}
       />
       <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
@@ -34,7 +35,7 @@ import Tabs from '@theme/Tabs'
   <TabItem value="workers">
     <figure style={{ textAlign: 'center', display: 'contents' }}>
       <FancyboxImage
-        src="/img/certificates/certificates-workers.svg"
+        src={`${getBasePrefix()}/img/certificates/certificates-workers.svg`}
         style={{ width: '100%', maxWidth: 'none' }}
       />
       <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
@@ -44,7 +45,7 @@ import Tabs from '@theme/Tabs'
 
     <figure style={{ textAlign: 'center', display: 'contents' }}>
       <FancyboxImage
-        src="/img/certificates/certificates-workers-transport.svg"
+        src={`${getBasePrefix()}/img/certificates/certificates-workers-transport.svg`}
         style={{ width: '100%', maxWidth: 'none' }}
       />
       <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>

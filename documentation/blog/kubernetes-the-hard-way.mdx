@@ -42,6 +42,7 @@ import AllServiceStartComponent from '@site/docs/tech-docs/kubernetes/components
 
 import KubernetesStatusReady from '@site/docs/tech-docs/kubernetes/statusCluster.mdx'
 import AboutAllCertificates from '@site/docs/tech-docs/kubernetes/certificates/aboutAllComponent.mdx'
+import {getBasePrefix} from '@site/src/utils/getBasePrefix'
 
 import { FancyboxImage } from '@site/src/components/commonBlocks/FancyboxImage'
 import { AaaBug } from '@site/src/components/AaaBug'
@@ -87,7 +88,7 @@ import { AaaBug } from '@site/src/components/AaaBug'
     }}
   >
     <img
-      src="/img/commics/monkey-user/k8s.png"
+      src={`${getBasePrefix()}/img/commics/monkey-user/k8s.png`}
       alt="commics"
       style={{
         width: '90%',
@@ -275,7 +276,7 @@ import { AaaBug } from '@site/src/components/AaaBug'
 <h4>Уровень компонентов</h4>
 
 <figure style={{ textAlign: 'center', display: 'contents' }}>
-  <FancyboxImage src="/img/components/pie.svg" style={{ width: '100%', maxWidth: 'none' }} />
+  <FancyboxImage src={`${getBasePrefix()}/img/components/pie.svg`} style={{ width: '100%', maxWidth: 'none' }} />
   <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
     Технологический слой.
   </figcaption>
@@ -365,7 +366,7 @@ import { AaaBug } from '@site/src/components/AaaBug'
 <h4>Уровень коммутации</h4>
 
 <figure style={{ textAlign: 'center', display: 'contents' }}>
-  <FancyboxImage src="/img/control-plane/transport.svg" style={{ width: '100%', maxWidth: 'none' }} />
+  <FancyboxImage src={`${getBasePrefix()}/img/control-plane/transport.svg`} style={{ width: '100%', maxWidth: 'none' }} />
   <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
     Сетевая диаграмма развертывания.
   </figcaption>
@@ -433,7 +434,7 @@ import { AaaBug } from '@site/src/components/AaaBug'
 <h4>Уровень балансировки</h4>
 
 <figure style={{ textAlign: 'center', display: 'contents' }}>
-  <FancyboxImage src="/img/control-plane/load-balancer.svg" style={{ width: '100%', maxWidth: 'none' }} />
+  <FancyboxImage src={`${getBasePrefix()}/img/control-plane/load-balancer.svg`} style={{ width: '100%', maxWidth: 'none' }} />
   <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
     Технологический слой.
   </figcaption>
