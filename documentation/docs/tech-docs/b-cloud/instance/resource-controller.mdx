@@ -28,7 +28,7 @@ import { getBasePrefix } from '@site/src/utils/getBasePrefix'
 
 - **Управление квотами**: предоставляет инструменты для установки и контроля квот на использование ресурсов, таких как вычислительная мощность, память и диски.
 
-- **Управление развертыванием**: позволяет настраивать базовые конфигурации для автоматического развертывания клиентского компонента.
+- **Управление развертыванием**: позволяет настраивать базовые конфигурации для автоматического развертывания клиентских компонентов.
 
 ## Функциональные требования
 
@@ -59,7 +59,7 @@ import { getBasePrefix } from '@site/src/utils/getBasePrefix'
      - Secret
 
 6. Действия процесса реконсиляции при удалении:
-   - В ответ на события удаления процесс реконсиляции должен удалять все ресурсы, созданные контроллером, связанные с удаленным ресурсом Project.
+   - В ответ на событие удаления, процесс реконсиляции должен удалять все объекты, связанные с удаляемым ресурсом Project.
 
 ## Дочерние ресурсы
 
@@ -141,7 +141,7 @@ import { getBasePrefix } from '@site/src/utils/getBasePrefix'
     <TabItem value='RoleBinding'>
         При создании ресурса `Instance` автоматически устанавливается ряд связей между группами пользователей и заранее подготовленными ролевыми моделями.
 
-        `all-architect-namespacescope-view` - базовые права групповые права для `архитекторов` в рамках instance namespaces.
+        `all-architect-namespacescope-view` - базовые права, групповые права для `архитекторов` в рамках instance namespaces.
         <CodeBlock language="yaml">
           {dedent`
             ---
@@ -161,7 +161,7 @@ import { getBasePrefix } from '@site/src/utils/getBasePrefix'
           `}
         </CodeBlock>
 
-        `all-namespacescope-view` - базовые права групповые права `для всех` в рамках instance namespaces.
+        `all-namespacescope-view` - базовые права, групповые права `для всех` в рамках instance namespaces.
         <CodeBlock language="yaml">
           {dedent`
             ---
@@ -181,7 +181,7 @@ import { getBasePrefix } from '@site/src/utils/getBasePrefix'
           `}
         </CodeBlock>
 
-        `analyst-namespacescope-edit` - базовые права групповые права `аналитика` в рамках instance namespaces.
+        `analyst-namespacescope-edit` - базовые права, групповые права `аналитика` в рамках instance namespaces.
         <CodeBlock language="yaml">
           {dedent`
             ---
@@ -221,7 +221,7 @@ import { getBasePrefix } from '@site/src/utils/getBasePrefix'
           `}
         </CodeBlock>
 
-        `developer-namespacescope-edit` - базовые права групповые права `разработчиков` в рамках instance namespaces.
+        `developer-namespacescope-edit` - базовые права, групповые права `разработчиков` в рамках instance namespaces.
         <CodeBlock language="yaml">
           {dedent`
             ---
@@ -241,7 +241,7 @@ import { getBasePrefix } from '@site/src/utils/getBasePrefix'
           `}
         </CodeBlock>
 
-        `devops-namespacescope-edit` - базовые права групповые права `devops инженеров` в рамках instance namespaces.
+        `devops-namespacescope-edit` - базовые права, групповые права `devops инженеров` в рамках instance namespaces.
         <CodeBlock language="yaml">
           {dedent`
             ---
@@ -261,7 +261,7 @@ import { getBasePrefix } from '@site/src/utils/getBasePrefix'
           `}
         </CodeBlock>
 
-        `qa-namespacescope-edit` - базовые права групповые права `тестировщиков` в рамках instance namespaces.
+        `qa-namespacescope-edit` - базовые права, групповые права `тестировщиков` в рамках instance namespaces.
         <CodeBlock language="yaml">
           {dedent`
             ---
@@ -283,7 +283,7 @@ import { getBasePrefix } from '@site/src/utils/getBasePrefix'
     </TabItem>
 
     <TabItem value='ResourceQuota'>
-        При создании ресурса `Instance` автоматически генерируется ресурс `ResourceQuota`, который впоследствии будет отвечать за квотирование проекта.
+        При создании ресурса `Instance` автоматически генерируется ресурс `ResourceQuota`, который впоследствии будет отвечать за распределение квот в проекте.
         <CodeBlock language="yaml">
           {dedent`
             ---
@@ -304,7 +304,7 @@ import { getBasePrefix } from '@site/src/utils/getBasePrefix'
     </TabItem>
 
     <TabItem value='ApplicationSET'>
-        При создании ресурса `Instance` автоматически генерируется ресурс `ApplicationSET`, который впоследствии будет отвечать за развертование клиентского компонента в кластере.
+        При создании ресурса `Instance` автоматически генерируется ресурс `ApplicationSET`, который впоследствии будет отвечать за развертывание клиентских компонентов в кластере.
         <CodeBlock language="yaml">
           {dedent`
             ---
@@ -364,7 +364,7 @@ import { getBasePrefix } from '@site/src/utils/getBasePrefix'
         </CodeBlock>
     </TabItem>
     <TabItem value='InstanceLegacy'>
-      При создании ресурса `Instance` автоматически генерируется ресурс `InstanceLegacy`, который впоследствии будет отвечать интеграцию с внешними системами.
+      При создании ресурса `Instance` автоматически генерируется ресурс `InstanceLegacy`, который впоследствии будет отвечать за интеграцию с внешними системами.
       <CodeBlock language="yaml">
         {dedent`
               ---
@@ -380,7 +380,7 @@ import { getBasePrefix } from '@site/src/utils/getBasePrefix'
     </TabItem>
     <TabItem value='Secret'>
       При создании ресурса `Instance` автоматически генерируется ресурс `Secret`, который
-      TODO @Колбин - проверить и ддописать!.
+      TODO @Колбин - проверить и дописать!.
       <CodeBlock language="yaml">
         {dedent`
                 ---
