@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="ru" dir="ltr" class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-tech-docs/kubernetes/components/components" data-has-hydrated="false">
+<head>
+<meta charset="UTF-8">
+<meta name="generator" content="Docusaurus v3.7.0">
+<title data-rh="true">4. Компоненты | in-cloud</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="http://example.com/tech-docs/kubernetes/components/components"><meta data-rh="true" property="og:locale" content="ru"><meta data-rh="true" name="docusaurus_locale" content="ru"><meta data-rh="true" name="docsearch:language" content="ru"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="4. Компоненты | in-cloud"><meta data-rh="true" name="description" content="4.1.Kubernetes"><meta data-rh="true" property="og:description" content="4.1.Kubernetes"><link data-rh="true" rel="icon" href="/img/favicon.ico"><link data-rh="true" rel="canonical" href="http://example.com/tech-docs/kubernetes/components/components"><link data-rh="true" rel="alternate" href="http://example.com/tech-docs/kubernetes/components/components" hreflang="ru"><link data-rh="true" rel="alternate" href="http://example.com/tech-docs/kubernetes/components/components" hreflang="x-default"><link rel="alternate" type="application/rss+xml" href="/blog/rss.xml" title="in-cloud RSS Feed">
+<link rel="alternate" type="application/atom+xml" href="/blog/atom.xml" title="in-cloud Atom Feed">
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&amp;display=swap" crossorigin="anonymous">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&amp;display=swap" crossorigin="anonymous">
+<script src="/js/observer.js"></script><link rel="stylesheet" href="/assets/css/styles.7a426cea.css">
+<script src="/assets/js/runtime~main.7ccbf30b.js" defer="defer"></script>
+<script src="/assets/js/main.61aeeffc.js" defer="defer"></script>
+</head>
+<body class="navigation-with-keyboard">
+<script>!function(){function t(t){document.documentElement.setAttribute("data-theme",t)}var e=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme")}catch(t){}}();t(null!==e?e:"dark")}(),function(){try{const n=new URLSearchParams(window.location.search).entries();for(var[t,e]of n)if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id="__docusaurus"><div role="region" aria-label="Перейти к основному содержимому"><a class="skipToContent_fXgn" href="#__docusaurus_skipToContent_fallback">Перейти к основному содержимому</a></div><nav aria-label="Main" class="navbar navbar--fixed-top"><div class="navbar__inner"><div class="navbar__items"><button aria-label="Переключить навигационную панель" aria-expanded="false" class="navbar__toggle clean-btn" type="button"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/"><div class="navbar__logo"><img src="/img/logo.png" alt="" class="themedComponent_mlkZ themedComponent--light_NVdE"><img src="/img/logo.png" alt="" class="themedComponent_mlkZ themedComponent--dark_xIcU"></div><b class="navbar__title text--truncate">In Cloud</b></a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/tech-docs/kubernetes/about">Техническая документация</a><a class="navbar__item navbar__link" href="/blog">Blog</a></div><div class="navbar__items navbar__items--right"><a href="https://github.com/PRO-Robotech/in-cloud-docs" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link header-github-link" aria-label="GitHub repository">in-cloud-docs<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_node_modules-@docusaurus-theme-classic-lib-theme-Icon-ExternalLink-styles-module"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg><ul class="github-facts"><li class="github-fact github-fact--stars"></li><li class="github-fact github-fact--forks"></li></ul></a><div class="navbarSearchContainer_dCNk"></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div id="__docusaurus_skipToContent_fallback" class="main-wrapper mainWrapper_z2l0"><div class="docsWrapper_hBAB"><button aria-label="Прокрутка к началу" class="clean-btn theme-back-to-top-button backToTopButton_sjWU" type="button"></button><div class="docRoot_UBD9"><aside class="theme-doc-sidebar-container docSidebarContainer_YfHR"><div class="sidebarViewport_aRkj"><div class="sidebar_njMd"><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_SIkG"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--sublist-caret menu__link--active" role="button" aria-expanded="true" href="/tech-docs/kubernetes/about">B-Cloud</a></div><ul style="display:block;overflow:visible;height:auto" class="menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/tech-docs/kubernetes/about">0. Введение</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/tech-docs/kubernetes/introduction">1. Общее описание</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" tabindex="0" href="/tech-docs/kubernetes/components/components">4. Компоненты</a></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-2 menu__list-item"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="true" tabindex="0" href="/tech-docs/kubernetes/setup-environments/base-os/base-os-setup">5. Настройка</a></div><ul style="display:block;overflow:visible;height:auto" class="menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-3 menu__list-item"><a class="menu__link" tabindex="0" href="/tech-docs/kubernetes/setup-environments/base-os/base-os-setup">5.0. Настройка ОС</a></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-3 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" tabindex="0" href="/tech-docs/etcd/setup-environments/os-setup">5.1. Etcd</a></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-3 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" tabindex="0" href="/tech-docs/kubernetes/setup-environments/os-setup">5.2. Kubernetes</a></div></li></ul></li></ul></li></ul></nav></div></div></aside><main class="docMainContainer_TBSr"><div class="container padding-top--md padding-bottom--lg"><div class="row"><div class="col docItemCol_VOVn"><div class="docItemContainer_Djhp"><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Z_bl" aria-label="Навигационная цепочка текущей страницы"><ul class="breadcrumbs" itemscope="" itemtype="https://schema.org/BreadcrumbList"><li class="breadcrumbs__item"><a aria-label="Главная страница" class="breadcrumbs__link" href="/"><svg viewBox="0 0 24 24" class="breadcrumbHomeIcon_YNFT"><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill="currentColor"></path></svg></a></li><li class="breadcrumbs__item"><span class="breadcrumbs__link">B-Cloud</span><meta itemprop="position" content="1"></li><li itemscope="" itemprop="itemListElement" itemtype="https://schema.org/ListItem" class="breadcrumbs__item breadcrumbs__item--active"><span class="breadcrumbs__link" itemprop="name">4. Компоненты</span><meta itemprop="position" content="2"></li></ul></nav><div class="tocCollapsible_ETCw theme-doc-toc-mobile tocMobile_ITEo"><button type="button" class="clean-btn tocCollapsibleButton_TO0P">Содержание этой страницы</button></div><div class="theme-doc-markdown markdown"><header><h1>4. Компоненты</h1></header>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="41kubernetes">4.1.Kubernetes<a href="#41kubernetes" class="hash-link" aria-label="Прямая ссылка на 4.1.Kubernetes" title="Прямая ссылка на 4.1.Kubernetes">​</a></h2>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="411-kube-api-api-server">4.1.1 Kube-API (API Server)<a href="#411-kube-api-api-server" class="hash-link" aria-label="Прямая ссылка на 4.1.1 Kube-API (API Server)" title="Прямая ссылка на 4.1.1 Kube-API (API Server)">​</a></h3>
+<p><strong>Описание</strong>: API Server является центральным компонентом управления кластером Kubernetes, предоставляющим RESTful API для взаимодействия с системой. Он обеспечивает доступ к данным кластера, их изменение и удаление, а также координирует все операции, связанные с управлением компонентами и ресурсами. API Server является связующим звеном между всеми остальными компонентами Kubernetes.</p>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="функции">Функции<a href="#функции" class="hash-link" aria-label="Прямая ссылка на Функции" title="Прямая ссылка на Функции">​</a></h4>
+<ul>
+<li>Обработка всех входящих запросов (через REST API), включая создание,  обновление и удаление ресурсов.</li>
+<li>Взаимодействие с etcd для хранения и извлечения конфигурационных данных.</li>
+<li>Аутентификация и авторизация запросов с помощью интеграции с RBAC/ABAC.</li>
+<li>Обеспечение внутренней синхронизации с компонентами кластера через механизмы очередей и уведомлений.</li>
+</ul>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="интерфейсы">Интерфейсы<a href="#интерфейсы" class="hash-link" aria-label="Прямая ссылка на Интерфейсы" title="Прямая ссылка на Интерфейсы">​</a></h4>
+<ul>
+<li>HTTP/HTTPS RESTful API.</li>
+<li>WebSocket для оповещений в реальном времени (например, через Watch).</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="412-kube-controller-manager">4.1.2 Kube-controller-manager<a href="#412-kube-controller-manager" class="hash-link" aria-label="Прямая ссылка на 4.1.2 Kube-controller-manager" title="Прямая ссылка на 4.1.2 Kube-controller-manager">​</a></h3>
+<p><strong>Описание</strong>: <strong>Kube-controller-manager</strong> — это компонент Kubernetes, отвечающий за управление состоянием ресурсов в кластере через различные контроллеры. Он следит за состоянием ресурсов (например, подов, реплика-сетов, деплойментов) и принимает меры для приведения фактического состояния к желаемому, обеспечивая отказоустойчивость и масштабируемость приложений. Контроллеры выполняют задачи по созданию, обновлению и удалению ресурсов, а также по соблюдению правил масштабирования и обеспечения доступности.</p>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="функции">Функции<a href="#функции" class="hash-link" aria-label="Прямая ссылка на Функции" title="Прямая ссылка на Функции">​</a></h4>
+<ul>
+<li>Выполнение контрольных операций для поддержания желаемого состояния ресурсов в кластере.</li>
+<li>Управление жизненным циклом объектов Kubernetes, таких как реплика-сеты, деплойменты, поды и сервисы.</li>
+<li>Реализация стратегий масштабирования, обновлений и откатов для ресурсов.</li>
+<li>Обеспечение отказоустойчивости и восстановление после сбоев путём автоматического создания или удаления ресурсов.</li>
+</ul>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="особенности">Особенности<a href="#особенности" class="hash-link" aria-label="Прямая ссылка на Особенности" title="Прямая ссылка на Особенности">​</a></h4>
+<ul>
+<li>Включает несколько типов контроллеров для выполнения специфических задач, например:<!-- -->
+<ul>
+<li><strong>Replication Controller</strong> — поддерживает заданное количество реплик подов.</li>
+<li><strong>Deployment Controller</strong> — управляет плавными обновлениями и откатами деплойментов.</li>
+<li><strong>StatefulSet Controller</strong> — обеспечивает уп равление состоянием подов с сохранением стабильных идентификаторов и томов.</li>
+</ul>
+</li>
+<li>Обеспечивает управление автоматическим масштабированием ресурсов, включая вертикальное и горизонтальное масштабирование.</li>
+<li>Реализует автоматические проверки состояния ресурсов, с последующим исправлением нарушений желаемого состояния.</li>
+</ul>
+<p><strong>Kube-controller-manager</strong> играет ключевую роль в поддержании стабильности и доступности приложений, автоматизируя процессы создания, обновления и восстановления ресурсов в Kubernetes.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="413-kube-scheduler">4.1.3 Kube-scheduler<a href="#413-kube-scheduler" class="hash-link" aria-label="Прямая ссылка на 4.1.3 Kube-scheduler" title="Прямая ссылка на 4.1.3 Kube-scheduler">​</a></h3>
+<p><strong>Описание</strong>: <strong>Kube-scheduler</strong> — это компонент Kubernetes, отвечающий за распределение подов по узлам кластера. Он принимает решения о том, на каком узле должен быть запущен новый под, учитывая доступные ресурсы узлов, метки и аннотации, а также предпочтения, заданные пользователем или политиками размещения. Scheduler выполняет задачу оптимального распределения нагрузки и обеспечения эффективного использования ресурсов в кластере.</p>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="функции">Функции<a href="#функции" class="hash-link" aria-label="Прямая ссылка на Функции" title="Прямая ссылка на Функции">​</a></h4>
+<ul>
+<li>Планирование подов на узлы с учётом доступных ресурсов, таких как CPU, память и другие.</li>
+<li>Определение предпочтений для размещения подов, например, с учётом географической близости или специфических сетевых настроек.</li>
+<li>Оценка состояния ресурсов на узлах и распределение нагрузки для обеспечения оптимальной работы кластера.</li>
+</ul>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="особенности">Особенности<a href="#особенности" class="hash-link" aria-label="Прямая ссылка на Особенности" title="Прямая ссылка на Особенности">​</a></h4>
+<ul>
+<li>Осуществляет планирование размещения подов на основе доступных ресурсов узлов, таких как CPU, память, сетевые интерфейсы и другие параметры.</li>
+<li>Поддерживает политику размещения подов через affinity (размещение на узлах с определёнными метками) и anti-affinity (избежание размещения на узлах с определёнными метками).</li>
+<li>Обеспечивает отказоустойчивость и высокую доступность путём равномерного распределения нагрузки между узлами.</li>
+<li>Интегрируется с другими компонентами Kubernetes для применения стратегий приоритетов, например, с <strong>Taints</strong> и <strong>Tolerations</strong> для исключения узлов с нестандартными настройками или состоянием.</li>
+<li>Использует динамическую проверку состояния узлов и автоматическое переназначение подов при изменении ресурсов или отказах узлов.</li>
+</ul>
+<p><strong>Kube-scheduler</strong> играет ключевую роль в обеспечении баланса нагрузки и эффективности работы кластера Kubernetes, корректно распределяя поды в зависимости от текущих условий и ограничений.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="414-kubelet">4.1.4 Kubelet<a href="#414-kubelet" class="hash-link" aria-label="Прямая ссылка на 4.1.4 Kubelet" title="Прямая ссылка на 4.1.4 Kubelet">​</a></h3>
+<p><strong>Описание</strong>: <strong>Kubelet</strong> — это агент, работающий на каждом узле кластера Kubernetes. Он отвечает за запуск и управление контейнерами (подами), а также за поддержание их текущего состояния. Kubelet выполняет операции, связанные с мониторингом контейнеров, взаимодействует с API Server и контейнерной средой, а также предоставляет информацию о состоянии подов и контейнеров в <strong>etcd</strong>.</p>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="функции">Функции<a href="#функции" class="hash-link" aria-label="Прямая ссылка на Функции" title="Прямая ссылка на Функ ции">​</a></h4>
+<ul>
+<li>Запуск и управление контейнерами на узле, включая создание, запуск и остановку подов.</li>
+<li>Мониторинг состояния контейнеров, выполнение проверок их живучести (<strong>liveness</strong>) и готовности (<strong>readiness</strong>).</li>
+<li>Отчёт о текущем состоянии подов и контейнеров в <strong>etcd</strong> через API Server.</li>
+<li>Обработка команд от API Server, таких как перезапуск или обновление контейнеров.</li>
+</ul>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="особенности">Особенности<a href="#особенности" class="hash-link" aria-label="Прямая ссылка на Особенности" title="Прямая ссылка на Особенности">​</a></h4>
+<ul>
+<li>Взаимодействует с <strong>Container Runtime Interface (CRI)</strong>, обеспечивая взаимодействие с контейнерными движками (например, <strong>containerd</strong> или <strong>CRI-O</strong>).</li>
+<li>Поддерживает выполнение проверок <strong>liveness</strong> и <strong>readiness probes</strong>, которые помогают определить, когда контейнеры готовы к обслуживанию трафика или когда их следует перезапустить.</li>
+<li>Обеспечивает точность и согласованность состояния контейнеров на узле, передавая информацию о текущем состоянии в <strong>API Server</strong>.</li>
+<li>Использует <strong>RBAC (Role-Based Access Control)</strong> (ABAC) для управления доступом к ресурсам Kubernetes, что позволяет определять, какие действия может выполнять Kubelet в рамках кластера. Это включает доступ к API Server и взаимодействие с другими компонентами, обеспечивая безопасность на уровне узлов и ресурсов.</li>
+<li>Работает с <strong>ServiceAccount</strong> для аутентификации и авторизации запросов к API Server, используя соответствующие <strong>role</strong> и <strong>rolebinding</strong>.</li>
+</ul>
+<p><strong>Kubelet</strong> является важным элементом в поддержании работоспособности и безопасности контейнеров на каждом узле. Он обеспечивает корректное выполнение контейнеров, их мониторинг и взаимодействие с другими компонентами через контролируемый доступ с использованием RBAC.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="415-kubeadm">4.1.5 Kubeadm<a href="#415-kubeadm" class="hash-link" aria-label="Прямая ссылка на 4.1.5 Kubeadm" title="Прямая ссылка на 4.1.5 Kubeadm">​</a></h3>
+<p><strong>Описание</strong>:  Kubeadm — это инструмент для упрощения развертывания и настройки кластера Kubernetes. Он автоматизирует процесс установки и настройки компонентов кластера, таких как API Server, Controller Manager, Scheduler и Etcd, а также обеспечивает создание и настройку соединений между узлами кластера.</p>
+<p>Kubeadm не является полноценной системой управления кластером, а фокусируется на базовой настройке инфраструктуры и установке. Он предоставляет возможность быстро настроить кластер Kubernetes, соблюдая лучшие практики и рекомендации по безопасности.</p>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="функции">Функции<a href="#функции" class="hash-link" aria-label="Прямая ссылка на Функции" title="Прямая ссылка на Функции">​</a></h4>
+<ul>
+<li>Инициализация мастер-узла Kubernetes, включая создание конфигураций и сертификатов.</li>
+<li>Подключение рабочих узлов к кластеру.</li>
+<li>Настройка сетевой инфраструктуры и взаимодействия между компонентами.</li>
+<li>Управление жизненным циклом сертификатов, включая их создание, продление и обновление.</li>
+<li>Обеспечение безопасного соединения между узлами с использованием TLS сертификатов для шифрования трафика.</li>
+<li>Создание и настройка необходимых сервисных аккаунтов и ролей для работы кластера.</li>
+</ul>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="особенности">Особенности<a href="#особенности" class="hash-link" aria-label="Прямая ссылка на Особенности" title="Прямая ссылка на Особенности">​</a></h4>
+<ul>
+<li>Подходит как для тестовых, так и для продуктивных сред.</li>
+<li>Поддерживает настройку высокодоступных кластеров и поддержку различных типов хр анилищ.</li>
+<li>Упрощает процесс обновления и миграции компонентов Kubernetes, минимизируя риски при переходах между версиями.</li>
+<li>Обеспечивает автоматическое управление сертификатами, что значительно упрощает процесс обеспечения безопасности кластера.</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="415-kubectl">4.1.5 Kubectl<a href="#415-kubectl" class="hash-link" aria-label="Прямая ссылка на 4.1.5 Kubectl" title="Прямая ссылка на 4.1.5 Kubectl">​</a></h3>
+<p><strong>Описание</strong>:<br>
+<!-- -->Kubectl — это командная утилита для взаимодействия с Kubernetes-API сервером. Kubectl используется администраторами и разработчиками для управления ресурсами кластера Kubernetes. С помощью kubectl можно создавать, изменять, удалять и просматривать ресурсы в кластере, а также выполнять диагностику и мониторинг состояния системы. Kubectl служит клиентским интерфейсом для отправки запросов на сервер Kubernetes, обеспечивая удобный доступ к функционалу кластера.</p>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="функции">Функции:<a href="#функции" class="hash-link" aria-label="Прямая ссылка на Функции:" title="Прямая ссылка на Функции:">​</a></h4>
+<ul>
+<li><strong>Взаимодействие с API Server</strong>: Kubectl отправляет HTTP-запросы на API Server, используя RESTful API для выполнения различных опера ций (например, создание или удаление подов, развертывание приложений).</li>
+<li><strong>Управление ресурсами кластера</strong>: Создание, изменение, удаление и просмотр ресурсов, таких как поды, реплика-сеты, деплойменты, сервисы и другие объекты Kubernetes.</li>
+<li><strong>Получение состояния кластера</strong>: Просмотр состояния ресурсов, логов контейнеров и диагностика проблем.</li>
+<li><strong>Реализация операций с контекстами и конфигурациями</strong>: Возможность работы с несколькими кластерами через контексты, использование различных конфигурационных файлов для управления доступом и настройками (например, через <code>kubectl config</code>).</li>
+<li><strong>Запуск команд и сценариев</strong>: Возможность выполнения различных команд, включая запуск одноразовых подов для выполнения администраторских задач, а также выполнение команд внутри контейнеров через <code>kubectl exec</code>.</li>
+</ul>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="особенности">Особенности:<a href="#особенности" class="hash-link" aria-label="Прямая ссылка на Особенности:" title="Прямая ссылка на Особенности:">​</a></h4>
+<ul>
+<li><strong>Поддержка нескольких кластеров</strong>: Kubectl может быть настроен на взаимодействие с несколькими кластерами Kubernetes, позволяя переключаться между ними с помощью контекстов.</li>
+<li><strong>Интерактивные команды</strong>: Возможность использования флагов для вывода информации в удобном формате (например, <code>-o yaml</code>, <code>-o json</code>) для более детального анализа или использования в скриптах.</li>
+<li><strong>Диагностика и отладка</strong>: Kubectl предоставляет инструменты для диагностики и отладки работы приложений в кластере, включая доступ к логам (<code>kubectl logs</code>), выполнение команд внутри контейнеров (<code>kubectl exec</code>), а также мониторинг состояния подов и узлов.</li>
+<li><strong>Автоматизация и интеграция с CI/CD</strong>: Kubectl активно используется в процессах автоматизации развертывания и управления приложениями в Kubernetes, интегрируясь с системами CI/CD для непрерывной интеграции и доставки.</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="42-etcd">4.2. ETCD<a href="#42-etcd" class="hash-link" aria-label="Прямая ссылка на 4.2. ETCD" title="Прямая ссылка на 4.2. ETCD">​</a></h2>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="421-etcd">4.2.1. Etcd<a href="#421-etcd" class="hash-link" aria-label="Прямая ссылка на 4.2.1. Etcd" title="Прямая ссылка на 4.2.1. Etcd">​</a></h3>
+<p><strong>Описание</strong>: <strong>Etcd</strong> — это распределённое хранилище с открытым исходным кодом, которое используется для хранения всех данных конфигурации и состояния кластера Kubernetes. Все ключевые данные, такие как состояние подов, деплойментов, секретов и сервисов, сохраняются в <strong>etcd</strong>. Это хранилище обеспечивает консистентность данных и позволяет кластерам Kubernetes восстанавливать своё состояние после сбоев.</p>
+<p><strong>etcd</strong> является основой для всего кластера, обеспечивая надежность и высокую доступность данных. В Kubernetes используется в качестве централизованного хранилища для всех метаданных о кластере, включая конфигурации и статусы компонентов.</p>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="функции">Функции<a href="#функции" class="hash-link" aria-label="Прямая ссылка на Функции" title="Прямая ссылка на Функции">​</a></h4>
+<ul>
+<li>хранение всей конфигурации и состояния кластера Kubernetes.</li>
+<li>обеспечение согласованности данных в распределённой системе.</li>
+<li>поддержка высокой доступности и отказоустойчивости через репликацию данных.</li>
+<li>возможность восстановления состояния кластера в случае сбоев.</li>
+</ul>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="особенности">Особенности<a href="#особенности" class="hash-link" aria-label="Прямая ссылка на Особенности" title="Прямая ссылка на Особенности">​</a></h4>
+<ul>
+<li><strong>Консистентность</strong>: Использует алгоритм консенсунса Raft для обеспечения целостности данных.</li>
+<li><strong>Высокая доступность</strong>: Поддержка репликации данных между несколькими узлами для обеспечения отказоустойчивости.</li>
+<li><strong>Распределённость</strong>: Распределённое хранилище с возможностью масштабирования, позволяющее организовать несколько реплик для достижения высокоскоростной работы и резервного копирования.</li>
+<li><strong>API-интерфейс</strong>: Предоставляет REST API для доступа и управления данными, хранящимися в etcd.</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="43-runc">4.3. Runc<a href="#43-runc" class="hash-link" aria-label="Прямая ссылка на 4.3. Runc" title="Прямая ссылка на 4.3. Runc">​</a></h2>
+<p><strong>Описание</strong>: Runc — это низкоуровневый инструмент для создания и управления контейнерами, реализующий спецификацию Open Container Initiative (OCI). Он используется для выполнения контейнеров в Kubernetes через CRI (Container Runtime Interface).</p>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="функции">Функции<a href="#функции" class="hash-link" aria-label="Прямая ссылка на Функции" title="Прямая ссылка на Функции">​</a></h4>
+<ul>
+<li>Запуск контейнеров с использованием контейнерных образов.</li>
+<li>Управление жизненным цикл ом контейнеров (создание, запуск, остановка).</li>
+<li>Обеспечение изоляции и безопасности контейнеров на уровне операционной системы.</li>
+</ul>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="особенности">Особенности<a href="#особенности" class="hash-link" aria-label="Прямая ссылка на Особенности" title="Прямая ссылка на Особенности">​</a></h4>
+<ul>
+<li>Работает как контейнерный runtime для Kubernetes, обеспечивая выполнение контейнеров в строго ограниченной среде.</li>
+<li>Взаимодействует с контейнерной средой через CRI, используя интерфейсы типа containerd или CRI-O.</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="44-containerd">4.4. Containerd<a href="#44-containerd" class="hash-link" aria-label="Прямая ссылка на 4.4. Containerd" title="Прямая ссылка на 4.4. Containerd">​</a></h2>
+<p><strong>Описание</strong>: <strong>Containerd</strong> — это высокопроизводительный контейнерный рантайм с открытым исходным кодом, который используется для запуска и управления контейнерами. Он предоставляет функциональность, необходимую для работы с контейнерами. Например, создание, запуск, управление жизненным циклом контейнеров и работа с образами. <strong>Containerd</strong> интегрируется с <strong>CRI (Container Runtime Interface)</strong>, предоставляя необходимую абстракцию для взаимодействия с Kubernetes через <strong>kubelet</strong>.</p>
+<p><strong>Containerd</strong> является компонентом низкого уровня, который используется для взаимодействия с контейнерами и их выполнением, при этом он не предоставляет полноценной оркестрации или планирования контейнеров — эти функции выполняет Kubernetes.</p>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="функции">Функции<a href="#функции" class="hash-link" aria-label="Прямая ссылка на Функции" title="Прямая ссылка на Функции">​</a></h4>
+<ul>
+<li>Управление жизненным циклом контейнеров, включая создание, запуск, остановку и удаление контейнеров.</li>
+<li>Работа с образами контейнеров: загрузка, извлечение и хранение образов.</li>
+<li>Поддержка взаимодействия с CRI для интеграции с Kubernetes через kubelet.</li>
+<li>Обработка сетевых настроек и монтирование дисковых томов для контейнеров.</li>
+<li>Управление ресурсами контейнеров, такими как CPU, память и I/O.</li>
+<li>Интеграция с <strong>containerd-shim</strong> для управления изоляцией и связью с контейнерами на уровне операционной системы.</li>
+</ul>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="особенности">Особенности<a href="#особенности" class="hash-link" aria-label="Прямая ссылка на Особенности" title="Прямая ссылка на Особенности">​</a></h4>
+<ul>
+<li>Совместим с <strong>Open Container Initiative (OCI)</strong>, что обеспечивает поддержку стандартов контейнерных образов и спецификаций.</li>
+<li>Легковесный и высокоэффективный контейнерный рантайм, ориентированный на поддержку масштабируемых и производительных контейнерных решений.</li>
+<li>Использует <strong>gRPC API</strong> для управления контейнерами и взаимодействия с другими компонентами системы.</li>
+<li>Может быть использован не только с Kubernetes, но и в других контейнерных оркестраторах и решениях.</li>
+<li>Поддерживает расширяемость через плагины, для взаимодействия с различными сетевыми решениями, хранилищами и другими системами.</li>
+</ul>
+<p><strong>Containerd</strong> предоставляет базовую инфраструктуру для управления контейнерами, которая может быть использована как часть более крупных систем, таких как Kubernetes, для работы с контейнерами в распределённой среде.</p>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="45-crictl">4.5. Crictl<a href="#45-crictl" class="hash-link" aria-label="Прямая ссылка на 4.5. Crictl" title="Прямая ссылка на 4.5. Crictl">​</a></h2>
+<p><strong>Описание</strong>: Crictl — это инструмент командной строки для взаимодействия с контейнерной средой, использующей интерфейс CRI. Crictl позволяет администратору выполнять операции с контейнерами и подами, такие как создание, запуск, остановка и получение информации о контейнерах, которые управляются через CRI.</p>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="функции">Функции<a href="#функции" class="hash-link" aria-label="Прямая ссылка на Функции" title="Прямая ссылка на Функции">​</a></h4>
+<ul>
+<li>Отправка команд в контейнерные среды, использующие CRI.</li>
+<li>Управление жизненным циклом контейнеров.</li>
+<li>Получение информации о контейнерах, подах и их статусе.</li>
+</ul>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="особенности">Особенности<a href="#особенности" class="hash-link" aria-label="Прямая ссылка на Особенности" title="Прямая ссылка на Особенности">​</a></h4>
+<ul>
+<li>Удобный инструмент для диагностики и отладки контейнерных приложений в Kubernetes.</li>
+<li>Предоставляет функциональность, аналогичную стандартным инструментам Docker, но ориентированную на CRI.</li>
+</ul></div></article><nav class="pagination-nav docusaurus-mt-lg" aria-label="Страница документа"><a class="pagination-nav__link pagination-nav__link--prev" href="/tech-docs/kubernetes/introduction"><div class="pagination-nav__sublabel">Предыдущая страница</div><div class="pagination-nav__label">1. Общее описание</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/tech-docs/kubernetes/setup-environments/base-os/base-os-setup"><div class="pagination-nav__sublabel">Следующая страница</div><div class="pagination-nav__label">5.0. Настройка ОС</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#41kubernetes" class="table-of-contents__link toc-highlight">4.1.Kubernetes</a><ul><li><a href="#411-kube-api-api-server" class="table-of-contents__link toc-highlight">4.1.1 Kube-API (API Server)</a></li><li><a href="#412-kube-controller-manager" class="table-of-contents__link toc-highlight">4.1.2 Kube-controller-manager</a></li><li><a href="#413-kube-scheduler" class="table-of-contents__link toc-highlight">4.1.3 Kube-scheduler</a></li><li><a href="#414-kubelet" class="table-of-contents__link toc-highlight">4.1.4 Kubelet</a></li><li><a href="#415-kubeadm" class="table-of-contents__link toc-highlight">4.1.5 Kubeadm</a></li><li><a href="#415-kubectl" class="table-of-contents__link toc-highlight">4.1.5 Kubectl</a></li></ul></li><li><a href="#42-etcd" class="table-of-contents__link toc-highlight">4.2. ETCD</a><ul><li><a href="#421-etcd" class="table-of-contents__link toc-highlight">4.2.1. Etcd</a></li></ul></li><li><a href="#43-runc" class="table-of-contents__link toc-highlight">4.3. Runc</a></li><li><a href="#44-containerd" class="table-of-contents__link toc-highlight">4.4. Containerd</a></li><li><a href="#45-crictl" class="table-of-contents__link toc-highlight">4.5. Crictl</a></li></ul></div></div></div></div></main></div></div></div><footer class="footer footer--dark"><div class="container container-fluid"></div></footer></div>
+<div id="medusa-root"></div>
+<script charset="utf-8" src="/js/header-enabler.js"></script></body>
+</html>

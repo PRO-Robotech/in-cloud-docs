@@ -1,0 +1,23 @@
+"use strict";(self.webpackChunkdocumentation=self.webpackChunkdocumentation||[]).push([[41653],{63217:(e,n,t)=>{t.r(n),t.d(n,{assets:()=>u,contentTitle:()=>l,default:()=>m,frontMatter:()=>d,metadata:()=>o,toc:()=>h});const o=JSON.parse('{"id":"tech-docs/kubernetes/components/containerd/checks/statusBinFiles","title":"statusBinFiles","description":"{dedent`","source":"@site/docs/tech-docs/kubernetes/components/containerd/checks/statusBinFiles.mdx","sourceDirName":"tech-docs/kubernetes/components/containerd/checks","slug":"/tech-docs/kubernetes/components/containerd/checks/statusBinFiles","permalink":"/tech-docs/kubernetes/components/containerd/checks/statusBinFiles","draft":false,"unlisted":false,"tags":[],"version":"current","frontMatter":{}}');var r=t(74848),c=t(28453),s=t(60513),i=t(1775),a=t(63770);const d={},l=void 0,u={},h=[];function x(e){const n={admonition:"admonition",...(0,c.R)(),...e.components};return(0,r.jsxs)(r.Fragment,{children:[(0,r.jsx)(i.A,{language:"bash",children:s.A`
+  journalctl -t containerd-installer
+`}),"\n",(0,r.jsx)(n.admonition,{title:"\u0412\u044b\u0432\u043e\u0434 \u043a\u043e\u043c\u0430\u043d\u0434\u044b",type:"note",children:(0,r.jsx)(i.A,{language:"text",children:s.A`
+  ***** [INFO] Checking current containerd version...
+  ***** [INFO] Current: none, Target: ${a.M.containerd.value}
+  ***** [INFO] Download URL: https://*******
+  ***** [INFO] Updating containerd to version ${a.M.containerd.value}...
+  ***** [INFO] Working directory: /tmp/tmp.*****
+  ***** [INFO] Downloading containerd...
+  ***** [INFO] Downloading checksum file...
+  ***** [INFO] Verifying checksum...
+  ***** [INFO] Extracting files...
+  ***** [INFO] Installing binaries...
+  ***** [INFO] Containerd successfully updated to ${a.M.containerd.value}.
+`})}),"\n",(0,r.jsx)(i.A,{language:"bash",children:s.A`
+  ls -la /usr/local/bin/ | grep -E "containerd|ctr"
+`}),"\n",(0,r.jsx)(n.admonition,{title:"\u0412\u044b\u0432\u043e\u0434 \u043a\u043e\u043c\u0430\u043d\u0434\u044b",type:"note",children:(0,r.jsx)(i.A,{language:"bash",children:s.A`
+  -rwxr-xr-x  1 root root  54855296 Feb 18 15:12 containerd
+  -rwxr-xr-x  1 root root   7176192 Feb 18 15:12 containerd-shim
+  -rwxr-xr-x  1 root root   8884224 Feb 18 15:12 containerd-shim-containerd-v1
+  -rwxr-xr-x  1 root root  12169216 Feb 18 15:12 containerd-shim-containerd-v2
+  -rwxr-xr-x  1 root root  12169216 Feb 18 15:12 ctr
+`})})]})}function m(e={}){const{wrapper:n}={...(0,c.R)(),...e.components};return n?(0,r.jsx)(n,{...e,children:(0,r.jsx)(x,{...e})}):x(e)}},63770:(e,n,t)=>{t.d(n,{M:()=>o});const o={kubernetes:{value:"v1.30.4"},etcd:{value:"3.5.12-0"},etcdctl:{value:"v3.5.12"},runc:{value:"v1.1.12"},containerd:{value:"1.7.19"},crictl:{value:"v1.30.0"}}}}]);
