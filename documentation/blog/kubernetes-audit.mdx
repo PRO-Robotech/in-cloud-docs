@@ -1,0 +1,782 @@
+---
+title: 'Kubernetes Audit'
+date: 2025-03-23
+slug: kubernetes-audit
+authors:
+  - name: Путилин Дмитрий Львович
+    title: Архитектор
+    url: https://t.me/bezumniy_kot_work
+    image_url: https://avatars.githubusercontent.com/u/107264732?v=4
+    socials:
+      github: FR-Solution
+tags: [Kubernetes, Handler-Pipeline]
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import CodeBlock from '@theme/CodeBlock';
+import dedent from 'ts-dedent';
+
+### Аудит (Audit)
+
+<p>
+  Kubernetes использует систему аудита для журналирования всех входящих HTTP-запросов к API-серверу. Аудит создаёт подробную запись о том, кто и что пытался сделать в кластере, независимо от того, был ли запрос успешным или завершился ошибкой.
+</p>
+<p>
+  Аудит работает до этапа аутентификации, чтобы зафиксировать даже неавторизованные или анонимные попытки доступа. Это важно для выявления инцидентов безопасности, отладки и соблюдения требований регуляторов.
+</p>
+<p>
+  Аудит-события формируются согласно политике, описанной в конфигурационном файле. Каждое событие содержит:
+</p>
+<ul>
+  <li>временную метку</li>
+  <li>идентификатор пользователя (если есть)</li>
+  <li>запрашиваемый ресурс и действие</li>
+  <li>результат (успех/отказ)</li>
+  <li>уникальный <code>auditID</code>, по которому можно отследить цепочку вызовов</li>
+</ul>
+<p>
+  Сами события можно направить в файл, на удалённый webhook, в лог-файл <code>kube-apiserver</code> или в систему логирования.
+</p>
+
+#### Настройка политики
+
+<p>
+  Политика аудита — это YAML-файл, описывающий набор правил, определяющих какие события нужно логировать и с какой степенью детализации.
+  Каждое правило состоит из условий (фильтров) и уровня логирования <code>level</code>, который задаёт объём сохраняемой информации.
+</p>
+<p>
+  API-сервер обрабатывает список правил сверху вниз и применяет первое подходящее. Если ни одно правило не сработает, применяется поведение по умолчанию или пропуск события.
+</p>
+<p>
+  Ниже перечислены атрибуты, которые можно использовать для настройки фильтрации событий:
+</p>
+
+<table style={{ tableLayout: "fixed", width: "100%" }}>
+  <thead>
+    <tr>
+      <th>Параметр</th>
+      <th>Описание</th>
+      <th>Пример значения</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>level</code></td>
+      <td>Уровень детализации</td>
+      <td><code>None</code>, <code>Metadata</code>, <code>Request</code>, <code>RequestResponse</code></td>
+    </tr>
+    <tr>
+      <td><code>users</code>, <code>userGroups</code></td>
+      <td>Фильтрация по пользователю или группе</td>
+      <td><code>system:serviceaccount:default:my-app</code></td>
+    </tr>
+    <tr>
+      <td><code>verbs</code></td>
+      <td>Операции над ресурсами</td>
+      <td><code>get</code>, <code>list</code>, <code>watch</code>, <code>create</code>, <code>update</code>, <code>patch</code>, <code>delete</code>, <code>deletecollection</code>, <code>proxy</code>, <code>redirect</code>, <code>head</code></td>
+    </tr>
+    <tr>
+      <td><code>resources</code></td>
+      <td>Целевые объекты Kubernetes</td>
+      <td><code>pods</code>, <code>configmaps</code></td>
+    </tr>
+    <tr>
+      <td><code>namespaces</code></td>
+      <td>Ограничение по namespace</td>
+      <td><code>default</code>, <code>kube-system</code></td>
+    </tr>
+    <tr>
+      <td><code>nonResourceURLs</code></td>
+      <td>Запросы к системным путям вне API-объектов</td>
+      <td><code>/metrics</code>, <code>/healthz</code></td>
+    </tr>
+    <tr>
+      <td><code>omitStages</code></td>
+      <td>Исключение стадий обработки</td>
+      <td><code>RequestReceived</code>, <code>ResponseStarted</code>, <code>ResponseComplete</code>, <code>Panic</code></td>
+    </tr>
+  </tbody>
+</table>
+
+#### Доступные значения для level
+
+<table>
+  <thead>
+    <tr>
+      <th>Значение</th>
+      <th>Описание</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>None</code></td>
+      <td>Не логировать событие вообще</td>
+    </tr>
+    <tr>
+      <td><code>Metadata</code></td>
+      <td>Логируются только метаданные запроса (пользователь, ресурс, verb и т.п.)</td>
+    </tr>
+    <tr>
+      <td><code>Request</code></td>
+      <td>Логируются метаданные и тело запроса. Ответ не логируется</td>
+    </tr>
+    <tr>
+      <td><code>RequestResponse</code></td>
+      <td>Логируются метаданные, тело запроса и тело ответа</td>
+    </tr>
+  </tbody>
+</table>
+
+#### Доступные значения для omitStages
+
+<table>
+  <thead>
+    <tr>
+      <th>Стадия</th>
+      <th>Описание</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>RequestReceived</code></td>
+      <td>Запрос получен API-сервером, но ещё не обработан</td>
+    </tr>
+    <tr>
+      <td><code>ResponseStarted</code></td>
+      <td>Началась отправка ответа клиенту</td>
+    </tr>
+    <tr>
+      <td><code>ResponseComplete</code></td>
+      <td>Запрос полностью завершён</td>
+    </tr>
+    <tr>
+      <td><code>Panic</code></td>
+      <td>Обработка запроса завершилась с фатальной ошибкой</td>
+    </tr>
+  </tbody>
+</table>
+
+
+### Рекомендации по написанию политик
+
+<p>
+  Ниже представлен план по написанию эффективных и безопасных политик аудита Kubernetes.
+</p>
+
+<table style={{ tableLayout: "fixed", width: "100%" }}>
+  <thead>
+    <tr>
+      <th>Рекомендация</th>
+      <th>Описание</th>
+      <th>Пример</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Подавление системного шума</strong></td>
+      <td>Исключайте аудит низкоприоритетных событий от внутренних компонентов</td>
+      <td>
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <button
+            onClick={() => {
+              const modal = document.createElement('dialog');
+              modal.style.border = 'none';
+              modal.style.padding = '0';
+              modal.style.background = '#1e1e1e';
+              modal.style.borderRadius = '8px';
+              modal.style.maxWidth = '960px';
+              modal.style.width = '90vw';
+              modal.style.maxHeight = '90vh';
+              modal.style.overflow = 'auto';
+              modal.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.5)';
+              modal.innerHTML = `
+              <style>
+                @import "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css";
+                .hljs {
+                  background: #1e1e1e;
+                  color: #d4d4d4;
+                  font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+                  font-size: 0.9rem;
+                  padding: 1rem;
+                  overflow-x: auto;
+                  white-space: pre;
+                }
+              </style>
+              <div style="display: flex; flex-direction: column; height: 100%;">
+                <div style="padding: 1rem 1rem 0.25rem; font-weight: bold; color: #ccc;">
+                  Пример YAML политики
+                </div>
+                <div style="padding: 0 1rem 1rem;">
+                  ${
+                    (() => {
+                      const el = document.createElement('div');
+                      // Используем React для рендера CodeBlock с dedent
+                      // Но здесь вставка как innerHTML, поэтому рендерим как строку
+                      // В реальном MDX это был бы JSX, но для модального окна вставляем выделенный блок кода:
+                      // Воспользуемся highlight.js для подсветки, как и раньше
+                      const yaml = dedent(`
+                        - level: None
+                          users: ["system:kube-proxy", "system:unsecured"]
+                          verbs: ["get", "watch"]
+                          resources:
+                            - group: ""
+                              resources: ["events", "services", "endpoints"]
+                        - level: None
+                          nonResourceURLs: ["/healthz*", "/version", "/metrics"]
+                      `);
+                      // Экранируем HTML
+                      function escapeHtml(str) {
+                        return str.replace(/[&<>"']/g, function (m) {
+                          switch (m) {
+                            case '&': return '&amp;';
+                            case '<': return '&lt;';
+                            case '>': return '&gt;';
+                            case '"': return '&quot;';
+                            case "'": return '&#39;';
+                          }
+                        });
+                      }
+                      return `<pre><code class="language-yaml">${escapeHtml(yaml)}</code></pre>`;
+                    })()
+                  }
+                </div>
+                <form method="dialog" style="text-align: right; padding: 0.5rem 1rem 1rem;">
+                  <button style="padding: 0.4rem 0.8rem; background: #444; color: #fff; border: none; border-radius: 4px; font-size: 0.85rem;">
+                    Закрыть
+                  </button>
+                </form>
+              </div>
+              `;
+              document.body.appendChild(modal);
+              modal.showModal();
+              modal.addEventListener('close', () => modal.remove());
+
+              const script = document.createElement('script');
+              script.src = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js';
+              script.onload = () => window.hljs.highlightAll();
+              document.body.appendChild(script);
+            }}
+            style={{
+              whiteSpace: "nowrap",
+              padding: "0.35rem 0.75rem",
+              backgroundColor: "#2b2b2b",
+              color: "#fff",
+              border: "1px solid #555",
+              borderRadius: "6px",
+              fontSize: "0.85rem",
+              fontWeight: 500,
+              cursor: "pointer"
+            }}
+          >
+            Открыть пример
+          </button>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Фильтрация по пользователям и группам</strong></td>
+      <td>Отдельные правила для сервисов и контроллеров Kubernetes</td>
+      <td>        <div style={{ display: "flex", justifyContent: "center" }}>
+          <button
+            onClick={() => {
+              const modal = document.createElement('dialog');
+              modal.style.border = 'none';
+              modal.style.padding = '0';
+              modal.style.background = '#1e1e1e';
+              modal.style.borderRadius = '8px';
+              modal.style.maxWidth = '960px';
+              modal.style.width = '90vw';
+              modal.style.maxHeight = '90vh';
+              modal.style.overflow = 'auto';
+              modal.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.5)';
+              modal.innerHTML = `
+              <style>
+                @import "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css";
+                .hljs {
+                  background: #1e1e1e;
+                  color: #d4d4d4;
+                  font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+                  font-size: 0.9rem;
+                  padding: 1rem;
+                  overflow-x: auto;
+                  white-space: pre;
+                }
+              </style>
+              <div style="display: flex; flex-direction: column; height: 100%;">
+                <div style="padding: 1rem 1rem 0.25rem; font-weight: bold; color: #ccc;">
+                  Пример YAML политики
+                </div>
+                <div style="padding: 0 1rem 1rem;">
+                  ${
+                    (() => {
+                      const el = document.createElement('div');
+                      // Используем React для рендера CodeBlock с dedent
+                      // Но здесь вставка как innerHTML, поэтому рендерим как строку
+                      // В реальном MDX это был бы JSX, но для модального окна вставляем выделенный блок кода:
+                      // Воспользуемся highlight.js для подсветки, как и раньше
+                      const yaml = dedent(`
+                        - level: None
+                          users: ["system:kube-proxy", "system:unsecured"]
+                          verbs: ["get", "watch"]
+                          resources:
+                            - group: ""
+                              resources: ["events", "services", "endpoints"]
+                        - level: None
+                          nonResourceURLs: ["/healthz*", "/version", "/metrics"]
+                      `);
+                      // Экранируем HTML
+                      function escapeHtml(str) {
+                        return str.replace(/[&<>"']/g, function (m) {
+                          switch (m) {
+                            case '&': return '&amp;';
+                            case '<': return '&lt;';
+                            case '>': return '&gt;';
+                            case '"': return '&quot;';
+                            case "'": return '&#39;';
+                          }
+                        });
+                      }
+                      return `<pre><code class="language-yaml">${escapeHtml(yaml)}</code></pre>`;
+                    })()
+                  }
+                </div>
+                <form method="dialog" style="text-align: right; padding: 0.5rem 1rem 1rem;">
+                  <button style="padding: 0.4rem 0.8rem; background: #444; color: #fff; border: none; border-radius: 4px; font-size: 0.85rem;">
+                    Закрыть
+                  </button>
+                </form>
+              </div>
+              `;
+              document.body.appendChild(modal);
+              modal.showModal();
+              modal.addEventListener('close', () => modal.remove());
+
+              const script = document.createElement('script');
+              script.src = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js';
+              script.onload = () => window.hljs.highlightAll();
+              document.body.appendChild(script);
+            }}
+            style={{
+              whiteSpace: "nowrap",
+              padding: "0.35rem 0.75rem",
+              backgroundColor: "#2b2b2b",
+              color: "#fff",
+              border: "1px solid #555",
+              borderRadius: "6px",
+              fontSize: "0.85rem",
+              fontWeight: 500,
+              cursor: "pointer"
+            }}
+          >
+            Открыть пример
+          </button>
+        </div>
+        </td>
+    </tr>
+    <tr>
+      <td><strong>Минимизация утечек чувствительных данных</strong></td>
+      <td>Логируйте только метаданные запросов к секретам и токенам</td>
+      <td>
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <button
+            onClick={() => {
+              const modal = document.createElement('dialog');
+              modal.style.border = 'none';
+              modal.style.padding = '0';
+              modal.style.background = '#1e1e1e';
+              modal.style.borderRadius = '8px';
+              modal.style.maxWidth = '960px';
+              modal.style.width = '90vw';
+              modal.style.maxHeight = '90vh';
+              modal.style.overflow = 'auto';
+              modal.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.5)';
+              modal.innerHTML = `
+  <style>
+    @import "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css";
+    .hljs {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+      font-size: 0.9rem;
+      padding: 1rem;
+      overflow-x: auto;
+      white-space: pre;
+    }
+  </style>
+  <div style="display: flex; flex-direction: column; height: 100%;">
+    <div style="padding: 1rem 1rem 0.25rem; font-weight: bold; color: #ccc;">
+      Пример политики для чувствительных ресурсов
+    </div>
+    <div style="padding: 0 1rem 1rem;">
+      <pre><code class="language-yaml">- level: Metadata
+  resources:
+    - group: ""
+      resources: ["secrets", "configmaps", "serviceaccounts/token"]
+    - group: authentication.k8s.io
+      resources: ["tokenreviews"]</code></pre>
+    </div>
+    <form method="dialog" style="text-align: right; padding: 0.5rem 1rem 1rem;">
+      <button style="padding: 0.4rem 0.8rem; background: #444; color: #fff; border: none; border-radius: 4px; font-size: 0.85rem;">
+        Закрыть
+      </button>
+    </form>
+  </div>
+              `;
+              document.body.appendChild(modal);
+              modal.showModal();
+              modal.addEventListener('close', () => modal.remove());
+
+              const script = document.createElement('script');
+              script.src = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js';
+              script.onload = () => window.hljs.highlightAll();
+              document.body.appendChild(script);
+            }}
+            style={{
+              whiteSpace: "nowrap",
+              padding: "0.35rem 0.75rem",
+              backgroundColor: "#2b2b2b",
+              color: "#fff",
+              border: "1px solid #555",
+              borderRadius: "6px",
+              fontSize: "0.85rem",
+              fontWeight: 500,
+              cursor: "pointer"
+            }}
+          >
+            Открыть пример
+          </button>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Детализация только для важных API</strong></td>
+      <td>Включайте <code>RequestResponse</code> только для CRD, Admission, Webhook</td>
+      <td><code>admissionregistration.k8s.io</code>, <code>apiextensions.k8s.io</code></td>
+    </tr>
+    <tr>
+      <td><strong>Фильтрация по операциям</strong></td>
+      <td>Выделяйте <code>create</code>, <code>delete</code>, <code>patch</code> отдельно</td>
+      <td><code>verbs: ["create", "delete"]</code></td>
+    </tr>
+    <tr>
+      <td><strong>Фильтрация по namespace</strong></td>
+      <td>Ограничьте аудит системными или чувствительными пространствами имён</td>
+      <td><code>namespaces: ["kube-system", "prod"]</code></td>
+    </tr>
+    <tr>
+      <td><strong>Отключение стадии RequestReceived</strong></td>
+      <td>Снижает объём логов, сохраняя важные стадии</td>
+      <td><code>omitStages: ["RequestReceived"]</code></td>
+    </tr>
+    <tr>
+      <td><strong>Универсальное правило по умолчанию</strong></td>
+      <td>Последнее правило без фильтров должно логировать всё остальное</td>
+      <td><code>level: Metadata</code>, <code>omitStages</code></td>
+    </tr>
+    <tr>
+      <td><strong>Разделение политики по зонам</strong></td>
+      <td>Используйте разные политики для разных уровней доступа или областей</td>
+      <td>Отдельный файл политики для <code>prod</code> и <code>dev</code></td>
+    </tr>
+    <tr>
+      <td><strong>Трассировка через Audit-ID</strong></td>
+      <td>Внедряйте <code>Audit-ID</code> в цепочку запросов микросервисов</td>
+      <td><code>curl -H "Audit-ID: trace-123"</code></td>
+    </tr>
+    <tr>
+      <td><strong>Интеграция с внешними SIEM</strong></td>
+      <td>Передавайте события через webhook в систему мониторинга</td>
+      <td><code>--audit-webhook-config-file</code></td>
+    </tr>
+    <tr>
+      <td><strong>Поддержка расследований</strong></td>
+      <td>Храните <code>RequestResponse</code> события ограниченное время для анализа</td>
+      <td>Выделенное хранилище с ротацией логов</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>
+  Ниже представлены рекомендуемые шаблоны политик аудита для разных целей:
+</p>
+
+<Tabs
+  groupId="audit-policy-examples"
+  defaultValue="minimal"
+  values={[
+    {label: 'Минимальный аудит', value: 'minimal'},
+    {label: 'Аудит только create/delete', value: 'create-delete'},
+    {label: 'Полный аудит всех запросов', value: 'full'}
+  ]}>
+
+  <TabItem value="minimal">
+    <p>
+      Минимальная политика, которая фиксирует только метаданные по запросам к объектам Pods. Подходит для систем с минимальными требованиями к аудиту.
+    </p>
+    <CodeBlock language="yaml">
+      {dedent`
+        apiVersion: audit.k8s.io/v1
+        kind: Policy
+        rules:
+          - level: Metadata
+            resources:
+              - group: ""
+                resources: ["pods"]
+      `}
+    </CodeBlock>
+
+    <p>
+      Пример исходного запроса от клиента:
+    </p>
+    <CodeBlock language="bash">
+      {dedent`
+        curl -k \\
+          --header "Authorization: Bearer $TOKEN" \\
+          https://127.0.0.1:6443/api/v1/namespaces/default/pods
+      `}
+    </CodeBlock>
+
+    <p>
+      Пример события аудита, которое будет записано при использовании уровня <code>Metadata</code>:
+    </p>
+    <CodeBlock language="json">
+      {dedent`
+        {
+          "kind": "Event",
+          "apiVersion": "audit.k8s.io/v1",
+          "level": "Metadata",
+          "auditID": "123e4567-e89b-12d3-a456-426614174000",
+          "stage": "ResponseComplete",
+          "requestURI": "/api/v1/namespaces/default/pods",
+          "verb": "get",
+          "user": {
+            "username": "system:serviceaccount:default:my-app"
+          },
+          "sourceIPs": ["10.0.0.15"],
+          "objectRef": {
+            "resource": "pods",
+            "namespace": "default"
+          },
+          "responseStatus": {
+            "code": 200
+          },
+          "requestReceivedTimestamp": "2025-05-03T10:15:00Z",
+          "stageTimestamp": "2025-05-03T10:15:00Z"
+        }
+      `}
+    </CodeBlock>
+  </TabItem>
+
+  <TabItem value="create-delete">
+    <p>
+      Аудит ограничен действиями <code>create</code> над Pods, что позволяет отслеживать только события изменения состояния кластера.
+    </p>
+    <CodeBlock language="yaml">
+      {dedent`
+        apiVersion: audit.k8s.io/v1
+        kind: Policy
+        rules:
+          - level: Request
+            verbs: ["create"]
+            resources:
+              - group: ""
+                resources: ["pods"]
+      `}
+    </CodeBlock>
+
+    <p>
+      Пример исходного запроса от клиента:
+    </p>
+    <CodeBlock language="bash">
+      {dedent`
+        curl -k \\
+          -X POST \\
+          --header "Authorization: Bearer $TOKEN" \\
+          --header "Content-Type: application/json" \\
+          --data '{"apiVersion":"v1","kind":"Pod","metadata":{"name":"nginx"},"spec":{"containers":[{"name":"nginx","image":"nginx"}]}}' \\
+          https://127.0.0.1:6443/api/v1/namespaces/default/pods
+      `}
+    </CodeBlock>
+
+    <p>
+      Пример события аудита, записанного при уровне <code>Request</code>:
+    </p>
+    <CodeBlock language="json">
+      {dedent`
+        {
+          "kind": "Event",
+          "apiVersion": "audit.k8s.io/v1",
+          "level": "Request",
+          "verb": "create",
+          "requestURI": "/api/v1/namespaces/default/pods",
+          "requestObject": {
+            "metadata": {
+              "name": "nginx"
+            },
+            "spec": {
+              "containers": [
+                {
+                  "name": "nginx",
+                  "image": "nginx"
+                }
+              ]
+            }
+          },
+          "user": {
+            "username": "system:serviceaccount:default:my-app"
+          },
+          "objectRef": {
+            "resource": "pods",
+            "namespace": "default",
+            "name": "nginx"
+          },
+          "responseStatus": {
+            "code": 200
+          }
+        }
+      `}
+    </CodeBlock>
+  </TabItem>
+
+  <TabItem value="full">
+    <p>
+      Полная политика аудита, логирующая всё содержимое запросов и ответов. Используется в средах с повышенными требованиями к наблюдаемости и безопасному расследованию инцидентов.
+    </p>
+    <CodeBlock language="yaml">
+      {dedent`
+        apiVersion: audit.k8s.io/v1
+        kind: Policy
+        rules:
+          - level: RequestResponse
+      `}
+    </CodeBlock>
+
+    <p>
+      Пример исходного запроса от клиента:
+    </p>
+    <CodeBlock language="bash">
+      {dedent`
+        curl -k \\
+          -X POST \\
+          --header "Authorization: Bearer $TOKEN" \\
+          --header "Content-Type: application/json" \\
+          --data '{"apiVersion":"v1","kind":"Pod","metadata":{"name":"nginx"},"spec":{"containers":[{"name":"nginx","image":"nginx"}]}}' \\
+          https://127.0.0.1:6443/api/v1/namespaces/default/pods
+      `}
+    </CodeBlock>
+
+    <p>
+      Пример события аудита, записанного при уровне <code>RequestResponse</code>:
+    </p>
+    <CodeBlock language="json">
+      {dedent`
+        {
+          "kind": "Event",
+          "apiVersion": "audit.k8s.io/v1",
+          "level": "RequestResponse",
+          "verb": "create",
+          "requestURI": "/api/v1/namespaces/default/pods",
+          "requestObject": {
+            "metadata": {
+              "name": "nginx"
+            },
+            "spec": {
+              "containers": [
+                {
+                  "name": "nginx",
+                  "image": "nginx"
+                }
+              ]
+            }
+          },
+          "responseObject": {
+            "status": "Success"
+          },
+          "user": {
+            "username": "system:serviceaccount:default:my-app"
+          },
+          "responseStatus": {
+            "code": 201
+          }
+        }
+      `}
+    </CodeBlock>
+  </TabItem>
+
+</Tabs>
+
+
+#### Настройка API-сервера
+
+<p>
+  Для активации системы аудита необходимо указать путь к файлу политики с помощью параметра запуска API-сервера:
+</p>
+
+<CodeBlock language="bash">
+  {dedent`
+    --audit-policy-file=/etc/kubernetes/audit-policy.yaml
+  `}
+</CodeBlock>
+
+### Расширенные приёмы работы с аудитом
+
+<p>
+  Ниже перечислены менее известные, но очень полезные возможности системы аудита Kubernetes, которые помогают улучшить наблюдаемость, безопасность и интеграцию с внешними системами.
+</p>
+
+#### Использование Audit-ID для трассировки
+
+<p>
+  Kube-apiserver генерирует уникальный <code>auditID</code> для каждого запроса и передаёт его в HTTP-заголовке <code>Audit-ID</code>. Это значение можно проксировать дальше до микросервисов и логировать в приложении.
+</p>
+
+<CodeBlock language="bash">
+  {dedent`
+    curl -H "Audit-ID: trace-12345" https://127.0.0.1:6443/api/v1/namespaces/default/pods
+  `}
+</CodeBlock>
+
+#### Аудит Webhook-запросов
+
+<p>
+  Запросы от API-сервера к внешним admission webhook'ам тоже могут быть зааудированы. Это позволяет видеть причину отказа при ошибке в ValidatingAdmissionWebhook.
+</p>
+
+<p>
+  Рекомендуется повышать уровень логирования до <code>RequestResponse</code> для ресурсов <code>admission.k8s.io</code>, чтобы отлаживать поведение контроллеров.
+</p>
+
+#### Фильтрация по namespace и пользователям
+
+<p>
+  В политике аудита можно задать фильтры по <code>users</code>, <code>userGroups</code> и <code>namespaces</code>. Это позволяет логировать только чувствительные зоны (например, продакшен), или действия конкретных ролей (например, админов).
+</p>
+
+#### Снижение объёма логов с помощью omitStages
+
+<p>
+  Можно сократить количество создаваемых событий, исключив стадию <code>RequestReceived</code>:
+</p>
+
+<CodeBlock language="yaml">
+  {dedent`
+    omitStages:
+      - "RequestReceived"
+  `}
+</CodeBlock>
+
+<p>
+  Это снижает нагрузку на диск и систему логирования без потери критической информации.
+</p>
+
+
+<p>
+  Вместо записи в файл можно настроить отправку событий аудита через webhook:
+</p>
+
+<CodeBlock language="bash">
+  {dedent`
+    --audit-webhook-config-file=/etc/kubernetes/audit-webhook.yaml
+  `}
+</CodeBlock>
