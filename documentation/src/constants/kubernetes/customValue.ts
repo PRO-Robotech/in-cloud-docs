@@ -29,6 +29,12 @@ export const CUSTOM_VALUE: TCustomValueItems = {
   criEndpoint: {
     value: '/var/run/containerd/containerd.sock',
   },
+  kubernetesAPIAuditPolicyPath: {
+    value: '/var/log/kubernetes/audit/audit-policy.yaml',
+  },
+  kubernetesAPIAuditLogPath: {
+    value: '/var/log/kubernetes/audit/audit.log',
+  },
   kubernetesServiceCIDR: {
     value: '29.64.0.0/16',
   },

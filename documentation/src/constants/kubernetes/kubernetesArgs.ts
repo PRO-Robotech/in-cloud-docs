@@ -74,6 +74,8 @@ export const KUBERNETES_KUBE_API_ARGS: TCustomValueItems = {
       audit-webhook-truncate-max-batch-size: "${KUBE_API_ARGS.auditWebhookTruncateMaxBatchSize.value}"
       audit-webhook-truncate-max-event-size: "${KUBE_API_ARGS.auditWebhookTruncateMaxEventSize.value}"
       audit-webhook-version: "${KUBE_API_ARGS.auditWebhookVersion.value}"
+      audit-policy-file=${KUBE_API_ARGS.auditPolicyFile.value}
+      audit-log-path=${KUBE_API_ARGS.auditLogPath.value}
       authentication-token-webhook-cache-ttl: "${KUBE_API_ARGS.authenticationTokenWebhookCacheTtl.value}"
       authentication-token-webhook-version: "${KUBE_API_ARGS.authenticationTokenWebhookVersion.value}"
       authorization-mode: "${KUBE_API_ARGS.authorizationMode.value}"
