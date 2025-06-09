@@ -1,49 +1,50 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { default as MonacoEditor } from '@monaco-editor/react';
+/* eslint-disable react/button-has-type */
+import React, { useState, useEffect, useRef, useMemo } from 'react'
+import Editor from '@monaco-editor/react'
 
 interface YamlModalProps {
-  yamlContent: string;
-  onCloseOtherModals?: () => void;
+  yamlContent: string
+  onCloseOtherModals?: () => void
 }
 
-const YamlModal: React.FC<YamlModalProps> = ({ yamlContent, onCloseOtherModals }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [showNotification, setShowNotification] = useState(false);
-  const [editorHeight, setEditorHeight] = useState<string>('300px');
-  const dialogRef = useRef<HTMLDialogElement>(null);
+export const YamlModal: React.FC<YamlModalProps> = ({ yamlContent, onCloseOtherModals }) => {
+  const [isOpen, setIsOpen] = useState(false)
+  const [showNotification, setShowNotification] = useState(false)
+  const [editorHeight, setEditorHeight] = useState<string>('300px')
+  const dialogRef = useRef<HTMLDialogElement>(null)
 
-  const lineCount = useMemo(() => yamlContent.split('\n').length, [yamlContent]);
+  const lineCount = useMemo(() => yamlContent.split('\n').length, [yamlContent])
 
   useEffect(() => {
-    const minHeight = 200;
-    const maxHeight = window.innerHeight * 0.8;
-    const approxHeight = lineCount * 20;
-    const finalHeight = Math.min(Math.max(approxHeight, minHeight), maxHeight);
-    setEditorHeight(`${finalHeight}px`);
-  }, [lineCount]);
+    const minHeight = 200
+    const maxHeight = window.innerHeight * 0.65
+    const approxHeight = lineCount * 20
+    const finalHeight = Math.min(Math.max(approxHeight, minHeight), maxHeight)
+    setEditorHeight(`${finalHeight}px`)
+  }, [lineCount])
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isOpen) {
-        setIsOpen(false);
+        setIsOpen(false)
       }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen]);
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [isOpen])
 
   const handleOpen = () => {
-    onCloseOtherModals?.();
-    setIsOpen(true);
-    setTimeout(() => dialogRef.current?.focus(), 0);
-  };
+    onCloseOtherModals?.()
+    setIsOpen(true)
+    setTimeout(() => dialogRef.current?.focus(), 0)
+  }
 
   const handleCopy = () => {
     navigator.clipboard.writeText(yamlContent).then(() => {
-      setShowNotification(true);
-      setTimeout(() => setShowNotification(false), 2000);
-    });
-  };
+      setShowNotification(true)
+      setTimeout(() => setShowNotification(false), 2000)
+    })
+  }
 
   return (
     <>
@@ -94,11 +95,9 @@ const YamlModal: React.FC<YamlModalProps> = ({ yamlContent, onCloseOtherModals }
             }}
           >
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <div style={{ padding: '1rem', fontWeight: 'bold', color: '#ccc' }}>
-                Пример политики
-              </div>
-              <div style={{ padding: '0 1rem 1rem', overflow: 'auto' }}>
-                <MonacoEditor
+              <div style={{ padding: '1rem', fontWeight: 'bold', color: '#ccc' }}>Пример политики</div>
+              <div style={{ padding: '0 1rem 1rem', overflow: 'auto', maxHeight: '70vh' }}>
+                <Editor
                   height={editorHeight}
                   defaultLanguage="yaml"
                   defaultValue={yamlContent}
@@ -167,7 +166,5 @@ const YamlModal: React.FC<YamlModalProps> = ({ yamlContent, onCloseOtherModals }
         </div>
       )}
     </>
-  );
-};
-
-export default YamlModal;
+  )
+}

@@ -18,10 +18,9 @@ import Tabs from '@theme/Tabs'
 import TabItem from '@theme/TabItem'
 import CodeBlock from '@theme/CodeBlock'
 import dedent from 'ts-dedent'
-import YamlModal from '../src/components/YamlModal/YamlModal'
+import { YamlModal } from '../src/components/YamlModal/YamlModal'
 import { getBasePrefix } from '@site/src/utils/getBasePrefix'
-import {YANDEX_KUBERNETES_AUDIT_POLICY} from '@site/src/constants/kubernetes/kubernetesAudt'
-
+import { YANDEX_KUBERNETES_AUDIT_POLICY } from '@site/src/constants/kubernetes/kubernetesAudt'
 
 <h3>
   Kubernetes Audit <span style={{ color: '#1cc5ac' }}>#</span>
@@ -119,39 +118,69 @@ API-сервер обрабатывает список правил сверху
   </thead>
   <tbody>
     <tr>
-      <td><code>level</code></td>
+      <td>
+        <code>level</code>
+      </td>
       <td>Уровень детализации</td>
-      <td><code>None</code>, <code>Metadata</code>, <code>Request</code>, <code>RequestResponse</code></td>
+      <td>
+        <code>None</code>, <code>Metadata</code>, <code>Request</code>, <code>RequestResponse</code>
+      </td>
     </tr>
     <tr>
-      <td><code>users</code>, <code>userGroups</code></td>
+      <td>
+        <code>users</code>, <code>userGroups</code>
+      </td>
       <td>Фильтрация по пользователю или группе</td>
-      <td><code>system:serviceaccount:default:my-app</code></td>
+      <td>
+        <code>system:serviceaccount:default:my-app</code>
+      </td>
     </tr>
     <tr>
-      <td><code>verbs</code></td>
+      <td>
+        <code>verbs</code>
+      </td>
       <td>Операции над ресурсами</td>
-      <td><code>get</code>, <code>list</code>, <code>watch</code>, <code>create</code>, <code>update</code>, <code>patch</code>, <code>delete</code>, <code>deletecollection</code>, <code>proxy</code>, <code>redirect</code>, <code>head</code></td>
+      <td>
+        <code>get</code>, <code>list</code>, <code>watch</code>, <code>create</code>, <code>update</code>,{' '}
+        <code>patch</code>, <code>delete</code>, <code>deletecollection</code>, <code>proxy</code>,{' '}
+        <code>redirect</code>, <code>head</code>
+      </td>
     </tr>
     <tr>
-      <td><code>resources</code></td>
+      <td>
+        <code>resources</code>
+      </td>
       <td>Целевые объекты Kubernetes</td>
-      <td><code>pods</code>, <code>configmaps</code></td>
+      <td>
+        <code>pods</code>, <code>configmaps</code>
+      </td>
     </tr>
     <tr>
-      <td><code>namespaces</code></td>
+      <td>
+        <code>namespaces</code>
+      </td>
       <td>Ограничение по namespace</td>
-      <td><code>default</code>, <code>kube-system</code></td>
+      <td>
+        <code>default</code>, <code>kube-system</code>
+      </td>
     </tr>
     <tr>
-      <td><code>nonResourceURLs</code></td>
+      <td>
+        <code>nonResourceURLs</code>
+      </td>
       <td>Запросы к системным путям вне API-объектов</td>
-      <td><code>/metrics</code>, <code>/healthz</code></td>
+      <td>
+        <code>/metrics</code>, <code>/healthz</code>
+      </td>
     </tr>
     <tr>
-      <td><code>omitStages</code></td>
+      <td>
+        <code>omitStages</code>
+      </td>
       <td>Исключение стадий обработки</td>
-      <td><code>RequestReceived</code>, <code>ResponseStarted</code>, <code>ResponseComplete</code>, <code>Panic</code></td>
+      <td>
+        <code>RequestReceived</code>, <code>ResponseStarted</code>, <code>ResponseComplete</code>, <code>Panic</code>
+      </td>
     </tr>
   </tbody>
 </table>
@@ -167,19 +196,27 @@ API-сервер обрабатывает список правил сверху
   </thead>
   <tbody>
     <tr>
-      <td><code>None</code></td>
+      <td>
+        <code>None</code>
+      </td>
       <td>Не логировать событие вообще</td>
     </tr>
     <tr>
-      <td><code>Metadata</code></td>
+      <td>
+        <code>Metadata</code>
+      </td>
       <td>Логируются только метаданные запроса (пользователь, ресурс, verb и т.п.)</td>
     </tr>
     <tr>
-      <td><code>Request</code></td>
+      <td>
+        <code>Request</code>
+      </td>
       <td>Логируются метаданные и тело запроса. Ответ не логируется</td>
     </tr>
     <tr>
-      <td><code>RequestResponse</code></td>
+      <td>
+        <code>RequestResponse</code>
+      </td>
       <td>Логируются метаданные, тело запроса и тело ответа</td>
     </tr>
   </tbody>
@@ -196,25 +233,34 @@ API-сервер обрабатывает список правил сверху
   </thead>
   <tbody>
     <tr>
-      <td><code>RequestReceived</code></td>
+      <td>
+        <code>RequestReceived</code>
+      </td>
       <td>Запрос получен API-сервером, но ещё не обработан</td>
     </tr>
     <tr>
-      <td><code>ResponseStarted</code></td>
+      <td>
+        <code>ResponseStarted</code>
+      </td>
       <td>Началась отправка ответа клиенту</td>
     </tr>
     <tr>
-      <td><code>ResponseComplete</code></td>
+      <td>
+        <code>ResponseComplete</code>
+      </td>
       <td>Запрос полностью завершён</td>
     </tr>
     <tr>
-      <td><code>Panic</code></td>
+      <td>
+        <code>Panic</code>
+      </td>
       <td>Обработка запроса завершилась с фатальной ошибкой</td>
     </tr>
   </tbody>
 </table>
 
 ## Примеры политик аудита
+
 > Эти примеры помогут вам начать настройку аудита в Kubernetes. Они покрывают основные сценарии и позволяют адаптировать политику под ваши нужды.
 
 ### Подавление системного шума
@@ -1062,7 +1108,6 @@ API-сервер обрабатывает список правил сверху
 </CodeBlock>
 
 ## Заключение
-
 
 Аудит Kubernetes — мощный инструмент безопасности. Грамотная настройка политик позволяет отслеживать действия пользователей и сервисов, минимизировать утечки данных и сосредоточиться на критически важных событиях. Примеры политик в статье — отправная точка, но аудит всегда пишется под требования вашей компании и инфраструктуры.
 
