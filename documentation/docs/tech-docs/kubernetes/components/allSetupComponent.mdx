@@ -10,6 +10,9 @@ import CrictlLifecycleSettingsComponent from '@site/docs/tech-docs/kubernetes/co
 import KubeadmCheckComponent from '@site/docs/tech-docs/kubernetes/components/kubeadm/checkComponent.mdx'
 import KubeadmLifecycleSettingsComponent from '@site/docs/tech-docs/kubernetes/components/kubeadm/lifecycleSettingsComponent.mdx'
 
+import KuberentesAPIAuditPolicy from '@site/docs/tech-docs/kubernetes/components/kubelet/auditPolicy.mdx'
+
+
 import TabItem from '@theme/TabItem'
 import Tabs from '@theme/Tabs'
 
@@ -63,6 +66,17 @@ import Tabs from '@theme/Tabs'
       </summary>
       <KubeadmLifecycleSettingsComponent />
       <KubeadmCheckComponent />
+    </details>
+  </TabItem>
+  <TabItem value="Kubernetes Audit">
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Настройка Kubernetes Audit</p>
+          <p className="obligatory-note-green">● Не обязателен к применению</p>
+        </div>
+      </summary>
+      <KuberentesAPIAuditPolicy />
     </details>
   </TabItem>
 </Tabs>

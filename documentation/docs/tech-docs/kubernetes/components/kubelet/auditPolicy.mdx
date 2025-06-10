@@ -1,0 +1,26 @@
+import dedent from 'ts-dedent'
+import CodeBlock from '@theme/CodeBlock'
+import { COMPONENTS_VERSION } from '@site/src/constants/kubernetes/componentsVersion'
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+import {YANDEX_KUBERNETES_AUDIT_POLICY} from '@site/src/constants/kubernetes/kubernetesAudt'
+
+<h3>Этапы настройки компонента</h3>
+
+- Создание рабочей директории
+- Подготовка политики аудита
+
+<h3>Создание рабочей директории</h3>
+<CodeBlock language="bash">
+  {dedent`
+    mkdir -p /var/log/kubernetes/audit
+  `}
+</CodeBlock>
+
+<h3>Подготовка политики аудита</h3>
+<CodeBlock language="bash">
+    {dedent`
+      cat <<EOF > ${CUSTOM_VALUE.kubernetesAPIAuditPolicyPath.value}
+      ${YANDEX_KUBERNETES_AUDIT_POLICY.data.value}
+      EOF
+    `}
+</CodeBlock>
