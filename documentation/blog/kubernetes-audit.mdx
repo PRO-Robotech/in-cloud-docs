@@ -849,6 +849,25 @@ API-сервер обрабатывает список правил сверху
               - level: Metadata
                 omitStages:
                   - "RequestReceived"
+                verbs: ["get","list","watch"]
+                resources:
+                  - group: ""
+                    resources:
+                      - "secrets"
+
+              - level: Metadata
+                omitStages:
+                  - "RequestReceived"
+                verbs: ["delete"]
+                resources:
+                  - group: ""
+                    resources:
+                      - "secrets"
+
+              - level: Metadata
+                omitStages:
+                  - "RequestReceived"
+                verbs: ["create","patch"]
                 resources:
                   - group: ""
                     resources:
