@@ -2,10 +2,10 @@
 import { TCustomValueItems } from '../../customTypes/customValue'
 import dedent from 'ts-dedent'
 
-import {ETCD_ARGS}              from '@site/src/constants/kubernetes/etcdArgs'
-import {KUBE_API_ARGS}          from '@site/src/constants/kubernetes/kubeAPIArgs'
-import {KUBE_CONTROLLER_MANAGER_ARGS} from '@site/src/constants/kubernetes/kubeControllerManagerArgs'
-import {KUBE_SCHEDULER_ARGS} from '@site/src/constants/kubernetes/kubeSchedulerArgs'
+import { ETCD_ARGS } from '@site/src/constants/kubernetes/etcdArgs'
+import { KUBE_API_ARGS } from '@site/src/constants/kubernetes/kubeAPIArgs'
+import { KUBE_CONTROLLER_MANAGER_ARGS } from '@site/src/constants/kubernetes/kubeControllerManagerArgs'
+import { KUBE_SCHEDULER_ARGS } from '@site/src/constants/kubernetes/kubeSchedulerArgs'
 
 export const KUBERNETES_ETCD_API_ARGS: TCustomValueItems = {
   data: {
@@ -33,9 +33,9 @@ export const KUBERNETES_ETCD_API_ARGS: TCustomValueItems = {
       experimental-initial-corrupt-check: "true"
       experimental-watch-progress-notify-interval: "5s"
       trusted-ca-file: "${ETCD_ARGS.trustedCAFile.value}"
-    `
-  }
-};
+    `,
+  },
+}
 
 export const KUBERNETES_KUBE_API_ARGS: TCustomValueItems = {
   data: {
@@ -74,8 +74,8 @@ export const KUBERNETES_KUBE_API_ARGS: TCustomValueItems = {
       audit-webhook-truncate-max-batch-size: "${KUBE_API_ARGS.auditWebhookTruncateMaxBatchSize.value}"
       audit-webhook-truncate-max-event-size: "${KUBE_API_ARGS.auditWebhookTruncateMaxEventSize.value}"
       audit-webhook-version: "${KUBE_API_ARGS.auditWebhookVersion.value}"
-      audit-policy-file=${KUBE_API_ARGS.auditPolicyFile.value}
-      audit-log-path=${KUBE_API_ARGS.auditLogPath.value}
+      audit-policy-file: ${KUBE_API_ARGS.auditPolicyFile.value}
+      audit-log-path: ${KUBE_API_ARGS.auditLogPath.value}
       authentication-token-webhook-cache-ttl: "${KUBE_API_ARGS.authenticationTokenWebhookCacheTtl.value}"
       authentication-token-webhook-version: "${KUBE_API_ARGS.authenticationTokenWebhookVersion.value}"
       authorization-mode: "${KUBE_API_ARGS.authorizationMode.value}"
@@ -215,11 +215,9 @@ export const KUBERNETES_KUBE_API_ARGS: TCustomValueItems = {
       # admission-control: "${KUBE_API_ARGS.admissionControl.value}"
       # admission-control-config-file: "${KUBE_API_ARGS.admissionControlConfigFile.value}"
       # advertise-address: "${KUBE_API_ARGS.advertiseAddress.value}"
-    `
-  }
-};
-
-
+    `,
+  },
+}
 
 export const KUBERNETES_KUBE_CONTROLLER_MANAGER_ARGS: TCustomValueItems = {
   data: {
@@ -371,9 +369,9 @@ export const KUBERNETES_KUBE_CONTROLLER_MANAGER_ARGS: TCustomValueItems = {
       # volume-host-cidr-denylist: "${KUBE_CONTROLLER_MANAGER_ARGS.volumeHostCidrDenylist.value}"
       # external-cloud-volume-plugin: "${KUBE_CONTROLLER_MANAGER_ARGS.externalCloudVolumePlugin.value}"
       # requestheader-allowed-names: "${KUBE_CONTROLLER_MANAGER_ARGS.requestheaderAllowedNames.value}"
-    `
-  }
-};
+    `,
+  },
+}
 
 export const KUBERNETES_KUBE_SCHEDULER_ARGS: TCustomValueItems = {
   data: {
@@ -435,6 +433,6 @@ export const KUBERNETES_KUBE_SCHEDULER_ARGS: TCustomValueItems = {
       # tls-sni-cert-key: "${KUBE_SCHEDULER_ARGS.tlsSniCertKey.value}"
       # vmodule: "${KUBE_SCHEDULER_ARGS.vmodule.value}"
       # write-config-to: "${KUBE_SCHEDULER_ARGS.writeConfigTo.value}"
-    `
-  }
+    `,
+  },
 }
