@@ -1,0 +1,397 @@
+---
+title: 'Kubernetes pods/exec'
+description: 'Переход pods/exec на WebSocket (GET вместо POST), влияние на RBAC и риски разрешений в Kubernetes.'
+date: 2025-08-18
+slug: kubernetes-pods-exec
+authors:
+  - name: Путилин Дмитрий Львович
+    title: Архитектор
+    url: https://t.me/bezumniy_kot_work
+    image_url: https://avatars.githubusercontent.com/u/107264732?v=4
+    socials:
+      github: FR-Solution
+toc_min_heading_level: 2
+toc_max_heading_level: 2
+tags: [Kubernetes, RBAC, Security, pods/exec]
+---
+
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
+import CodeBlock from '@theme/CodeBlock'
+import dedent from 'ts-dedent'
+import { YamlModal } from '../src/components/YamlModal/YamlModal'
+import { getBasePrefix } from '@site/src/utils/getBasePrefix'
+import { YANDEX_KUBERNETES_AUDIT_POLICY } from '@site/src/constants/kubernetes/kubernetesAudt'
+
+<h3>
+  Kubernetes pods/exec <span style={{ color: '#1cc5ac' }}>#</span>
+</h3>
+
+<p style={{ fontStyle: 'italic', fontWeight: 600 }}>
+  Разбираем переход на WebSocket и его влияние на RBAC.
+</p>
+
+<div
+  style={{
+    display: 'flex',
+    flexWrap: 'wrap',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    gap: '30px',
+    marginTop: '1.5rem',
+  }}
+>
+  <div style={{ flex: '1 1 58%', minWidth: '280px', maxWidth: '620px' }}>
+    <p>
+      <code>pods/exec</code> — удобный способ выполнять команды внутри контейнера для отладки и администрирования.
+      В новых версиях Kubernetes произошёл переход со старого SPDY на WebSocket, что меняет сетевое взаимодействие и затрагивает модель прав.
+    </p>
+  </div>
+
+  <div
+    style={{
+      flex: '1 1 35%',
+      minWidth: '200px',
+      textAlign: 'center',
+      marginTop: '-7rem',
+    }}
+  >
+    <img
+      src={`${getBasePrefix()}img/pods-exec/promo.png`}
+      alt="pods/exec audit"
+      style={{
+        width: '100%',
+        maxWidth: '330px',
+        filter: 'drop-shadow(0 0 30px rgba(196, 202, 255, 0.2))',
+        transition: 'transform 0.3s ease-in-out',
+      }}
+    />
+  </div>
+</div>
+
+
+{/* truncate */}
+
+## Оглавление
+
+- [Что изменилось](#что-изменилось)
+- [Влияние на kubectl и RBAC](#влияние-на-kubectl-и-rbac)
+- [Демонстрация (kubectl 1.33.3 vs 1.29.0)](#демонстрация-kubectl-1333-vs-1290)
+- [Проверка на Minikube](#проверка-на-minikube)
+- [Итоги и рекомендации](#итоги-и-рекомендации)
+
+## Что изменилось
+
+Переход клиентских потоков (`kubectl exec`, `attach`, `port-forward` и др.) на WebSocket: по умолчанию используется WebSocket вместо SPDY.
+Это делает взаимодействие эффективнее и влияет на трактовку RBAC для подресурса `pods/exec`.
+
+Источник: [Streaming Transitions from SPDY to WebSockets](https://kubernetes.io/blog/2024/08/20/websockets-transition/)
+
+## Влияние на kubectl и RBAC
+
+- Ранее `kubectl exec` чаще шёл через **POST**; теперь — через **GET** с апгрейдом до WebSocket.
+- Для `pods/exec` достаточно **`get`** (в современных версиях) либо **`create`** (в старых), в зависимости от клиента/кластера.
+- Это меняет оценку «безопасности» правил вроде «`verbs: ["get"]` на `resources: ["*"]` в `apiGroups: [""]` » — такой доступ может открыть и `pods/exec`.
+
+## Проверка на Minikube
+
+<h3>Кластер и контексты</h3>
+
+<CodeBlock language="bash">
+  {dedent`
+    minikube -p 13201 start --kubernetes-version=1.32.1 --ssh-port=13201
+  `}
+</CodeBlock>
+
+<CodeBlock language="bash">
+  {dedent`
+    kubectl get nodes
+  `}
+</CodeBlock>
+
+<CodeBlock language="bash">
+  {dedent`
+    NAME    STATUS   ROLES           AGE   VERSION
+    13201   Ready    control-plane   60s   v1.32.1
+  `}
+</CodeBlock>
+
+<h3>cluster-admin и anonymous</h3>
+
+<CodeBlock language="bash">
+  {dedent`
+    export KUBECONFIG=cluster-admin
+    minikube -p 13201 update-context
+  `}
+</CodeBlock>
+
+<CodeBlock language="bash">
+  {dedent`
+    export KUBECONFIG=anonymous-view
+    minikube -p 13201 update-context
+    sed -i '/^[[:space:]]*users:/,$d' anonymous-view
+  `}
+</CodeBlock>
+
+<h3>Pod и проверки exec</h3>
+
+<CodeBlock language="bash">
+  {dedent`
+    kubectl \\
+      --kubeconfig=cluster-admin \\
+      apply -f - <<EOF
+    ---
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
+    EOF
+  `}
+</CodeBlock>
+
+<CodeBlock language="bash">
+  {dedent`
+    kubectl --kubeconfig=cluster-admin get po
+  `}
+</CodeBlock>
+
+<CodeBlock language="bash">
+  {dedent`
+    NAME    READY   STATUS    RESTARTS   AGE
+    nginx   1/1     Running   0          23s
+  `}
+</CodeBlock>
+
+<h3>exec: cluster-admin vs anonymous</h3>
+
+<CodeBlock language="bash">
+  {dedent`
+    kubectl --kubeconfig=cluster-admin exec -it nginx -- sh
+  `}
+</CodeBlock>
+
+<CodeBlock language="bash">
+  {dedent`
+    # ls -al
+    total 76
+    drwxr-xr-x   1 root root 4096 Aug 18 15:09 .
+    drwxr-xr-x   1 root root 4096 Aug 18 15:09 ..
+  `}
+</CodeBlock>
+
+<CodeBlock language="bash">
+  {dedent`
+    kubectl --kubeconfig=anonymous-view exec -it nginx -- sh
+  `}
+</CodeBlock>
+
+<CodeBlock language="bash">
+  {dedent`
+    Error from server (Forbidden): pods "nginx" is forbidden: User "system:anonymous" cannot get resource "pods" in API group "" in the namespace "default"
+  `}
+</CodeBlock>
+
+<h3>Добавляем доступ только на <code>get</code></h3>
+:::note
+  Просьба обратить внимание что вместе с pods/exec добавляется доступ к pods иначе exec не будет работать.
+:::
+<CodeBlock language="bash">
+  {dedent`
+    kubectl \\
+      --kubeconfig=cluster-admin \\
+      apply -f - <<EOF
+    ---
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: ClusterRole
+    metadata:
+      name: anonymous-view
+    rules:
+      - apiGroups: [""]
+        resources:
+          - pods
+          - pods/exec
+        verbs: ["get"]
+    ---
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: ClusterRoleBinding
+    metadata:
+      name: anonymous-view
+    roleRef:
+      apiGroup: rbac.authorization.k8s.io
+      kind: ClusterRole
+      name: anonymous-view
+    subjects:
+      - kind: User
+        name: system:anonymous
+        apiGroup: rbac.authorization.k8s.io
+    EOF
+  `}
+</CodeBlock>
+
+<CodeBlock language="bash">
+  {dedent`
+    clusterrole.rbac.authorization.k8s.io/anonymous-view created
+    clusterrolebinding.rbac.authorization.k8s.io/anonymous-view created
+  `}
+</CodeBlock>
+
+<CodeBlock language="bash">
+  {dedent`
+    kubectl --kubeconfig=anonymous-view exec -it nginx -- sh
+  `}
+</CodeBlock>
+
+<CodeBlock language="bash">
+  {dedent`
+    # ls -la
+    total 76
+    drwxr-xr-x   1 root root 4096 Aug 18 15:09 .
+    drwxr-xr-x   1 root root 4096 Aug 18 15:09 ..
+    -rwxr-xr-x   1 root root    0 Aug 18 15:09 .dockerenv
+    drwxr-xr-x   2 root root 4096 Mar 26  2019 bin
+    drwxr-xr-x   2 root root 4096 Feb  3  2019 boot
+    drwxr-xr-x   5 root root  360 Aug 18 15:09 dev
+  `}
+</CodeBlock>
+
+## Демонстрация (kubectl 1.33.3 vs 1.29.0)
+
+<details open>
+  <summary>
+    <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+      <p style={{ marginBottom: 0 }}>kubectl v1.33.3</p>
+    </div>
+  </summary>
+
+  <CodeBlock language="bash">
+    {dedent`
+      kubectl version
+      Client Version: v1.33.3
+    `}
+  </CodeBlock>
+
+  <CodeBlock language="bash">
+    {dedent`
+      kubectl exec -it nginx -- sh
+    `}
+  </CodeBlock>
+
+  <CodeBlock language="bash">
+    {dedent`
+      ******
+      verb="GET" url="/api/v1/namespaces/default/pods/incloud-web-incloud-web-chart-d99877d74-27tcd/exec?command=sh&container=nginx&stdin=true&stdout=true&tty=true"
+      ******
+    `}
+  </CodeBlock>
+
+  <CodeBlock language="bash">
+    {dedent`
+      / $ ls -al
+      total 76
+      drwxr-xr-x    1 root     root          4096 Aug 16 20:43 .
+      drwxr-xr-x    1 root     root          4096 Aug 16 20:43 ..
+      drwxr-xr-x    2 root     root          4096 Jul 15 10:42 bin
+      drwxr-xr-x    5 root     root           360 Aug 16 20:43 dev
+    `}
+  </CodeBlock>
+</details>
+
+<details open>
+  <summary>
+    <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+      <p style={{ marginBottom: 0 }}>kubectl v1.29.0</p>
+    </div>
+  </summary>
+
+  <CodeBlock language="bash">
+    {dedent`
+      kubectl version
+      Client Version: v1.29.0
+    `}
+  </CodeBlock>
+
+  <CodeBlock language="bash">
+    {dedent`
+      kubectl exec -it nginx -- sh
+    `}
+  </CodeBlock>
+
+  <CodeBlock language="bash">
+    {dedent`
+      ******
+      POST https://api/v1/namespaces/default/pods/incloud-web-incloud-web-chart-d99877d74-27tcd/exec?command=sh&container=nginx&stdin=true&stdout=true&tty=true
+      ******
+    `}
+  </CodeBlock>
+
+  <CodeBlock language="bash">
+    {dedent`
+      / $ ls -al
+      total 76
+      drwxr-xr-x    1 root     root          4096 Aug 16 20:43 .
+      drwxr-xr-x    1 root     root          4096 Aug 16 20:43 ..
+      drwxr-xr-x    2 root     root          4096 Jul 15 10:42 bin
+      drwxr-xr-x    5 root     root           360 Aug 16 20:43 dev
+    `}
+  </CodeBlock>
+</details>
+
+<h3>Kuberentes Audit</h3>
+<CodeBlock language="bash">
+  {dedent`
+    {
+      "annotations": {
+        "authorization.k8s.io/decision": "allow",
+        "authorization.k8s.io/reason": "RBAC: allowed by ClusterRoleBinding \"anonymous-view-all\" of ClusterRole \"anonymous-view\" to User \"system:anonymous\""
+      },
+      "apiVersion": "audit.k8s.io/v1",
+      "auditID": "142e967e-4958-4a77-b691-2f71e26ba6ec",
+      "kind": "Event",
+      "level": "Request",
+      "objectRef": {
+        "apiVersion": "v1",
+        "name": "nginx",
+        "namespace": "default",
+        "resource": "pods",
+        "subresource": "exec"
+      },
+      "requestReceivedTimestamp": "2025-08-15T16:46:50.233954Z",
+      "requestURI": "/api/v1/namespaces/default/pods/nginx/exec?container=liveness-probe&stdin=true&stdout=true&tty=true&command=sh&command=-c&command=stty%20cols%20999%3B%20exec%20%2Fbin%2Fsh",
+      "responseStatus": {
+        "code": 101,
+        "metadata": {}
+      },
+      "sourceIPs": [
+        "10.0.0.33"
+      ],
+      "stage": "ResponseComplete",
+      "stageTimestamp": "2025-08-15T16:46:50.296700Z",
+      "user": {
+        "groups": [
+          "system:unauthenticated"
+        ],
+        "username": "system:anonymous"
+      },
+      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36",
+      "verb": "get"
+    }
+  `}
+</CodeBlock>
+
+
+:::danger Опасный паттерн
+`verbs: ["get"]` на `resources: ["*"]` в `apiGroups: [""]` может фактически разрешить `pods/exec`. Проверяйте агрегации и wildcard-правила.
+:::
+
+## Итоги и рекомендации
+
+- `pods/exec` больше нельзя оценивать как «безопасный» в рамках общего `get` на все ресурсы.
+- Проверяйте роли и агрегации: наличие `pods/exec` под `get` теперь критично.
+- Поддерживайте принцип наименьших прав: отделяйте `pods` (чтение) и `pods/exec` (строго контролируемый доступ).
+- Добавьте аудит событий `pods/exec` и алерты (по необходимости — ограничивайте `kubectl`-версии, используемые в периметре).
