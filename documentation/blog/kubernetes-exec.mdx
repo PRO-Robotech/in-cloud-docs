@@ -332,12 +332,7 @@ import { YANDEX_KUBERNETES_AUDIT_POLICY } from '@site/src/constants/kubernetes/k
 
   <CodeBlock language="bash">
     {dedent`
-      / $ ls -al
-      total 76
-      drwxr-xr-x    1 root     root          4096 Aug 16 20:43 .
-      drwxr-xr-x    1 root     root          4096 Aug 16 20:43 ..
-      drwxr-xr-x    2 root     root          4096 Jul 15 10:42 bin
-      drwxr-xr-x    5 root     root           360 Aug 16 20:43 dev
+      Error from server (Forbidden): pods "nginx" is forbidden: User "system:anonymous" cannot get resource "pods" in API group "" in the namespace "default"
     `}
   </CodeBlock>
 </details>
