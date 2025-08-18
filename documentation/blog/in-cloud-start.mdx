@@ -1,0 +1,1343 @@
+---
+title: 'InCloud: начало'
+date: 2025-03-23
+slug: incloud-start
+authors:
+  - name: Путилин Дмитрий Львович
+    title: Архитектор
+    url: https://t.me/bezumniy_kot_work
+    image_url: https://avatars.githubusercontent.com/u/107264732?v=4
+    socials:
+      github: FR-Solution
+toc_min_heading_level: 2
+toc_max_heading_level: 2
+tags: [Kubernetes, Handler-Pipeline, Audit]
+---
+
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
+import CodeBlock from '@theme/CodeBlock'
+import dedent from 'ts-dedent'
+import { YamlModal } from '../src/components/YamlModal/YamlModal'
+import { getBasePrefix } from '@site/src/utils/getBasePrefix'
+import { FancyboxImage } from '@site/src/components/commonBlocks/FancyboxImage'
+
+### InCloud: начало <span style={{ color: '#1cc5ac' }}>#</span>
+
+<p style={{ fontStyle: 'italic', fontWeight: 600 }}>
+  Открываем серию статей о Kubernetes в новом формате — через практику, опыт и архитектуру.
+</p>
+
+<div
+  style={{
+    display: 'flex',
+    flexWrap: 'wrap',
+    alignItems: 'flex-start',
+    gap: '30px',
+    marginTop: '1.5rem',
+  }}
+>
+  <div style={{ flex: '1 1 55%', minWidth: '280px' }}>
+    <p>
+      Эта статья открывает серию, посвящённую <strong>InCloud</strong> — первому в отрасли динамическому UI для Kubernetes. Мы расскажем, как родилась идея, какие проблемы она решает и как начать работу с платформой уже сегодня.
+    </p>
+  </div>
+
+  <div
+    style={{
+      flex: '1 1 40%',
+      minWidth: '220px',
+      textAlign: 'center',
+      marginTop: '-3rem',
+    }}
+  >
+    <img
+      src={`${getBasePrefix()}img/audit/audit-promo.png`}
+      alt="InCloud Audit Promo"
+      style={{
+        width: '110%',
+        maxWidth: '330px',
+        filter: 'drop-shadow(0 0 30px rgba(196, 202, 255, 0.2))',
+        transition: 'transform 0.3s ease-in-out',
+      }}
+    />
+  </div>
+</div>
+
+## Оглавление
+
+- [Предпосылки](#предпосылки)
+- [Openshift Console](#openshift-console)
+- [HeadLamp](#headlamp)
+- [Найм команды](#найм-команды)
+- [Идея InCloud](#идея-incloud)
+- [Что нужно для такого интерфейса?](#что-нужно-для-такого-интерфейса)
+
+## Предпосылки
+
+Первые шаги к созданию InCloud начались около пяти лет назад, когда я работал в центральном аппарате Сбербанка. Тогда мы внедряли Kubernetes на масштабах предприятия и столкнулись с необходимостью дать пользователям удобный веб-интерфейс.
+
+## Openshift Console
+
+На тот момент основным решением стала Openshift Console — зрелый инструмент, уже встроенный в нашу экосистему. Он был логичным выбором благодаря широким возможностям и поддержке плагинов.
+
+### Проблемы Openshift
+
+1. **Зависимость от компонентов Openshift.** Без них ломались ключевые функции — например, просмотр логов требовал объект `project`.
+2. **Негибкий сайдбар.** Являясь основой навигации, он не поддавался настройке.
+3. **Сложности в кастомизации:**
+   - Нет мультикластерной поддержки.
+   - Нельзя настраивать колонки в табличных видах.
+   - Невозможно изменить поведение сводных страниц.
+
+### Преимущества Openshift
+
+- Продвинутый движок навигации и поиска.
+- Поддержка расширений.
+- Широкое распространение в отрасли.
+
+## HeadLamp
+
+После Сбербанка я столкнулся с другим решением — **HeadLamp**. Оно входило в CNCF и уже покрывало часть наших нужд через плагины.
+
+### Проблемы HeadLamp
+
+1. Сайдбар снова оказался негибким — настраивался только через плагины.
+2. Расширение интерфейса требовало глубокого погружения в SDK.
+
+### Плюсы
+
+- Зрелое open-source решение.
+- Хорошая база плагинов.
+- Поддержка из коробки, вход в CNCF.
+
+## Найм команды
+
+В 2023 году стало очевидно: нам нужен собственный путь. Мы начали с найма команды фронтенд-разработчиков и за полгода поняли — ни HeadLamp, ни Openshift Console не позволят нам реализовать наш подход.
+
+Мы хотели интерфейс, который **не пишется, а конфигурируется**. Это и стало философией InCloud.
+
+## Идея InCloud
+
+Что делает UI идеальным?
+
+- Он адаптируется под процессы, а не навязывает свои.
+- Он работает "из коробки", но остаётся гибким.
+- Он поддерживает любые Kubernetes-ресурсы.
+
+Главное: интерфейс не должен диктовать, как жить. Он должен **подстраиваться**.
+
+## Что нужно для такого интерфейса?
+
+<h3>Работа с ресурсами</h3>
+
+---
+
+<h4>Области видимости</h4>
+<table>
+  <thead>
+    <tr>
+      <th>Префикс</th>
+      <th>Значение</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>stock</code></td>
+      <td>Пользовательский UI</td>
+    </tr>
+    <tr>
+      <td><code>inside</code></td>
+      <td>Административный UI</td>
+    </tr>
+    <tr>
+      <td><code>namespace</code></td>
+      <td>Объекты в пространстве имён</td>
+    </tr>
+    <tr>
+      <td><code>cluster</code></td>
+      <td>Объекты типа ClusterScope или Namespaced во всех Namespaces</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+<h4>Типы страниц</h4>
+<table>
+  <thead>
+    <tr>
+      <th>Тип</th>
+      <th>Назначение</th>
+      <th>Пример запроса</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>api-form</code></td>
+      <td>Форма создания ресурса (<code>/apis/...</code>)</td>
+      <td><code>apps/v1/Deployment</code></td>
+    </tr>
+    <tr>
+      <td><code>api-table</code></td>
+      <td>Таблица ресурсов (<code>/apis/...</code>)</td>
+      <td><code>batch/v1/Job</code></td>
+    </tr>
+    <tr>
+      <td><code>builtin-form</code></td>
+      <td>Форма для <code>core/v1</code></td>
+      <td><code>v1/Pod</code></td>
+    </tr>
+    <tr>
+      <td><code>builtin-table</code></td>
+      <td>Таблица для <code>core/v1</code></td>
+      <td><code>v1/Service</code></td>
+    </tr>
+    <tr>
+      <td><code>factory</code></td>
+      <td>Выделенные страницы фабрики</td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+<h3>Sidebar — основной инструмент навигации</h3>
+
+<p>
+  Sidebar в InCloud — это базовый элемент навигации. Он отвечает за доступ к ресурсам и страницам интерфейса и настраивается через YAML-конфигурацию.
+  Такой подход позволяет управлять структурой и содержимым сайдбара декларативно, без жёсткой привязки к коду.
+</p>
+
+<p>
+  В отличие от статичных решений, сайдбар в InCloud можно адаптировать под конкретные команды и их рабочие процессы.
+  Это даёт возможность настраивать разные области видимости — пользовательскую, административную, кластерную или namespace — и поддерживать разные сценарии работы без дублирования интерфейса.
+</p>
+
+---
+
+<h4>Структура полей menuItems</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Поле</th>
+      <th>Тип</th>
+      <th>Описание</th>
+      <th>Пример</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>spec.id</code></td>
+      <td>string</td>
+      <td>Уникальный идентификатор sidebar, отображается в UI.</td>
+      <td>
+        <YamlModal
+          yamlContent={dedent`
+            ### Административный интерфейс
+            id: inside-cluster-api-form
+            id: inside-cluster-api-table
+            id: inside-cluster-builtin-form
+            id: inside-cluster-builtin-table
+            id: inside-namespace-api-form
+            id: inside-namespace-api-table
+            id: inside-namespace-builtin-form
+            id: inside-namespace-builtin-table
+
+            ### Пользовательский интерфейс
+            id: stock-cluster-api-form
+            id: stock-cluster-api-table
+            id: stock-cluster-builtin-form
+            id: stock-cluster-builtin-table
+            id: stock-project-api-form
+            id: stock-project-api-table
+            id: stock-project-builtin-form
+            id: stock-project-builtin-table
+            id: stock-project-factory-*factoryName
+          `}
+        />
+      </td>
+    </tr>
+    <tr>
+      <td><code>spec.keysAndTags</code></td>
+      <td>object</td>
+      <td>Сопоставление ключей и тегов для sidebar</td>
+      <td>
+        <YamlModal
+          yamlContent={dedent`
+            keysAndTags:
+              # key — указатель на spec.menuItems[].children[].key
+              pods:
+                # tags — указатели со стороны фабрики на ключи, которые будут использоваться в сайдбаре
+                - pod-sidebar
+          `}
+        />
+      </td>
+    </tr>
+    <tr>
+      <td><code>spec.keysAndTags.\{childrenKey\}</code></td>
+      <td>array</td>
+      <td>Массив тегов для привязки конкретного ключа</td>
+      <td>
+        <CodeBlock language="yaml">
+          {dedent`
+            - pod-sidebar
+          `}
+        </CodeBlock>
+      </td>
+    </tr>
+    <tr>
+      <td><code>spec.menuItems[]</code></td>
+      <td>array</td>
+      <td>Список элементов меню в сайдбаре</td>
+      <td>
+        <YamlModal
+          yamlContent={dedent`
+            - children:
+                - key: pods
+                  label: Pods
+                  link: /openapi-ui/{clusterName}/{namespace}/builtin-table/pods
+              key: workloads
+              label: Workloads
+          `}
+        />
+      </td>
+    </tr>
+    <tr>
+      <td><code>spec.menuItems[].key</code></td>
+      <td>string</td>
+      <td>Уникальный ключ группы меню</td>
+      <td>
+        <CodeBlock language="yaml">
+          {dedent`
+            workloads
+          `}
+        </CodeBlock>
+      </td>
+    </tr>
+    <tr>
+      <td><code>spec.menuItems[].label</code></td>
+      <td>string</td>
+      <td>Отображаемое имя группы меню</td>
+      <td>
+        <CodeBlock language="yaml">
+          {dedent`
+            Workloads
+          `}
+        </CodeBlock>
+      </td>
+    </tr>
+    <tr>
+      <td><code>spec.menuItems[].children[]</code></td>
+      <td>array</td>
+      <td>Вложенные пункты меню</td>
+      <td>
+        <YamlModal
+          yamlContent={dedent`
+            - key: pods
+              label: Pods
+              link: /openapi-ui/{clusterName}/{namespace}/builtin-table/pods
+          `}
+        />
+      </td>
+    </tr>
+    <tr>
+      <td><code>spec.menuItems[].children[].key</code></td>
+      <td>string</td>
+      <td>Уникальный ключ пункта меню</td>
+      <td>
+        <CodeBlock language="yaml">
+          {dedent`
+            pods
+          `}
+        </CodeBlock>
+      </td>
+    </tr>
+    <tr>
+      <td><code>spec.menuItems[].children[].label</code></td>
+      <td>string</td>
+      <td>Отображаемое имя в интерфейсе</td>
+      <td>
+        <CodeBlock language="yaml">
+          {dedent`
+            Pods
+          `}
+        </CodeBlock>
+      </td>
+    </tr>
+    <tr>
+      <td><code>spec.menuItems[].children[].link</code></td>
+      <td>string</td>
+      <td>Путь в интерфейсе UI</td>
+      <td>
+        <YamlModal
+          yamlContent={dedent`
+            # {clusterName}   — имя кластера
+            # {namespace}     — пространство имён (или all-namespaces)
+            # {typeName}      — ресурс (pods, deployments и т.д.)
+            # {apiGroup}      — группа API (apps, batch, networking.k8s.io)
+            # {apiVersion}    — версия API (v1, v1beta1, v1alpha1)
+
+            # default — cluster list
+            link: /openapi-ui/clusters
+
+            # default — cluster route
+            link: /openapi-ui/\{clusterName\}
+
+            # builtin — namespace scope
+            link: /openapi-ui/\{clusterName\}/\{namespace\}/builtin-table/pods
+            link: /openapi-ui/\{clusterName\}/\{namespace\}/builtin-form/pods
+            link: /openapi-ui/\{clusterName\}/\{namespace\}/builtin-table/{typeName}
+            link: /openapi-ui/\{clusterName\}/\{namespace\}/builtin-form/{typeName}
+
+            # builtin — cluster scope
+            link: /openapi-ui/\{clusterName\}/builtin-table/pods
+            link: /openapi-ui/\{clusterName\}/builtin-form/pods
+            link: /openapi-ui/\{clusterName\}/api-table/{typeName}
+            link: /openapi-ui/\{clusterName\}/api-form/{typeName}
+
+            # api — namespace scope
+            link: /openapi-ui/\{clusterName\}/\{namespace\}/api-table/apps/v1/deployments
+            link: /openapi-ui/\{clusterName\}/\{namespace\}/api-form/apps/v1/deployments
+            link: /openapi-ui/\{clusterName\}/\{namespace\}/api-table/{apiGroup}/{apiVersion}/{typeName}
+            link: /openapi-ui/\{clusterName\}/\{namespace\}/api-form/{apiGroup}/{apiVersion}/{typeName}
+
+            # api — cluster scope
+            link: /openapi-ui/\{clusterName\}/api-table/apps/v1/deployments
+            link: /openapi-ui/\{clusterName\}/api-form/apps/v1/deployments
+            link: /openapi-ui/\{clusterName\}/api-table/{apiGroup}/{apiVersion}/{typeName}
+            link: /openapi-ui/\{clusterName\}/api-form/{apiGroup}/{apiVersion}/{typeName}
+          `}
+        />
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+<h4>Настройка sidebar</h4>
+
+<details close className="custom-gray-block">
+  <summary>
+    <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+      <p style={{ marginBottom: 0 }}>Sidebar Example</p>
+    </div>
+  </summary>
+  <CodeBlock language="yaml">
+    {dedent`
+      ---
+      apiVersion: front.in-cloud.io/v1alpha1
+      kind: Sidebar
+      metadata:
+        name: stock-cluster-api-table
+      spec:
+        id: stock-cluster-api-table
+        menuItems:
+          - children:
+              - key: pods
+                label: Pods
+                link: /openapi-ui/{clusterName}/builtin-table/pods
+              - key: deployments
+                label: Deployments
+                link: /openapi-ui/{clusterName}/api-table/apps/v1/deployments
+              - key: statefulsets
+                label: Statefulsets
+                link: /openapi-ui/{clusterName}/api-table/apps/v1/statefulsets
+              - key: secrets
+                label: Secrets
+                link: /openapi-ui/{clusterName}/builtin-table/secrets
+              - key: configmaps
+                label: ConfigMaps
+                link: /openapi-ui/{clusterName}/builtin-table/configmaps
+              - key: cronjobs
+                label: CronJobs
+                link: /openapi-ui/{clusterName}/api-table/batch/v1/cronjobs
+              - key: jobs
+                label: Jobs
+                link: /openapi-ui/{clusterName}/api-table/batch/v1/jobs
+              - key: daemonsets
+                label: Daemonsets
+                link: /openapi-ui/{clusterName}/api-table/apps/v1/daemonsets
+              - key: replicasets
+                label: ReplicaSets
+                link: /openapi-ui/{clusterName}/api-table/apps/v1/replicasets
+              - key: replicationcontrollers
+                label: ReplicationControllers
+                link: /openapi-ui/{clusterName}/builtin-table/replicationcontrollers
+              - key: horizontalpodautoscalers
+                label: HorizontalPodAutoscalers
+                link: /openapi-ui/{clusterName}/api-table/autoscaling/v2/horizontalpodautoscalers
+              - key: poddisruptionbudgets
+                label: PodDisruptionBudgets
+                link: /openapi-ui/{clusterName}/api-table/policy/v1/poddisruptionbudgets
+            key: workloads
+            label: Workloads
+          - children:
+              - key: services
+                label: Services
+                link: /openapi-ui/{clusterName}/builtin-table/services
+              - key: networkpolicies
+                label: NetworkPolicies
+                link: /openapi-ui/{clusterName}/api-table/networking.k8s.io/v1/networkpolicies
+              - key: ingresses
+                label: Ingresses
+                link: /openapi-ui/{clusterName}/api-table/networking.k8s.io/v1/ingresses
+            key: networking
+            label: Networking
+          - children:
+              - key: persistentvolumes
+                label: PersistentVolumes
+                link: /openapi-ui/{clusterName}/builtin-table/persistentvolumes
+              - key: persistentvolumeclaims
+                label: PersistentVolumeClaims
+                link: /openapi-ui/{clusterName}/builtin-table/persistentvolumeclaims
+              - key: storageclasses
+                label: StorageClasses
+                link: /openapi-ui/{clusterName}/api-table/storage.k8s.io/v1/storageclasses
+            key: storage
+            label: Storage
+          - children:
+              - key: nodes
+                label: Nodes
+                link: /openapi-ui/{clusterName}/builtin-table/nodes
+            key: compute
+            label: Compute
+          - children:
+              - key: groups
+                label: ServiceAccounts
+                link: /openapi-ui/{clusterName}/builtin-table/serviceaccounts
+              - key: roles
+                label: Roles
+                link: /openapi-ui/{clusterName}/api-table/rbac.authorization.k8s.io/v1/roles
+              - key: rolebindings
+                label: RoleBindings
+                link: /openapi-ui/{clusterName}/api-table/rbac.authorization.k8s.io/v1/rolebindings
+              - key: clusterroles
+                label: ClusterRoles
+                link: /openapi-ui/{clusterName}/api-table/rbac.authorization.k8s.io/v1/clusterroles
+              - key: clusterrolebindings
+                label: ClusterRoleBindings
+                link: /openapi-ui/{clusterName}/api-table/rbac.authorization.k8s.io/v1/clusterrolebindings
+            key: usermanagement
+            label: User Management
+          - children:
+              - key: namespaces
+                label: Namespaces
+                link: /openapi-ui/{clusterName}/builtin-table/namespaces
+              - key: limitranges
+                label: LimitRanges
+                link: /openapi-ui/{clusterName}/builtin-table/limitranges
+              - key: resourcequotas
+                label: ResourceQuotas
+                link: /openapi-ui/{clusterName}/builtin-table/resourcequotas
+              - key: customresourcedefinitions
+                label: CustomResourceDefinitions
+                link: /openapi-ui/{clusterName}/api-table/apiextensions.k8s.io/v1/customresourcedefinitions
+            key: administration
+            label: Administration
+  `}
+  </CodeBlock>
+</details>
+
+
+---
+
+:::warning
+Просьба обратить внимание что id связаны между компонентами интерфейса и подчиняются правилам именования.
+:::
+
+
+:::info
+Просьба учитывать, что сайдбары требуется настраивать под каждую область видимости.
+Для административного и пользовательского интерфейсов конфигурация может различаться.
+Также сайдбар необходимо описывать под каждую страницу фабрики. На первый взгляд это может показаться избыточным, но именно такой подход обеспечивает гибкость и позволяет адаптировать интерфейс под конкретные команды и их процессы.
+:::
+
+<figure style={{ textAlign: 'center', display: 'contents' }}>
+  <FancyboxImage
+    src={`${getBasePrefix()}img/incloud/interfaces/pod-ns-all-sidebar.png`}
+    style={{ width: '100%', maxWidth: 'none' }}
+  />
+  <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
+    Пример сайдбара для страницы Pods в пространстве имён All
+  </figcaption>
+</figure>
+
+---
+<h3>Breadcrumb — побочный инструмент навигации</h3>
+
+<p>
+  Breadcrumb в InCloud — это дополнительный элемент навигации. Он показывает путь от корневого уровня до текущей страницы и помогает пользователю понимать контекст,
+  в котором он работает. Основная цель — дать быстрый доступ к предыдущим уровням без необходимости возвращаться к сайдбару или выполнять повторный поиск.
+</p>
+
+<p>
+  Цепочка формируется декларативно на основе YAML-описания. Каждый элемент имеет ключ, отображаемое имя и ссылку, в которых могут использоваться плейсхолдеры
+  (<code>\{clusterName}</code>, <code>\{namespace}</code>, <code>\{apiGroup}</code>, <code>\{apiVersion}</code>, <code>\{typeName}</code>).
+  Это позволяет гибко настраивать структуру навигации под конкретный сценарий работы.
+</p>
+
+<p>
+  В отличие от Sidebar, Breadcrumb не определяет логику интерфейса, а дополняет её. Он служит для удобства и экономии времени, когда необходимо перемещаться
+  по вложенным уровням интерфейса или быстро переключаться между кластерами и пространствами имён.
+</p>
+
+---
+<h4>Структура полей Breadcrumb</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Поле</th>
+      <th>Тип</th>
+      <th>Описание</th>
+      <th>Пример</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>spec.id</code></td>
+      <td>string</td>
+      <td>Уникальный идентификатор цепочки навигации (breadcrumb), отображается в UI.</td>
+      <td>
+        <YamlModal
+          yamlContent={dedent`
+            ### Административный интерфейс
+            id: inside-cluster-api-form
+            id: inside-cluster-api-table
+            id: inside-cluster-builtin-form
+            id: inside-cluster-builtin-table
+            id: inside-namespace-api-form
+            id: inside-namespace-api-table
+            id: inside-namespace-builtin-form
+            id: inside-namespace-builtin-table
+
+            ### Пользовательский интерфейс
+            id: stock-cluster-api-form
+            id: stock-cluster-api-table
+            id: stock-cluster-builtin-form
+            id: stock-cluster-builtin-table
+            id: stock-project-api-form
+            id: stock-project-api-table
+            id: stock-project-builtin-form
+            id: stock-project-builtin-table
+            id: stock-project-factory-*factoryName
+          `}
+        />
+      </td>
+    </tr>
+    <tr>
+      <td><code>spec.breadcrumbItems[]</code></td>
+      <td>array</td>
+      <td>Список элементов навигационной цепочки (breadcrumb trail).</td>
+      <td>
+        <YamlModal
+          yamlContent={dedent`
+            # Пример цепочки навигации для страницы создания ресурса в пространстве имён
+            breadcrumbItems:
+              - key: In-Cloud
+                label: In-Cloud
+                link: "/openapi-ui"
+              - key: clusterList
+                label: "Cluster List"
+                link: "/openapi-ui/clusters"
+              - key: cluster
+                label: "{clusterName}"
+                link: "/openapi-ui/clusters/{clusterName}"
+              - key: namespaces
+                label: "Namespaces"
+              - key: namespace
+                label: "All"
+              - key: api
+                label: "{typeName}"
+          `}
+        />
+      </td>
+    </tr>
+    <tr>
+      <td><code>spec.breadcrumbItems[].key</code></td>
+      <td>string</td>
+      <td>Уникальный ключ пункта в цепочке навигации.</td>
+      <td>
+        <CodeBlock language="yaml">
+          {dedent`
+            clusterList
+          `}
+        </CodeBlock>
+      </td>
+    </tr>
+    <tr>
+      <td><code>spec.breadcrumbItems[].label</code></td>
+      <td>string</td>
+      <td>Отображаемое имя пункта навигации в UI.</td>
+      <td>
+        <CodeBlock language="yaml">
+          {dedent`
+            Cluster List
+          `}
+        </CodeBlock>
+      </td>
+    </tr>
+    <tr>
+      <td><code>spec.breadcrumbItems[].link</code></td>
+      <td>string</td>
+      <td>
+        Ссылка на страницу, соответствующую элементу навигации.
+      </td>
+      <td>
+        <YamlModal
+          yamlContent={dedent`
+            # {clusterName}   — имя кластера
+            # {namespace}     — пространство имён (или all-namespaces)
+            # {typeName}      — ресурс (pods, deployments и т.д.)
+            # {apiGroup}      — группа API (apps, batch, networking.k8s.io)
+            # {apiVersion}    — версия API (v1, v1beta1, v1alpha1)
+
+            # default — cluster list
+            link: /openapi-ui/clusters
+
+            # default — cluster route
+            link: /openapi-ui/\{clusterName\}
+
+            # builtin — namespace scope
+            link: /openapi-ui/\{clusterName\}/\{namespace\}/builtin-table/pods
+            link: /openapi-ui/\{clusterName\}/\{namespace\}/builtin-form/pods
+            link: /openapi-ui/\{clusterName\}/\{namespace\}/builtin-table/{typeName}
+            link: /openapi-ui/\{clusterName\}/\{namespace\}/builtin-form/{typeName}
+
+            # builtin — cluster scope
+            link: /openapi-ui/\{clusterName\}/builtin-table/pods
+            link: /openapi-ui/\{clusterName\}/builtin-form/pods
+            link: /openapi-ui/\{clusterName\}/api-table/{typeName}
+            link: /openapi-ui/\{clusterName\}/api-form/{typeName}
+
+            # api — namespace scope
+            link: /openapi-ui/\{clusterName\}/\{namespace\}/api-table/apps/v1/deployments
+            link: /openapi-ui/\{clusterName\}/\{namespace\}/api-form/apps/v1/deployments
+            link: /openapi-ui/\{clusterName\}/\{namespace\}/api-table/{apiGroup}/{apiVersion}/{typeName}
+            link: /openapi-ui/\{clusterName\}/\{namespace\}/api-form/{apiGroup}/{apiVersion}/{typeName}
+
+            # api — cluster scope
+            link: /openapi-ui/\{clusterName\}/api-table/apps/v1/deployments
+            link: /openapi-ui/\{clusterName\}/api-form/apps/v1/deployments
+            link: /openapi-ui/\{clusterName\}/api-table/{apiGroup}/{apiVersion}/{typeName}
+            link: /openapi-ui/\{clusterName\}/api-form/{apiGroup}/{apiVersion}/{typeName}
+          `}
+        />
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+<h4>Настройка breadcrumb</h4>
+
+<details close className="custom-gray-block">
+  <summary>
+    <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+      <p style={{ marginBottom: 0 }}>BreadCrumb Example</p>
+    </div>
+  </summary>
+  <CodeBlock language="yaml">
+    {dedent`
+      ---
+      apiVersion: front.in-cloud.io/v1alpha1
+      kind: Breadcrumb
+      metadata:
+        name: stock-cluster-api-table
+      spec:
+        id: "stock-cluster-api-table"
+        breadcrumbItems:
+          - key: In-Cloud
+            label: In-Cloud
+            link: "/openapi-ui"
+          - key: clusterList
+            label: "Cluster List"
+            link: "/openapi-ui/clusters"
+          - key: cluster
+            label: "{clusterName}"
+            link: "/openapi-ui/clusters/{clusterName}"
+          - key: namespaces
+            label: "Namespaces"
+          - key: namespace
+            label: "All"
+          - key: api
+            label: "{typeName}"
+  `}
+  </CodeBlock>
+</details>
+
+---
+
+:::warning
+Просьба обратить внимание что id связаны между компонентами интерфейса и подчиняются правилам именования.
+:::
+
+:::info
+Просьба учитывать, что Breadcrumb требуется настраивать под каждую область видимости.
+Для административного и пользовательского интерфейсов конфигурация может различаться.
+Также Breadcrumb необходимо описывать под каждую страницу фабрики. На первый взгляд это может показаться избыточным, но именно такой подход обеспечивает гибкость и позволяет адаптировать интерфейс под конкретные команды и их процессы.
+:::
+
+
+---
+
+<figure style={{ textAlign: 'center', display: 'contents' }}>
+  <FancyboxImage
+    src={`${getBasePrefix()}img/incloud/interfaces/pod-ns-all-breadcrumb.png`}
+    style={{ width: '100%', maxWidth: 'none' }}
+  />
+  <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
+    Пример хлебных крошек для страницы Pods в пространстве имён All
+  </figcaption>
+</figure>
+
+
+---
+
+<h3>CustomColumnsOverride — настройка колонок</h3>
+<p>
+  CustomColumnsOverride — механизм описания колонок табличных представлений Kubernetes-ресурсов в InCloud.
+  Позволяет переопределять стандартные колонки, добавлять новые и задавать поведение (тип, значения по умолчанию, обрезку длины).
+</p>
+<p>
+  Работает для пользовательской и административной областей видимости. Конфигурация декларативная (YAML) и не требует правок кода.
+</p>
+
+---
+<h4>Структура полей CustomColumnsOverride</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Поле</th>
+      <th>Тип</th>
+      <th>Пример</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>spec.id</code></td>
+      <td>string</td>
+      <td>
+        <YamlModal
+          yamlContent={dedent`
+            ###
+            ### Административный интерфейс
+            inside-namespace-/v1/pods
+            inside-cluster-/v1/pods
+            inside-namespace-/apps/v1/deployments
+            inside-cluster-/apps/v1/deployments
+
+            ### Пользовательский интерфейс
+            stock-namespace-/v1/pods
+            stock-cluster-/v1/pods
+            stock-namespace-/apps/v1/deployments
+            stock-cluster-/apps/v1/deployments
+          `}
+        />
+      </td>
+    </tr>
+
+    <tr>
+      <td><code>spec.additionalPrinterColumns[]</code></td>
+      <td>array</td>
+      <td>
+        <YamlModal
+          yamlContent={dedent`
+            additionalPrinterColumns:
+              - jsonPath: .metadata.name
+                name: Name
+              - jsonPath: .spec.nodeName
+                name: Node
+              - jsonPath: .spec.restartPolicy
+                name: Restart Policy
+              - jsonPath: .status.podIP
+                name: Pod IP
+              - jsonPath: .status.conditions[?(@.type=="ContainersReady")].status
+                name: Status Containers
+              - jsonPath: .status.conditions[?(@.type=="PodScheduled")].status
+                name: Status Scheduled
+              - jsonPath: .status.qosClass
+                name: QOS
+              - jsonPath: .status.phase
+                name: Phase
+              - jsonPath: .metadata.creationTimestamp
+                name: Created
+          `}
+        />
+      </td>
+    </tr>
+
+    <tr>
+      <td><code>spec.additionalPrinterColumnsUndefinedValues[]</code></td>
+      <td>array</td>
+      <td>
+        <YamlModal
+          yamlContent={dedent`
+            additionalPrinterColumnsUndefinedValues:
+              - key: Node
+                value: Unschedulable
+          `}
+        />
+      </td>
+    </tr>
+
+    <tr>
+      <td><code>spec.additionalPrinterColumnsTrimLengths[]</code></td>
+      <td>array</td>
+      <td>
+        <YamlModal
+          yamlContent={dedent`
+            additionalPrinterColumnsTrimLengths:
+              - key: Name
+                value: 64
+          `}
+        />
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h4>Описание полей</h4>
+<dl>
+  <dt><code>spec.id</code></dt>
+  <dd>Идентификатор области видимости и ресурса, для которого переопределяются колонки.</dd>
+
+  <dt><code>spec.additionalPrinterColumns[]</code></dt>
+  <dd>Список пользовательских колонок для табличного представления ресурса.</dd>
+
+  <dt><code>spec.additionalPrinterColumnsUndefinedValues[]</code></dt>
+  <dd>Подстановка значений по умолчанию, если вычисленное значение пустое или не определено.</dd>
+
+  <dt><code>spec.additionalPrinterColumnsTrimLengths[]</code></dt>
+  <dd>Правила обрезки строковых значений по длине для указанных колонок.</dd>
+</dl>
+
+
+---
+
+<h4>Структура элемента <code>additionalPrinterColumns[]</code></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Поле</th>
+      <th>Тип</th>
+      <th>Описание</th>
+      <th>Пример</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>jsonPath</code></td>
+      <td>string</td>
+      <td>JSONPath-выражение для извлечения значения колонки из объекта ресурса.</td>
+      <td>
+        <CodeBlock language="yaml">
+          {dedent`
+            .status.phase
+          `}
+        </CodeBlock>
+      </td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td>string</td>
+      <td>Заголовок колонки.</td>
+      <td>
+        <CodeBlock language="yaml">
+          {dedent`
+            Phase
+          `}
+        </CodeBlock>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+<h4>Структура элемента <code>additionalPrinterColumnsUndefinedValues[]</code></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Поле</th>
+      <th>Тип</th>
+      <th>Описание</th>
+      <th>Пример</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>key</code></td>
+      <td>string</td>
+      <td>Имя колонки, к которой применяется подстановка.</td>
+      <td>
+        <CodeBlock language="yaml">
+          {dedent`
+            Pod IP
+          `}
+        </CodeBlock>
+      </td>
+    </tr>
+    <tr>
+      <td><code>value</code></td>
+      <td>string</td>
+      <td>Значение по умолчанию при отсутствии данных.</td>
+      <td>
+        <CodeBlock language="yaml">
+          {dedent`
+            NotAllocated
+          `}
+        </CodeBlock>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+<h4>Структура элемента <code>additionalPrinterColumnsTrimLengths[]</code></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Поле</th>
+      <th>Тип</th>
+      <th>Описание</th>
+      <th>Пример</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>key</code></td>
+      <td>string</td>
+      <td>Имя колонки, для которой задаётся ограничение длины.</td>
+      <td>
+        <CodeBlock language="yaml">
+          {dedent`
+            Name
+          `}
+        </CodeBlock>
+      </td>
+    </tr>
+    <tr>
+      <td><code>value</code></td>
+      <td>integer</td>
+      <td>Максимальная длина строки, символы сверх — обрезаются.</td>
+      <td>
+        <CodeBlock language="yaml">
+          {dedent`
+            64
+          `}
+        </CodeBlock>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+<h4>Настройка CustomColumnsOverride</h4>
+
+<details close className="custom-gray-block">
+  <summary>
+    <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+      <p style={{ marginBottom: 0 }}>CustomColumnsOverride Example</p>
+    </div>
+  </summary>
+  <CodeBlock language="yaml">
+    {dedent`
+      ---
+      apiVersion: front.in-cloud.io/v1alpha1
+      kind: CustomColumnsOverride
+      metadata:
+        name: "stock-cluster-v1.pods"
+      spec:
+        additionalPrinterColumns:
+          - jsonPath: .metadata.name
+            name: Name
+            type: string
+          - jsonPath: .metadata.namespace
+            name: Namespace
+            type: string
+          - jsonPath: .spec.nodeName
+            name: Node
+            type: string
+          - jsonPath: .spec.restartPolicy
+            name: Restart Policy
+            type: string
+          - jsonPath: .status.podIP
+            name: Pod IP
+            type: string
+          - jsonPath: .status.conditions[?(@.type=="ContainersReady")].status
+            name: Status Containers
+            type: string
+          - jsonPath: .status.conditions[?(@.type=="PodScheduled")].status
+            name: Status Scheduled
+            type: string
+          - jsonPath: .status.qosClass
+            name: QOS
+            type: string
+          - jsonPath: .status.phase
+            name: Phase
+            type: string
+          - jsonPath: .metadata.creationTimestamp
+            name: Created
+            type: date
+        additionalPrinterColumnsUndefinedValues:
+          - key: Node
+            value: Unschedulable
+          - key: Pod IP
+            value: NotAllocated
+        additionalPrinterColumnsTrimLengths:
+          - key: Name
+            value: 64
+        id: "stock-cluster-/v1/pods"
+  `}
+  </CodeBlock>
+</details>
+
+---
+
+:::warning
+Просьба обратить внимание что id в этом ресурсе отличается от BreadCrumb и Sidebar.
+:::
+
+:::info
+Просьба учитывать, что CustomColumnsOverride требуется настраивать под каждый тип ресурса тк они отличаются по структуре.
+> JsonPath использует весь функционал библиотеки TypeScript JSONPath, а значит позволяет использовать фильтры, условия и другие возможности для извлечения данных из сложных структур.
+:::
+
+
+---
+
+<figure style={{ textAlign: 'center', display: 'contents' }}>
+  <FancyboxImage
+    src={`${getBasePrefix()}img/incloud/interfaces/pod-ns-all-cco.png`}
+    style={{ width: '100%', maxWidth: 'none' }}
+  />
+  <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
+    Пример форматирования таблиц для Pods в пространстве имён All
+  </figcaption>
+</figure>
+
+---
+
+<h3>TableUriMapping — табличный роутинг</h3>
+
+<p>
+  TableUriMapping — механизм настройки маршрутов для табличных представлений Kubernetes-ресурсов в InCloud.
+  При определении маршрута строки и ячейки становятся кликабельными и ведут на соответствующие страницы ресурса.
+</p>
+<p>
+  Работает для пользовательской и административной областей видимости. Конфигурация декларативная (YAML) и не требует правок кода.
+</p>
+
+
+<h4>Структура полей TableUriMapping</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Поле</th>
+      <th>Тип</th>
+      <th>Описание</th>
+      <th>Пример</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>spec.id</code></td>
+      <td>string</td>
+      <td>Идентификатор области видимости и ресурса, для которых настраивается табличный роутинг.</td>
+      <td>
+        <YamlModal
+          yamlContent={dedent`
+            # {clusterName}   — имя кластера
+            # {namespace}     — пространство имён (или all-namespaces)
+            # {typeName}      — ресурс (pods, deployments и т.д.)
+            # {apiGroup}      — группа API (apps, batch, networking.k8s.io)
+            # {apiVersion}    — версия API (v1, v1beta1, v1alpha1)
+
+            # builtin — ресурсы
+            # Примеры шаблонов:
+            # inside-cluster-/v1/{typeName}
+            # inside-namespace-/v1/{typeName}
+            # stock-cluster-/v1/{typeName}
+            # stock-namespace-/v1/{typeName}
+
+            # Примеры:
+            id: stock-namespace-/v1/pods
+            id: stock-cluster-/v1/pods
+
+            # api — ресурсы
+            # Примеры шаблонов:
+            # inside-cluster-/{apiGroup}/{apiVersion}/{typeName}
+            # inside-namespace-/{apiGroup}/{apiVersion}/{typeName}
+            # stock-cluster-/{apiGroup}/{apiVersion}/{typeName}
+            # stock-namespace-/{apiGroup}/{apiVersion}/{typeName}
+
+            # Примеры:
+            id: stock-namespace-/apps/v1/deployments
+            id: stock-cluster-/apps/v1/deployments
+
+          `}
+        />
+      </td>
+    </tr>
+    <tr>
+      <td><code>spec.keysToParse</code></td>
+      <td>string</td>
+      <td>JSONPath до значения, подставляемого как ```~recordValue``` (опционально).</td>
+      <td>
+        <YamlModal
+          yamlContent={dedent`
+            keysToParse: .metadata.name
+          `}
+        />
+      </td>
+    </tr>
+    <tr>
+      <td><code>spec.keysToParseSecond</code></td>
+      <td>string</td>
+      <td>JSONPath до значения, подставляемого как ```~recordValueSecond``` (опционально).</td>
+      <td>
+        <YamlModal
+          yamlContent={dedent`
+            keysToParseSecond: .metadata.namespace
+          `}
+        />
+      </td>
+    </tr>
+    <tr>
+      <td><code>spec.keysToParseThird</code></td>
+      <td>string</td>
+      <td>JSONPath до значения, подставляемого как ```~recordValueThird``` (опционально).</td>
+      <td>
+        <YamlModal
+          yamlContent={dedent`
+            keysToParseThird: {3}
+          `}
+        />
+      </td>
+    </tr>
+    <tr>
+      <td><code>spec.pathToNavigate</code></td>
+      <td>string</td>
+      <td>Шаблон маршрута для перехода из таблицы. Поддерживает плейсхолдеры из контекста и значений по JSONPath.</td>
+      <td>
+        <YamlModal
+          yamlContent={dedent`
+            /openapi-ui/{clusterName}/~recordValueSecond~/factory/pod-details/~recordValue~
+          `}
+        />
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h5>Плейсхолдеры маршрута</h5>
+<table>
+  <thead>
+    <tr>
+      <th>Плейсхолдер</th>
+      <th>Источник</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>\{clusterName}</code></td>
+      <td>Выбранный кластер</td>
+    </tr>
+    <tr>
+      <td><code>\{namespace}</code></td>
+      <td>Выбранное пространство имён (если применяется)</td>
+    </tr>
+    <tr>
+      <td><code>```~recordValue~```</code></td>
+      <td>Значение из <code>spec.keysToParse</code></td>
+    </tr>
+    <tr>
+      <td><code>```~recordValueSecond~```</code></td>
+      <td>Значение из <code>spec.keysToParseSecond</code></td>
+    </tr>
+    <tr>
+      <td><code>```~recordValueThird~```</code></td>
+      <td>Значение из <code>spec.keysToParseThird</code></td>
+    </tr>
+    <tr>
+      <td><code>\{index}</code></td>
+      <td>Номер индекса URI (считается в разрезе разделительных "/")</td>
+    </tr>
+  </tbody>
+</table>
+
+
+<h4>Настройка TableUriMapping</h4>
+
+<details close className="custom-gray-block">
+  <summary>
+    <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+      <p style={{ marginBottom: 0 }}>TableUriMapping Example</p>
+    </div>
+  </summary>
+  <CodeBlock language="yaml">
+    {dedent`
+      ---
+      apiVersion: front.in-cloud.io/v1alpha1
+      kind: TableUriMapping
+      metadata:
+        name: stock-cluster-pod-details
+      spec:
+        keysToParse: ".metadata.name"
+        keysToParseSecond: ".metadata.namespace"
+        id: "stock-cluster-/v1/pods"
+        pathToNavigate: "/openapi-ui/{clusterName}/~recordValueSecond~/factory/pod-details/~recordValue~"
+    `}
+  </CodeBlock>
+</details>
+
+---
+
+:::warning
+Просьба обратить внимание что id в этом ресурсе отличается от BreadCrumb и Sidebar.
+:::
+
+:::info
+Просьба учитывать, что CustomColumnsOverride требуется настраивать под каждый тип ресурса.
+:::
+
+
+---
+
+<figure style={{ textAlign: 'center', display: 'contents' }}>
+  <FancyboxImage
+    src={`${getBasePrefix()}img/incloud/interfaces/pod-ns-all-tum-start.png`}
+    style={{ width: '100%', maxWidth: 'none' }}
+  />
+  <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
+    Страница табличного представления Pods в пространстве имён All где нажали на строку таблицы
+  </figcaption>
+</figure>
+
+
+<figure style={{ textAlign: 'center', display: 'contents' }}>
+  <FancyboxImage
+    src={`${getBasePrefix()}img/incloud/interfaces/pod-ns-all-tum-finish.png`}
+    style={{ width: '100%', maxWidth: 'none' }}
+  />
+  <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
+    Страница фабрики с деталями Pods, открытая по клику на строку таблицы
+  </figcaption>
+</figure>
+
+> Как видно на втором изображении, контекст сохраняется на уровнях Sidebar и Breadcrumb — это позволяет быстро вернуться к предыдущему состоянию интерфейса. Указатели keysToParse и keysToParseSecond передают нужные значения в фабрику, задавая Namespace-контекст для дальнейшей работы с Pods.
+---
+
