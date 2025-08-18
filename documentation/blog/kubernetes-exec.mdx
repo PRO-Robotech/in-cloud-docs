@@ -25,9 +25,6 @@ import { YANDEX_KUBERNETES_AUDIT_POLICY } from '@site/src/constants/kubernetes/k
 
 <h3> Kubernetes pods/exec <span style={{ color: '#1cc5ac' }}>#</span> </h3>
 
-<p style={{ fontStyle: 'italic', fontWeight: 600 }}>
-  Разбираем переход на WebSocket и его влияние на RBAC.
-</p>
 
 <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-start', justifyContent: 'space-between', gap: '30px', marginTop: '1.5rem' }}>
   <div style={{ flex: '1 1 58%', minWidth: '280px', maxWidth: '620px' }}>
@@ -65,7 +62,7 @@ import { YANDEX_KUBERNETES_AUDIT_POLICY } from '@site/src/constants/kubernetes/k
 </CodeBlock>
 
 <p>
-  Если вы ответили «безопасная», то вы не одиноки — и вы предоставили бы доступ к <code>pods/exec</code> любому пользователю в кластере.
+  Если вы ответили «безопасная», то вы не одиноки — и вы предоставили бы доступ к <code>pods/exec</code> любому пользователю в кластере, конечно если бы создали сверху ClusterRolebinding.
 </p>
 
 {/* truncate */}
