@@ -51,16 +51,17 @@ import { YANDEX_KUBERNETES_AUDIT_POLICY } from '@site/src/constants/kubernetes/k
 </div>
 
 <CodeBlock language="bash">
-{dedent`
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: test-role
-rules:
-- apiGroups: [""]
-  resources: ["*"]
-  verbs: ["get"]
-`}
+  {dedent`
+    ---
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: ClusterRole
+    metadata:
+      name: test-role
+    rules:
+      - apiGroups: [""]
+        resources: ["*"]
+        verbs: ["get"]
+  `}
 </CodeBlock>
 
 <p>
@@ -82,16 +83,17 @@ rules:
 На самом деле — ничего. Проблеме уже больше 7 лет, но о ней мало кто знает. Проблема заключается в том, что в головах умных мужей укоренилась мысль, что доступ к <code>pods/exec</code> можно дать вот таким простым правилом:
 
 <CodeBlock language="bash">
-{dedent`
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: test-role
-rules:
-- apiGroups: [""]
-  resources: ["pods/exec"]
-  verbs: ["create"]
-`}
+  {dedent`
+    ---
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: ClusterRole
+    metadata:
+      name: test-role
+    rules:
+      - apiGroups: [""]
+        resources: ["pods/exec"]
+        verbs: ["create"]
+  `}
 </CodeBlock>
 
 В принципе вы были бы правы, но, как показала практика — не только =)
@@ -148,103 +150,103 @@ rules:
 ### Кластер и контексты
 
 <CodeBlock language="bash">
-{dedent`
-minikube -p 13201 start --kubernetes-version=1.32.1 --ssh-port=13201
-`}
+  {dedent`
+    minikube -p 13201 start --kubernetes-version=1.32.1 --ssh-port=13201
+  `}
 </CodeBlock>
 
 <CodeBlock language="bash">
-{dedent`
-kubectl get nodes
-`}
+  {dedent`
+    kubectl get nodes
+  `}
 </CodeBlock>
 
 <CodeBlock language="bash">
-{dedent`
-NAME     STATUS   ROLES           AGE   VERSION
-13201    Ready    control-plane   60s   v1.32.1
-`}
+  {dedent`
+    NAME     STATUS   ROLES           AGE   VERSION
+    13201    Ready    control-plane   60s   v1.32.1
+  `}
 </CodeBlock>
 
 ### cluster-admin и anonymous
 
 <CodeBlock language="bash">
-{dedent`
-export KUBECONFIG=cluster-admin
-minikube -p 13201 update-context
-`}
+  {dedent`
+    export KUBECONFIG=cluster-admin
+    minikube -p 13201 update-context
+  `}
 </CodeBlock>
 
 <CodeBlock language="bash">
-{dedent`
-export KUBECONFIG=anonymous-view
-minikube -p 13201 update-context
-sed -i '/^[[:space:]]*users:/,$d' anonymous-view
-`}
+  {dedent`
+    export KUBECONFIG=anonymous-view
+    minikube -p 13201 update-context
+    sed -i '/^[[:space:]]*users:/,$d' anonymous-view
+  `}
 </CodeBlock>
 
 ### Pod и проверки exec
 
 <CodeBlock language="bash">
-{dedent`
-kubectl \\
-  --kubeconfig=cluster-admin \\
-  apply -f - <<EOF
----
-apiVersion: v1
-kind: Pod
-metadata:
-  name: nginx
-spec:
-  containers:
-  - name: nginx
-    image: nginx:1.14.2
-    ports:
-    - containerPort: 80
-EOF
-`}
+  {dedent`
+    kubectl \\
+      --kubeconfig=cluster-admin \\
+      apply -f - <<EOF
+    ---
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
+    EOF
+  `}
 </CodeBlock>
 
 <CodeBlock language="bash">
-{dedent`
-kubectl --kubeconfig=cluster-admin get po
-`}
+  {dedent`
+    kubectl --kubeconfig=cluster-admin get po
+  `}
 </CodeBlock>
 
 <CodeBlock language="bash">
-{dedent`
-NAME    READY   STATUS    RESTARTS   AGE
-nginx   1/1     Running   0          23s
-`}
+  {dedent`
+    NAME    READY   STATUS    RESTARTS   AGE
+    nginx   1/1     Running   0          23s
+  `}
 </CodeBlock>
 
 ### exec: cluster-admin vs anonymous
 
 <CodeBlock language="bash">
-{dedent`
-kubectl --kubeconfig=cluster-admin exec -it nginx -- sh
-`}
+  {dedent`
+    kubectl --kubeconfig=cluster-admin exec -it nginx -- sh
+  `}
 </CodeBlock>
 
 <CodeBlock language="bash">
-{dedent`
-# ls -al
-total 76
-drwxr-xr-x 1 root root 4096 Aug 18 15:09 .
-drwxr-xr-x 1 root root 4096 Aug 18 15:09 ..
-`}
+  {dedent`
+    # ls -al
+    total 76
+    drwxr-xr-x 1 root root 4096 Aug 18 15:09 .
+    drwxr-xr-x 1 root root 4096 Aug 18 15:09 ..
+  `}
 </CodeBlock>
 
 <CodeBlock language="bash">
-{dedent`
-kubectl --kubeconfig=anonymous-view exec -it nginx -- sh
-`}
+  {dedent`
+    kubectl --kubeconfig=anonymous-view exec -it nginx -- sh
+  `}
 </CodeBlock>
 
 <CodeBlock language="bash">
-{dedent`
-Error from server (Forbidden): pods "nginx" is forbidden: User "system:anonymous" cannot get resource "pods" in API group "" in the namespace "default"
-`}
+  {dedent`
+    Error from server (Forbidden): pods "nginx" is forbidden: User "system:anonymous" cannot get resource "pods" in API group "" in the namespace "default"
+  `}
 </CodeBlock>
 
 ### Добавляем доступ только на <code>get</code>
@@ -254,62 +256,62 @@ Error from server (Forbidden): pods "nginx" is forbidden: User "system:anonymous
 :::
 
 <CodeBlock language="bash">
-{dedent`
-kubectl \\
-  --kubeconfig=cluster-admin \\
-  apply -f - <<EOF
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: anonymous-view
-rules:
-  - apiGroups: [""]
-    resources:
-      - pods
-      - pods/exec
-    verbs: ["get"]
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: anonymous-view
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: anonymous-view
-subjects:
-  - kind: User
-    name: system:anonymous
-    apiGroup: rbac.authorization.k8s.io
-EOF
-`}
+  {dedent`
+    kubectl \\
+      --kubeconfig=cluster-admin \\
+      apply -f - <<EOF
+    ---
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: ClusterRole
+    metadata:
+      name: anonymous-view
+    rules:
+      - apiGroups: [""]
+        resources:
+          - pods
+          - pods/exec
+        verbs: ["get"]
+    ---
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: ClusterRoleBinding
+    metadata:
+      name: anonymous-view
+    roleRef:
+      apiGroup: rbac.authorization.k8s.io
+      kind: ClusterRole
+      name: anonymous-view
+    subjects:
+      - kind: User
+        name: system:anonymous
+        apiGroup: rbac.authorization.k8s.io
+    EOF
+  `}
 </CodeBlock>
 
 <CodeBlock language="bash">
-{dedent`
-clusterrole.rbac.authorization.k8s.io/anonymous-view created
-clusterrolebinding.rbac.authorization.k8s.io/anonymous-view created
-`}
+  {dedent`
+    clusterrole.rbac.authorization.k8s.io/anonymous-view created
+    clusterrolebinding.rbac.authorization.k8s.io/anonymous-view created
+  `}
 </CodeBlock>
 
 <CodeBlock language="bash">
-{dedent`
-kubectl --kubeconfig=anonymous-view exec -it nginx -- sh
-`}
+  {dedent`
+    kubectl --kubeconfig=anonymous-view exec -it nginx -- sh
+  `}
 </CodeBlock>
 
 <CodeBlock language="bash">
-{dedent`
-# ls -la
-total 76
-drwxr-xr-x 1 root root 4096 Aug 18 15:09 .
-drwxr-xr-x 1 root root 4096 Aug 18 15:09 ..
--rwxr-xr-x 1 root root    0 Aug 18 15:09 .dockerenv
-drwxr-xr-x 2 root root 4096 Mar 26 2019 bin
-drwxr-xr-x 2 root root 4096 Feb  3 2019 boot
-drwxr-xr-x 5 root root  360 Aug 18 15:09 dev
-`}
+  {dedent`
+    # ls -la
+    total 76
+    drwxr-xr-x 1 root root 4096 Aug 18 15:09 .
+    drwxr-xr-x 1 root root 4096 Aug 18 15:09 ..
+    -rwxr-xr-x 1 root root    0 Aug 18 15:09 .dockerenv
+    drwxr-xr-x 2 root root 4096 Mar 26 2019 bin
+    drwxr-xr-x 2 root root 4096 Feb  3 2019 boot
+    drwxr-xr-x 5 root root  360 Aug 18 15:09 dev
+  `}
 </CodeBlock>
 
 ## Демонстрация (kubectl 1.33.3 vs 1.29.0)
@@ -322,33 +324,33 @@ drwxr-xr-x 5 root root  360 Aug 18 15:09 dev
 </summary>
 
 <CodeBlock language="bash">
-{dedent`
-kubectl version
-Client Version: v1.33.3
-`}
+  {dedent`
+    kubectl version
+    Client Version: v1.33.3
+  `}
 </CodeBlock>
 
 <CodeBlock language="bash">
-{dedent`
-kubectl exec -it nginx -- sh
-`}
+  {dedent`
+    kubectl exec -it nginx -- sh
+  `}
 </CodeBlock>
 
 <CodeBlock language="bash">
-{dedent`
-****** verb="GET" url="/api/v1/namespaces/default/pods/incloud-web-incloud-web-chart-d99877d74-27tcd/exec?command=sh&container=nginx&stdin=true&stdout=true&tty=true" ******
-`}
+  {dedent`
+    ****** verb="GET" url="/api/v1/namespaces/default/pods/incloud-web-incloud-web-chart-d99877d74-27tcd/exec?command=sh&container=nginx&stdin=true&stdout=true&tty=true" ******
+  `}
 </CodeBlock>
 
 <CodeBlock language="bash">
-{dedent`
-/ $ ls -al
-total 76
-drwxr-xr-x 1 root root 4096 Aug 16 20:43 .
-drwxr-xr-x 1 root root 4096 Aug 16 20:43 ..
-drwxr-xr-x 2 root root 4096 Jul 15 10:42 bin
-drwxr-xr-x 5 root root  360 Aug 16 20:43 dev
-`}
+  {dedent`
+    / $ ls -al
+    total 76
+    drwxr-xr-x 1 root root 4096 Aug 16 20:43 .
+    drwxr-xr-x 1 root root 4096 Aug 16 20:43 ..
+    drwxr-xr-x 2 root root 4096 Jul 15 10:42 bin
+    drwxr-xr-x 5 root root  360 Aug 16 20:43 dev
+  `}
 </CodeBlock>
 </details>
 
@@ -360,29 +362,29 @@ drwxr-xr-x 5 root root  360 Aug 16 20:43 dev
 </summary>
 
 <CodeBlock language="bash">
-{dedent`
-kubectl version
-Client Version: v1.29.0
-`}
+  {dedent`
+    kubectl version
+    Client Version: v1.29.0
+  `}
 </CodeBlock>
 
 <CodeBlock language="bash">
-{dedent`
-kubectl exec -it nginx -- sh
-`}
+  {dedent`
+    kubectl exec -it nginx -- sh
+  `}
 </CodeBlock>
 
 <CodeBlock language="bash">
-{dedent`
-****** POST https://api/v1/namespaces/default/pods/incloud-web-incloud-web-chart-d99877d74-27tcd/exec?command=sh&container=nginx&stdin=true&stdout=true&tty=true ******
-`}
+  {dedent`
+    ****** POST https://api/v1/namespaces/default/pods/incloud-web-incloud-web-chart-d99877d74-27tcd/exec?command=sh&container=nginx&stdin=true&stdout=true&tty=true ******
+  `}
 </CodeBlock>
 
 <CodeBlock language="bash">
-{dedent`
-Error from server (Forbidden): pods "nginx" is forbidden:
-User "system:anonymous" cannot get resource "pods" in API group "" in the namespace "default"
-`}
+  {dedent`
+    Error from server (Forbidden): pods "nginx" is forbidden:
+    User "system:anonymous" cannot get resource "pods" in API group "" in the namespace "default"
+  `}
 </CodeBlock>
 </details>
 
@@ -394,39 +396,39 @@ User "system:anonymous" cannot get resource "pods" in API group "" in the namesp
 <h3>Kubernetes Audit</h3>
 
 <CodeBlock language="bash">
-{dedent`
-{
-  "annotations": {
-    "authorization.k8s.io/decision": "allow",
-    "authorization.k8s.io/reason": "RBAC: allowed by ClusterRoleBinding \\"anonymous-view-all\\" of ClusterRole \\"anonymous-view\\" to User \\"system:anonymous\\""
-  },
-  "apiVersion": "audit.k8s.io/v1",
-  "auditID": "142e967e-4958-4a77-b691-2f71e26ba6ec",
-  "kind": "Event",
-  "level": "Request",
-  "objectRef": {
-    "apiVersion": "v1",
-    "name": "nginx",
-    "namespace": "default",
-    "resource": "pods",
-    "subresource": "exec"
-  },
-  "requestURI": "/api/v1/namespaces/default/pods/nginx/exec?...",
-  "responseStatus": {
-    "code": 101,
-    "metadata": {}
-  },
-  "sourceIPs": ["10.0.0.33"],
-  "stage": "ResponseComplete",
-  "stageTimestamp": "2025-08-15T16:46:50.296700Z",
-  "user": {
-    "groups": ["system:unauthenticated"],
-    "username": "system:anonymous"
-  },
-  "userAgent": "Mozilla/5.0 (...) Safari/537.36",
-  "verb": "get"
-}
-`}
+  {dedent`
+    {
+      "annotations": {
+        "authorization.k8s.io/decision": "allow",
+        "authorization.k8s.io/reason": "RBAC: allowed by ClusterRoleBinding \\"anonymous-view-all\\" of ClusterRole \\"anonymous-view\\" to User \\"system:anonymous\\""
+      },
+      "apiVersion": "audit.k8s.io/v1",
+      "auditID": "142e967e-4958-4a77-b691-2f71e26ba6ec",
+      "kind": "Event",
+      "level": "Request",
+      "objectRef": {
+        "apiVersion": "v1",
+        "name": "nginx",
+        "namespace": "default",
+        "resource": "pods",
+        "subresource": "exec"
+      },
+      "requestURI": "/api/v1/namespaces/default/pods/nginx/exec?...",
+      "responseStatus": {
+        "code": 101,
+        "metadata": {}
+      },
+      "sourceIPs": ["10.0.0.33"],
+      "stage": "ResponseComplete",
+      "stageTimestamp": "2025-08-15T16:46:50.296700Z",
+      "user": {
+        "groups": ["system:unauthenticated"],
+        "username": "system:anonymous"
+      },
+      "userAgent": "Mozilla/5.0 (...) Safari/537.36",
+      "verb": "get"
+    }
+  `}
 </CodeBlock>
 
 ## Итоги и рекомендации
@@ -435,19 +437,20 @@ User "system:anonymous" cannot get resource "pods" in API group "" in the namesp
 Проверяйте RBAC, не доверяйте слепо ролям с `*` в `resources` и `verbs`.
 
 <CodeBlock language="bash">
-{dedent`
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: test-role
-rules:
-- apiGroups: [""]
-  resources: ["pods"]
-  verbs: ["get"]
-- apiGroups: [""]
-  resources: ["pods/exec"]
-  verbs: ["create", "get"]
-`}
+  {dedent`
+    ---
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: ClusterRole
+    metadata:
+      name: test-role
+    rules:
+      - apiGroups: [""]
+        resources: ["pods"]
+        verbs: ["get"]
+      - apiGroups: [""]
+        resources: ["pods/exec"]
+        verbs: ["create", "get"]
+  `}
 </CodeBlock>
 
 :::danger Опасный паттерн
