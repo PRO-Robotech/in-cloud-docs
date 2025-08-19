@@ -270,6 +270,9 @@ import dedent                 from 'ts-dedent'
           readOnly: true
         - mountPath: /var/log/kubernetes/audit/
           name: k8s-audit
+        - mountPath: /etc/kubernetes/audit-policy.yaml
+          name: k8s-audit-policy
+          readOnly: true
         - mountPath: ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/pki
           name: k8s-certs
           readOnly: true
@@ -302,6 +305,10 @@ import dedent                 from 'ts-dedent'
           path: /var/log/kubernetes/audit/
           type: DirectoryOrCreate
         name: k8s-audit
+      - hostPath:
+          path: /etc/kubernetes/audit-policy.yaml
+          type: File
+        name: k8s-audit-policy
       - hostPath:
           path: ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/pki
           type: DirectoryOrCreate

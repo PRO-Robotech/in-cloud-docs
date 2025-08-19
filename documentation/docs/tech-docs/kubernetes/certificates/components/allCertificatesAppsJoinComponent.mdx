@@ -30,6 +30,15 @@ import ETCDPeerOpenssl from '@site/docs/tech-docs/etcd/certificates/components/e
 import ETCDPeerOpensslStatus from '@site/docs/tech-docs/etcd/certificates/components/etcd/etcdPeer/checks/statusOpenssl.mdx'
 import ETCDPeerKubeadmStatus from '@site/docs/tech-docs/etcd/certificates/components/etcd/etcdPeer/checks/statusKubeadm.mdx'
 
+import KubeControllerManagerOpenssl from '@site/docs/tech-docs/kubernetes/certificates/components/kubeControllerManager/kubeControllerManagerServer/openssl.mdx'
+import KubeControllerManagerOpensslStatus from '@site/docs/tech-docs/kubernetes/certificates/components/kubeControllerManager/kubeControllerManagerServer/checks/statusOpenssl.mdx'
+import KubeControllerManagerKubeadmStatus from '@site/docs/tech-docs/kubernetes/certificates/components/kubeControllerManager/kubeControllerManagerServer/checks/statusKubeadm.mdx'
+
+
+import KubeSchedulerOpenssl from '@site/docs/tech-docs/kubernetes/certificates/components/kubeScheduler/kubeSchedulerServer/openssl.mdx'
+import KubeSchedulerOpensslStatus from '@site/docs/tech-docs/kubernetes/certificates/components/kubeScheduler/kubeSchedulerServer/checks/statusOpenssl.mdx'
+import KubeSchedulerKubeadmStatus from '@site/docs/tech-docs/kubernetes/certificates/components/kubeScheduler/kubeSchedulerServer/checks/statusKubeadm.mdx'
+
 import JoinAllCertsGen from '@site/docs/tech-docs/kubernetes/certificates/components/_kubeadm/joinAllCertsGen.mdx'
 
 import TabItem from '@theme/TabItem'
@@ -184,6 +193,48 @@ import Tabs from '@theme/Tabs'
         <TabItem value="Kubeadm">
           <JoinAllCertsGen />
           <ETCDPeerKubeadmStatus />
+        </TabItem>
+      </Tabs>
+    </details>
+  </TabItem>
+  <TabItem value="Controller server">
+    <details open className="custom-gray-block">
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Controller server</p>
+        </div>
+      </summary>
+      <Tabs groupId="install-type">
+        <TabItem value="HardWay">
+          <KubeControllerManagerOpenssl />
+          <KubeControllerManagerOpensslStatus />
+        </TabItem>
+        <TabItem value="Kubeadm">
+          :::danger
+          Просьба обратить внимание, что kubeadm не управляет данными сертификатами.
+          Используйте HardWay режим
+          :::
+        </TabItem>
+      </Tabs>
+    </details>
+  </TabItem>
+  <TabItem value="Scheduler server">
+    <details open className="custom-gray-block">
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Scheduler server</p>
+        </div>
+      </summary>
+      <Tabs groupId="install-type">
+        <TabItem value="HardWay">
+          <KubeSchedulerOpenssl />
+          <KubeSchedulerOpensslStatus />
+        </TabItem>
+        <TabItem value="Kubeadm">
+          :::danger
+          Просьба обратить внимание, что kubeadm не управляет данными сертификатами.
+          Используйте HardWay режим
+          :::
         </TabItem>
       </Tabs>
     </details>

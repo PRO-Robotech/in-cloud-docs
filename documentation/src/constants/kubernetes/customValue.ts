@@ -30,7 +30,7 @@ export const CUSTOM_VALUE: TCustomValueItems = {
     value: '/var/run/containerd/containerd.sock',
   },
   kubernetesAPIAuditPolicyPath: {
-    value: '/var/log/kubernetes/audit/audit-policy.yaml',
+    value: '/etc/kubernetes/audit-policy.yaml',
   },
   kubernetesAPIAuditLogPath: {
     value: '/var/log/kubernetes/audit/audit.log',

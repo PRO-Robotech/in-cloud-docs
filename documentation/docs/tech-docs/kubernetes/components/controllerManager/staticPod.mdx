@@ -162,6 +162,12 @@ import CodeBlock                  from '@theme/CodeBlock'
         # ТРЕБУЕТСЯ РАСКОМЕНТИРОВАТЬ
         # ->
         # - --cloud-provider: "${KUBE_CONTROLLER_MANAGER_ARGS.cloudProvider.value}"
+        # ЕСЛИ НУЖНО ПОДКЛЮЧИТЬ СЕРВЕРНЫЕ СЕРТИФИКАТЫ ДЛЯ KUBE-CONTROLLER-MANAGER
+        # ОБРАТИТЕ ВНИМАНИЕ, ЧТО KUBEADM НЕ СОЗДАЕТ ДАННЫЕ СЕРТИФИКАТЫ
+        # ТРЕБУЕТСЯ РАСКОМЕНТИРОВАТЬ
+        # ->
+        # - --tls-cert-file=${KUBE_CONTROLLER_MANAGER_ARGS.tlsCertFile.value}
+        # - --tls-private-key-file=${KUBE_CONTROLLER_MANAGER_ARGS.tlsPrivateKeyFile.value}
         # Не указывать если значение "" или undefined
         # - --cluster-signing-kube-apiserver-client-cert-file=${KUBE_CONTROLLER_MANAGER_ARGS.clusterSigningKubeApiserverClientCertFile.value}
         # - --cluster-signing-kube-apiserver-client-key-file=${KUBE_CONTROLLER_MANAGER_ARGS.clusterSigningKubeApiserverClientKeyFile.value}
@@ -183,10 +189,8 @@ import CodeBlock                  from '@theme/CodeBlock'
         # - --pv-recycler-pod-template-filepath-nfs=${KUBE_CONTROLLER_MANAGER_ARGS.pvRecyclerPodTemplateFilepathNfs.value}
         # - --service-cluster-ip-range=${KUBE_CONTROLLER_MANAGER_ARGS.serviceClusterIpRange.value}
         # - --show-hidden-metrics-for-version=${KUBE_CONTROLLER_MANAGER_ARGS.showHiddenMetricsForVersion.value}
-        # - --tls-cert-file=${KUBE_CONTROLLER_MANAGER_ARGS.tlsCertFile.value}
         # - --tls-cipher-suites=${KUBE_CONTROLLER_MANAGER_ARGS.tlsCipherSuites.value}
         # - --tls-min-version=${KUBE_CONTROLLER_MANAGER_ARGS.tlsMinVersion.value}
-        # - --tls-private-key-file=${KUBE_CONTROLLER_MANAGER_ARGS.tlsPrivateKeyFile.value}
         # - --tls-sni-cert-key=${KUBE_CONTROLLER_MANAGER_ARGS.tlsSniCertKey.value}
         # - --vmodule=${KUBE_CONTROLLER_MANAGER_ARGS.vmodule.value}
         # - --volume-host-cidr-denylist=${KUBE_CONTROLLER_MANAGER_ARGS.volumeHostCidrDenylist.value}

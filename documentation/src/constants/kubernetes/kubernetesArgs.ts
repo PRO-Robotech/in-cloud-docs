@@ -339,6 +339,12 @@ export const KUBERNETES_KUBE_CONTROLLER_MANAGER_ARGS: TCustomValueItems = {
       v: "${KUBE_CONTROLLER_MANAGER_ARGS.v.value}"
       version: "${KUBE_CONTROLLER_MANAGER_ARGS.version.value}"
       volume-host-allow-local-loopback: "${KUBE_CONTROLLER_MANAGER_ARGS.volumeHostAllowLocalLoopback.value}"
+      # ЕСЛИ НУЖНО ПОДКЛЮЧИТЬ СЕРВЕРНЫЕ СЕРТИФИКАТЫ ДЛЯ KUBE-CONTROLLER-MANAGER
+      # ОБРАТИТЕ ВНИМАНИЕ, ЧТО KUBEADM НЕ СОЗДАЕТ ДАННЫЕ СЕРТИФИКАТЫ
+      # ТРЕБУЕТСЯ РАСКОМЕНТИРОВАТЬ
+      # ->
+      # tls-cert-file=${KUBE_CONTROLLER_MANAGER_ARGS.tlsCertFile.value}
+      # tls-private-key-file=${KUBE_CONTROLLER_MANAGER_ARGS.tlsPrivateKeyFile.value}
       # Не указывать если значение "" или undefined
       # cluster-signing-kube-apiserver-client-cert-file: "${KUBE_CONTROLLER_MANAGER_ARGS.clusterSigningKubeApiserverClientCertFile.value}"
       # cluster-signing-kube-apiserver-client-key-file: "${KUBE_CONTROLLER_MANAGER_ARGS.clusterSigningKubeApiserverClientKeyFile.value}"
@@ -360,10 +366,8 @@ export const KUBERNETES_KUBE_CONTROLLER_MANAGER_ARGS: TCustomValueItems = {
       # pv-recycler-pod-template-filepath-nfs: "${KUBE_CONTROLLER_MANAGER_ARGS.pvRecyclerPodTemplateFilepathNfs.value}"
       # service-cluster-ip-range: "${KUBE_CONTROLLER_MANAGER_ARGS.serviceClusterIpRange.value}"
       # show-hidden-metrics-for-version: "${KUBE_CONTROLLER_MANAGER_ARGS.showHiddenMetricsForVersion.value}"
-      # tls-cert-file: "${KUBE_CONTROLLER_MANAGER_ARGS.tlsCertFile.value}"
       # tls-cipher-suites: "${KUBE_CONTROLLER_MANAGER_ARGS.tlsCipherSuites.value}"
       # tls-min-version: "${KUBE_CONTROLLER_MANAGER_ARGS.tlsMinVersion.value}"
-      # tls-private-key-file: "${KUBE_CONTROLLER_MANAGER_ARGS.tlsPrivateKeyFile.value}"
       # tls-sni-cert-key: "${KUBE_CONTROLLER_MANAGER_ARGS.tlsSniCertKey.value}"
       # vmodule: "${KUBE_CONTROLLER_MANAGER_ARGS.vmodule.value}"
       # volume-host-cidr-denylist: "${KUBE_CONTROLLER_MANAGER_ARGS.volumeHostCidrDenylist.value}"
@@ -416,6 +420,13 @@ export const KUBERNETES_KUBE_SCHEDULER_ARGS: TCustomValueItems = {
       secure-port: "${KUBE_SCHEDULER_ARGS.securePort.value}"
       v: "${KUBE_SCHEDULER_ARGS.v.value}"
       version: "${KUBE_SCHEDULER_ARGS.version.value}"
+      # ЕСЛИ НУЖНО ПОДКЛЮЧИТЬ СЕРВЕРНЫЕ СЕРТИФИКАТЫ ДЛЯ KUBE-SCHEDULER
+      # ОБРАТИТЕ ВНИМАНИЕ, ЧТО KUBEADM НЕ СОЗДАЕТ ДАННЫЕ СЕРТИФИКАТЫ
+      # ТРЕБУЕТСЯ РАСКОМЕНТИРОВАТЬ
+      # ->
+      # tls-cert-file=${KUBE_SCHEDULER_ARGS.tlsCertFile.value}
+      # tls-private-key-file=${KUBE_SCHEDULER_ARGS.tlsPrivateKeyFile.value}
+      # <-
       # allow-metric-labels: "${KUBE_SCHEDULER_ARGS.allowMetricLabels.value}"
       # allow-metric-labels-manifest: "${KUBE_SCHEDULER_ARGS.allowMetricLabelsManifest.value}"
       # cert-dir: "${KUBE_SCHEDULER_ARGS.certDir.value}"
@@ -426,10 +437,8 @@ export const KUBERNETES_KUBE_SCHEDULER_ARGS: TCustomValueItems = {
       # requestheader-allowed-names: "${KUBE_SCHEDULER_ARGS.requestheaderAllowedNames.value}"
       # requestheader-client-ca-file: "${KUBE_SCHEDULER_ARGS.requestheaderClientCaFile.value}"
       # show-hidden-metrics-for-version: "${KUBE_SCHEDULER_ARGS.showHiddenMetricsForVersion.value}"
-      # tls-cert-file: "${KUBE_SCHEDULER_ARGS.tlsCertFile.value}"
       # tls-cipher-suites: "${KUBE_SCHEDULER_ARGS.tlsCipherSuites.value}"
       # tls-min-version: "${KUBE_SCHEDULER_ARGS.tlsMinVersion.value}"
-      # tls-private-key-file: "${KUBE_SCHEDULER_ARGS.tlsPrivateKeyFile.value}"
       # tls-sni-cert-key: "${KUBE_SCHEDULER_ARGS.tlsSniCertKey.value}"
       # vmodule: "${KUBE_SCHEDULER_ARGS.vmodule.value}"
       # write-config-to: "${KUBE_SCHEDULER_ARGS.writeConfigTo.value}"

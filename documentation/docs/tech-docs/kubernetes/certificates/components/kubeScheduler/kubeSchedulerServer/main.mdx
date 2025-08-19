@@ -1,0 +1,22 @@
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+import Openssl from '@site/docs/tech-docs/kubernetes/certificates/components/kubeScheduler/kubeSchedulerServer/openssl.mdx'
+import StatusOpenssl from '@site/docs/tech-docs/kubernetes/certificates/components/kubeScheduler/kubeSchedulerServer/checks/statusOpenssl.mdx'
+import StatusKubeadm from '@site/docs/tech-docs/kubernetes/certificates/components/kubeScheduler/kubeSchedulerServer/checks/statusKubeadm.mdx'
+
+
+<Tabs groupId="install-type">
+
+  <TabItem value="HardWay">
+    <Openssl />
+    <StatusOpenssl />
+  </TabItem>
+
+  <TabItem value="Kubeadm">
+    :::danger
+    Просьба обратить внимание, что kubeadm не управляет данными сертификатами.
+    Используйте HardWay режим
+    :::
+  </TabItem>
+
+</Tabs>

@@ -6,6 +6,8 @@ import KubeAPIServerMain from '@site/docs/tech-docs/kubernetes/certificates/comp
 import ETCDClientETCDMain from '@site/docs/tech-docs/etcd/certificates/components/etcd/etcdClient/main.mdx'
 import ETCDServerMain from '@site/docs/tech-docs/etcd/certificates/components/etcd/etcdServer/main.mdx'
 import ETCDPeerMain from '@site/docs/tech-docs/etcd/certificates/components/etcd/etcdPeer/main.mdx'
+import ControllerServerMain from '@site/docs/tech-docs/kubernetes/certificates/components/kubeControllerManager/kubeControllerManagerServer/main.mdx'
+import SchedulerServerMain from '@site/docs/tech-docs/kubernetes/certificates/components/kubeScheduler/kubeSchedulerServer/main.mdx'
 
 import TabItem from '@theme/TabItem'
 import Tabs from '@theme/Tabs'
@@ -89,6 +91,26 @@ import Tabs from '@theme/Tabs'
         </div>
       </summary>
       <ETCDPeerMain />
+    </details>
+  </TabItem>
+  <TabItem value="Controller server">
+    <details open className="custom-gray-block">
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Controller server</p>
+        </div>
+      </summary>
+      <ControllerServerMain />
+    </details>
+  </TabItem>
+  <TabItem value="Scheduler server">
+    <details open className="custom-gray-block">
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Scheduler server</p>
+        </div>
+      </summary>
+      <SchedulerServerMain />
     </details>
   </TabItem>
 </Tabs>
