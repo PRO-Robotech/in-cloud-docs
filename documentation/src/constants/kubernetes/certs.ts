@@ -36,8 +36,8 @@ export const CERTIFICATES: TCertsItems = {
     cname: 'system:kube-controller-manager',
   },
   kubernetesControllerManagerServer: {
-    keyPath: `${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/pki/controller-manager-server-key.pem`,
-    crtPath: `${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/pki/controller-manager-server.pem`,
+    keyPath: `${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/pki/controller-manager-server.key`,
+    crtPath: `${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/pki/controller-manager-server.crt`,
     csrPath: `${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/openssl/csr/controller-manager-server.csr`,
     crtConf: `${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/openssl/controller-manager-server.conf`,
     keySize: '2048',
@@ -181,8 +181,8 @@ export const CERTIFICATES: TCertsItems = {
     cname: 'system:kube-scheduler',
   },
   kubernetesSchedulerServer: {
-    keyPath: `${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/pki/scheduler-server-key.pem`,
-    crtPath: `${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/pki/scheduler-server.pem`,
+    keyPath: `${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/pki/scheduler-server.key`,
+    crtPath: `${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/pki/scheduler-server.crt`,
     csrPath: `${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/openssl/csr/scheduler-server.csr`,
     crtConf: `${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/openssl/scheduler-server.conf`,
     keySize: '2048',
