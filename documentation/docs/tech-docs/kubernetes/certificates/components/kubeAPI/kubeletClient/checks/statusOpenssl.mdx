@@ -13,7 +13,7 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 
   <CodeBlock language="bash">
     {dedent`
-      ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/openssl/cert-report.sh ${CERTIFICATES.kubernetesServer.crtPath}
+      ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/openssl/cert-report.sh ${CERTIFICATES.kubernetesKubeletClient.crtPath}
     `}
   </CodeBlock>
 
