@@ -22,18 +22,30 @@ import dedent from 'ts-dedent'
 import { YamlModal } from '../src/components/YamlModal/YamlModal'
 import { getBasePrefix } from '@site/src/utils/getBasePrefix'
 import { YANDEX_KUBERNETES_AUDIT_POLICY } from '@site/src/constants/kubernetes/kubernetesAudt'
+import './kubernetes-exec.css'
 
-<h3> Kubernetes pods/exec <span style={{ color: '#1cc5ac' }}>#</span> </h3>
+<h3>
+  Kubernetes pods/exec <span style={{ color: '#1cc5ac' }}>#</span>{' '}
+</h3>
 
-
-<div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-start', justifyContent: 'space-between', gap: '30px', marginTop: '1.5rem' }}>
+<div
+  style={{
+    display: 'flex',
+    flexWrap: 'wrap',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    gap: '30px',
+    marginTop: '1.5rem',
+  }}
+>
   <div style={{ flex: '1 1 58%', minWidth: '280px', maxWidth: '620px' }}>
     <p>
-      <code>pods/exec</code> — удобный способ выполнять команды внутри контейнера для отладки и администрирования.
-      Но вот вам сходу задача: как вы считаете, насколько безопасна вот такая роль в Kubernetes, которую можно выдать любому пользователю, предположив абсурдную ситуацию, что ресурс Secret в кластере не используется?
+      <code>pods/exec</code> — удобный способ выполнять команды внутри контейнера для отладки и администрирования. Но
+      вот вам сходу задача: как вы считаете, насколько безопасна вот такая роль в Kubernetes, которую можно выдать
+      любому пользователю, предположив абсурдную ситуацию, что ресурс Secret в кластере не используется?
     </p>
   </div>
-  <div style={{ flex: '1 1 35%', minWidth: '200px', textAlign: 'center', marginTop: '-7rem' }}>
+  <div className="execImageWrapper">
     <img
       src={`${getBasePrefix()}img/blog/pod-exec-promo.png`}
       alt="pods/exec audit"
@@ -62,7 +74,8 @@ import { YANDEX_KUBERNETES_AUDIT_POLICY } from '@site/src/constants/kubernetes/k
 </CodeBlock>
 
 <p>
-  Если вы ответили «безопасная», то вы не одиноки — и вы предоставили бы доступ к <code>pods/exec</code> любому пользователю в кластере, конечно если бы создали сверху ClusterRolebinding.
+  Если вы ответили «безопасная», то вы не одиноки — и вы предоставили бы доступ к <code>pods/exec</code> любому
+  пользователю в кластере, конечно если бы создали сверху ClusterRolebinding.
 </p>
 
 {/* truncate */}
@@ -122,20 +135,36 @@ import { YANDEX_KUBERNETES_AUDIT_POLICY } from '@site/src/constants/kubernetes/k
   </thead>
   <tbody>
     <tr>
-      <td><code>GET</code></td>
-      <td><code>get</code></td>
+      <td>
+        <code>GET</code>
+      </td>
+      <td>
+        <code>get</code>
+      </td>
     </tr>
     <tr>
-      <td><code>POST</code></td>
-      <td><code>create</code></td>
+      <td>
+        <code>POST</code>
+      </td>
+      <td>
+        <code>create</code>
+      </td>
     </tr>
     <tr>
-      <td><code>PUT</code></td>
-      <td><code>update</code></td>
+      <td>
+        <code>PUT</code>
+      </td>
+      <td>
+        <code>update</code>
+      </td>
     </tr>
     <tr>
-      <td><code>DELETE</code></td>
-      <td><code>delete</code></td>
+      <td>
+        <code>DELETE</code>
+      </td>
+      <td>
+        <code>delete</code>
+      </td>
     </tr>
   </tbody>
 </table>
@@ -390,6 +419,7 @@ import { YANDEX_KUBERNETES_AUDIT_POLICY } from '@site/src/constants/kubernetes/k
 :::
 
 ---
+
 <h3>Kubernetes Audit</h3>
 
 <CodeBlock language="bash">
@@ -429,6 +459,7 @@ import { YANDEX_KUBERNETES_AUDIT_POLICY } from '@site/src/constants/kubernetes/k
 </CodeBlock>
 
 ## Итоги и рекомендации
+
 К сожалению нельзя знать все на свете, но можно стараться минимизировать риски.
 
 Проверяйте RBAC, не доверяйте слепо ролям с `*` в `resources` и `verbs`.
