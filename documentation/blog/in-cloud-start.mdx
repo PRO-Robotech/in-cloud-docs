@@ -22,11 +22,6 @@ import { YamlModal } from '../src/components/YamlModal/YamlModal'
 import { getBasePrefix } from '@site/src/utils/getBasePrefix'
 import { FancyboxImage } from '@site/src/components/commonBlocks/FancyboxImage'
 
-### InCloud: начало <span style={{ color: '#1cc5ac' }}>#</span>
-
-<p style={{ fontStyle: 'italic', fontWeight: 600 }}>
-  Открываем серию статей о Kubernetes в новом формате — через практику, опыт и архитектуру.
-</p>
 
 <div
   style={{
@@ -41,6 +36,7 @@ import { FancyboxImage } from '@site/src/components/commonBlocks/FancyboxImage'
     <p>
       Эта статья открывает серию, посвящённую <strong>InCloud</strong> — первому в отрасли динамическому UI для Kubernetes. Мы расскажем, как родилась идея, какие проблемы она решает и как начать работу с платформой уже сегодня.
     </p>
+
   </div>
 
   <div
@@ -48,12 +44,12 @@ import { FancyboxImage } from '@site/src/components/commonBlocks/FancyboxImage'
       flex: '1 1 40%',
       minWidth: '220px',
       textAlign: 'center',
-      marginTop: '-3rem',
+      marginTop: '-7rem', // 👈 ключевая правка: картинка поднимается выше заголовка
     }}
   >
     <img
-      src={`${getBasePrefix()}img/audit/audit-promo.png`}
-      alt="InCloud Audit Promo"
+      src={`${getBasePrefix()}img/incloud/image.png`}
+      alt="audit"
       style={{
         width: '110%',
         maxWidth: '330px',
@@ -61,8 +57,12 @@ import { FancyboxImage } from '@site/src/components/commonBlocks/FancyboxImage'
         transition: 'transform 0.3s ease-in-out',
       }}
     />
+
   </div>
 </div>
+
+
+{/* truncate */}
 
 ## Как зародилась идея
 
@@ -266,7 +266,29 @@ import { FancyboxImage } from '@site/src/components/commonBlocks/FancyboxImage'
     <tr>
       <td><code>factory</code></td>
       <td>Выделенные страницы фабрики</td>
-      <td></td>
+      <td>
+        <figure style={{ textAlign: 'center', display: 'contents' }}>
+          <FancyboxImage src={`${getBasePrefix()}img/incloud/components/.drawio.svg`} style={{ width: '100%', maxWidth: 'none' }} />
+          <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
+          </figcaption>
+        </figure>
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+
+        <YamlModal
+          yamlContent={dedent`
+            - type: antdText
+              data:
+                id: details-title
+                text: "Pod details"
+                strong: true
+                style:
+                  fontSize: 20
+                  marginBottom: 12px
+          `}
+        />
+        </div>
+
+      </td>
     </tr>
   </tbody>
 </table>
@@ -1588,8 +1610,1716 @@ import { FancyboxImage } from '@site/src/components/commonBlocks/FancyboxImage'
 
 <h3>MarketplacePanel — TODO</h3>
 
-<h3>Factory — TODO</h3>
+<h3>Factory</h3>
 
-<h3>CustomFormsOverride — TODO</h3>
 
-<h3>CustomFormsPrefill — TODO</h3>
+<p>
+  Ресурс <code>Factory</code> используется в InCloud UI для декларативного построения интерфейсов на основе описания в YAML.
+  Он выступает как описатель страницы или её части, включающей:
+</p>
+
+<ul>
+  <li>получение данных через API</li>
+  <li>визуальное разложение на компоненты</li>
+  <li>объединение вложенных компонентов в структуру</li>
+  <li>работу с JSONPath-выражениями и переменными из URL</li>
+</ul>
+
+---
+
+<h3>Общее описание</h3>
+
+Ресурс принадлежит группе <code>front.in-cloud.io/v1alpha1</code> и имеет следующий базовый вид:
+
+<CodeBlock language="yaml" title="Factory.yaml">
+  {dedent`
+    ---
+    apiVersion: front.in-cloud.io/v1alpha1
+    kind: Factory
+    metadata:
+      name: example-details
+    spec:
+      key: example-details
+      urlsToFetch:
+        - /api/clusters/{2}/k8s/api/v1/namespaces/{3}/examples/{6}
+      data:
+        - type: antdText
+          data:
+            id: text-header
+            text: Example title
+  `}
+</CodeBlock>
+
+---
+
+<h3>Ключевые поля</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Поле</th>
+      <th>Тип</th>
+      <th>Назначение</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>spec.key</code></td>
+      <td><code>string</code></td>
+      <td>Уникальный ключ страницы, используется как ID и часть URL.</td>
+    </tr>
+    <tr>
+      <td><code>sidebarTags[]</code></td>
+      <td><code>string[]</code></td>
+      <td>Связь с тегами сайдбара, влияет на навигацию и видимость.</td>
+    </tr>
+    <tr>
+      <td><code>urlsToFetch[]</code></td>
+      <td><code>string[]</code></td>
+      <td>Список API-запросов, чьи данные будут подставлены в шаблоны компонентов.</td>
+    </tr>
+    <tr>
+      <td><code>withScrollableMainContentCard</code></td>
+      <td><code>bool</code></td>
+      <td>Управляет наличием скролла в карточке основного контента.</td>
+    </tr>
+    <tr>
+      <td><code>data[]</code></td>
+      <td><code>Component[]</code></td>
+      <td>Основная структура компонентов интерфейса.</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+<h3>Переменные URL</h3>
+
+<p>
+  Все пути в <code>urlsToFetch</code> и других полях могут содержать переменные в фигурных скобках, которые подставляются при рендеринге:
+</p>
+
+<CodeBlock language="yaml" title="Пример с плейсхолдерами">
+  {dedent`
+    urlsToFetch:
+      - /api/clusters/{2}/k8s/api/v1/namespaces/{3}/pods/{6}
+  `}
+</CodeBlock>
+
+---
+
+<h3>Поле <code>data[]</code></h3>
+
+Поле <code>data</code> — это **основное содержимое Factory-ресурса**.
+Оно описывает структуру интерфейса в виде иерархии компонентов.
+
+
+<h4>Доступные компоненты Factory</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Название</th>
+      <th>Назначение</th>
+      <th>Пример</th>
+    </tr>
+  </thead>
+  <tbody>
+
+    <tr>
+      <td><code>antdText</code></td>
+      <td>Выводит простой текст или заголовок</td>
+      <td>
+        <figure style={{ textAlign: 'center', display: 'contents' }}>
+          <FancyboxImage src={`${getBasePrefix()}img/incloud/components/antdText.drawio.svg`} style={{ width: '100%', maxWidth: 'none' }} />
+          <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
+          </figcaption>
+        </figure>
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+
+          <YamlModal
+            yamlContent={dedent`
+              - type: antdText
+                data:
+                  id: details-title
+                  text: "Pod details"
+                  strong: true
+                  style:
+                    fontSize: 20
+                    marginBottom: 12px
+            `}
+          />
+
+          <YamlModal
+            buttonLabel="Пример структуры"
+            yamlContent={dedent`
+            {
+              id: number | string
+              text: string
+            } & Omit<TextProps, 'id' | 'children'>
+            `}
+          />
+          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+            <a href="https://ant.design/components/typography#typographytext">TextProps</a>
+            <a href="https://ant.design/components/typography#typography-demo-text">Пример</a>
+          </div>
+        </div>
+      </td>
+    </tr>
+
+    <tr>
+      <td><code>parsedText</code></td>
+      <td>Значение из JSONPath</td>
+      <td>
+        <figure style={{ textAlign: 'center', display: 'contents' }}>
+          <FancyboxImage src={`${getBasePrefix()}img/incloud/components/parsedText.drawio.svg`} style={{ width: '100%', maxWidth: 'none' }} />
+          <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
+          </figcaption>
+        </figure>
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+          <YamlModal
+            yamlContent={dedent`
+              - type: parsedText
+                data:
+                  id: meta-name-value
+                  text: "{reqsJsonPath[0]['.metadata.name']['-']}"
+            `}
+          />
+          <YamlModal
+            buttonLabel="Пример структуры"
+            yamlContent={dedent`
+              {
+                id: number | string
+                text: string
+                formatter?: 'timestamp'
+                style?: CSSProperties
+              }
+            `}
+          />
+        </div>
+      </td>
+    </tr>
+
+    <tr>
+      <td><code>StatusText</code></td>
+      <td>Определяет статус по значениям (успех, ошибка, ожидание)</td>
+      <td>
+        <figure style={{ textAlign: 'center', display: 'contents' }}>
+          <FancyboxImage src={`${getBasePrefix()}img/incloud/components/StatusText.drawio.svg`} style={{ width: '100%', maxWidth: 'none' }} />
+          <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
+          </figcaption>
+        </figure>
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+          <YamlModal
+            yamlContent={dedent`
+              - type: StatusText
+                data:
+                  id: pod-status
+
+                  # --- Collected values from Pod status -----------------------------------
+                  values:
+                    # Init containers
+                    - "{reqsJsonPath[0]['.status.initContainerStatuses[*].state.waiting.reason']}"
+                    - "{reqsJsonPath[0]['.status.initContainerStatuses[*].state.terminated.reason']}"
+                    - "{reqsJsonPath[0]['.status.initContainerStatuses[*].lastState.terminated.reason']}"
+
+                    # Main containers
+                    - "{reqsJsonPath[0]['.status.containerStatuses[*].state.waiting.reason']}"
+                    - "{reqsJsonPath[0]['.status.containerStatuses[*].state.terminated.reason']}"
+                    - "{reqsJsonPath[0]['.status.containerStatuses[*].lastState.terminated.reason']}"
+
+                    # Pod phase and general reason
+                    - "{reqsJsonPath[0]['.status.phase']}"
+                    - "{reqsJsonPath[0]['.status.reason']}"
+
+                    # Condition reasons (PodScheduled / Initialized / ContainersReady / Ready)
+                    - "{reqsJsonPath[0]['.status.conditions[*].reason']}"
+
+                  # --- Success criteria ---------------------------------------------------
+                  criteriaSuccess: notEquals
+                  stategySuccess: every
+                  valueToCompareSuccess:
+                    - "Preempted"
+                    - "Shutdown"
+                    - "NodeShutdown"
+                    - "DisruptionTarget"
+                    - "Unschedulable"
+                    - "SchedulingGated"
+                    - "ContainersNotReady"
+                    - "ContainersNotInitialized"
+                    - "BackOff"
+                    - "PreStopHookError"
+                    - "KillError"
+                    - "ContainerStatusUnknown"
+
+                  # --- Error criteria -----------------------------------------------------
+                  criteriaError: equals
+                  strategyError: every
+                  valueToCompareError:
+                    - "Failed"
+                    - "Unknown"
+                    - "Evicted"
+                    - "NodeLost"
+                    - "UnexpectedAdmissionError"
+                    - "SchedulerError"
+                    - "FailedScheduling"
+                    - "CrashLoopBackOff"
+                    - "ImagePullBackOff"
+                    - "ErrImagePull"
+                    - "ErrImageNeverPull"
+                    - "InvalidImageName"
+                    - "ImageInspectError"
+                    - "CreateContainerConfigError"
+                    - "CreateContainerError"
+                    - "RunContainerError"
+                    - "StartError"
+                    - "PostStartHookError"
+                    - "ContainerCannotRun"
+                    - "OOMKilled"
+                    - "Error"
+                    - "DeadlineExceeded"
+                    - "CreatePodSandboxError"
+
+                  # --- Output text rendering ----------------------------------------------
+                  successText:  "{reqsJsonPath[0]['.status.phase']}"
+                  errorText:    "Error"
+                  fallbackText: "Progressing"
+            `}
+          />
+
+          <YamlModal
+            buttonLabel="Пример структуры"
+            yamlContent={dedent`
+              {
+                id: number | string
+                values: string[] // array of reqsJsonPath
+                criteriaSuccess: 'equals' | 'notEquals'
+                criteriaError: 'equals' | 'notEquals'
+                stategySuccess?: 'some' | 'every' // every - default
+                strategyError?: 'some' | 'every' // every - default
+                valueToCompareSuccess: unknown[]
+                valueToCompareError: unknown[]
+                successText: string
+                errorText: string
+                fallbackText: string
+              } & Omit<TextProps, 'id' | 'children'>
+            `}
+          />
+          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+            <a href="https://ant.design/components/typography#typographytext">TextProps</a>
+            <a href="https://ant.design/components/typography#typography-demo-text">Пример</a>
+          </div>
+        </div>
+      </td>
+    </tr>
+
+    <tr>
+      <td><code>antdLink</code></td>
+      <td>Гиперссылка на другой ресурс или маршрут</td>
+      <td>
+        <figure style={{ textAlign: 'center', display: 'contents' }}>
+          <FancyboxImage src={`${getBasePrefix()}img/incloud/components/antdLink.drawio.svg`} style={{ width: '100%', maxWidth: 'none' }} />
+          <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
+          </figcaption>
+        </figure>
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+
+          <YamlModal
+            yamlContent={dedent`
+              - data:
+                  href: /openapi-ui/{2}/factory/namespace-details/{reqsJsonPath[0]['.metadata.namespace']['-']}
+                  id: namespace-link
+                  text: "{reqsJsonPath[0]['.metadata.namespace']['-']}"
+                type: antdLink
+            `}
+          />
+
+          <YamlModal
+            buttonLabel="Пример структуры"
+            yamlContent={dedent`
+              {
+                id: number | string
+                text: string
+                href: string
+              } & Omit<LinkProps, 'id' | 'children' | 'href'>
+            `}
+          />
+          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+            <a href="https://ant.design/components/typography#typography-demo-text">Пример</a>
+          </div>
+        </div>
+      </td>
+    </tr>
+
+    <tr>
+      <td><code>antdButton</code></td>
+      <td>Кнопка действия с ID, стилями и событиями</td>
+      <td>
+        <figure style={{ textAlign: 'center', display: 'contents' }}>
+          <FancyboxImage src={`${getBasePrefix()}img/incloud/components/antdButton.drawio.svg`} style={{ width: '100%', maxWidth: 'none' }} />
+          <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
+          </figcaption>
+        </figure>
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+
+          <YamlModal
+            yamlContent={dedent`
+              - type: antdFlex
+                data:
+                  id: qos-class-block
+                  vertical: false
+                  gap: 2
+                children:
+                  - type: antdButton
+                    data:
+                      id: github-button
+                      text: "⭐ Star us on GitHub"
+                      # type: primary
+                      shape: round
+                      size: large
+                      href: "https://github.com/PRO-Robotech/openapi-ui"
+                      target: "_blank"
+                      style:
+                        backgroundColor: "#24292f"
+                        color: "#ffffff"
+                        fontWeight: 600
+                        padding: "0 20px"
+                        boxShadow: "0 2px 8px rgba(0,0,0,0.25)"
+                        transition: "all 0.3s"
+                        hover:
+                          backgroundColor: "#444d56"
+            `}
+          />
+          <YamlModal
+            buttonLabel="Пример структуры"
+            yamlContent={dedent`
+              {
+                id: number | string
+                text: string
+              } & Omit<ButtonProps, 'id' | 'children'>
+              `}
+          />
+          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+            <a href="https://ant.design/components/button#api">ButtonProps</a>
+            <a href="https://ant.design/components/button">Пример</a>
+          </div>
+        </div>
+      </td>
+    </tr>
+
+    <tr>
+      <td><code>KeyCounter</code></td>
+      <td>Подсчитывает количество ключей в объекте</td>
+      <td>
+        <figure style={{ textAlign: 'center', display: 'contents' }}>
+          <FancyboxImage src={`${getBasePrefix()}img/incloud/components/KeyCounter.drawio.svg`} style={{ width: '100%', maxWidth: 'none' }} />
+          <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
+          </figcaption>
+        </figure>
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+
+          <YamlModal
+            yamlContent={dedent`
+              - type: KeyCounter
+                data:
+                  id: annotations-counter
+                  text: "~counter~ Annotations"
+                  reqIndex: 0
+                  jsonPathToObj: ".metadata.annotations"
+                  errorText: "No annotations"
+            `}
+          />
+          <YamlModal
+            buttonLabel="Пример структуры"
+            yamlContent={dedent`
+              {
+                id: number | string
+                reqIndex: string
+                jsonPathToObj: string
+                text: string
+                errorText: string
+                style?: CSSProperties
+              }
+            `}
+          />
+        </div>
+      </td>
+    </tr>
+
+    <tr>
+      <td><code>ItemCounter</code></td>
+      <td>Подсчитывает количество элементов в массиве</td>
+      <td>
+        <figure style={{ textAlign: 'center', display: 'contents' }}>
+          <FancyboxImage src={`${getBasePrefix()}img/incloud/components/ItemCounter.drawio.svg`} style={{ width: '100%', maxWidth: 'none' }} />
+          <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
+          </figcaption>
+        </figure>
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+
+          <YamlModal
+            yamlContent={dedent`
+              - type: ItemCounter
+                data:
+                  id: annotations-counter
+                  text: "~counter~ Toleratons"
+                  reqIndex: 0
+                  jsonPathToObj: ".spec.tolerations"
+                  errorText: "No tolerations"
+            `}
+          />
+          <YamlModal
+            buttonLabel="Пример структуры"
+            yamlContent={dedent`
+              {
+                id: number | string
+                reqIndex: string
+                jsonPathToArray: string
+                text: string
+                errorText: string
+                style?: CSSProperties
+              }
+            `}
+          />
+        </div>
+      </td>
+    </tr>
+
+    <tr>
+      <td><code>ConverterBytes</code></td>
+      <td>Конвертирует байты в читаемый размер (КБ, МБ и т.д.)</td>
+      <td>
+        <figure style={{ textAlign: 'center', display: 'contents' }}>
+          <FancyboxImage src={`${getBasePrefix()}img/incloud/components/ConverterBytes.drawio.svg`} style={{ width: '100%', maxWidth: 'none' }} />
+          <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
+          </figcaption>
+        </figure>
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+
+          <YamlModal
+            yamlContent={dedent`
+              - type: ConverterBytes
+                data:
+                  id: example-converter-bytes
+                  bytesValue: "{reqsJsonPath[0]['.sizeBytes']['-']}"
+                  format: true
+                  precision: 1
+            `}
+          />
+          <YamlModal
+            buttonLabel="Пример структуры"
+            yamlContent={dedent`
+              {
+                id: number | string
+                bytesValue: string // reqs
+                unit?: TUnitInput // do not enter if wanna auto format
+                /** If true, returns "12.3 GiB" instead of just 12.3 */
+                format?: boolean
+                /** Max fraction digits when formatting (default 2) */
+                precision?: number
+                /** Locale for number formatting (default: undefined => user agent) */
+                locale?: string
+                standard?: 'si' | 'iec'
+                notANumberText?: string
+                style?: CSSProperties
+              }
+            `}
+          />
+        </div>
+      </td>
+    </tr>
+
+    <tr>
+      <td><code>SecretBase64Plain</code></td>
+      <td>Показывает секрет в base64 или plaintext с глазком</td>
+      <td>
+        <figure style={{ textAlign: 'center', display: 'contents' }}>
+          <FancyboxImage src={`${getBasePrefix()}img/incloud/components/SecretBase64Plain.drawio.svg`} style={{ width: '100%', maxWidth: 'none' }} />
+          <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
+          </figcaption>
+        </figure>
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+
+        <YamlModal
+          yamlContent={dedent`
+            - type: SecretBase64Plain
+              data:
+                id: example-secterbase64
+                base64Value: "{reqsJsonPath[0]['.data.auth']['-']}"
+                niceLooking: true
+          `}
+        />
+          <YamlModal
+            buttonLabel="Пример структуры"
+            yamlContent={dedent`
+              {
+                id: number | string
+                base64Value?: string // reqs | one of required
+                plainTextValue?: string // reqs | one of required
+                containerStyle?: CSSProperties
+                inputContainerStyle?: CSSProperties
+                flexProps?: Omit<FlexProps, 'children'>
+                niceLooking?: boolean
+                notificationWidth?: string // default 300px
+                notificationText?: string // Text copied to clipboard
+              }
+            `}
+          />
+        </div>
+      </td>
+    </tr>
+
+    <tr>
+      <td><code>antdFlex</code></td>
+      <td>Контейнер с флекс-раскладкой (по умолчанию вертикальный)</td>
+      <td>
+        <figure style={{ textAlign: 'center', display: 'contents' }}>
+          <FancyboxImage src={`${getBasePrefix()}img/incloud/components/antdFlex.drawio.svg`} style={{ width: '100%', maxWidth: 'none' }} />
+          <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
+          </figcaption>
+        </figure>
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+
+          <YamlModal
+            yamlContent={dedent`
+              - type: antdFlex
+                data:
+                  id: field-name-block
+                  vertical: true
+                  gap: 4
+                children:
+                  - type: antdText
+                    data:
+                      id: field-name-label
+                      strong: true
+                      text: "Name"
+                  - type: parsedText
+                    data:
+                      id: field-name-value
+                      text: "{reqsJsonPath[0]['.metadata.name']['-']}"
+            `}
+          />
+
+          <YamlModal
+            buttonLabel="Пример структуры"
+            yamlContent={dedent`
+              {
+                id: number | string
+              } & Omit<FlexProps, 'id' | 'children'>
+            `}
+          />
+          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+            <a href="https://ant.design/components/flex#api">FlexProps</a>
+            <a href="https://ant.design/components/flex">Пример</a>
+          </div>
+        </div>
+      </td>
+    </tr>
+
+    <tr>
+      <td><code>antdRow</code></td>
+      <td>Горизонтальная сетка из колонок</td>
+      <td>
+        <figure style={{ textAlign: 'center', display: 'contents' }}>
+          <FancyboxImage src={`${getBasePrefix()}img/incloud/components/antdRow.drawio.svg`} style={{ width: '100%', maxWidth: 'none' }} />
+          <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
+          </figcaption>
+        </figure>
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+
+          <YamlModal
+            yamlContent={dedent`
+              - type: antdRow
+                data:
+                  id: details-grid
+                  gutter: [48, 12]
+                children: []
+            `}
+          />
+          <YamlModal
+            buttonLabel="Пример структуры"
+            yamlContent={dedent`
+              {
+                id: number | string
+              } & Omit<RowProps, 'id' | 'children'>
+            `}
+          />
+          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+            <a href="https://ant.design/components/grid#row">RowProps</a>
+            <a href="https://ant.design/components/grid">Пример</a>
+          </div>
+        </div>
+      </td>
+    </tr>
+
+    <tr>
+      <td><code>antdCol</code></td>
+      <td>Колонка в рамках строки <code>antdRow</code></td>
+      <td>
+        <figure style={{ textAlign: 'center', display: 'contents' }}>
+          <FancyboxImage src={`${getBasePrefix()}img/incloud/components/antdCol.drawio.svg`} style={{ width: '100%', maxWidth: 'none' }} />
+          <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
+          </figcaption>
+        </figure>
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+
+          <YamlModal
+            yamlContent={dedent`
+              - type: antdCol
+                data:
+                  id: details-col-right
+                  span: 12
+                children: []
+            `}
+          />
+          <YamlModal
+            buttonLabel="Пример структуры"
+            yamlContent={dedent`
+            {
+              id: number | string
+            } & Omit<ColProps, 'id' | 'children'>
+            `}
+          />
+          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+            <a href="https://ant.design/components/grid#col">ColProps</a>
+            <a href="https://ant.design/components/grid">Пример</a>
+          </div>
+        </div>
+      </td>
+    </tr>
+
+    <tr>
+      <td><code>antdTabs</code></td>
+      <td>Вкладки с разными дочерними компонентами</td>
+      <td>
+        <figure style={{ textAlign: 'center', display: 'contents' }}>
+          <FancyboxImage src={`${getBasePrefix()}img/incloud/components/antdTabs.drawio.svg`} style={{ width: '100%', maxWidth: 'none' }} />
+          <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
+          </figcaption>
+        </figure>
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+          <YamlModal
+            yamlContent={dedent`
+              - type: antdTabs
+                data:
+                  id: tabs-root
+                  defaultActiveKey: "details"
+                  items:
+                    - key: "details"
+                      label: "Details"
+                      children: []
+                    - key: "yaml"
+                      label: "Yaml"
+                      children: []
+                    - key: "logs"
+                      label: "Logs"
+                      children: []
+                    - key: "terminal"
+                      label: "Terminal"
+                      children: []
+                    - key: "reports"
+                      label: "Reports"
+                      children: []
+                    - key: "cfg-reports"
+                      label: "CFG Reports"
+                      children: []
+            `}
+          />
+          <YamlModal
+            buttonLabel="Пример структуры"
+            yamlContent={dedent`
+            {
+              id: number | string
+            } & Omit<TabsProps, 'id' | 'children'>
+            `}
+          />
+          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+            <a href="https://ant.design/components/tabs#tabs">TabsProps</a>
+            <a href="https://ant.design/components/tabs">Пример</a>
+          </div>
+        </div>
+      </td>
+    </tr>
+
+    <tr>
+      <td><code>antdCard</code></td>
+      <td>Обёртка в виде карточки с отступами и стилем</td>
+      <td>
+        <figure style={{ textAlign: 'center', display: 'contents' }}>
+          <FancyboxImage src={`${getBasePrefix()}img/incloud/components/antdCard.drawio.svg`} style={{ width: '100%', maxWidth: 'none' }} />
+          <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
+          </figcaption>
+        </figure>
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+
+          <YamlModal
+            yamlContent={dedent`
+              - type: antdCard
+                data:
+                  id: pod-info-card
+                  title: "Secret Info"
+                  bordered: true
+                  style:
+                    marginBottom: 16px
+                    padding: 12px
+                children:
+                  - type: SecretBase64Plain
+                    data:
+                      id: example-secterbase64
+                      base64Value: "{reqsJsonPath[0]['.data.auth']['-']}"
+                      niceLooking: true
+            `}
+          />
+          <YamlModal
+            buttonLabel="Пример структуры"
+            yamlContent={dedent`
+            {
+              id: number | string
+            } & Omit<CardProps, 'id'>
+            `}
+          />
+          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+            <a href="https://ant.design/components/card#api">CardProps</a>
+            <a href="https://ant.design/components/card">Пример</a>
+          </div>
+        </div>
+      </td>
+    </tr>
+
+    <tr>
+      <td><code>ContentCard</code></td>
+      <td>Визуальная карточка с секцией данных</td>
+      <td>
+        <figure style={{ textAlign: 'center', display: 'contents' }}>
+          <FancyboxImage src={`${getBasePrefix()}img/incloud/components/ContentCard.drawio.svg`} style={{ width: '100%', maxWidth: 'none' }} />
+          <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9рем', color: '#666', textAlign: 'center' }}>
+          </figcaption>
+        </figure>
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+          <YamlModal
+            yamlContent={dedent`
+              - type: ContentCard
+                data:
+                  id: sync-status-card
+                  style:
+                    marginBottom: 24px
+                children: []
+            `}
+          />
+          <YamlModal
+            buttonLabel="Пример структуры"
+            yamlContent={dedent`
+              {
+                id: number | string
+                flexGrow?: number
+                displayFlex?: boolean
+                flexFlow?: string
+                maxHeight?: number
+              }
+            `}
+          />
+        </div>
+      </td>
+    </tr>
+
+    <tr>
+      <td><code>Spacer</code></td>
+      <td>Добавляет вертикальный отступ между элементами</td>
+      <td>
+        <figure style={{ textAlign: 'center', display: 'contents' }}>
+          <FancyboxImage src={`${getBasePrefix()}img/incloud/components/Spacer.drawio.svg`} style={{ width: '100%', maxWidth: 'none' }} />
+          <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
+          </figcaption>
+        </figure>
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+          <YamlModal
+            yamlContent={dedent`
+              - type: Spacer
+                data:
+                  id: details-spacer
+                  "$space": 16
+            `}
+          />
+          <YamlModal
+            buttonLabel="Пример структуры"
+            yamlContent={dedent`
+              {
+                id: number | string
+                $space?: number
+                $spaceMob?: number
+                $samespace?: boolean
+              }
+            `}
+          />
+        </div>
+      </td>
+    </tr>
+
+    <tr>
+      <td><code>EnrichedTable</code></td>
+      <td>Продвинутая таблица с поддержкой загрузки данных и фильтрации</td>
+      <td>
+        <figure style={{ textAlign: 'center', display: 'contents' }}>
+          <FancyboxImage src={`${getBasePrefix()}img/incloud/components/EnrichedTable.drawio.svg`} style={{ width: '100%', maxWidth: 'none' }} />
+          <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
+          </figcaption>
+        </figure>
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+          <YamlModal
+            yamlContent={dedent`
+              - type: EnrichedTable
+                data:
+                  id: resources-table
+                  fetchUrl: "/api/clusters/{2}/k8s/apis/argoproj.io/v1alpha1/namespaces/{3}/applications/{6}"
+                  clusterNamePartOfUrl: "{2}"
+                  customizationId: "factory-argocd-application-status-resources"
+                  baseprefix: "/openapi-ui"
+                  withoutControls: true
+                  pathToItems: ".status.resources"
+            `}
+          />
+          <YamlModal
+            buttonLabel="Пример структуры"
+            yamlContent={dedent`
+              {
+                id: number | string
+                fetchUrl: string
+                pathToItems: string | string[] // jsonpath or keys as string[]
+                clusterNamePartOfUrl: string
+                labelsSelector?: Record<string, string>
+                labelsSelectorFull?: {
+                  reqIndex: number
+                  pathToLabels: string | string[] // jsonpath or keys as string[]
+                }
+                fieldSelector?: {
+                  fieldName: string
+                  parsedText: string
+                }
+                baseprefix?: string
+                resourceSchema?: TJSON
+                dataForControls?: {
+                  cluster: string
+                  syntheticProject?: string
+                  pathPrefix: string
+                  apiVersion: string
+                  typeName: string
+                  backlink: string
+                  deletePathPrefix: string
+                  permissions: {
+                    canUpdate?: boolean
+                    canDelete?: boolean
+                  }
+                }
+                customizationId?: string
+                forceDefaultAdditionalPrinterColumns?: TAdditionalPrinterColumns
+              }
+            `}
+          />
+        </div>
+      </td>
+    </tr>
+
+    <tr>
+      <td><code>VisibilityContainer</code></td>
+      <td>Показывает блок при наличии содержимого (обычно из <code>value</code>)</td>
+      <td>
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+          <YamlModal
+            yamlContent={dedent`
+              - type: VisibilityContainer
+                data:
+                  id: conditions-visibility
+                  value: "{reqsJsonPath[0]['.roleRef.kind']['-']}"
+                  style:
+                    margin: 0
+                    padding: 0
+                  children: []
+            `}
+          />
+          <YamlModal
+            buttonLabel="Пример структуры"
+            yamlContent={dedent`
+              {
+                id: number | string
+                value: string
+              }
+            `}
+          />
+        </div>
+      </td>
+    </tr>
+
+    <tr>
+      <td><code>YamlEditorSingleton</code></td>
+      <td>Редактор YAML для одного ресурса (prefill через API)</td>
+      <td>
+        <figure style={{ textAlign: 'center', display: 'contents' }}>
+          <FancyboxImage src={`${getBasePrefix()}img/incloud/components/YamlEditorSingleton.drawio.svg`} style={{ width: '100%', maxWidth: 'none' }} />
+          <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
+          </figcaption>
+        </figure>
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+          <YamlModal
+            yamlContent={dedent`
+              - key: yaml
+                type: YamlEditorSingleton
+                label: YAML
+                data:
+                  apiGroup: apps
+                  apiVersion: v1
+                  cluster: '{2}'
+                  id: yaml-editor
+                  isNameSpaced: true
+                  prefillValuesRequestIndex: 0
+                  substractHeight: 400
+                  type: apis
+                  typeName: deployments
+            `}
+          />
+          <YamlModal
+            buttonLabel="Пример структуры"
+            yamlContent={dedent`
+              {
+                id: number | string
+                cluster: string
+                isNameSpaced: boolean
+                type: 'builtin' | 'apis'
+                apiGroup?: string
+                apiVersion?: string
+                typeName: string
+                prefillValuesRequestIndex: number
+                substractHeight?: number
+              }
+            `}
+          />
+        </div>
+      </td>
+    </tr>
+
+    <tr>
+      <td><code>Labels</code></td>
+      <td>Редактируемый список label'ов объекта</td>
+      <td>
+        <figure style={{ textAlign: 'center', display: 'contents' }}>
+          <FancyboxImage src={`${getBasePrefix()}img/incloud/components/Labels.drawio.svg`} style={{ width: '100%', maxWidth: 'none' }} />
+          <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
+          </figcaption>
+        </figure>
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+          <YamlModal
+            yamlContent={dedent`
+              - type: Labels
+                data:
+                  containerStyle:
+                    marginTop: -30px
+                  editModalWidth: 650
+                  endpoint: /api/clusters/{2}/k8s/apis/apps/v1/namespaces/{3}/deployments/{6}
+                  id: labels-editor
+                  inputLabel: ""
+                  jsonPathToLabels: .metadata.labels
+                  maxEditTagTextLength: 35
+                  modalDescriptionText: ""
+                  modalTitle: Edit labels
+                  notificationSuccessMessage: Updated successfully
+                  notificationSuccessMessageDescription: Labels have been updated
+                  paddingContainerEnd: 24px
+                  pathToValue: /metadata/labels
+                  reqIndex: 0
+                  selectProps:
+                    maxTagTextLength: 35
+            `}
+          />
+          <YamlModal
+            buttonLabel="Пример структуры"
+            yamlContent={dedent`
+              {
+                  id: number | string
+                  reqIndex: string
+                  jsonPathToLabels: string
+                  selectProps?: SelectProps
+                  readOnly?: true
+                  notificationSuccessMessage?: string
+                  notificationSuccessMessageDescription?: string
+                  modalTitle?: string
+                  modalDescriptionText?: string
+                  modalDescriptionTextStyle?: CSSProperties
+                  inputLabel?: string
+                  inputLabelStyle?: CSSProperties
+                  containerStyle?: CSSProperties
+                  maxEditTagTextLength?: number
+                  allowClearEditSelect?: boolean
+                  endpoint?: string
+                  pathToValue?: string
+                  editModalWidth?: number | string
+                  paddingContainerEnd?: string
+                }
+            `}
+          />
+          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+            <a href="https://ant.design/components/select#select-props">selectProps</a>
+          </div>
+        </div>
+      </td>
+    </tr>
+
+    <tr>
+      <td><code>Tolerations</code></td>
+      <td>Просмотр и редактирование toleration'ов Pod'а</td>
+      <td>
+        <figure style={{ textAlign: 'center', display: 'contents' }}>
+          <FancyboxImage src={`${getBasePrefix()}img/incloud/components/Tolerations.drawio.svg`} style={{ width: '100%', maxWidth: 'none' }} />
+          <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
+          </figcaption>
+        </figure>
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+          <YamlModal
+            yamlContent={dedent`
+              - type: Tolerations
+                data:
+                  cols:
+                  - 8
+                  - 3
+                  - 8
+                  - 4
+                  - 1
+                  editModalWidth: 1000px
+                  endpoint: /api/clusters/{2}/k8s/api/v1/namespaces/{3}/pods/{6}
+                  errorText: 0 Tolerations
+                  id: tolerations
+                  inputLabel: ""
+                  jsonPathToArray: .spec.tolerations
+                  modalDescriptionText: ""
+                  modalTitle: Edit tolerations
+                  notificationSuccessMessage: Updated successfully
+                  notificationSuccessMessageDescription: Tolerations have been
+                    updated
+                  pathToValue: /spec/tolerations
+                  reqIndex: 0
+                  text: ~counter~ Tolerations
+            `}
+          />
+          <YamlModal
+            buttonLabel="Пример структуры"
+            yamlContent={dedent`
+              {
+                id: number | string
+                reqIndex: string
+                jsonPathToArray: string
+                text: string
+                errorText: string
+                containerStyle?: CSSProperties
+                notificationSuccessMessage?: string
+                notificationSuccessMessageDescription?: string
+                modalTitle?: string
+                modalDescriptionText?: string
+                modalDescriptionTextStyle?: CSSProperties
+                inputLabel?: string
+                inputLabelStyle?: CSSProperties
+                endpoint?: string
+                pathToValue?: string
+                editModalWidth?: number | string
+                cols: number[] // 5
+              }
+            `}
+          />
+        </div>
+      </td>
+    </tr>
+
+    <tr>
+      <td><code>Annotations</code></td>
+      <td>Редактируемая таблица аннотаций</td>
+      <td>
+        <figure style={{ textAlign: 'center', display: 'contents' }}>
+          <FancyboxImage src={`${getBasePrefix()}img/incloud/components/Annotations.drawio.svg`} style={{ width: '100%', maxWidth: 'none' }} />
+          <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
+          </figcaption>
+        </figure>
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+          <YamlModal
+            yamlContent={dedent`
+              - type: Annotations
+                data:
+                  cols:
+                  - 11
+                  - 11
+                  - 2
+                  editModalWidth: 800px
+                  endpoint: /api/clusters/{2}/k8s/apis/apps/v1/namespaces/{3}/deployments/{6}
+                  errorText: 0 Annotations
+                  id: annotations
+                  inputLabel: ""
+                  jsonPathToObj: .metadata.annotations
+                  modalDescriptionText: ""
+                  modalTitle: Edit annotations
+                  notificationSuccessMessage: Updated successfully
+                  notificationSuccessMessageDescription: Annotations have been
+                    updated
+                  pathToValue: /metadata/annotations
+                  reqIndex: 0
+                  text: ~counter~ Annotations
+            `}
+          />
+          <YamlModal
+            buttonLabel="Пример структуры"
+            yamlContent={dedent`
+              {
+                id: number | string
+                reqIndex: string
+                jsonPathToObj: string
+                text: string
+                errorText: string
+                containerStyle?: CSSProperties
+                notificationSuccessMessage?: string
+                notificationSuccessMessageDescription?: string
+                modalTitle?: string
+                modalDescriptionText?: string
+                modalDescriptionTextStyle?: CSSProperties
+                inputLabel?: string
+                inputLabelStyle?: CSSProperties
+                endpoint?: string
+                pathToValue?: string
+                editModalWidth?: number | string
+                cols: number[] // 3
+              }
+            `}
+          />
+        </div>
+      </td>
+    </tr>
+
+    <tr>
+      <td><code>ArrayOfObjectsToKeyValues</code></td>
+      <td>Преобразует массив объектов в список ключ:значение по полям <code>keyFieldName</code> и <code>valueFieldName</code></td>
+      <td>
+        <figure style={{ textAlign: 'center', display: 'contents' }}>
+          <FancyboxImage src={`${getBasePrefix()}img/incloud/components/ArrayOfObjectsToKeyValues.drawio.svg`} style={{ width: '100%', maxWidth: 'none' }} />
+          <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
+          </figcaption>
+        </figure>
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+          <YamlModal
+            yamlContent={dedent`
+              - type: ArrayOfObjectsToKeyValues
+                data:
+                  id: node-address
+                  reqIndex: 0
+                  jsonPathToArray: ".status.addresses"
+                  keyFieldName: type
+                  valueFieldName: address
+                  keyFieldStyle:
+                    color: "#aaabac"
+            `}
+          />
+          <YamlModal
+            buttonLabel="Пример структуры"
+            yamlContent={dedent`
+              {
+                id: number | string
+                reqIndex: string
+                jsonPathToArray: string
+                keyFieldName: string
+                valueFieldName: string
+                separator?: string
+                containerStyle?: CSSProperties
+                rowStyle?: CSSProperties
+                keyFieldStyle?: CSSProperties
+                valueFieldStyle?: CSSProperties
+              }
+            `}
+          />
+        </div>
+      </td>
+    </tr>
+
+    <tr>
+      <td><code>PodLogs</code></td>
+      <td>Просмотр логов выбранного Pod'а</td>
+      <td>
+        <figure style={{ textAlign: 'center', display: 'contents' }}>
+          <FancyboxImage src={`${getBasePrefix()}img/incloud/components/PodLogs.drawio.svg`} style={{ width: '100%', maxWidth: 'none' }} />
+          <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
+          </figcaption>
+        </figure>
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+          <YamlModal
+            yamlContent={dedent`
+              - type: PodLogs
+                data:
+                  id: pod-logs
+                  cluster: "{2}"
+                  namespace: "{reqsJsonPath[0]['.metadata.namespace']['-']}"
+                  podName: "{reqsJsonPath[0]['.metadata.name']['-']}"
+                  substractHeight: 400
+            `}
+          />
+          <YamlModal
+            buttonLabel="Пример структуры"
+            yamlContent={dedent`
+              {
+                id: number | string
+                cluster: string
+                namespace: string
+                podName: string
+                substractHeight?: number
+              }
+            `}
+          />
+        </div>
+      </td>
+    </tr>
+
+    <tr>
+      <td><code>PodTerminal</code></td>
+      <td>Терминал для exec внутри контейнера Pod'а</td>
+      <td>
+        <figure style={{ textAlign: 'center', display: 'contents' }}>
+          <FancyboxImage src={`${getBasePrefix()}img/incloud/components/PodTerminal.drawio.svg`} style={{ width: '100%', maxWidth: 'none' }} />
+          <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
+          </figcaption>
+        </figure>
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+          <YamlModal
+            yamlContent={dedent`
+              - type: PodTerminal
+                data:
+                  id: pod-terminal
+                  cluster: "{2}"
+                  namespace: "{reqsJsonPath[0]['.metadata.namespace']['-']}"
+                  podName: "{reqsJsonPath[0]['.metadata.name']['-']}"
+                  substractHeight: 400
+            `}
+          />
+          <YamlModal
+            buttonLabel="Пример структуры"
+            yamlContent={dedent`
+              {
+                id: number | string
+                cluster: string
+                namespace: string
+                podName: string
+                substractHeight?: number
+              }
+            `}
+          />
+        </div>
+      </td>
+    </tr>
+
+    <tr>
+      <td><code>NodeTerminal</code></td>
+      <td>Exec в отдельный Pod на выбранной ноде</td>
+      <td>
+        <figure style={{ textAlign: 'center', display: 'contents' }}>
+          <FancyboxImage src={`${getBasePrefix()}img/incloud/components/NodeTerminal.drawio.svg`} style={{ width: '100%', maxWidth: 'none' }} />
+          <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
+          </figcaption>
+        </figure>
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+          <YamlModal
+            yamlContent={dedent`
+              - type: NodeTerminal
+                data:
+                  id: terminal
+                  cluster: "{2}"
+                  nodeName: "{reqsJsonPath[0]['.metadata.name']['-']}"
+            `}
+          />
+          <YamlModal
+            buttonLabel="Пример структуры"
+            yamlContent={dedent`
+              {
+                id: number | string
+                cluster: string
+                nodeName: string
+                substractHeight?: number
+              }
+            `}
+          />
+        </div>
+      </td>
+    </tr>
+
+  </tbody>
+</table>
+
+
+---
+
+<h3>Обработка данных</h3>
+
+<p>
+  Данные, полученные из <code>urlsToFetch</code>, доступны во всех компонентах через JSONPath с синтаксисом:
+</p>
+
+<CodeBlock language="yaml">
+  {dedent`
+    text: '{reqsJsonPath[0][".metadata.name"]["-"]}'
+  `}
+</CodeBlock>
+
+<ul>
+  <li><code>reqsJsonPath[0]</code> — первый элемент из <code>urlsToFetch</code></li>
+  <li><code>[".metadata.name"]</code> — путь к нужному полю</li>
+  <li><code>["-"]</code> — Базовое значение если значение не определено</li>
+</ul>
+
+---
+
+<h3>Типовые применения</h3>
+
+<ul>
+  <li>Страницы деталей ресурсов (Pods, Deployments, Nodes)</li>
+  <li>Таблицы с YAML/JSON редактированием</li>
+  <li>Динамические вкладки с таблицами (<code>EnrichedTable</code>)</li>
+  <li>Визуализация логов и терминала</li>
+</ul>
+
+---
+
+<h3>Примеры</h3>
+
+<ul>
+  <li><a href="https://github.com/PRO-Robotech/incloud-web-resources/blob/main/templates/Factory/pod-details.yaml">Factory: pod-details</a></li>
+  <li><a href="https://github.com/PRO-Robotech/incloud-web-resources/blob/main/templates/Factory/node-details.yaml">Factory: node-details</a></li>
+</ul>
+
+---
+
+:::info
+Компонент <code>Factory</code> является ключевым в визуальной архитектуре InCloud UI. Он даёт возможность создавать интерфейс без написания кода.
+:::
+
+:::tip
+Factory поддерживает версионность API. Вы можете создавать разные Factory-ресурсы с одинаковым ключом, но разными реализациями под нужные кластеры.
+:::
+
+
+
+### CustomFormsOverride
+
+Компонент `CustomFormsOverride` используется для кастомизации динамических форм редактирования ресурсов в интерфейсе InCloud. Он работает поверх OpenAPI-спецификаций и позволяет декларативно переопределять поведение и структуру UI-форм.
+
+---
+
+<h4>1. Зачем нужен CustomFormsOverride</h4>
+
+:::info
+`CustomFormsOverride` создан для того, чтобы стандартная форма, построенная на базе OpenAPI, стала более удобной, лаконичной и безопасной.
+:::
+
+Он решает следующие задачи:
+- скрывает ненужные или чувствительные поля (например, `metadata`, `status`);
+- позволяет переопределить типы и поведение полей;
+- добавляет поддержку справочников и зависимостей между полями;
+- меняет отображение без пересборки всего UI.
+
+---
+
+<h4>3. Основные блоки ресурса</h4>
+
+Ресурс `CustomFormsOverride` внутри `spec` логически делится на несколько ключевых блоков:
+
+<table>
+  <thead>
+    <tr>
+      <th>Блок</th>
+      <th>Назначение</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>customizationId</code></td>
+      <td>Уникальный идентификатор, по которому UI находит и применяет переопределённую форму к нужному ресурсу.</td>
+    </tr>
+    <tr>
+      <td><code>hidden</code></td>
+      <td>Массив путей до скрываемых полей. Например, <code>["spec", "serviceRef", "apiVersion"]</code>. Позволяет убрать из формы технические и чувствительные поля.</td>
+    </tr>
+    <tr>
+      <td><code>schema</code></td>
+      <td>Переопределение структуры и поведения формы на базе JSON Schema. Здесь задаются типы, описания, required-поля и расширения вроде <code>customProps</code>.</td>
+    </tr>
+    <tr>
+      <td><code>strategy</code></td>
+      <td>Определяет способ объединения с оригинальной схемой ресурса: <code>merge</code> (объединить) или <code>replace</code> (заменить полностью).</td>
+    </tr>
+  </tbody>
+</table>
+
+<h4>4. Что делает блок <code>schema</code></h4>
+
+Блок <code>schema</code> используется для переопределения OpenAPI-структуры формы. Он позволяет задать удобную, безопасную и бизнес-ориентированную форму с описаниями, справочниками, обязательными полями и типами.
+
+<table>
+  <thead>
+    <tr>
+      <th>Возможность</th>
+      <th>Описание</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>type</code></td>
+      <td>Базовый тип поля: <code>string</code>, <code>integer</code>, <code>boolean</code>, <code>object</code>, <code>array</code>.</td>
+    </tr>
+    <tr>
+      <td><code>description</code></td>
+      <td>Подпись и пояснение для поля — отображается как подсказка в UI.</td>
+    </tr>
+    <tr>
+      <td><code>required</code></td>
+      <td>Массив обязательных полей. Используется для валидации формы.</td>
+    </tr>
+    <tr>
+      <td><code>enum</code></td>
+      <td>Ограничение на набор допустимых значений — автоматически отрисовывается как выпадающий список.</td>
+    </tr>
+    <tr>
+      <td><code>properties</code></td>
+      <td>Вложенные поля для объектов. Используется при описании <code>type: object</code>.</td>
+    </tr>
+    <tr>
+      <td><code>items</code></td>
+      <td>Схема элемента массива. Используется при <code>type: array</code>.</td>
+    </tr>
+    <tr>
+      <td><code>customProps</code></td>
+      <td>Кастомные расширения InCloud UI для отображения справочников, диапазонов и зависимостей между полями.</td>
+    </tr>
+  </tbody>
+</table>
+
+:::tip
+Блок <code>schema</code> позволяет настроить поведение формы без пересборки UI.
+:::
+
+<h4>6. Кастомные типы полей</h4>
+
+При переопределении схемы в ресурсах <code>CustomFormsOverride</code> доступны нестандартные типы, которые расширяют базовые возможности <code>OpenAPI Schema</code>. Эти типы используются в поле <code>type</code> и активируют специальное поведение в UI.
+
+<table>
+  <thead>
+    <tr>
+      <th>Тип</th>
+      <th>Описание</th>
+      <th>Пример</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>listInput</code></td>
+      <td>Кастомный тип для выбора значения из внешнего справочника. В сочетании с <code>customProps</code> позволяет подгружать данные по <code>valueUri</code>, отображать и фильтровать их по заданным <code>keysToLabel</code> и <code>keysToValue</code>.</td>
+      <td>
+        <YamlModal yamlContent={dedent`
+          *******
+          schema:
+            properties:
+              spec:
+                properties:
+                  namespace:
+                    description: Name of the referenced object
+                    type: listInput
+                    customProps:
+                      keysToLabel:
+                        - metadata
+                        - name
+                      keysToValue:
+                        - metadata
+                        - name
+                      mode: tag
+                      valueUri: "/api/clusters/{clusterName}/k8s/api/v1/namespaces"
+        `} />
+      </td>
+    </tr>
+    <tr>
+      <td><code>rangeInputCpu</code></td>
+      <td>Тип ввода значений CPU с возможностью задания минимального и максимального диапазона, шага и бизнес-логики сравнения. Поддерживает редактирование и агрегацию значений из API-ответов.</td>
+      <td>
+        <YamlModal yamlContent={dedent`
+          *******
+          schema:
+            properties:
+              spec:
+                properties:
+                  cpu:
+                    customProps:
+                      add:
+                        max:
+                          keysToValue:
+                            - status
+                            - quotasLeft
+                            - k8s
+                            - limits
+                            - cpu
+                          type: resourceValue
+                          valueUri: /api/clusters/{clusterName}/k8s/apis/example.com/v1alpha/projectquotas/{namespace}
+                        min:
+                          type: number
+                          value: 0
+                        step: 0.1
+                      edit:
+                        max:
+                          firstValueUri: /api/clusters/{clusterName}/k8s/apis/example.com/v1alpha/projectquotas/{namespace}
+                          firstValuesKeysToValue:
+                            - status
+                            - quotasLeft
+                            - k8s
+                            - limits
+                            - cpu
+                          secondValueUri: /api/clusters/{clusterName}/k8s/api/v1/namespaces/{entryName}/resourcequotas/{entryName}-quotas
+                          secondValuesKeysToValue:
+                            - status
+                            - hard
+                            - limits.cpu
+                          type: addResourceValues
+                        min:
+                          keysToValue:
+                            - status
+                            - used
+                            - limits.cpu
+                          type: resourceValue
+                          valueUri: /api/clusters/{clusterName}/k8s/api/v1/namespaces/{entryName}/resourcequotas/{entryName}-quotas
+                        step: 0.1
+                      logic: cpuLike
+                    type: rangeInputCpu
+        `} />
+      </td>
+    </tr>
+    <tr>
+      <td><code>rangeInputMemory</code></td>
+      <td>Аналогично <code>rangeInputCpu</code>, но используется для управления значениями объема памяти. Позволяет задать диапазоны, фильтрацию и зависимости от квот или лимитов в других ресурсах.</td>
+      <td>
+        <YamlModal yamlContent={dedent`
+          schema:
+            properties:
+              spec:
+                properties:
+                  memory:
+                    customProps:
+                      add:
+                        max:
+                          keysToValue:
+                          - status
+                          - quotasLeft
+                          - k8s
+                          - limits
+                          - memory
+                          type: resourceValue
+                          valueUri: /api/clusters/{clusterName}/k8s/apis/example.com/v1alpha/projectquotas/{namespace}
+                        min:
+                          type: number
+                          value: 0
+                        step: 0.1
+                      edit:
+                        max:
+                          firstValueUri: /api/clusters/{clusterName}/k8s/apis/example.com/v1alpha/projectquotas/{namespace}
+                          firstValuesKeysToValue:
+                          - status
+                          - quotasLeft
+                          - k8s
+                          - limits
+                          - memory
+                          secondValueUri: /api/clusters/{clusterName}/k8s/api/v1/namespaces/{entryName}/resourcequotas/{entryName}-quotas
+                          secondValuesKeysToValue:
+                          - status
+                          - hard
+                          - limits.memory
+                          type: addResourceValues
+                        min:
+                          keysToValue:
+                          - status
+                          - used
+                          - limits.memory
+                          type: resourceValue
+                          valueUri: /api/clusters/{clusterName}/k8s/api/v1/namespaces/{entryName}/resourcequotas/{entryName}-quotas
+                        step: 0.1
+                      logic: memoryLike
+                    type: rangeInputMemory
+                type: object
+        `} />
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+:::info
+Кастомные типы являются расширением стандартных типов <code>string</code>, <code>number</code>, <code>boolean</code> и работают только в рамках UI InCloud.
+:::
+
+
+### CustomFormsPrefill
+
+Ресурс <code>CustomFormsPrefill</code> позволяет заранее подставлять значения в кастомные формы UI InCloud.
+Это упрощает ввод данных и обеспечивает единообразие при создании ресурсов Kubernetes.
+
+<h4>Пример ресурса</h4>
+
+<CodeBlock language="yaml">
+  {dedent`
+    ---
+    apiVersion: front.in-cloud.io/v1alpha1
+    kind: CustomFormsPrefill
+    metadata:
+      name: v1.service
+    spec:
+      customizationId: stock-namespace-/v1/services
+      values:
+        - path:
+            - metadata
+          value:
+            name: example-service
+            namespace: default
+        - path:
+            - spec
+          value:
+            type: ClusterIP
+            selector:
+              app: my-app
+            ports:
+              - name: http
+                protocol: TCP
+                port: 80
+                targetPort: 8080
+  `}
+</CodeBlock>
+
+<h4>Поля ресурса</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Поле</th>
+      <th>Тип</th>
+      <th>Назначение</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>metadata.name</code></td>
+      <td><code>string</code></td>
+      <td>Уникальное имя ресурса префилла.</td>
+    </tr>
+    <tr>
+      <td><code>spec.customizationId</code></td>
+      <td><code>string</code></td>
+      <td>ID формы, к которой применяется префилл (должен совпадать с <code>CustomForms</code>).</td>
+    </tr>
+    <tr>
+      <td><code>spec.values[]</code></td>
+      <td><code>array</code></td>
+      <td>Массив подстановок для полей формы.</td>
+    </tr>
+    <tr>
+      <td><code>spec.values[].path</code></td>
+      <td><code>string[]</code></td>
+      <td>Путь до поля объекта в виде массива ключей (например, <code>["spec","ports"]</code>).</td>
+    </tr>
+    <tr>
+      <td><code>spec.values[].value</code></td>
+      <td><code>any</code></td>
+      <td>Значение для подстановки (строка, число, объект или массив).</td>
+    </tr>
+  </tbody>
+</table>

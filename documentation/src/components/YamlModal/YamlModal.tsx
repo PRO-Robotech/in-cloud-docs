@@ -5,9 +5,14 @@ import Editor from '@monaco-editor/react'
 interface YamlModalProps {
   yamlContent: string
   onCloseOtherModals?: () => void
+  buttonLabel?: string
 }
 
-export const YamlModal: React.FC<YamlModalProps> = ({ yamlContent, onCloseOtherModals }) => {
+export const YamlModal: React.FC<YamlModalProps> = ({
+  yamlContent,
+  onCloseOtherModals,
+  buttonLabel = 'Открыть пример',
+}) => {
   const [isOpen, setIsOpen] = useState(false)
   const [showNotification, setShowNotification] = useState(false)
   const [editorHeight, setEditorHeight] = useState<string>('300px')
@@ -62,7 +67,7 @@ export const YamlModal: React.FC<YamlModalProps> = ({ yamlContent, onCloseOtherM
           cursor: 'pointer',
         }}
       >
-        Открыть пример
+        {buttonLabel}
       </button>
 
       {isOpen && (
