@@ -60,12 +60,12 @@ export const etcd = [
       {
         type: 'doc',
         label: '5.1.3.1. Инициализация',
-        id: 'tech-docs/etcd/components/etcd/etcd-settings',
+        id: 'tech-docs/etcd/components/etcd/setup-init-component',
       },
       {
         type: 'doc',
         label: '5.1.3.2. Добавление узла',
-        id: 'tech-docs/etcd/components/etcd/add-members',
+        id: 'tech-docs/etcd/components/etcd/setup-join-component',
       },
       {
         type: 'doc',
@@ -74,7 +74,7 @@ export const etcd = [
       },
       {
         type: 'doc',
-        label: '5.1.3.4. Настройка бекапов',
+        label: '5.1.3.4. Бекапы',
         id: 'tech-docs/etcd/components/etcd/etcd-backups',
       },
     ],

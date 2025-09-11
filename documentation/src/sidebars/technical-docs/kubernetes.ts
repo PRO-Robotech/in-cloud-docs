@@ -106,20 +106,9 @@ export const kubernetes = [
         // },
       },
       {
-        type: 'category',
+        type: 'doc',
         label: '5.2.3.2. Расширение',
-        collapsed: true,
-        link: {
-          type: 'doc',
-          id: 'tech-docs/kubernetes/k8s-join',
-        },
-        items: [
-          {
-            type: 'doc',
-            label: '5.2.3.2.2. ETCD',
-            id: 'tech-docs/kubernetes/etcd-join',
-          },
-        ],
+        id: 'tech-docs/kubernetes/k8s-join',
       },
       {
         type: 'doc',
