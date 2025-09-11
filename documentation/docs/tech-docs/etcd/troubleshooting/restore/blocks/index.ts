@@ -4,6 +4,7 @@ import * as CrushedNodeK8s      from './CodeAndInputCrushedNodeK8s'
 import * as SingleNodeKubeApi   from './CodeAndInputSingleNodeKubeApi'
 import * as ThreeNodeKubeApi    from './CodeAndInputThreeNodeKubeApi'
 import * as CrushedNodeKubeApi  from './CodeAndInputCrushedNodeKubeApi'
+import * as ThreeNodeKubeApiGardener  from './CodeAndInputThreeNodeKubeApiGardener'
 
 export const SingleNodeFunctionsK8s = {
   ...SingleNodeK8s
@@ -27,4 +28,8 @@ export const ThreeNodeFunctionsKubeApi = {
 
 export const CrushedNodeFunctionsKubeApi = {
   ...CrushedNodeKubeApi
+}
+
+export const ThreeNodeFunctionsKubeApiGardener = {
+  ...ThreeNodeKubeApiGardener
 }
