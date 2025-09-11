@@ -1,0 +1,101 @@
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+import { PORTS } from '@site/src/constants/kubernetes/ports'
+import { COMPONENTS_VERSION } from '@site/src/constants/kubernetes/componentsVersion'
+import { ETCD_ARGS } from '@site/src/constants/kubernetes/etcdArgs'
+
+import dedent from 'ts-dedent'
+import CodeBlock from '@theme/CodeBlock'
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+
+<h4>Переменные окружения</h4>
+
+<CodeBlock language="bash">
+  {dedent`
+    # Общие
+    export CLUSTER_NAME=${CUSTOM_VALUE.clusterName.value}
+    export NAMESPACE=etcd-backup
+
+    # Параметры хранения
+    export STORE_CONTAINER="etcd-backups"
+    export STORE_PREFIX="etcd-\${CLUSTER_NAME}"
+
+    # Параметры расписания / ротации
+    export FULL_SCHEDULE='0 */4 * * *'
+    export DELTA_PERIOD='1h'
+    export MAX_BACKUPS=6
+    export GC_POLICY="LimitBased"
+    export GC_PERIOD="30m"
+  `}
+</CodeBlock>
+
+<h4>Переменные окружения (S3)</h4>
+
+<CodeBlock language="bash">
+  {dedent`
+    export S3_REGION="us-east-1"
+    export S3_ACCESS_KEY_ID="<your-access-key>"
+    export S3_SECRET_ACCESS_KEY="<your-secret-key>"
+    export S3_ENDPOINT="https://s3.example.com"
+    export S3_FORCE_PATH_STYLE="true"
+  `}
+</CodeBlock>
+
+
+<h4>Создание values-файла</h4>
+
+<CodeBlock language="bash">
+  {dedent`
+    cat > "\${WORKDIR}/values-s3.yaml" <<EOF
+    secret:
+      name: etcd-backup
+      s3:
+        region: "\${S3_REGION}"
+        accessKeyID: "\${S3_ACCESS_KEY_ID}"
+        secretAccessKey: "\${S3_SECRET_ACCESS_KEY}"
+        endpoint: "\${S3_ENDPOINT}"
+        s3ForcePathStyle: "\${S3_FORCE_PATH_STYLE}"
+
+    app:
+      args:
+        - --use-etcd-wrapper=false
+        - --schedule=\${FULL_SCHEDULE}
+        - --delta-snapshot-period=\${DELTA_PERIOD}
+        - --storage-provider=S3
+        - --store-container=\${STORE_CONTAINER}
+        - --store-prefix=\${STORE_PREFIX}
+        - --max-backups=\${MAX_BACKUPS}
+        - --garbage-collection-policy=\${GC_POLICY}
+        - --garbage-collection-period=\${GC_PERIOD}
+        - --endpoints=https://\$(NODE_IP):2379
+        - --cacert=/etc/etcd-pki/ca.crt
+        - --cert=/etc/etcd-pki/healthcheck-client.crt
+        - --key=/etc/etcd-pki/healthcheck-client.key
+        - --compression-policy=gzip
+        - --compress-snapshots=true
+        - --etcd-snapshot-timeout=8m
+        - --etcd-defrag-timeout=8m
+        - --etcd-connection-timeout=30s
+        - --delta-snapshot-memory-limit=204857600
+        - --server-port=18080
+        - --max-parallel-chunk-uploads=1
+        - --min-chunk-size=16777212
+        - --defragmentation-schedule=0 0 */3 * *
+    EOF
+  `}
+</CodeBlock>
+
+<h4>Установка компонента</h4>
+
+<CodeBlock language="bash">
+  {dedent`
+    helm repo add incloud-backup https://charts.example.com/etcd-backup
+    helm repo update
+
+    helm upgrade \\
+      --install etcd-backup incloud-backup/etcd-backup \\
+      --namespace "\${NAMESPACE}" \\
+      -f "\${WORKDIR}/values-s3.yaml"
+  `}
+</CodeBlock>

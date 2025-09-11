@@ -1,0 +1,116 @@
+---
+id: ThreeNodeK8s
+---
+
+import CodeBlock                  from '@theme/CodeBlock'
+import dedent                     from 'ts-dedent'
+import { CUSTOM_VALUE }           from '@site/src/constants/kubernetes/customValue'
+import TabItem                    from '@theme/TabItem'
+import Tabs                       from '@theme/Tabs'
+import { ETCD_ARGS }              from '@site/src/constants/kubernetes/etcdArgs'
+import { CodeAndInputExportPods } from '@site/src/components/commonBlocks'
+
+import { CERTIFICATES }         from '@site/src/constants/kubernetes/certs'
+import { PORTS }                from '@site/src/constants/kubernetes/ports'
+import { ThreeNodeFunctionsK8s }  from './blocks'
+
+
+:::warning
+Скрипт восстановления необходимо запускать на всех трех узлах. Также перед запуском требуется подготовить переменные окружения на каждом узле.
+:::
+
+<h4>Переменные окружения</h4>
+
+  <CodeBlock language="bash">
+    {dedent`
+      # Общие
+      export NODE_NAME_1="master-1"; export NODE_IP_1="10.0.0.11"
+      export NODE_NAME_2="master-2"; export NODE_IP_2="10.0.0.12"
+      export NODE_NAME_3="master-3"; export NODE_IP_3="10.0.0.13"
+
+      export S3_REGION=ru1
+      export S3_ACCESS_KEY_ID=""
+      export S3_SECRET_ACCESS_KEY=""
+      export S3_ENDPOINT=https://example.com
+      export S3_FORCE_PATH_STYLE=true
+      export S3_BUCKET=etcd-backups
+      export S3_PREFIX=cluster-name
+
+    `}
+  </CodeBlock>
+
+  1. Запустите скрипт восстановления, сформированный в разделе 5.1.1.2
+
+  <CodeBlock language="bash">
+    {dedent`
+      bash ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/etcd/backup/restore.sh
+    `}
+  </CodeBlock>
+
+  2. После успешной отработки скрипта, положительный вывод:
+
+  <CodeBlock language="bash">
+    {dedent`
+      [2025-09-15 22:15:47] backup original manifest -> /etc/kubernetes/etcd/backup/etcd.yaml.orig-20250915
+      [2025-09-15 22:15:47] move manifest to staging -> /etc/kubernetes/etcd/backup/etcd.yaml.staged
+      [2025-09-15 22:15:47] run etcdbrctl restore (via container) -> /var/lib/etcd-restore-20250915
+      europe-docker.pkg.dev/gardener-project/releases/gardener/etcdbrctl:v0.36.3:       resolved       |++++++++++++++++++++++++++++++++++++++|
+      index-sha256:9dbab758cc0f945db50757a045251f4247a9fd3c99852397b5d6e174290dcf37:    exists         |++++++++++++++++++++++++++++++++++++++|
+      manifest-sha256:21c0c5d2b3ffa80b1cd9721a11c1bd5a900cade17cd9cacd0df743bdfa991d12: exists         |++++++++++++++++++++++++++++++++++++++|
+      layer-sha256:473d8557b1b27974f7dc7c4b4e1a209df0e27e8cae1e3e33b7bb45c969b6fc7e:    done           |++++++++++++++++++++++++++++++++++++++|
+      layer-sha256:5664b15f108bf9436ce3312090a767300800edbbfd4511aa1a6d64357024d5dd:    done           |++++++++++++++++++++++++++++++++++++++|
+      layer-sha256:354595d008e6afb16261ec6a1220e8aff0decf76852719ea123b3d8f18941eae:    done           |++++++++++++++++++++++++++++++++++++++|
+      config-sha256:ed587eaf7ad70ea8f13eea9f494a10ea62174b2007e9385ec74bdea625c334e1:   done           |++++++++++++++++++++++++++++++++++++++|
+      layer-sha256:b6824ed73363f94b3b2b44084c51c31bc32af77a96861d49e16f91e3ab6bed71:    done           |++++++++++++++++++++++++++++++++++++++|
+      layer-sha256:27be814a09ebd97fac6fb7b82d19f117185e90601009df3fbab6f442f85cd6b3:    done           |++++++++++++++++++++++++++++++++++++++|
+      layer-sha256:1c56d6035a42c0a75d79cc88acf6c9d4104343639f19b8262b520c449731445d:    done           |++++++++++++++++++++++++++++++++++++++|
+      layer-sha256:4aa0ea1413d37a58615488592a0b827ea4b2e48fa5a77cf707d0e35f025e613f:    done           |++++++++++++++++++++++++++++++++++++++|
+      layer-sha256:7c12895b777bcaa8ccae0605b4de635b68fc32d60fa08f421dc3818bf55ee212:    done           |++++++++++++++++++++++++++++++++++++++|
+      layer-sha256:e33bce57de289fffd2380f73997dfb7e1ec193877904bed99f28c715d071fdc4:    done           |++++++++++++++++++++++++++++++++++++++|
+      layer-sha256:9ef7d74bdfdf3c517b28bd694a9159e94e5f53ff1ca87b39f8ca1ac0be2ed317:    done           |++++++++++++++++++++++++++++++++++++++|
+      layer-sha256:33e068de264953dfdc9f9ada207e76b61159721fd64a4820b320d05133a55fb8:    done           |++++++++++++++++++++++++++++++++++++++|
+      layer-sha256:9112d77ee5b16873acaa186b816c3c61f5f8eba40730e729e9614a27f40211e0:    done           |++++++++++++++++++++++++++++++++++++++|
+      elapsed: 0.9 s                                                                    total:   0.0 B (0.0 B/s)
+      unpacking linux/amd64 sha256:9dbab758cc0f945db50757a045251f4247a9fd3c99852397b5d6e174290dcf37...
+      done: 16.795957ms
+      time="2025-09-15T22:15:48Z" level=info msg="Finding latest set of snapshot to recover from..."
+      time="2025-09-15T22:15:48Z" level=info msg="Bucket versioning is not found to be enabled."
+      time="2025-09-15T22:15:48Z" level=info msg="Creating temporary directory default.restoration.tmp for persisting full and delta snapshots locally." actor=restorer
+      time="2025-09-15T22:15:48Z" level=info msg="Restoring from base snapshot: Full-00000000-00424681-1757974467.gz" actor=restorer
+      time="2025-09-15T22:15:48Z" level=info msg="start decompressing the snapshot with gzip compressionPolicy" actor=de-compressor
+      time="2025-09-15T22:15:50Z" level=info msg="Fetched the snapshot from the object store in 1.680048616 seconds" actor=restorer
+      time="2025-09-15T22:15:50Z" level=info msg="Successfully fetched and saved data of the base snapshot in 1.680048616 seconds [CompressionPolicy:gzip]" actor=restorer
+      {"level":"info","ts":1757974550.407757,"caller":"snapshot/v3_snapshot.go:306","msg":"restoring snapshot","path":"default.restoration.tmp/snapshot-3632706098.db","wal-dir":"/var/etcd/restore/member/wal","data-dir":"/var/etcd/restore","snap-dir":"/var/etcd/restore/member/snap"}
+      {"level":"info","ts":1757974552.6158156,"caller":"mvcc/kvstore.go:417","msg":"restored last compact revision","meta-bucket-name":"meta","meta-bucket-name-key":"finishedCompactRev","restored-compact-revision":416712}
+      {"level":"info","ts":1757974552.7440662,"caller":"membership/cluster.go:395","msg":"added member","cluster-id":"a440bb4fb07040e6","local-member-id":"0","added-peer-id":"4a327bad03efe02d","added-peer-peer-urls":["https://10.16.0.4:2380"]}
+      {"level":"info","ts":1757974552.7443075,"caller":"membership/cluster.go:395","msg":"added member","cluster-id":"a440bb4fb07040e6","local-member-id":"0","added-peer-id":"711fe66f5ed3f099","added-peer-peer-urls":["https://10.16.0.5:2380"]}
+      {"level":"info","ts":1757974552.7443626,"caller":"membership/cluster.go:395","msg":"added member","cluster-id":"a440bb4fb07040e6","local-member-id":"0","added-peer-id":"d4bc596dd8b92f8e","added-peer-peer-urls":["https://10.16.0.3:2380"]}
+      {"level":"info","ts":1757974552.7520623,"caller":"snapshot/v3_snapshot.go:326","msg":"restored snapshot","path":"default.restoration.tmp/snapshot-3632706098.db","wal-dir":"/var/etcd/restore/member/wal","data-dir":"/var/etcd/restore","snap-dir":"/var/etcd/restore/member/snap"}
+      time="2025-09-15T22:15:52Z" level=info msg="Successfully restored from base snapshot: Full-00000000-00424681-1757974467.gz" actor=restorer
+      time="2025-09-15T22:15:52Z" level=info msg="No delta snapshots present over base snapshot." actor=restorer
+      time="2025-09-15T22:15:52Z" level=info msg="Successfully restored the etcd data directory."
+      [2025-09-15 22:15:52] patch staged manifest hostPath to /var/lib/etcd-restore-20250915
+      [2025-09-15 22:15:53] return manifest to manifests/
+      [2025-09-15 22:15:53] done; original manifest backup: /etc/kubernetes/etcd/backup/etcd.yaml.orig-20250915
+
+    `}
+  </CodeBlock>
+
+  4. Проверьте состояние кластера ETCD с помощью команд:
+
+  <CodeBlock language="bash">
+    {dedent`
+      etcdctl --endpoints=$(etcdctlMembers) endpoint status -w table
+    `}
+  </CodeBlock>
+  <CodeBlock language="bash">
+    {dedent`
+      +------------------------+------------------+---------+---------+-----------+------------+-----------+------------+--------------------+--------+
+      |        ENDPOINT        |        ID        | VERSION | DB SIZE | IS LEADER | IS LEARNER | RAFT TERM | RAFT INDEX | RAFT APPLIED INDEX | ERRORS |
+      +------------------------+------------------+---------+---------+-----------+------------+-----------+------------+--------------------+--------+
+      | https://10.16.0.3:2379 | d4bc596dd8b92f8e |  3.5.12 |  133 MB |     false |      false |         3 |    2301973 |            2301973 |        |
+      | https://10.16.0.4:2379 | 710bdf7e445d9872 |  3.5.12 |  133 MB |      true |      false |         3 |    2301975 |            2301975 |        |
+      | https://10.16.0.5:2379 | 7da50acd64535d83 |  3.5.12 |  133 MB |     false |      false |         3 |    2301975 |            2301975 |        |
+      +------------------------+------------------+---------+---------+-----------+------------+-----------+------------+--------------------+--------+
+    `}
+  </CodeBlock>

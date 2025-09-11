@@ -1,0 +1,178 @@
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+import { PORTS } from '@site/src/constants/kubernetes/ports'
+import { COMPONENTS_VERSION } from '@site/src/constants/kubernetes/componentsVersion'
+import { ETCD_ARGS } from '@site/src/constants/kubernetes/etcdArgs'
+
+import dedent from 'ts-dedent'
+import CodeBlock from '@theme/CodeBlock'
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+
+<h4>Переменные окружения (общие)</h4>
+
+<CodeBlock language="bash">
+  {dedent`
+    # Общее
+    export CLUSTER_NAME=${CUSTOM_VALUE.clusterName.value}
+    export NAMESPACE=etcd-backup
+
+    # Параметры хранения
+    export STORE_CONTAINER="etcd-backups"
+    export STORE_PREFIX="etcd-\${CLUSTER_NAME}"
+
+    # Параметры расписания / ротации
+    export FULL_SCHEDULE='0 */4 * * *'
+    export DELTA_PERIOD='1h'
+    export MAX_BACKUPS=6
+    export GC_POLICY="LimitBased"
+    export GC_PERIOD="30m"
+
+    # Пути на хосте
+    export MANIFEST_DIR="${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/manifests"
+    export S3_CREDS_DIR="${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/etcd/backup/s3"
+    export ETCD_PKI_DIR="${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/pki/etcd"
+  `}
+</CodeBlock>
+
+<h4>Переменные окружения (S3)</h4>
+
+<CodeBlock language="bash">
+  {dedent`
+    export S3_REGION="us-east-1"
+    export S3_ACCESS_KEY_ID="<your-access-key>"
+    export S3_SECRET_ACCESS_KEY="<your-secret-key>"
+    export S3_ENDPOINT="https://s3.example.com"
+    export S3_FORCE_PATH_STYLE="true"
+  `}
+</CodeBlock>
+
+<h4>Создание рабочих директорий</h4>
+
+<CodeBlock language="bash">
+  {dedent`
+    sudo mkdir -p ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/etcd/backup/s3
+  `}
+</CodeBlock>
+
+
+<h4>Подготовка S3 конфигурации</h4>
+
+<CodeBlock language="bash">
+  {dedent`
+    # Записываем креды в файлы
+    printf '%s' "$\{S3_REGION}"            | sudo tee "${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/etcd/backup/s3/region" >/dev/null
+    printf '%s' "$\{S3_ACCESS_KEY_ID}"     | sudo tee "${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/etcd/backup/s3/accessKeyID" >/dev/null
+    printf '%s' "$\{S3_SECRET_ACCESS_KEY}" | sudo tee "${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/etcd/backup/s3/secretAccessKey" >/dev/null
+    printf '%s' "$\{S3_ENDPOINT}"          | sudo tee "${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/etcd/backup/s3/endpoint" >/dev/null
+    printf '%s' "$\{S3_FORCE_PATH_STYLE}"  | sudo tee "${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/etcd/backup/s3/s3ForcePathStyle" >/dev/null
+  `}
+</CodeBlock>
+
+<h4>Подготовка etcd-config</h4>
+
+<CodeBlock language="bash">
+  {dedent`
+    cat <<EOF > ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/etcd/backup/etcd.conf.yaml
+    name: default
+    data-dir: default.etcd
+    listen-client-urls: http://127.0.0.1:2379
+    listen-peer-urls:   http://127.0.0.1:2380
+
+    initial-advertise-peer-urls:
+      default:
+        - http://127.0.0.1:2380
+
+    initial-cluster: default=http://127.0.0.1:2380
+    initial-cluster-token: etcd-cluster
+    initial-cluster-state: new
+    EOF
+  `}
+</CodeBlock>
+
+<h4>Генерация static pod манифеста</h4>
+
+<CodeBlock language="bash">
+  {dedent`
+    sudo tee "\${MANIFEST_DIR}/etcd-backup.yaml" > /dev/null <<EOF
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: etcd-backup-snapshot
+      namespace: kube-system
+      labels:
+        app: etcd-backup-snapshot
+    spec:
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      containers:
+        - name: etcdbrctl
+          image: europe-docker.pkg.dev/gardener-project/releases/gardener/etcdbrctl:v0.36.3
+          command: ["/etcdbrctl","server"]
+          args:
+            - --use-etcd-wrapper=false
+            - --schedule=\${FULL_SCHEDULE}
+            - --delta-snapshot-period=\${DELTA_PERIOD}
+            - --storage-provider=S3
+            - --store-container=\${STORE_CONTAINER}
+            - --store-prefix=\${STORE_PREFIX}
+            - --max-backups=\${MAX_BACKUPS}
+            - --garbage-collection-policy=\${GC_POLICY}
+            - --garbage-collection-period=\${GC_PERIOD}
+            - --compression-policy=gzip
+            - --compress-snapshots=true
+            - --etcd-snapshot-timeout=8m
+            - --etcd-defrag-timeout=8m
+            - --etcd-connection-timeout=30s
+            - --delta-snapshot-memory-limit=204857600
+            - --endpoints=https://\$(NODE_IP):2379
+            - --server-port=18080
+            - --cacert=/etc/etcd-pki/ca.crt
+            - --cert=/etc/etcd-pki/healthcheck-client.crt
+            - --key=/etc/etcd-pki/healthcheck-client.key
+            - --max-parallel-chunk-uploads=1
+            - --min-chunk-size=16777212
+            - --defragmentation-schedule=0 0 */3 * *
+          env:
+            - name: NODE_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: AWS_APPLICATION_CREDENTIALS
+              value: /var/etcd-backup
+            - name: AWS_ENDPOINT_URL_S3
+              value: "\${S3_ENDPOINT}"
+          volumeMounts:
+            - name: etcd-pki
+              mountPath: /etc/etcd-pki
+              readOnly: true
+            - name: etcd-backup
+              mountPath: /var/etcd-backup
+              readOnly: true
+            - name: etcd-config
+              mountPath: /var/etcd/config
+              readOnly: true
+      volumes:
+        - name: etcd-pki
+          hostPath:
+            path: "\${ETCD_PKI_DIR}"
+            type: Directory
+        - name: etcd-backup
+          hostPath:
+            path: "\${S3_CREDS_DIR}"
+            type: Directory
+        - name: etcd-config
+          hostPath:
+            path: "${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/etcd/backup/etcd.conf.yaml"
+            type: File
+    EOF
+  `}
+</CodeBlock>

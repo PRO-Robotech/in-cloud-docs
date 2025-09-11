@@ -1,0 +1,46 @@
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+import { PORTS } from '@site/src/constants/kubernetes/ports'
+import { COMPONENTS_VERSION } from '@site/src/constants/kubernetes/componentsVersion'
+import { ETCD_ARGS } from '@site/src/constants/kubernetes/etcdArgs'
+import { BACKUP_SCRIPT } from '@site/src/constants/kubernetes/backupScript'
+
+import dedent from 'ts-dedent'
+import CodeBlock from '@theme/CodeBlock'
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+
+<details>
+  <summary>
+    <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+      <p style={{ marginBottom: 0 }}>Скрипт восстановления из S3</p>
+    </div>
+  </summary>
+
+<h4>Создание рабочих директорий</h4>
+
+<CodeBlock language="bash">
+  {dedent`
+    sudo mkdir -p ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/etcd/backup/s3
+  `}
+</CodeBlock>
+
+<h4>Подготовка скрипта восстановления</h4>
+
+<CodeBlock language="bash">
+  {dedent`
+    cat <<'EOF' > ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/etcd/backup/restore.sh
+    ${BACKUP_SCRIPT.data.value}
+    EOF
+  `}
+</CodeBlock>
+
+<h4>Настройка Chmod</h4>
+
+<CodeBlock language="bash">
+  {dedent`
+    chmod +x ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/etcd/backup/restore.sh
+  `}
+</CodeBlock>
+
+</details>

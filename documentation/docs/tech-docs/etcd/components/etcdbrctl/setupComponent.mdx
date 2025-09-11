@@ -1,0 +1,30 @@
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+import { PORTS } from '@site/src/constants/kubernetes/ports'
+import { COMPONENTS_VERSION } from '@site/src/constants/kubernetes/componentsVersion'
+import { ETCD_ARGS } from '@site/src/constants/kubernetes/etcdArgs'
+
+import dedent from 'ts-dedent'
+import CodeBlock from '@theme/CodeBlock'
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+import BackupScriptCloudInit from '@site/docs/tech-docs/etcd/components/etcdbrctl/backupScriptCloudInit.mdx'
+import BackupScriptBash from '@site/docs/tech-docs/etcd/components/etcdbrctl/backupScriptBash.mdx'
+
+
+:::warning Информация
+  Этот скрипт является необязательным, но потребуется в случае, если вы планируете настраивать восстановление кластера ETCD из бэкапов.
+:::
+
+
+<Tabs groupId="install-type">
+
+  <TabItem value='Bash'>
+    <BackupScriptBash/>
+  </TabItem>
+
+  <TabItem value='Cloud-init'>
+    <BackupScriptCloudInit/>
+  </TabItem>
+
+</Tabs>

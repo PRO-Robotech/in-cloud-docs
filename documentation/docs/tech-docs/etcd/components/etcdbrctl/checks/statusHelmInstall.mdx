@@ -1,0 +1,43 @@
+import dedent from 'ts-dedent'
+import CodeBlock from '@theme/CodeBlock'
+import { COMPONENTS_VERSION } from '@site/src/constants/kubernetes/componentsVersion'
+
+<CodeBlock language="bash">
+  {dedent`
+    kubectl -n "\${NAMESPACE}" get pods -l app=etcd-backup-snapshot
+    kubectl -n "\${NAMESPACE}" logs -l app=etcd-backup-snapshot --tail=50
+  `}
+</CodeBlock>
+
+:::note Вывод команды
+
+<CodeBlock language="bash">
+  {dedent`
+    level=info msg="Creating leaderElector..." actor=backup-restore-server
+    level=info msg="Starting leaderElection..." actor=leader-elector
+    level=info msg="backup-restore started leading..." actor=leader-elector
+    level=info msg="Successfully saved full snapshot at: Full-00000000-01953405-1757675894.gz" actor=snapshotter
+    level=info msg="Will take next full snapshot at time: 2025-09-12 11:20:00 +0000 UTC" actor=snapshotter
+    level=info msg="Successfully saved delta snapshot at: Incr-01954818-01961242-1757676502.gz" actor=snapshotter
+  `}
+</CodeBlock>
+:::
+
+<CodeBlock language="bash">
+  {dedent`
+    # с помощью утилиты mc (minio client)
+    mc alias set myS3 "\${S3_ENDPOINT}" "\${S3_ACCESS_KEY_ID}" "\${S3_SECRET_ACCESS_KEY}" --api S3v4
+    mc ls myS3/\${STORE_CONTAINER}/\${STORE_PREFIX}
+  `}
+</CodeBlock>
+
+:::note Вывод команды
+
+<CodeBlock language="bash">
+  {dedent`
+    [2025-09-12 13:40:14 MSK]  14MiB STANDARD Full-00000000-01924106-1757673605.gz
+    [2025-09-12 14:00:13 MSK]  14MiB STANDARD Full-00000000-01939464-1757674805.gz
+    [2025-09-12 13:48:55 MSK]  19MiB STANDARD Incr-01924107-01930792-1757674123.gz
+  `}
+</CodeBlock>
+:::
