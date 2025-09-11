@@ -88,10 +88,6 @@ export const etcd = [
     type: 'category',
     label: '5.1.5. Диагностика',
     collapsed: true,
-    link: {
-      type: 'doc',
-      id: 'tech-docs/etcd/etcd-main',
-    },
     items: [
       {
         type: 'doc',

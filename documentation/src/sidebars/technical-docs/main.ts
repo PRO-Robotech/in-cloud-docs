@@ -93,11 +93,11 @@ export const main = [
     label: '5. Настройка',
     collapsed: false,
     items: [
-      {
-        type: 'doc',
-        label: '5.0. Настройка ОС',
-        id: 'tech-docs/kubernetes/setup-environments/base-os/base-os-setup',
-      },
+      // {
+      //   type: 'doc',
+      //   label: '5.0. Настройка ОС',
+      //   id: 'tech-docs/kubernetes/setup-environments/base-os/base-os-setup',
+      // },
       {
         type: 'category',
         label: '5.1. Etcd',
