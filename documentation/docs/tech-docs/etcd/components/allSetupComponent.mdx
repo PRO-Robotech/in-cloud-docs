@@ -1,0 +1,20 @@
+import EtcdDownloadBIN from '@site/docs/tech-docs/etcd/components/etcd/lifecycleDownloadComponent.mdx'
+import EtcdCheckBIN from '@site/docs/tech-docs/etcd/components/etcd/checkBIN.mdx'
+
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+<Tabs groupId="component">
+  <TabItem value="etcd">
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Установка etcd</p>
+          <p className="obligatory-note-orange">● Обязателен к применению</p>
+        </div>
+      </summary>
+      <EtcdDownloadBIN />
+      <EtcdCheckBIN />
+    </details>
+  </TabItem>
+</Tabs>

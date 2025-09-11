@@ -10,28 +10,9 @@ export const etcd = [
         id: 'tech-docs/etcd/setup-environments/os-setup',
       },
       {
-        type: 'category',
+        type: 'doc',
         label: '5.1.1.2. Установка ПО',
-        collapsed: true,
-        items: [
-          {
-            type: 'doc',
-            label: '5.1.1.2.1. Etcd',
-            id: 'tech-docs/etcd/components/etcd/lifecycle',
-          },
-        ],
-      },
-      {
-        type: 'category',
-        label: '5.1.1.3. Проверка',
-        collapsed: true,
-        items: [
-          {
-            type: 'doc',
-            label: '5.1.1.3.1. Etcd',
-            id: 'tech-docs/etcd/components/etcd/check',
-          },
-        ],
+        id: 'tech-docs/etcd/components/all-setup',
       },
     ],
   },
