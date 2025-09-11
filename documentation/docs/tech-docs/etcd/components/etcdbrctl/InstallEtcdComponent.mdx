@@ -1,0 +1,331 @@
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+import { PORTS } from '@site/src/constants/kubernetes/ports'
+import { COMPONENTS_VERSION } from '@site/src/constants/kubernetes/componentsVersion'
+import { ETCD_ARGS } from '@site/src/constants/kubernetes/etcdArgs'
+
+import dedent from 'ts-dedent'
+import CodeBlock from '@theme/CodeBlock'
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+<h4>Вводная часть</h4>
+>Компонент etcd-backup основан на утилите etcdbrctl от Gardener.
+>Она предназначена для резервного копирования и восстановления данных ETCD и может работать нескольких режимах хранения данных. Мы расссмотрим следующие:
+- <code>S3</code> — сохранение бэкапов в S3-совместимое хранилище (MinIO, Ceph, AWS S3 и т.п.).
+- <code>Local</code> — сохранение бэкапов на локальный диск.
+>Также в примере будет задейстован "server режим" утилиты, при котором etcdbrctl работает как демон внутри кластера, определяет наличие лидера ETCD, автоматически делает полные и инкрементальные снапшоты по расписанию, а также управляет их очисткой (garbage collection).
+
+<h4>Описание основных параметров, необходимых для работы утилиты</h4>
+<details className="custom-blue-block">
+<summary>Аргументы etcdbrctl</summary>
+
+- <code>--schedule</code> — cron-выражение для **полных** снапшотов (например, `0 */4 * * *` → раз в 4 часа).
+- <code>--delta-snapshot-period</code> — частота **инкрементальных** снапшотов (например, `1h`).
+- <code>--storage-provider</code> — <code>S3</code> или <code>Local</code>.
+- <code>--store-container</code> –  имя bucket или путь хранения, в случае storage-provider=Local.
+- <code>--store-prefix</code> — добавляет префикс к пути хранения бэкапов, чтобы их разделять по окружениям/кластерам.
+- <code>--max-backups</code> – максимальное количество full бэкапов.
+- <code>--garbage-collection-policy</code> — правила очистки старых бэкапов (LimitBased или Exponential).
+- <code>--garbage-collection-period</code> — как часто запускать GC.
+- <code>--server-port</code> — HTTP-порт, на котором сервер будет запущен.
+- <code>--use-etcd-wrapper</code> — отключает режим запуска собственного etcd wrapper’а (gardener-специфика). Мы работаем напрямую с уже существующим etcd.
+- <code>--etcd-snapshot-timeout</code> — таймаут создания снапшота (например, <code>8m</code>).  
+- <code>--etcd-defrag-timeout</code> — таймаут операции дефрагментации (например, <code>8m</code>).  
+- <code>--etcd-connection-timeout</code> — таймаут подключения к ETCD (например, <code>30s</code>).  
+- <code>--delta-snapshot-memory-limit</code> — лимит памяти для дельта-снапшотов (в байтах, напр. <code>204857600</code>).  
+- <code>--endpoints</code> — список адресов ETCD (обычно <code>https://$(NODE_IP):2379</code>).  
+- <code>--cacert</code> — путь к CA сертификату ETCD.  
+- <code>--cert</code> — путь к client сертификату ETCD.  
+- <code>--key</code> — путь к client ключу ETCD.  
+- <code>--max-parallel-chunk-uploads</code> — максимальное число параллельных загрузок чанков в S3.  
+- <code>--min-chunk-size</code> — минимальный размер чанка при загрузке (в байтах, напр. <code>16777212</code>).  
+- <code>--defragmentation-schedule</code> — cron-выражение для плановой дефрагментации (например, <code>*/30 * * * *</code>).  
+</details>
+
+<h4>Установка компонента</h4>
+
+<Tabs groupId="etcd-backup">
+  <TabItem value="s3" label="S3">
+
+  <details>
+    <summary>
+      <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+        <p style={{ marginBottom: 0 }}>Установка компонента с хранением в S3</p>
+        <p className="obligatory-note-orange">● Рекомендуется для production</p>
+      </div>
+    </summary>
+
+<h4>Переменные окружения</h4>
+
+<CodeBlock language="bash">
+  {dedent`
+    # Общие
+    export CLUSTER_NAME=${CUSTOM_VALUE.clusterName.value}
+    export NAMESPACE=etcd-backup
+
+    # S3 доступы
+    export S3_REGION="us-east-1"
+    export S3_ACCESS_KEY_ID="<your-access-key>"
+    export S3_SECRET_ACCESS_KEY="<your-secret-key>"
+    export S3_ENDPOINT="https://s3.example.com"
+    export S3_FORCE_PATH_STYLE="true"               # зависит от настроек S3 хранилища  
+
+    # Параметры хранения
+    export STORE_CONTAINER="etcd-backups"           # bucket name
+    export STORE_PREFIX="etcd-\${CLUSTER_NAME}"      # префикс
+
+    # Параметры расписания / ретенции
+    export FULL_SCHEDULE='0 */4 * * *'              # полные снапшоты (каждые 4 часа)
+    export DELTA_PERIOD='1h'                        # инкрементальные (каждый час)
+    export MAX_BACKUPS=6
+    export GC_POLICY="LimitBased"
+    export GC_PERIOD="30m"
+  `}
+</CodeBlock>
+
+<h4>Рабочая директория</h4>
+
+<CodeBlock language="bash">
+  {dedent`
+    export WORKDIR=${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/etcd-backup
+    mkdir -p "\${WORKDIR}"
+  `}
+</CodeBlock>
+
+<h4>Создание values-файла</h4>
+
+<CodeBlock language="bash">
+  {dedent`
+    cat > "\${WORKDIR}/values-s3.yaml" <<EOF
+    secret:
+      name: etcd-backup
+      s3:
+        region: "\${S3_REGION}"
+        accessKeyID: "\${S3_ACCESS_KEY_ID}"
+        secretAccessKey: "\${S3_SECRET_ACCESS_KEY}"
+        endpoint: "\${S3_ENDPOINT}"
+        s3ForcePathStyle: "\${S3_FORCE_PATH_STYLE}"
+
+    app:
+      args:
+        - --use-etcd-wrapper=false
+        - --schedule=\${FULL_SCHEDULE}
+        - --delta-snapshot-period=\${DELTA_PERIOD}
+        - --storage-provider=S3
+        - --store-container=\${STORE_CONTAINER}
+        - --store-prefix=\${STORE_PREFIX}
+        - --max-backups=\${MAX_BACKUPS}
+        - --garbage-collection-policy=\${GC_POLICY}
+        - --garbage-collection-period=\${GC_PERIOD}
+        - --endpoints=https://\$(NODE_IP):2379
+        - --cacert=/etc/etcd-pki/ca.crt
+        - --cert=/etc/etcd-pki/healthcheck-client.crt
+        - --key=/etc/etcd-pki/healthcheck-client.key
+        # далее идут дефолтные рекомендуемые значения, которые можно переназначить при желании
+        - --compression-policy=gzip
+        - --compress-snapshots=true
+        - --etcd-snapshot-timeout=8m
+        - --etcd-defrag-timeout=8m
+        - --etcd-connection-timeout=30s
+        - --delta-snapshot-memory-limit=204857600
+        - --server-port=18080
+        - --max-parallel-chunk-uploads=1
+        - --min-chunk-size=16777212
+        - --defragmentation-schedule=0 0 */3 * *
+    EOF
+  `}
+</CodeBlock>
+
+
+<h4>Установка компонента</h4>
+
+<CodeBlock language="bash">
+  {dedent`
+    helm repo add incloud-backup https://charts.example.com/etcd-backup
+    helm repo update
+
+    helm upgrade --install etcd-backup incloud-backup/etcd-backup --namespace "\${NAMESPACE}" -f "\${WORKDIR}/values-s3.yaml"
+  `}
+</CodeBlock>
+
+  </details>
+  </TabItem>
+
+  <TabItem value="local" label="Local">
+
+  <details>
+    <summary>
+      <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+        <p style={{ marginBottom: 0 }}>Установка компонента с хранением локально</p>
+        <p className="obligatory-note-orange">● Для dev/тест окружений</p>
+      </div>
+    </summary>
+
+    > TODO добавить возможность параметризировать компонент, в случае хранения локально
+
+  </details>
+  </TabItem>
+</Tabs>
+
+
+********
+
+
+<h4>Подготовка скрипта восстановления</h4>
+
+<Tabs groupId="etcd-backup">
+  <TabItem value="s3" label="S3">
+
+  <details>
+    <summary>
+      <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+        <p style={{ marginBottom: 0 }}>Скрипт восстановления из S3</p>
+      </div>
+    </summary>
+
+<h4>Переменные окружения</h4>
+
+<CodeBlock language="bash">
+  {dedent`
+    # Общие
+    export CLUSTER_NAME=${CUSTOM_VALUE.clusterName.value}
+    export STORE_CONTAINER="etcd-backups"
+    export STORE_PREFIX="etcd-\${CLUSTER_NAME}"
+
+    export S3_REGION="us-east-1"
+    export S3_ACCESS_KEY_ID="<your-access-key>"
+    export S3_SECRET_ACCESS_KEY="<your-secret-key>"
+    export S3_ENDPOINT="https://s3.example.com"
+    export S3_FORCE_PATH_STYLE="true"
+
+    # Узел и кворум (пример на 3 ноды)
+    export PEER_PORT="2380"
+    export THIS_NODE_NAME="$(hostname)"
+    export CURRENT_IP="$(ip -o -4 addr show dev eth1 | awk '{print $4}' | cut -d/ -f1)}" 
+
+    export NODE_NAME_1="cp-1"; export NODE_IP_1="10.0.0.11"
+    export NODE_NAME_2="cp-2"; export NODE_IP_2="10.0.0.12"
+    export NODE_NAME_3="cp-3"; export NODE_IP_3="10.0.0.13"
+
+    # Куда восстановить данные ETCD
+    export RESTORE_DATA_DIR="/var/lib/etcd-restore"
+  `}
+</CodeBlock>
+
+<h4>Подготовка скрипта восстановления</h4>
+
+<CodeBlock language="bash">
+  {dedent`
+    sudo mkdir -p /etc/kubernetes/etcd-backup
+    sudo tee /etc/kubernetes/etcd-backup/restore.sh > /dev/null <<'EOF'
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    # === Параметры/переменные (берутся из окружения, есть дефолты) ===
+    ETCDBRCTL_IMAGE="\${ETCDBRCTL_IMAGE:-europe-docker.pkg.dev/gardener-project/releases/gardener/etcdbrctl:v0.36.3}"
+
+    CLUSTER_NAME="\${CLUSTER_NAME:-my-cluster}"
+    STORE_CONTAINER="\${STORE_CONTAINER:-etcd-backups}"
+    STORE_PREFIX="\${STORE_PREFIX:-etcd-\${CLUSTER_NAME}}"
+
+    S3_REGION="\${S3_REGION:-us-east-1}"
+    S3_ACCESS_KEY_ID="\${S3_ACCESS_KEY_ID:-}"
+    S3_SECRET_ACCESS_KEY="\${S3_SECRET_ACCESS_KEY:-}"
+    S3_ENDPOINT="\${S3_ENDPOINT:-https://s3.example.com}"
+    S3_FORCE_PATH_STYLE="\${S3_FORCE_PATH_STYLE:-true}"
+
+    PEER_PORT="\${PEER_PORT:-2380}"
+    THIS_NODE_NAME="\${THIS_NODE_NAME:-$(hostname)}"
+    CURRENT_IP="\${CURRENT_IP:-}"
+    RESTORE_DATA_DIR="\${RESTORE_DATA_DIR:-/var/lib/etcd-restore}"
+
+    # Кворум (пример для 3 нод) — отредактируй под свой состав
+    NODE_NAME_1="\${NODE_NAME_1:-cp-1}"; NODE_IP_1="\${NODE_IP_1:-10.0.0.11}"
+    NODE_NAME_2="\${NODE_NAME_2:-cp-2}"; NODE_IP_2="\${NODE_IP_2:-10.0.0.12}"
+    NODE_NAME_3="\${NODE_NAME_3:-cp-3}"; NODE_IP_3="\${NODE_IP_3:-10.0.0.13}"
+
+    INITIAL_CLUSTER="\${NODE_NAME_1}=https://\${NODE_IP_1}:\${PEER_PORT},\${NODE_NAME_2}=https://\${NODE_IP_2}:\${PEER_PORT},\${NODE_NAME_3}=https://\${NODE_IP_3}:\${PEER_PORT}"
+
+
+    # === 1) Установка etcdbrctl с помощью containerd (ctr) ===
+    if ! command -v etcdbrctl >/dev/null 2>&1; then
+      if command -v ctr >/dev/null 2>&1; then
+        echo "[*] Устанавливаю etcdbrctl из образа: \${ETCDBRCTL_IMAGE}"
+        sudo ctr images pull "\${ETCDBRCTL_IMAGE}" >/dev/null
+        # Пробуем скопировать бинарник
+        sudo ctr run --rm --mount type=bind,src=/usr/local/bin,dst=/hostbin,options=rbind:rw "\${ETCDBRCTL_IMAGE}" etcdbrctl-installer sh -lc 'set -e;
+            SRC="";
+            if [ -x /etcdbrctl ]; then SRC=/etcdbrctl;
+            elif [ -x /usr/local/bin/etcdbrctl ]; then SRC=/usr/local/bin/etcdbrctl;
+            else SRC=$(command -v etcdbrctl || true); fi;
+            if [ -z "$SRC" ]; then SRC=$(busybox which etcdbrctl || true); fi;
+            if [ -z "$SRC" ]; then SRC=$(find / -maxdepth 3 -type f -name etcdbrctl -perm -111 2>/dev/null | head -n1); fi;
+            [ -n "$SRC" ] || { echo "etcdbrctl не найден в образе"; exit 1; }
+            cp "$SRC" /hostbin/etcdbrctl && chmod +x /hostbin/etcdbrctl'
+        command -v etcdbrctl >/dev/null || { echo "[-] Не удалось установить etcdbrctl"; exit 1; }
+      else
+        echo "[-] Не найден 'ctr'. Установите binary вручную или поставьте ctr."
+        exit 1
+      fi
+    fi
+
+
+    # === S3 креды для etcdbrctl ===
+    sudo mkdir -p /var/etcd-backup
+
+    declare -A CONFIG=(
+      [region]="\${S3_REGION}"
+      [accessKeyID]="\${S3_ACCESS_KEY_ID}"
+      [secretAccessKey]="\${S3_SECRET_ACCESS_KEY}"
+      [endpoint]="\${S3_ENDPOINT}"
+      [s3ForcePathStyle]="\${S3_FORCE_PATH_STYLE}"
+    )
+
+    for key in "\${!CONFIG[@]}"; do
+      printf "%s" "\${CONFIG[\$key]}" | sudo tee "/var/etcd-backup/\$key" >/dev/null
+    done
+
+    export AWS_APPLICATION_CREDENTIALS=/var/etcd-backup
+    export AWS_ENDPOINT_URL_S3="\${S3_ENDPOINT}"
+
+
+    # === 3) Подготовка каталога под восстановление ===
+    sudo mkdir -p "\${RESTORE_DATA_DIR}"
+    sudo chown -R root:root "\${RESTORE_DATA_DIR}"
+
+    echo "[*] Восстанавливаю из S3: s3://\${STORE_CONTAINER}/\${STORE_PREFIX}"
+    etcdbrctl restore \
+      --storage-provider=S3 \
+      --store-container="\${STORE_CONTAINER}" \
+      --store-prefix="\${STORE_PREFIX}" \
+      --data-dir="\${RESTORE_DATA_DIR}" \
+      --initial-cluster="\${INITIAL_CLUSTER}" \
+      --initial-advertise-peer-urls="https://\${CURRENT_IP}:\${PEER_PORT}" \
+      --name="\${THIS_NODE_NAME}"
+
+    echo "[+] Готово. Данные восстановлены в \${RESTORE_DATA_DIR}"
+    echo "    Далее: используйте восстановленный data-dir для запуска ETCD."
+    EOF
+
+    chmod +x /etc/kubernetes/etcd-backup/restore.sh
+  `}
+</CodeBlock>
+
+  </details>
+  </TabItem>
+
+
+  <TabItem value="local" label="Local">
+  <details>
+    <summary>
+      <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+        <p style={{ marginBottom: 0 }}>Скрипт восстановления из локального хранилища</p>
+      </div>
+    </summary>
+
+    > TODO добавить возможность параметризировать компонент, в случае хранения локально
+
+  </details>
+  </TabItem>
+
+</Tabs>

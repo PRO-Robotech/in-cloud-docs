@@ -72,6 +72,11 @@ export const etcd = [
         label: '5.1.3.3. Удаление узла',
         id: 'tech-docs/etcd/components/etcd/remove-members',
       },
+      {
+        type: 'doc',
+        label: '5.1.3.4. Настройка бекапов',
+        id: 'tech-docs/etcd/components/etcd/etcd-backups',
+      },
     ],
   },
   {
