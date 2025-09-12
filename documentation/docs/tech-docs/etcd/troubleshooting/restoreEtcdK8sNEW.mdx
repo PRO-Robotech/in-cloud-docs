@@ -1,0 +1,21 @@
+---
+id: RestoreEtcdK8s
+---
+
+import SingleNodeK8s            from '@site/docs/tech-docs/etcd/troubleshooting/restore/singleNodeK8s.mdx'
+import ThreeNodeK8s             from '@site/docs/tech-docs/etcd/troubleshooting/restore/threeNodeK8sNEW.mdx'
+import CrushedNodeK8s           from '@site/docs/tech-docs/etcd/troubleshooting/restore/crushedNodeK8s.mdx'
+import TabItem                  from '@theme/TabItem'
+import Tabs                     from '@theme/Tabs'
+
+Данный вариант подразумевает запуск скрипта восстановления из п.5.1.1.2 на всех трех узлах.
+Перед запуском инструкций, произведите подключение на все три ноды.
+<Tabs groupId="etcd-recovery-mode">
+  <TabItem value='etcdbrctl'>
+    <details>
+      <summary>Инструкция</summary>
+      <ThreeNodeK8s />
+    </details>
+  </TabItem>
+</Tabs>
+

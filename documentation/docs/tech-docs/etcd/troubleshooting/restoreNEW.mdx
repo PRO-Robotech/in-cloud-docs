@@ -1,5 +1,5 @@
 ---
-id: restore-old
+id: restore
 ---
 
 import CodeBlock                from '@theme/CodeBlock'
@@ -11,28 +11,16 @@ import Tabs                     from '@theme/Tabs'
 import dedent                   from 'ts-dedent'
 import { COMPONENTS_VERSION }   from '@site/src/constants/kubernetes/componentsVersion'
 import { ETCD_ARGS }            from '@site/src/constants/kubernetes/etcdArgs'
-import RestoreEtcdK8s           from './restoreEtcdK8s.mdx'
+import RestoreEtcdK8s           from './restoreEtcdK8sNEW.mdx'
 import RestoreEtcdKubeApi       from './restoreEtcdKupeApi.mdx'
 
 
 # 5.1.5.8. Восстановление
 
-В данной главе, рассмотрим два варианта ETCD:
+В данной главе, рассмотрим вариант восстановления ETCD.
 
-I. ETCD, развернутый внутри K8s кластера.
 
-II. ETCD, используемый KubeAPI текущего k8s кластера.
-
-## 5.1.5.8.1. ETCD in k8s cluster
+## 5.1.5.8.1. Восстановление ETCD на трех нодах.
 
 <RestoreEtcdK8s />
 
-## 5.1.5.8.2. ETCD Kube API current k8s cluster
-
-<RestoreEtcdKubeApi />
-
-*****
-
-TODO опиши как работает gardener etcd-backup (в режиме снапшотов)
-
-*****

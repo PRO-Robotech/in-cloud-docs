@@ -1,0 +1,186 @@
+---
+id: ThreeNodeK8s
+---
+
+import CodeBlock                  from '@theme/CodeBlock'
+import dedent                     from 'ts-dedent'
+import { CUSTOM_VALUE }           from '@site/src/constants/kubernetes/customValue'
+import TabItem                    from '@theme/TabItem'
+import Tabs                       from '@theme/Tabs'
+import { ETCD_ARGS }              from '@site/src/constants/kubernetes/etcdArgs'
+import { CodeAndInputExportPods } from '@site/src/components/commonBlocks'
+
+import { CERTIFICATES }         from '@site/src/constants/kubernetes/certs'
+import { PORTS }                from '@site/src/constants/kubernetes/ports'
+import { ThreeNodeFunctionsK8s }  from './blocks'
+
+  
+  :::warning
+  Скрипт восстановления необходимо запускать на всех трех узлах. Также перед запуском требуется подготовить переменные окружения на каждом узле.
+  :::
+
+
+  <Tabs groupId="etcd-node">
+    <TabItem value='Master-1'>
+
+    <h4>Переменные окружения</h4>
+
+      <CodeBlock language="bash">
+        {dedent`
+          # Общие
+          export CLUSTER_NAME=${CUSTOM_VALUE.clusterName.value}
+          export STORE_CONTAINER="etcd-backups"
+          export STORE_PREFIX="etcd-\${CLUSTER_NAME}"
+
+          export S3_REGION="us-east-1"
+          export S3_ACCESS_KEY_ID="<your-access-key>"
+          export S3_SECRET_ACCESS_KEY="<your-secret-key>"
+          export S3_ENDPOINT="https://s3.example.com"
+          export S3_FORCE_PATH_STYLE="true"
+
+          # Узел и кворум (пример на 3 ноды)
+          export PEER_PORT="2380"
+          export THIS_NODE_NAME="$(hostname)"
+          export CURRENT_IP="$(ip -o -4 addr show dev eth1 | awk '{print $4}' | cut -d/ -f1)}" 
+
+          export NODE_NAME_1="cp-1"; export NODE_IP_1="10.0.0.11"
+          export NODE_NAME_2="cp-2"; export NODE_IP_2="10.0.0.12"
+          export NODE_NAME_3="cp-3"; export NODE_IP_3="10.0.0.13"
+
+          # Куда восстановить данные ETCD
+          export RESTORE_DATA_DIR="/var/lib/etcd-restore"
+        `}
+      </CodeBlock>
+
+      1. Запустите скрипт восстановления, сформированный в разделе 5.1.1.2
+
+      <CodeBlock language="bash">
+        {dedent`
+          bash /etc/kubernetes/etcd-backup/restore.sh
+        `}
+      </CodeBlock>
+
+      2. После успешной отработки скрипта, положительный вывод:
+
+      <CodeBlock language="bash">
+        {dedent`
+          INFO[0020] Successfully restored the etcd data directory.
+        `}
+      </CodeBlock>
+
+      3. Замените в static-манифестах etcd, монтируемый volume, на восстановленную директорию
+
+      <CodeBlock language="bash">
+        {dedent`
+          - hostPath:
+              path: /var/lib/etcd-restore
+              type: DirectoryOrCreate
+            name: etcd-data
+        `}
+      </CodeBlock>
+
+      4. Проверьте состояние кластера ETCD с помощью команд:
+
+      <CodeBlock language="bash">
+        {dedent`
+          etcdctl --endpoints=$(etcdctlMembers) endpoint status -w table
+        `}
+      </CodeBlock>
+      <CodeBlock language="bash">
+        {dedent`
+          +------------------------+------------------+---------+---------+-----------+------------+-----------+------------+--------------------+--------+
+          |        ENDPOINT        |        ID        | VERSION | DB SIZE | IS LEADER | IS LEARNER | RAFT TERM | RAFT INDEX | RAFT APPLIED INDEX | ERRORS |
+          +------------------------+------------------+---------+---------+-----------+------------+-----------+------------+--------------------+--------+
+          | https://10.16.0.3:2379 | d4bc596dd8b92f8e |  3.5.12 |  133 MB |     false |      false |         3 |    2301973 |            2301973 |        |
+          | https://10.16.0.4:2379 | 710bdf7e445d9872 |  3.5.12 |  133 MB |      true |      false |         3 |    2301975 |            2301975 |        |
+          | https://10.16.0.5:2379 | 7da50acd64535d83 |  3.5.12 |  133 MB |     false |      false |         3 |    2301975 |            2301975 |        |
+          +------------------------+------------------+---------+---------+-----------+------------+-----------+------------+--------------------+--------+
+        `}
+      </CodeBlock>
+
+    </TabItem>
+    <TabItem value='Master-2'>
+
+    <h4>Переменные окружения</h4>
+
+      <CodeBlock language="bash">
+        {dedent`
+          # Общие
+          export CLUSTER_NAME=${CUSTOM_VALUE.clusterName.value}
+          export STORE_CONTAINER="etcd-backups"
+          export STORE_PREFIX="etcd-\${CLUSTER_NAME}"
+
+          export S3_REGION="us-east-1"
+          export S3_ACCESS_KEY_ID="<your-access-key>"
+          export S3_SECRET_ACCESS_KEY="<your-secret-key>"
+          export S3_ENDPOINT="https://s3.example.com"
+          export S3_FORCE_PATH_STYLE="true"
+
+          # Узел и кворум (пример на 3 ноды)
+          export PEER_PORT="2380"
+          export THIS_NODE_NAME="$(hostname)"
+          export CURRENT_IP="$(ip -o -4 addr show dev eth1 | awk '{print $4}' | cut -d/ -f1)}" 
+
+          export NODE_NAME_1="cp-1"; export NODE_IP_1="10.0.0.11"
+          export NODE_NAME_2="cp-2"; export NODE_IP_2="10.0.0.12"
+          export NODE_NAME_3="cp-3"; export NODE_IP_3="10.0.0.13"
+
+          # Куда восстановить данные ETCD
+          export RESTORE_DATA_DIR="/var/lib/etcd-restore"
+        `}
+      </CodeBlock>
+
+      1. Запустите скрипт восстановления 
+
+      <CodeBlock language="bash">
+        {dedent`
+          bash /etc/kubernetes/etcd-backup/restore.sh
+        `}
+      </CodeBlock>
+
+    </TabItem>
+    <TabItem value='Master-3'>
+
+    <h4>Переменные окружения</h4>
+
+      <CodeBlock language="bash">
+        {dedent`
+          # Общие
+          export CLUSTER_NAME=${CUSTOM_VALUE.clusterName.value}
+          export STORE_CONTAINER="etcd-backups"
+          export STORE_PREFIX="etcd-\${CLUSTER_NAME}"
+
+          export S3_REGION="us-east-1"
+          export S3_ACCESS_KEY_ID="<your-access-key>"
+          export S3_SECRET_ACCESS_KEY="<your-secret-key>"
+          export S3_ENDPOINT="https://s3.example.com"
+          export S3_FORCE_PATH_STYLE="true"
+
+          # Узел и кворум (пример на 3 ноды)
+          export PEER_PORT="2380"
+          export THIS_NODE_NAME="$(hostname)"
+          export CURRENT_IP="$(ip -o -4 addr show dev eth1 | awk '{print $4}' | cut -d/ -f1)}" 
+
+          export NODE_NAME_1="cp-1"; export NODE_IP_1="10.0.0.11"
+          export NODE_NAME_2="cp-2"; export NODE_IP_2="10.0.0.12"
+          export NODE_NAME_3="cp-3"; export NODE_IP_3="10.0.0.13"
+
+          # Куда восстановить данные ETCD
+          export RESTORE_DATA_DIR="/var/lib/etcd-restore"
+        `}
+      </CodeBlock>
+
+      1. Запустите скрипт восстановления 
+
+      <CodeBlock language="bash">
+        {dedent`
+          bash /etc/kubernetes/etcd-backup/restore.sh
+        `}
+      </CodeBlock>
+
+      </TabItem>
+    </Tabs>
+
+
+  После выполнения работ на всех трех узлах ETCD кластера, кластер восстановлен и готов к работе.
+

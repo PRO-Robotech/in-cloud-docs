@@ -1,5 +1,7 @@
 import EtcdDownloadBIN from '@site/docs/tech-docs/etcd/components/etcd/lifecycleDownloadComponent.mdx'
 import EtcdCheckBIN from '@site/docs/tech-docs/etcd/components/etcd/checkBIN.mdx'
+import EtcdbrctlDownloadBIN from '@site/docs/tech-docs/etcd/components/etcdbrctl/lifecycleDownloadComponent.mdx'
+import EtcdbrctlCheckInstall from '@site/docs/tech-docs/etcd/components/etcdbrctl/checkInstall.mdx'
 
 import TabItem from '@theme/TabItem'
 import Tabs from '@theme/Tabs'
@@ -15,6 +17,17 @@ import Tabs from '@theme/Tabs'
       </summary>
       <EtcdDownloadBIN />
       <EtcdCheckBIN />
+    </details>
+  </TabItem>
+  <TabItem value="etcdbrctl">
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Установка etcdbrctl</p>
+        </div>
+      </summary>
+      <EtcdbrctlDownloadBIN />
+      <EtcdbrctlCheckInstall />
     </details>
   </TabItem>
 </Tabs>

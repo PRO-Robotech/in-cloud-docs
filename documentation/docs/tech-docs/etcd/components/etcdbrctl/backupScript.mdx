@@ -1,0 +1,148 @@
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+import { PORTS } from '@site/src/constants/kubernetes/ports'
+import { COMPONENTS_VERSION } from '@site/src/constants/kubernetes/componentsVersion'
+import { ETCD_ARGS } from '@site/src/constants/kubernetes/etcdArgs'
+
+import dedent from 'ts-dedent'
+import CodeBlock from '@theme/CodeBlock'
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+<h4>Подготовка скрипта восстановления</h4>
+
+  <details>
+    <summary>
+      <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+        <p style={{ marginBottom: 0 }}>Скрипт восстановления из S3</p>
+      </div>
+    </summary>
+
+<h4>Переменные окружения</h4>
+
+<CodeBlock language="bash">
+  {dedent`
+    # Общие
+    export CLUSTER_NAME=${CUSTOM_VALUE.clusterName.value}
+    export STORE_CONTAINER="etcd-backups"
+    export STORE_PREFIX="etcd-\${CLUSTER_NAME}"
+
+    export S3_REGION="us-east-1"
+    export S3_ACCESS_KEY_ID="<your-access-key>"
+    export S3_SECRET_ACCESS_KEY="<your-secret-key>"
+    export S3_ENDPOINT="https://s3.example.com"
+    export S3_FORCE_PATH_STYLE="true"
+
+    # Узел и кворум (пример на 3 ноды)
+    export PEER_PORT="2380"
+    export THIS_NODE_NAME="$(hostname)"
+    export CURRENT_IP="$(ip -o -4 addr show dev eth1 | awk '{print $4}' | cut -d/ -f1)}" 
+
+    export NODE_NAME_1="cp-1"; export NODE_IP_1="10.0.0.11"
+    export NODE_NAME_2="cp-2"; export NODE_IP_2="10.0.0.12"
+    export NODE_NAME_3="cp-3"; export NODE_IP_3="10.0.0.13"
+
+    # Куда восстановить данные ETCD
+    export RESTORE_DATA_DIR="/var/lib/etcd-restore"
+  `}
+</CodeBlock>
+
+<h4>Подготовка скрипта восстановления</h4>
+
+<CodeBlock language="bash">
+  {dedent`
+    sudo mkdir -p /etc/kubernetes/etcd-backup
+    sudo tee /etc/kubernetes/etcd-backup/restore.sh > /dev/null <<'EOF'
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    # === Параметры/переменные (берутся из окружения, есть дефолты) ===
+    ETCDBRCTL_IMAGE="\${ETCDBRCTL_IMAGE:-europe-docker.pkg.dev/gardener-project/releases/gardener/etcdbrctl:v0.36.3}"
+
+    CLUSTER_NAME="\${CLUSTER_NAME:-my-cluster}"
+    STORE_CONTAINER="\${STORE_CONTAINER:-etcd-backups}"
+    STORE_PREFIX="\${STORE_PREFIX:-etcd-\${CLUSTER_NAME}}"
+
+    S3_REGION="\${S3_REGION:-us-east-1}"
+    S3_ACCESS_KEY_ID="\${S3_ACCESS_KEY_ID:-}"
+    S3_SECRET_ACCESS_KEY="\${S3_SECRET_ACCESS_KEY:-}"
+    S3_ENDPOINT="\${S3_ENDPOINT:-https://s3.example.com}"
+    S3_FORCE_PATH_STYLE="\${S3_FORCE_PATH_STYLE:-true}"
+
+    PEER_PORT="\${PEER_PORT:-2380}"
+    THIS_NODE_NAME="\${THIS_NODE_NAME:-$(hostname)}"
+    CURRENT_IP="\${CURRENT_IP:-}"
+    RESTORE_DATA_DIR="\${RESTORE_DATA_DIR:-/var/lib/etcd-restore}"
+
+    # Кворум (пример для 3 нод) — отредактируй под свой состав
+    NODE_NAME_1="\${NODE_NAME_1:-cp-1}"; NODE_IP_1="\${NODE_IP_1:-10.0.0.11}"
+    NODE_NAME_2="\${NODE_NAME_2:-cp-2}"; NODE_IP_2="\${NODE_IP_2:-10.0.0.12}"
+    NODE_NAME_3="\${NODE_NAME_3:-cp-3}"; NODE_IP_3="\${NODE_IP_3:-10.0.0.13}"
+
+    INITIAL_CLUSTER="\${NODE_NAME_1}=https://\${NODE_IP_1}:\${PEER_PORT},\${NODE_NAME_2}=https://\${NODE_IP_2}:\${PEER_PORT},\${NODE_NAME_3}=https://\${NODE_IP_3}:\${PEER_PORT}"
+
+
+    # === 1) Установка etcdbrctl с помощью containerd (ctr) ===
+    if ! command -v etcdbrctl >/dev/null 2>&1; then
+      if command -v ctr >/dev/null 2>&1; then
+        echo "[*] Устанавливаю etcdbrctl из образа: \${ETCDBRCTL_IMAGE}"
+        sudo ctr images pull "\${ETCDBRCTL_IMAGE}" >/dev/null
+        # Пробуем скопировать бинарник
+        sudo ctr run --rm --mount type=bind,src=/usr/local/bin,dst=/hostbin,options=rbind:rw "\${ETCDBRCTL_IMAGE}" etcdbrctl-installer sh -lc 'set -e;
+            SRC="";
+            if [ -x /etcdbrctl ]; then SRC=/etcdbrctl;
+            elif [ -x /usr/local/bin/etcdbrctl ]; then SRC=/usr/local/bin/etcdbrctl;
+            else SRC=$(command -v etcdbrctl || true); fi;
+            if [ -z "$SRC" ]; then SRC=$(busybox which etcdbrctl || true); fi;
+            if [ -z "$SRC" ]; then SRC=$(find / -maxdepth 3 -type f -name etcdbrctl -perm -111 2>/dev/null | head -n1); fi;
+            [ -n "$SRC" ] || { echo "etcdbrctl не найден в образе"; exit 1; }
+            cp "$SRC" /hostbin/etcdbrctl && chmod +x /hostbin/etcdbrctl'
+        command -v etcdbrctl >/dev/null || { echo "[-] Не удалось установить etcdbrctl"; exit 1; }
+      else
+        echo "[-] Не найден 'ctr'. Установите binary вручную или поставьте ctr."
+        exit 1
+      fi
+    fi
+
+
+    # === S3 креды для etcdbrctl ===
+    sudo mkdir -p /var/etcd-backup
+
+    declare -A CONFIG=(
+      [region]="\${S3_REGION}"
+      [accessKeyID]="\${S3_ACCESS_KEY_ID}"
+      [secretAccessKey]="\${S3_SECRET_ACCESS_KEY}"
+      [endpoint]="\${S3_ENDPOINT}"
+      [s3ForcePathStyle]="\${S3_FORCE_PATH_STYLE}"
+    )
+
+    for key in "\${!CONFIG[@]}"; do
+      printf "%s" "\${CONFIG[\$key]}" | sudo tee "/var/etcd-backup/\$key" >/dev/null
+    done
+
+    export AWS_APPLICATION_CREDENTIALS=/var/etcd-backup
+    export AWS_ENDPOINT_URL_S3="\${S3_ENDPOINT}"
+
+
+    # === 3) Подготовка каталога под восстановление ===
+    sudo mkdir -p "\${RESTORE_DATA_DIR}"
+    sudo chown -R root:root "\${RESTORE_DATA_DIR}"
+
+    echo "[*] Восстанавливаю из S3: s3://\${STORE_CONTAINER}/\${STORE_PREFIX}"
+    etcdbrctl restore \
+      --storage-provider=S3 \
+      --store-container="\${STORE_CONTAINER}" \
+      --store-prefix="\${STORE_PREFIX}" \
+      --data-dir="\${RESTORE_DATA_DIR}" \
+      --initial-cluster="\${INITIAL_CLUSTER}" \
+      --initial-advertise-peer-urls="https://\${CURRENT_IP}:\${PEER_PORT}" \
+      --name="\${THIS_NODE_NAME}"
+
+    echo "[+] Готово. Данные восстановлены в \${RESTORE_DATA_DIR}"
+    echo "    Далее: используйте восстановленный data-dir для запуска ETCD."
+    EOF
+
+    chmod +x /etc/kubernetes/etcd-backup/restore.sh
+  `}
+</CodeBlock>
+
+  </details>

@@ -56,7 +56,7 @@ export const etcd = [
       {
         type: 'doc',
         label: '5.1.3.4. Бекапы',
-        id: 'tech-docs/etcd/components/etcd/etcd-backups',
+        id: 'tech-docs/etcd/components/etcdbrctl/etcd-backups',
       },
     ],
   },
