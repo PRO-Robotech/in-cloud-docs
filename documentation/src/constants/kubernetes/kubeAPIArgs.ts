@@ -126,7 +126,7 @@ export const KUBE_API_ARGS: TCustomValueItems = {
   authorizationMode: { value: "Node,RBAC" },
   authorizationWebhookVersion: { value: "v1beta1" },
   cloudProvider: { value: "external" },
-  enableAdmissionPlugins: { value: "NamespaceLifecycle,LimitRanger,ServiceAccount,DefaultStorageClass,DefaultTolerationSeconds,MutatingAdmissionWebhook,ValidatingAdmissionWebhook,ResourceQuota,AlwaysPullImages,NodeRestriction,PodSecurity" },
+  enableAdmissionPlugins: { value: "NamespaceLifecycle,LimitRanger,ServiceAccount,DefaultStorageClass,DefaultTolerationSeconds,MutatingAdmissionWebhook,ValidatingAdmissionWebhook,ResourceQuota,NodeRestriction,PodSecurity" },
   endpointReconcilerType: { value: "lease" },
   storageMediaType: { value: "application/vnd.kubernetes.protobuf" },
   etcdPrefix: { value: "/registry" },

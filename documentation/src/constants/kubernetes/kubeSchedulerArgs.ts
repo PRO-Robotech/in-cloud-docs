@@ -165,13 +165,13 @@ export const KUBE_SCHEDULER_ARGS: TCustomValueItems = {
     value: '',
   },
   tlsPrivateKeyFile: {
-    value: '',
+    value: '/etc/kubernetes/pki/scheduler-server.key',
   },
   showHiddenMetricsForVersion: {
     value: '',
   },
   tlsCertFile: {
-    value: '',
+    value: '/etc/kubernetes/pki/scheduler-server.crt',
   },
   requestheaderClientCaFile: {
     value: '',

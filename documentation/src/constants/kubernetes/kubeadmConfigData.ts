@@ -42,6 +42,10 @@ export const KUBEADM_COFNIG_DATA: TCustomValueItems = {
           mountPath: "/var/log/kubernetes/audit/"
           readOnly: false
           pathType: DirectoryOrCreate
+        - name: "k8s-audit-policy"
+          hostPath: "/etc/kubernetes/audit-policy.yaml"
+          mountPath: "/etc/kubernetes/audit-policy.yaml"
+          pathType: File
         certSANs:
           - "127.0.0.1"
           # TODO для доабвления внешнего FQDN в сертификаты кластера
@@ -51,9 +55,35 @@ export const KUBEADM_COFNIG_DATA: TCustomValueItems = {
         extraArgs:
           cluster-name: "$\{CLUSTER_NAME}"
           ${KUBERNETES_KUBE_CONTROLLER_MANAGER_ARGS.data.value}
+        # ЕСЛИ НУЖНО ПОДКЛЮЧИТЬ СЕРВЕРНЫЕ СЕРТИФИКАТЫ ДЛЯ KUBE-CONTROLLER-MANAGER
+        # ОБРАТИТЕ ВНИМАНИЕ, ЧТО KUBEADM НЕ СОЗДАЕТ ДАННЫЕ СЕРТИФИКАТЫ
+        # ТРЕБУЕТСЯ РАСКОМЕНТИРОВАТЬ
+        # ->
+        # extraVolumes:
+        # - name: "controller-manager-crt"
+        #   hostPath: "/etc/kubernetes/pki/controller-manager-server.crt"
+        #   mountPath: "/etc/kubernetes/pki/controller-manager-server.crt"
+        #   pathType: File
+        # - name: "controller-manager-key"
+        #   hostPath: "/etc/kubernetes/pki/controller-manager-server.key"
+        #   mountPath: "/etc/kubernetes/pki/controller-manager-server.key"
+        #   pathType: File
       scheduler:
         extraArgs:
           ${KUBERNETES_KUBE_SCHEDULER_ARGS.data.value}
+        # ЕСЛИ НУЖНО ПОДКЛЮЧИТЬ СЕРВЕРНЫЕ СЕРТИФИКАТЫ ДЛЯ KUBE-SCHEDULER
+        # ОБРАТИТЕ ВНИМАНИЕ, ЧТО KUBEADM НЕ СОЗДАЕТ ДАННЫЕ СЕРТИФИКАТЫ
+        # ТРЕБУЕТСЯ РАСКОМЕНТИРОВАТЬ
+        # ->
+        # extraVolumes:
+        # - name: "scheduler-crt"
+        #   hostPath: "/etc/kubernetes/pki/scheduler-server.crt"
+        #   mountPath: "/etc/kubernetes/pki/scheduler-server.crt"
+        #   pathType: File
+        # - name: "scheduler-key"
+        #   hostPath: "/etc/kubernetes/pki/scheduler-server.key"
+        #   mountPath: "/etc/kubernetes/pki/scheduler-server.key"
+        #   pathType: File
     `,
   },
 }

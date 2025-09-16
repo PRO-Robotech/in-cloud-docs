@@ -15,7 +15,7 @@ import {KUBE_SCHEDULER_ARGS} from '@site/src/constants/kubernetes/kubeSchedulerA
 </CodeBlock>
 
 <details className="custom-blue-block">
-<summary>Static Pod Kube-Schedulerr</summary>
+<summary>Static Pod Kube-Scheduler</summary>
 
 <h4>Генерация манифеста</h4>
 <CodeBlock language="bash">
@@ -74,6 +74,13 @@ import {KUBE_SCHEDULER_ARGS} from '@site/src/constants/kubernetes/kubeSchedulerA
         - --secure-port=${KUBE_SCHEDULER_ARGS.securePort.value}
         - --v=${KUBE_SCHEDULER_ARGS.v.value}
         - --version=${KUBE_SCHEDULER_ARGS.version.value}
+      # ЕСЛИ НУЖНО ПОДКЛЮЧИТЬ СЕРВЕРНЫЕ СЕРТИФИКАТЫ ДЛЯ KUBE-SCHEDULER
+      # ОБРАТИТЕ ВНИМАНИЕ, ЧТО KUBEADM НЕ СОЗДАЕТ ДАННЫЕ СЕРТИФИКАТЫ
+      # ТРЕБУЕТСЯ РАСКОМЕНТИРОВАТЬ
+      # ->
+      # - --tls-cert-file=${KUBE_SCHEDULER_ARGS.tlsCertFile.value}
+      # - --tls-private-key-file=${KUBE_SCHEDULER_ARGS.tlsPrivateKeyFile.value}
+      # <-
       # - --allow-metric-labels=${KUBE_SCHEDULER_ARGS.allowMetricLabels.value}
       # - --allow-metric-labels-manifest=${KUBE_SCHEDULER_ARGS.allowMetricLabelsManifest.value}
       # - --cert-dir=${KUBE_SCHEDULER_ARGS.certDir.value}
@@ -84,10 +91,8 @@ import {KUBE_SCHEDULER_ARGS} from '@site/src/constants/kubernetes/kubeSchedulerA
       # - --requestheader-allowed-names=${KUBE_SCHEDULER_ARGS.requestheaderAllowedNames.value}
       # - --requestheader-client-ca-file=${KUBE_SCHEDULER_ARGS.requestheaderClientCaFile.value}
       # - --show-hidden-metrics-for-version=${KUBE_SCHEDULER_ARGS.showHiddenMetricsForVersion.value}
-      # - --tls-cert-file=${KUBE_SCHEDULER_ARGS.tlsCertFile.value}
       # - --tls-cipher-suites=${KUBE_SCHEDULER_ARGS.tlsCipherSuites.value}
       # - --tls-min-version=${KUBE_SCHEDULER_ARGS.tlsMinVersion.value}
-      # - --tls-private-key-file=${KUBE_SCHEDULER_ARGS.tlsPrivateKeyFile.value}
       # - --tls-sni-cert-key=${KUBE_SCHEDULER_ARGS.tlsSniCertKey.value}
       # - --vmodule=${KUBE_SCHEDULER_ARGS.vmodule.value}
       # - --write-config-to=${KUBE_SCHEDULER_ARGS.writeConfigTo.value}
@@ -119,6 +124,16 @@ import {KUBE_SCHEDULER_ARGS} from '@site/src/constants/kubernetes/kubeSchedulerA
         - mountPath: ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/scheduler.conf
           name: kubeconfig
           readOnly: true
+      # ЕСЛИ НУЖНО ПОДКЛЮЧИТЬ СЕРВЕРНЫЕ СЕРТИФИКАТЫ ДЛЯ KUBE-SCHEDULER
+      # ОБРАТИТЕ ВНИМАНИЕ, ЧТО KUBEADM НЕ СОЗДАЕТ ДАННЫЕ СЕРТИФИКАТЫ
+      # ТРЕБУЕТСЯ РАСКОМЕНТИРОВАТЬ
+      # ->
+      # - mountPath: ${KUBE_SCHEDULER_ARGS.tlsCertFile.value}
+      #   name: kube-scheduler-crt
+      #   readOnly: true
+      # - mountPath: ${KUBE_SCHEDULER_ARGS.tlsPrivateKeyFile.value}
+      #   name: kube-scheduler-key
+      #   readOnly: true
       hostNetwork: true
       priority: 2000001000
       priorityClassName: system-node-critical
@@ -130,6 +145,18 @@ import {KUBE_SCHEDULER_ARGS} from '@site/src/constants/kubernetes/kubeSchedulerA
           path: ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/scheduler.conf
           type: FileOrCreate
         name: kubeconfig
+      # ЕСЛИ НУЖНО ПОДКЛЮЧИТЬ СЕРВЕРНЫЕ СЕРТИФИКАТЫ ДЛЯ KUBE-SCHEDULER
+      # ОБРАТИТЕ ВНИМАНИЕ, ЧТО KUBEADM НЕ СОЗДАЕТ ДАННЫЕ СЕРТИФИКАТЫ
+      # ТРЕБУЕТСЯ РАСКОМЕНТИРОВАТЬ
+      # ->
+      # - hostPath:
+      #     path: ${KUBE_SCHEDULER_ARGS.tlsCertFile.value}
+      #     type: FileOrCreate
+      #   name: kube-scheduler-crt
+      # - hostPath:
+      #     path: ${KUBE_SCHEDULER_ARGS.tlsPrivateKeyFile.value}
+      #     type: FileOrCreate
+      #   name: kube-scheduler-key
     status: {}
     EOF
   `}
