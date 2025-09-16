@@ -10,28 +10,9 @@ export const etcd = [
         id: 'tech-docs/etcd/setup-environments/os-setup',
       },
       {
-        type: 'category',
+        type: 'doc',
         label: '5.1.1.2. Установка ПО',
-        collapsed: true,
-        items: [
-          {
-            type: 'doc',
-            label: '5.1.1.2.1. Etcd',
-            id: 'tech-docs/etcd/components/etcd/lifecycle',
-          },
-        ],
-      },
-      {
-        type: 'category',
-        label: '5.1.1.3. Проверка',
-        collapsed: true,
-        items: [
-          {
-            type: 'doc',
-            label: '5.1.1.3.1. Etcd',
-            id: 'tech-docs/etcd/components/etcd/check',
-          },
-        ],
+        id: 'tech-docs/etcd/components/all-setup',
       },
     ],
   },
@@ -60,17 +41,22 @@ export const etcd = [
       {
         type: 'doc',
         label: '5.1.3.1. Инициализация',
-        id: 'tech-docs/etcd/components/etcd/etcd-settings',
+        id: 'tech-docs/etcd/components/etcd/setup-init-component',
       },
       {
         type: 'doc',
         label: '5.1.3.2. Добавление узла',
-        id: 'tech-docs/etcd/components/etcd/add-members',
+        id: 'tech-docs/etcd/components/etcd/setup-join-component',
       },
       {
         type: 'doc',
         label: '5.1.3.3. Удаление узла',
         id: 'tech-docs/etcd/components/etcd/remove-members',
+      },
+      {
+        type: 'doc',
+        label: '5.1.3.4. Бекапы',
+        id: 'tech-docs/etcd/components/etcdbrctl/etcd-backups',
       },
     ],
   },
@@ -83,10 +69,6 @@ export const etcd = [
     type: 'category',
     label: '5.1.5. Диагностика',
     collapsed: true,
-    link: {
-      type: 'doc',
-      id: 'tech-docs/etcd/etcd-main',
-    },
     items: [
       {
         type: 'doc',
@@ -115,14 +97,14 @@ export const etcd = [
       },
       {
         type: 'doc',
-        label: '5.1.5.7. Бекапы',
-        id: 'tech-docs/etcd/troubleshooting/backups',
-      },
-      {
-        type: 'doc',
-        label: '5.1.5.8. Восстановление',
+        label: '5.1.5.7. Восстановление',
         id: 'tech-docs/etcd/troubleshooting/restore',
       },
+      // {
+      //   type: 'doc',
+      //   label: '5.1.5.8. Восстановление',
+      //   id: 'tech-docs/etcd/troubleshooting/restore',
+      // },
     ],
   },
 ]

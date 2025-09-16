@@ -44,6 +44,171 @@ import { CodeAndInputDownloadCreds }  from '@site/src/components/commonBlocks'
     <CodeBlock language="bash">{`etcdctl --endpoints=\${ENDPOINTS} snapshot save PATH_TO_SAVE/backup.db`}</CodeBlock>
 
   </TabItem>
+
+  <TabItem value='etcdbrctl'>
+    Утилита от gardener. Изначальная задумка которой – работать в стеке etcd-backup-restore: gardener поднимает свой etcd через wrapper, снимает с него snapshot и в случае проблем, восстанавливает.
+    Мы не используем данный подход и концентрируемся исключительно на использовании утилиты etcdbrctl, которая позволяет работать в двух режимах и тонко настраивать параметры. 
+    1) Одиночный snapshot:
+
+    <CodeBlock language="bash">{`etcdbrctl --endpoints=\${ENDPOINTS} snapshot --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/healthcheck-client.crt --key=/etc/kubernetes/pki/etcd/healthcheck-client.key PATH_TO_SAVE/backup.db`}</CodeBlock>
+
+    2) Режим - "server" (Рекомендуемый). Особенно актуален в случае, если control-plane нод больше одной и необходимо отслеживать текущего лидера etcd для автоматических бэкапов.
+
+    <CodeBlock language="bash">{`etcdbrctl server --endpoints=\${ENDPOINTS} --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/healthcheck-client.crt --key=/etc/kubernetes/pki/etcd/healthcheck-client.key PATH_TO_SAVE/backup.db`}</CodeBlock>
+
+    :::note
+    Основные параметры, также необходимые для работы утилиты:
+    - <code>--schedule</code> — cron-выражение для **полных** снапшотов (например, `0 */4 * * *` → раз в 4 часа).
+    - <code>--delta-snapshot-period</code> — частота **инкрементальных** снапшотов (например, `1h`).
+    - <code>--storage-provider</code> — <code>S3</code> или <code>Local</code>.
+    - <code>--store-container</code> –  имя bucket или путь хранения, в случае storage-provider=Local.
+    - <code>--store-prefix</code> — добавляет префикс к пути хранения бэкапов, чтобы их разделять по окружениям/кластерам.
+    - <code>--max-backups</code> – максимальное количество full бэкапов.
+    - <code>--garbage-collection-policy</code> — правила очистки старых бэкапов.
+    - <code>--garbage-collection-period</code> — как часто запускать GC.
+    - <code>--server-port</code> — HTTP-порт, на котором сервер будет запущен.
+    - <code>--use-etcd-wrapper</code> — отключает режим запуска собственного etcd wrapper’а (gardener-специфика). Мы работаем напрямую с уже существующим etcd.
+    :::
+
+    <details>
+      <summary>Пример DaemonSet с etcdbrctl (server-mode)</summary>
+
+      ```yaml
+      apiVersion: apps/v1
+      kind: DaemonSet
+      metadata:
+        name: etcd-backup-snapshot
+        namespace: kube-system
+        labels:
+          app: etcd-backup-snapshot
+      spec:
+        selector:
+          matchLabels:
+            app: etcd-backup-snapshot
+        template:
+          metadata:
+            labels:
+              app: etcd-backup-snapshot
+          spec:
+            containers:
+              - name: etcdbrctl
+                image: europe-docker.pkg.dev/gardener-project/releases/gardener/etcdbrctl:v0.36.3
+                command:
+                  - /etcdbrctl
+                  - server
+                args:
+                  - --use-etcd-wrapper=false
+                  - --schedule=0 */4 * * *
+                  - --delta-snapshot-period=1h
+                  - --storage-provider=S3
+                  - --store-container=etcd-backups
+                  - --store-prefix=etcd
+                  - --max-backups=6
+                  - --garbage-collection-policy=LimitBased
+                  - --garbage-collection-period=30m
+                  - --server-port=18080
+                  - --endpoints=https://$(NODE_IP):2379
+                  - --cacert=/etc/etcd-pki/ca.crt
+                  - --cert=/etc/etcd-pki/healthcheck-client.crt
+                  - --key=/etc/etcd-pki/healthcheck-client.key
+                env:
+                  - name: NODE_IP
+                    valueFrom:
+                      fieldRef:
+                        fieldPath: status.hostIP
+                  - name: POD_NAME
+                    valueFrom:
+                      fieldRef:
+                        fieldPath: metadata.name
+                  - name: POD_NAMESPACE
+                    valueFrom:
+                      fieldRef:
+                        fieldPath: metadata.namespace
+                  - name: AWS_APPLICATION_CREDENTIALS
+                    value: /var/etcd-backup
+                  - name: AWS_ENDPOINT_URL_S3
+                    valueFrom:
+                      secretKeyRef:
+                        name: etcd-backup
+                        key: "endpoint"
+                        optional: true
+                volumeMounts:
+                  - name: etcd-pki
+                    mountPath: /etc/etcd-pki
+                    readOnly: true
+                  - name: etcd-config
+                    mountPath: /var/etcd/config
+                    readOnly: true
+                  - name: etcd-backup
+                    mountPath: /var/etcd-backup/
+            volumes:
+              - name: etcd-pki
+                secret:
+                  secretName: etcd-certs
+              - name: etcd-config
+                configMap:
+                  name: etcd-config-2
+                  items:
+                    - key: etcd.conf.yaml
+                      path: etcd.conf.yaml
+              - name: etcd-backup
+                projected:
+                  defaultMode: 0440
+                  sources:
+                  - secret:
+                      name: etcd-backup
+                      optional: false
+            nodeSelector:
+              node-role.kubernetes.io/control-plane: ""
+      ```
+    </details>
+
+    <details>
+      <summary>Пример ConfigMap для etcdbrctl (server-mode)</summary>
+
+      ```yaml
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: etcd-config
+        namespace: kube-system
+      data:
+        etcd.conf.yaml: |
+          name: default
+          data-dir: default.etcd
+          listen-client-urls: http://127.0.0.1:2379
+          listen-peer-urls:   http://127.0.0.1:2380
+          # минимальные bootstrap-поля
+          initial-advertise-peer-urls:
+            default:
+            - http://127.0.0.1:2380
+          initial-cluster: default=http://127.0.0.1:2380
+          initial-cluster-token: etcd-cluster
+          initial-cluster-state: new
+      ```
+    </details>
+
+    <details>
+      <summary>Пример Secret для отправки бэкапов в S3</summary>
+
+      ```yaml
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: etcd-backup
+        namespace: kube-system
+      type: Opaque
+      stringData:
+        region: "us-east-1"
+        accessKeyID: ""
+        secretAccessKey: ""
+        endpoint: "https://s3.example.com"
+        s3ForcePathStyle: "true"
+      ```
+    </details>
+
+  </TabItem>
+
   <TabItem value='ectl'>
     Рабочий вариант, когда под рукой нет исполняемого файла. Дамп будет сохранен внутри
     файловой системы контейнера. Поэтому рекомендуется указывать путь в примонтированные области.

@@ -1,0 +1,43 @@
+import HelmInstall from '@site/docs/tech-docs/etcd/components/etcdbrctl/payload/helmInstall.mdx'
+import StaticPodInstall from '@site/docs/tech-docs/etcd/components/etcdbrctl/payload/staticPodInstall.mdx'
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+import EtcdbrctlCheckInstall from '@site/docs/tech-docs/etcd/components/etcdbrctl/checkInstall.mdx'
+
+:::warning Информация
+  Учтите, что у каждого способа установки есть свои сильные и слабые стороны. Из нашего опыта наиболее удобным вариантом является установка через Helm: этот подход упрощает процесс обновления и обеспечивает более безопасную работу с S3-секретами благодаря интеграции с Vault.
+:::
+
+<Tabs groupId="install-type">
+
+  <TabItem value='Helm'>
+    <h3>Этапы установки компонента</h3>
+
+    - Переменные окружения.
+    - Создание values-файла.
+    - Установка компонента.
+    - Проверка установки.
+
+    <HelmInstall />
+    <EtcdbrctlCheckInstall />
+  </TabItem>
+
+  {/* <TabItem value='StaticPod'>
+    <h3>Этапы установки компонента</h3>
+
+    - Переменные окружения (общие).
+    - Переменные окружения (S3).
+    - Создание рабочих директорийю.
+    - Подготовка S3 конфигурации.
+    - Подготовка etcd-config.
+    - Генерация static pod манифеста.
+
+    <StaticPodInstall />
+
+  </TabItem>
+
+  <TabItem value='SystemD'>
+    TODO
+  </TabItem> */}
+
+</Tabs>

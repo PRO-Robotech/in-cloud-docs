@@ -1,0 +1,66 @@
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+import MastersTabs from '@site/docs/tech-docs/kubernetes/setup-environments/allMasterTabs.mdx'
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+import CodeBlock from '@theme/CodeBlock'
+import dedent from 'ts-dedent'
+
+<h4>Базовые настройки узлов</h4>
+
+- Переменные окружения узла.
+- Изменение имени узла.
+- Установка зависимостей.
+
+<h4>Переменные окружения узла</h4>
+
+<MastersTabs />
+
+<CodeBlock language="bash">
+  {dedent`
+    export CLUSTER_NAME="${CUSTOM_VALUE.clusterName.value}"
+    export BASE_DOMAIN="${CUSTOM_VALUE.kubernetesBaseDomain.value}"
+    export CLUSTER_DOMAIN="${CUSTOM_VALUE.kubernetesClusterDomain.value}"
+    export FULL_HOST_NAME="${CUSTOM_VALUE.virtualMachineFullName.value}"
+  `}
+</CodeBlock>
+
+<h4>Изменение имени узла</h4>
+
+<CodeBlock language="bash">
+  {dedent`
+    hostnamectl set-hostname $\{FULL_HOST_NAME}
+  `}
+</CodeBlock>
+
+<h4>Установка зависимостей</h4>
+
+<Tabs groupId="install-pkg">
+
+  <TabItem value="apt">
+    <CodeBlock language="bash">
+      {dedent`
+          sudo apt update
+          sudo apt install -y conntrack socat jq tree yq
+        `}
+    </CodeBlock>
+  </TabItem>
+
+  <TabItem value="yum">
+    <CodeBlock language="bash">
+      {dedent`
+          sudo yum update
+          sudo yum install -y conntrack-tools socat jq tree yq
+        `}
+    </CodeBlock>
+  </TabItem>
+
+  <TabItem value="dnf">
+    <CodeBlock language="bash">
+      {dedent`
+          sudo dnf update
+          sudo dnf install -y conntrack-tools socat jq tree yq
+        `}
+    </CodeBlock>
+  </TabItem>
+
+</Tabs>

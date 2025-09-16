@@ -5,6 +5,7 @@ id: RestoreEtcdKubeApi
 import SingleNodeKubeApi        from '@site/docs/tech-docs/etcd/troubleshooting/restore/singleNodeKubeApi.mdx'
 import ThreeNodeKubeApi         from '@site/docs/tech-docs/etcd/troubleshooting/restore/threeNodeKubeApi.mdx'
 import CrushedNodeKubeApi       from '@site/docs/tech-docs/etcd/troubleshooting/restore/crushedNodeKubeApi.mdx'
+import ThreeNodeKubeApiGardener from '@site/docs/tech-docs/etcd/troubleshooting/restore/threeNodeKubeApiGardener.mdx'
 
 ### 5.1.5.8.2.1. Восстановление с одного узла из мгновенного снимка
 
@@ -40,4 +41,15 @@ III. Повреждены метаданные БД на одном или не�
 <details>
   <summary>Инструкция</summary>
   <CrushedNodeKubeApi />
+</details>
+
+******
+
+### 5.1.5.8.2.4. Восстановление всех трех узлов при помощи утилиты etcdbrctl от Gardener
+
+Данный вариант подразумевает, что бэкапы были сделаны ранее, с помощью утилиты etcdbrctl и размещены в S3.
+
+<details>
+  <summary>Инструкция</summary>
+  <ThreeNodeKubeApiGardener />
 </details>

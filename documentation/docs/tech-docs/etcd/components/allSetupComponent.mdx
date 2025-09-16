@@ -1,0 +1,32 @@
+import EtcdlifecycleDownloadComponent from '@site/docs/tech-docs/etcd/components/etcd/lifecycleDownloadComponent.mdx'
+import EtcdCheckBIN from '@site/docs/tech-docs/etcd/components/etcd/checkBIN.mdx'
+import EtcdbrctlLifecycleDownloadComponent from '@site/docs/tech-docs/etcd/components/etcdbrctl/lifecycleDownloadComponent.mdx'
+
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+<Tabs groupId="component">
+  <TabItem value="etcd">
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Установка etcd</p>
+          <p className="obligatory-note-orange">● Обязателен к применению</p>
+        </div>
+      </summary>
+      <EtcdlifecycleDownloadComponent />
+      <EtcdCheckBIN />
+    </details>
+  </TabItem>
+  <TabItem value="etcdbrctl">
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Установка etcd</p>
+          <p className="obligatory-note-green">● Не обязателен к применению</p>
+        </div>
+      </summary>
+      <EtcdbrctlLifecycleDownloadComponent />
+    </details>
+  </TabItem>
+</Tabs>
