@@ -1,0 +1,8 @@
+"use strict";(self.webpackChunkdocumentation=self.webpackChunkdocumentation||[]).push([[8538],{42913:(t,c,e)=>{e.r(c),e.d(c,{assets:()=>l,contentTitle:()=>r,default:()=>m,frontMatter:()=>i,metadata:()=>s,toc:()=>u});const s=JSON.parse('{"id":"tech-docs/etcd/components/etcdbrctl/checks/statusStaticPodInstall","title":"statusStaticPodInstall","description":"{dedent`","source":"@site/docs/tech-docs/etcd/components/etcdbrctl/checks/statusStaticPodInstall.mdx","sourceDirName":"tech-docs/etcd/components/etcdbrctl/checks","slug":"/tech-docs/etcd/components/etcdbrctl/checks/statusStaticPodInstall","permalink":"/tech-docs/etcd/components/etcdbrctl/checks/statusStaticPodInstall","draft":false,"unlisted":false,"tags":[],"version":"current","frontMatter":{}}');var n=e(74848),o=e(28453),a=e(60513),d=e(68747);const i={},r=void 0,l={},u=[];function h(t){const c={admonition:"admonition",...(0,o.R)(),...t.components};return(0,n.jsxs)(n.Fragment,{children:[(0,n.jsx)(d.A,{language:"bash",children:a.A`
+  etcd --version
+`}),"\n",(0,n.jsx)(c.admonition,{title:"\u0412\u044b\u0432\u043e\u0434 \u043a\u043e\u043c\u0430\u043d\u0434\u044b",type:"note",children:(0,n.jsx)(d.A,{language:"bash",children:a.A`
+  etcd Version: 3.5.5
+  Git SHA: 19002cfc6
+  Go Version: go1.16.15
+  Go OS/Arch: linux/amd64
+`})})]})}function m(t={}){const{wrapper:c}={...(0,o.R)(),...t.components};return c?(0,n.jsx)(c,{...t,children:(0,n.jsx)(h,{...t})}):h(t)}}}]);
