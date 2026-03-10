@@ -1,10 +1,21 @@
-import StatusBinFiles from '@site/docs/tech-docs/kubernetes/components/runc/checks/statusBinFiles.mdx'
-import StatusBinVersion from '@site/docs/tech-docs/kubernetes/components/runc/checks/statusBinVersion.mdx'
+import { BinaryVersionCheck, BinaryInstallCheck } from '@site/src/components/commonBlocks/BinaryCheck'
+import { COMPONENTS_VERSION } from '@site/src/constants/kubernetes/componentsVersion'
 
 <h3>Исполняемые файлы</h3>
 
-<StatusBinFiles />
+<BinaryInstallCheck
+  binaryName="runc"
+  version={COMPONENTS_VERSION.runc.value}
+  installSteps={['Installing runc...']}
+  successMessage="runc successfully updated to"
+  grepCommand="'runc$'"
+  lsOutput="-rwxr-xr-x  1 root root  10709696 Jan 23  2024 runc"
+/>
 
 <h3>Версия исполняемого файла</h3>
 
-<StatusBinVersion />
+<BinaryVersionCheck command="runc --version" output={`runc version 1.1.12
+commit: v1.1.12-0-g51d5e946
+spec: 1.0.2-dev
+go: go1.20.13
+libseccomp: 2.5.4`} />

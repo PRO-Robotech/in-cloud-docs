@@ -1,10 +1,17 @@
-import StatusVersion from '@site/docs/tech-docs/kubernetes/components/kubeadm/checks/statusBinVersion.mdx'
-import StatusDownload from '@site/docs/tech-docs/kubernetes/components/kubeadm/checks/statusBinFiles.mdx'
+import { BinaryVersionCheck, BinaryInstallCheck } from '@site/src/components/commonBlocks/BinaryCheck'
+import { COMPONENTS_VERSION } from '@site/src/constants/kubernetes/componentsVersion'
 
 <h4>Проверка установки</h4>
 
 <details className="custom-blue-block">
   <summary>Проверка установки</summary>
-  <StatusDownload />
-  <StatusVersion />
+  <BinaryInstallCheck
+    binaryName="kubeadm"
+    version={COMPONENTS_VERSION.kubernetes.value}
+    installSteps={['Extracting files...', 'Installing binaries...']}
+    successMessage="kubeadm successfully updated to"
+    grepCommand="'kubeadm$'"
+    lsOutput="-rwxr-xr-x  1 root root  50253976 Aug 14  2024 kubeadm"
+  />
+  <BinaryVersionCheck command="kubeadm version" output={'kubeadm version: &version.Info{Major:"1", Minor:"30", GitVersion:"v1.30.4", GitCommit:"a51b3b711150f57ffc1f526a640ec058514ed596", GitTreeState:"clean", BuildDate:"2024-08-14T19:02:46Z", GoVersion:"go1.22.5", Compiler:"gc", Platform:"linux/amd64"}'} />
 </details>

@@ -2,21 +2,19 @@ import TabItem from '@theme/TabItem'
 import Tabs from '@theme/Tabs'
 import Openssl from '@site/docs/tech-docs/kubernetes/certificates/components/kubeAPI/frontProxyClient/openssl.mdx'
 import Kubeadm from '@site/docs/tech-docs/kubernetes/certificates/components/kubeAPI/frontProxyClient/kubeadm.mdx'
-
-import StatusOpenssl from '@site/docs/tech-docs/kubernetes/certificates/components/kubeAPI/frontProxyClient/checks/statusOpenssl.mdx'
-import StatusKubeadm from '@site/docs/tech-docs/kubernetes/certificates/components/kubeAPI/frontProxyClient/checks/statusKubeadm.mdx'
-
+import { CertificateStatusCheck } from '@site/src/components/commonBlocks/CertificateStatusCheck'
+import { CERTIFICATES } from '@site/src/constants/kubernetes/certs'
 
 <Tabs groupId="install-type">
 
   <TabItem value="HardWay">
     <Openssl />
-    <StatusOpenssl />
+    <CertificateStatusCheck method="openssl" certPath={CERTIFICATES.kubernetesFrontProxyClient.crtPath} certDisplayName="front-proxy-client" caDisplayName="front-proxy-ca" />
   </TabItem>
 
   <TabItem value="Kubeadm">
     <Kubeadm />
-    <StatusKubeadm />
+    <CertificateStatusCheck method="kubeadm" certDisplayName="front-proxy-client" caDisplayName="front-proxy-ca" />
   </TabItem>
 
 </Tabs>

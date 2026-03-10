@@ -3,21 +3,20 @@ import Tabs from '@theme/Tabs'
 import Openssl from '@site/docs/tech-docs/kubernetes/certificates/components/admin/superAdminClient/openssl.mdx'
 import Kubeadm from '@site/docs/tech-docs/kubernetes/certificates/components/admin/superAdminClient/kubeadm.mdx'
 import Kubeconfig from '@site/docs/tech-docs/kubernetes/certificates/components/admin/superAdminClient/kubeconfig.mdx'
-
-import StatusOpenssl from '@site/docs/tech-docs/kubernetes/certificates/components/admin/superAdminClient/checks/statusOpenssl.mdx'
-import StatusKubeadm from '@site/docs/tech-docs/kubernetes/certificates/components/admin/superAdminClient/checks/statusKubeadm.mdx'
+import { CertificateStatusCheck } from '@site/src/components/commonBlocks/CertificateStatusCheck'
+import { CERTIFICATES } from '@site/src/constants/kubernetes/certs'
 
 <Tabs groupId="install-type">
 
   <TabItem value="HardWay">
     <Openssl />
     <Kubeconfig />
-    <StatusOpenssl />
+    <CertificateStatusCheck method="openssl" certPath={CERTIFICATES.kubernetesSuperAdminClient.crtPath} certDisplayName="super-admin.conf" caDisplayName="kubernetes" />
   </TabItem>
 
   <TabItem value="Kubeadm">
     <Kubeadm />
-    <StatusKubeadm />
+    <CertificateStatusCheck method="kubeadm" certDisplayName="super-admin.conf" caDisplayName="kubernetes" />
   </TabItem>
 
 </Tabs>

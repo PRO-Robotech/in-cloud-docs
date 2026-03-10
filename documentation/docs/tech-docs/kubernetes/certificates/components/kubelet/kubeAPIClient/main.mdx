@@ -3,22 +3,20 @@ import Tabs from '@theme/Tabs'
 import Openssl from '@site/docs/tech-docs/kubernetes/certificates/components/kubelet/kubeAPIClient/openssl.mdx'
 import Kubeadm from '@site/docs/tech-docs/kubernetes/certificates/components/kubelet/kubeAPIClient/kubeadm.mdx'
 import Kubeconfig from '@site/docs/tech-docs/kubernetes/certificates/components/kubelet/kubeAPIClient/kubeconfig.mdx'
-
-import StatusOpenssl from '@site/docs/tech-docs/kubernetes/certificates/components/kubelet/kubeAPIClient/checks/statusOpenssl.mdx'
-import StatusKubeadm from '@site/docs/tech-docs/kubernetes/certificates/components/kubelet/kubeAPIClient/checks/statusKubeadm.mdx'
-
+import { CertificateStatusCheck } from '@site/src/components/commonBlocks/CertificateStatusCheck'
+import { CERTIFICATES } from '@site/src/constants/kubernetes/certs'
 
 <Tabs groupId="install-type">
 
   <TabItem value="HardWay">
     <Openssl />
     <Kubeconfig />
-    <StatusOpenssl />
+    <CertificateStatusCheck method="openssl" certPath={CERTIFICATES.kubeletCurrentClient.crtPath} certDisplayName="kubelet-client-current" caDisplayName="kubernetes" />
   </TabItem>
 
   <TabItem value="Kubeadm">
     <Kubeadm />
-    <StatusKubeadm />
+    <CertificateStatusCheck method="kubeadm" certDisplayName="kubelet-client-current" caDisplayName="kubernetes" />
   </TabItem>
 
 </Tabs>

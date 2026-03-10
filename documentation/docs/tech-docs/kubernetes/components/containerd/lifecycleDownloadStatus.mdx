@@ -1,10 +1,21 @@
-import StatusBinFiles from '@site/docs/tech-docs/kubernetes/components/containerd/checks/statusBinFiles.mdx'
-import StatusBinVersion from '@site/docs/tech-docs/kubernetes/components/containerd/checks/statusBinVersion.mdx'
+import { BinaryVersionCheck, BinaryInstallCheck } from '@site/src/components/commonBlocks/BinaryCheck'
+import { COMPONENTS_VERSION } from '@site/src/constants/kubernetes/componentsVersion'
 
 <h3>Исполняемые файлы</h3>
 
-<StatusBinFiles />
+<BinaryInstallCheck
+  binaryName="containerd"
+  version={COMPONENTS_VERSION.containerd.value}
+  installSteps={['Extracting files...', 'Installing binaries...']}
+  successMessage="Containerd successfully updated to"
+  grepCommand={'-E "containerd|ctr"'}
+  lsOutput={`-rwxr-xr-x  1 root root  54855296 Feb 18 15:12 containerd
+-rwxr-xr-x  1 root root   7176192 Feb 18 15:12 containerd-shim
+-rwxr-xr-x  1 root root   8884224 Feb 18 15:12 containerd-shim-containerd-v1
+-rwxr-xr-x  1 root root  12169216 Feb 18 15:12 containerd-shim-containerd-v2
+-rwxr-xr-x  1 root root  12169216 Feb 18 15:12 ctr`}
+/>
 
 <h3>Версия исполняемого файла</h3>
 
-<StatusBinVersion />
+<BinaryVersionCheck command="containerd --version" output="containerd github.com/containerd/containerd v1.7.19 2bf793ef6dc9a18e00cb12efb64355c2c9d5eb41" />

@@ -1,15 +1,14 @@
 import TabItem from '@theme/TabItem'
 import Tabs from '@theme/Tabs'
 import Openssl from '@site/docs/tech-docs/kubernetes/certificates/components/kubeScheduler/kubeSchedulerServer/openssl.mdx'
-import StatusOpenssl from '@site/docs/tech-docs/kubernetes/certificates/components/kubeScheduler/kubeSchedulerServer/checks/statusOpenssl.mdx'
-import StatusKubeadm from '@site/docs/tech-docs/kubernetes/certificates/components/kubeScheduler/kubeSchedulerServer/checks/statusKubeadm.mdx'
-
+import { CertificateStatusCheck } from '@site/src/components/commonBlocks/CertificateStatusCheck'
+import { CERTIFICATES } from '@site/src/constants/kubernetes/certs'
 
 <Tabs groupId="install-type">
 
   <TabItem value="HardWay">
     <Openssl />
-    <StatusOpenssl />
+    <CertificateStatusCheck method="openssl" certPath={CERTIFICATES.kubernetesSchedulerServer.crtPath} certDisplayName="scheduler-server" caDisplayName="kubernetes" />
   </TabItem>
 
   <TabItem value="Kubeadm">

@@ -1,0 +1,20 @@
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+import Openssl from '@site/docs/tech-docs/etcd/certificates/components/etcdClient/openssl.mdx'
+import Kubeadm from '@site/docs/tech-docs/etcd/certificates/components/etcdClient/kubeadm.mdx'
+import { CertificateStatusCheck } from '@site/src/components/commonBlocks/CertificateStatusCheck'
+import { CERTIFICATES } from '@site/src/constants/kubernetes/certs'
+
+<Tabs groupId="install-type">
+
+  <TabItem value="HardWay">
+    <Openssl />
+    <CertificateStatusCheck method="openssl" certPath={CERTIFICATES.etcdClient.crtPath} certDisplayName="etcd-healthcheck-client" caDisplayName="etcd-ca" />
+  </TabItem>
+
+  <TabItem value="Kubeadm">
+    <Kubeadm />
+    <CertificateStatusCheck method="kubeadm" certDisplayName="etcd-healthcheck-client" caDisplayName="etcd-ca" />
+  </TabItem>
+
+</Tabs>
