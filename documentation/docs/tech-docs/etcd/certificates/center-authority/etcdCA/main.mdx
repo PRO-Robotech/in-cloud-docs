@@ -7,7 +7,7 @@ import ETCDCAKubeadm          from '@site/docs/tech-docs/etcd/certificates/cente
 
 > **Назначение:** CA для всех сертификатов etcd-кластера. Подписывает серверные, клиентские и peer-сертификаты etcd: `etcd-server` (клиентские подключения, порт 2379), `etcd-peer` (межузловая репликация, порт 2380) и `etcd-healthcheck-client` (проверки здоровья). Также используется kube-apiserver для верификации соединения с etcd через сертификат `apiserver-etcd-client`.
 
-:::warning
+:::warning Обратите внимание
 **Обратите внимание:** данный блок описывает только процесс создания корневых сертификатов ```ETCD CA```.
 :::
 

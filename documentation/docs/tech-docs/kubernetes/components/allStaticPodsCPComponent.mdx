@@ -4,8 +4,10 @@ import AllStaticPodsCPJoinComponent from '@site/docs/tech-docs/kubernetes/compon
 import TabItem from '@theme/TabItem'
 import Tabs from '@theme/Tabs'
 
+> Этот раздел описывает автоматическую генерацию static pod-манифестов для компонентов управляющего контура Kubernetes с помощью `kubeadm`.
+
 <Tabs groupId="phase">
-  <TabItem value="init">
+  <TabItem value="init" label="Init">
     <details>
       <summary>
         <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
@@ -16,7 +18,7 @@ import Tabs from '@theme/Tabs'
       <AllStaticPodsCPInitComponent />
     </details>
   </TabItem>
-  <TabItem value="join">
+  <TabItem value="join" label="Join">
     <details>
       <summary>
         <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>

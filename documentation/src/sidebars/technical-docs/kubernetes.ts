@@ -106,7 +106,7 @@ export const kubernetes = [
       },
       {
         type: 'doc',
-        label: '5.2.4.3. Загрузка конфигурации',
+        label: '5.2.4.3. Загрузка CFG',
         id: 'tech-docs/kubernetes/additional-setup/upload-configs/all-configs',
       },
       {
