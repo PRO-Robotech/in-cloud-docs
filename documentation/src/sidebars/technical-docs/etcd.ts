@@ -100,11 +100,6 @@ export const etcd = [
         label: '5.1.5.7. Восстановление',
         id: 'tech-docs/etcd/troubleshooting/restore',
       },
-      // {
-      //   type: 'doc',
-      //   label: '5.1.5.8. Восстановление',
-      //   id: 'tech-docs/etcd/troubleshooting/restore',
-      // },
     ],
   },
 ]
