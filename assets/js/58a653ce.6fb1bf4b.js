@@ -1,0 +1,7 @@
+"use strict";(globalThis.webpackChunkdocumentation=globalThis.webpackChunkdocumentation||[]).push([[8745],{79470(e,s,t){t.r(s),t.d(s,{assets:()=>h,contentTitle:()=>d,default:()=>p,frontMatter:()=>i,metadata:()=>n,toc:()=>m});const n=JSON.parse('{"id":"tech-docs/kubernetes/setup-environments/allMasterTabs","title":"allMasterTabs","description":"{dedent`","source":"@site/docs/tech-docs/kubernetes/setup-environments/allMasterTabs.mdx","sourceDirName":"tech-docs/kubernetes/setup-environments","slug":"/tech-docs/kubernetes/setup-environments/allMasterTabs","permalink":"/tech-docs/kubernetes/setup-environments/allMasterTabs","draft":false,"unlisted":false,"tags":[],"version":"current","frontMatter":{}}');var a=t(74848),r=t(28453),c=t(9792),l=t(76331),o=t(60513),u=t(57390);const i={},d=void 0,h={},m=[];function b(e){return(0,a.jsxs)(l.A,{children:[(0,a.jsx)(c.A,{value:"master-1",children:(0,a.jsx)(u.A,{language:"bash",children:o.A`
+        export HOST_NAME=master-1
+      `})}),(0,a.jsx)(c.A,{value:"master-2",children:(0,a.jsx)(u.A,{language:"bash",children:o.A`
+        export HOST_NAME=master-2
+      `})}),(0,a.jsx)(c.A,{value:"master-3",children:(0,a.jsx)(u.A,{language:"bash",children:o.A`
+        export HOST_NAME=master-3
+      `})})]})}function p(e={}){const{wrapper:s}={...(0,r.R)(),...e.components};return s?(0,a.jsx)(s,{...e,children:(0,a.jsx)(b,{...e})}):b()}}}]);
