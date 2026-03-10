@@ -8,6 +8,8 @@ import {KUBE_CONTROLLER_MANAGER_ARGS} from '@site/src/constants/kubernetes/kubeC
 import dedent                     from 'ts-dedent'
 import CodeBlock                  from '@theme/CodeBlock'
 
+> `--cluster-cidr` задаёт диапазон IP-адресов для Pod-сети, используемый контроллером IPAM; `--service-account-private-key-file` указывает приватный ключ для подписи токенов ServiceAccount; `--cloud-provider` (при наличии) подключает интеграцию с облачным провайдером для управления нодами и балансировщиками.
+
 <h4>Переменные окружения</h4>
 <CodeBlock language="bash">
   {dedent`

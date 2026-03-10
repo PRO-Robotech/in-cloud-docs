@@ -5,6 +5,8 @@ import FrontProxyCACert       from '@site/docs/tech-docs/kubernetes/certificates
 import FrontProxyCAKubeadm    from '@site/docs/tech-docs/kubernetes/certificates/center-authority/frontProxyCA/kubeadm.mdx'
 
 
+> **Назначение:** CA для механизма API aggregation (extension API servers). Подписывает сертификат `front-proxy-client`, который kube-apiserver использует при проксировании запросов к расширенным API-серверам (например, metrics-server, custom API servers).
+
 :::warning
 **Обратите внимание:** данный блок описывает только процесс создания корневых сертификатов ```Front Proxy CA```.
 :::

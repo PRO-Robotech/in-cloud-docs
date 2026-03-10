@@ -30,7 +30,14 @@ import Tabs from '@theme/Tabs'
           <p className="obligatory-note-orange">● Обязателен к применению</p>
         </div>
       </summary>
-      TODO
+
+      При добавлении нового узла управляющего контура (`join`) загрузка конфигурации выполняется автоматически
+      в рамках фазы `kubeadm join`. Конфигурация `kubeadm` и `kubelet` считывается из уже существующих `ConfigMap`
+      в namespace `kube-system`, которые были загружены на этапе инициализации первого узла.
+
+      Отдельного ручного вызова `upload-config` при join не требуется — `kubeadm join` самостоятельно
+      получает необходимые параметры из кластера.
+
     </details>
   </TabItem>
 </Tabs>

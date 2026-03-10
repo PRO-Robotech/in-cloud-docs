@@ -6,6 +6,8 @@ import Tabs from '@theme/Tabs'
 import DIR from '@site/docs/tech-docs/kubernetes/components/kubelet/payload/dir.mdx'
 import { DOWNLOAD_VERSION } from '@site/src/constants/kubernetes/downloads'
 
+> Dropin-конфигурация `10-kubeadm.conf` разделяет параметры на три уровня: `bootstrap-kubeconfig` используется при первичной регистрации узла в кластере (до получения постоянного `kubelet.conf`), `kubeadm-flags.env` содержит флаги, которые `kubeadm init` / `kubeadm join` генерируют динамически при инициализации, а `extra-args.env` позволяет задать дополнительные аргументы (например, `--cloud-provider=external` при использовании Cloud Controller Manager).
+
 <Tabs groupId="install-type">
 
   <TabItem value='Bash'>

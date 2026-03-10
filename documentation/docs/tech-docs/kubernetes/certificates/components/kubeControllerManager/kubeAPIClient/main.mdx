@@ -6,6 +6,8 @@ import Kubeconfig from '@site/docs/tech-docs/kubernetes/certificates/components/
 import { CertificateStatusCheck } from '@site/src/components/commonBlocks/CertificateStatusCheck'
 import { CERTIFICATES } from '@site/src/constants/kubernetes/certs'
 
+> **Назначение:** Клиентский сертификат kube-controller-manager для аутентификации в API Server. Встроен в kubeconfig `controller-manager.conf` и используется при каждом обращении controller-manager к kube-apiserver. Подписан **kubernetes-ca**.
+
 <Tabs groupId="install-type">
 
   <TabItem value="HardWay">

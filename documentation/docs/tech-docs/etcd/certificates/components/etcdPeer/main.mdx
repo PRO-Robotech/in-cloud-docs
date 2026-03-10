@@ -5,6 +5,8 @@ import Kubeadm from '@site/docs/tech-docs/etcd/certificates/components/etcdPeer/
 import { CertificateStatusCheck } from '@site/src/components/commonBlocks/CertificateStatusCheck'
 import { CERTIFICATES } from '@site/src/constants/kubernetes/certs'
 
+> **Назначение:** Сертификат для взаимной аутентификации (mutual TLS) между узлами etcd-кластера на порту 2380. Каждый участник кластера использует peer-сертификат как для серверной, так и для клиентской стороны соединения. Подписан **etcd-ca**.
+
 <Tabs groupId="install-type">
 
   <TabItem value="HardWay">

@@ -6,6 +6,7 @@ import SecondaryMasterTabs from '@site/docs/tech-docs/kubernetes/setup-environme
 import TabItem from '@theme/TabItem'
 import Tabs from '@theme/Tabs'
 
+> Конфигурация `kubeadm` описывает параметры `InitConfiguration` (bootstrap-токены, nodeRegistration, skipPhases) и `ClusterConfiguration` (controlPlaneEndpoint, сетевые подсети, аргументы компонентов control plane). Вкладка `init` используется при создании первого узла, `join` — при добавлении последующих.
 
 <Tabs groupId="phase">
 

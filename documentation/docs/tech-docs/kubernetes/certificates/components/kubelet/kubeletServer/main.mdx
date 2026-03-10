@@ -5,6 +5,8 @@ import Kubeadm from '@site/docs/tech-docs/kubernetes/certificates/components/kub
 import { CertificateStatusCheck } from '@site/src/components/commonBlocks/CertificateStatusCheck'
 import { CERTIFICATES } from '@site/src/constants/kubernetes/certs'
 
+> **Назначение:** Серверный сертификат kubelet для TLS на порту 10250. Предъявляется при подключении kube-apiserver и других клиентов к kubelet API. Подписан **kubernetes-ca**.
+
 <Tabs groupId="install-type">
 
   <TabItem value="HardWay">

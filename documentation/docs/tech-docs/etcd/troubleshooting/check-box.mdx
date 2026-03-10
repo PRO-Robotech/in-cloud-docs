@@ -2,4 +2,114 @@
 id: check-box
 ---
 
-# 5.1.5.1. Чек Бокс
+import dedent from 'ts-dedent'
+import CodeBlock from '@theme/CodeBlock'
+import { CERTIFICATES } from '@site/src/constants/kubernetes/certs'
+import { PORTS } from '@site/src/constants/kubernetes/ports'
+
+# 5.1.5.1. Чек-лист диагностики etcd
+
+> Перед началом диагностики убедитесь, что переменная `ETCDCTL_API=3` установлена и доступны TLS-сертификаты для подключения к кластеру.
+
+## Предварительные проверки
+
+### Здоровье кластера
+
+<CodeBlock language="bash">
+  {dedent`
+    etcdctl endpoint health \\
+      --endpoints=https://127.0.0.1:${PORTS.etcdServer.portNumber} \\
+      --cacert=${CERTIFICATES.etcdCA.crtPath} \\
+      --cert=${CERTIFICATES.etcdClient.crtPath} \\
+      --key=${CERTIFICATES.etcdClient.keyPath}
+  `}
+</CodeBlock>
+
+### Список участников кластера
+
+<CodeBlock language="bash">
+  {dedent`
+    etcdctl member list \\
+      --endpoints=https://127.0.0.1:${PORTS.etcdServer.portNumber} \\
+      --cacert=${CERTIFICATES.etcdCA.crtPath} \\
+      --cert=${CERTIFICATES.etcdClient.crtPath} \\
+      --key=${CERTIFICATES.etcdClient.keyPath} \\
+      -w table
+  `}
+</CodeBlock>
+
+### Статус эндпоинтов
+
+<CodeBlock language="bash">
+  {dedent`
+    etcdctl endpoint status \\
+      --endpoints=https://127.0.0.1:${PORTS.etcdServer.portNumber} \\
+      --cacert=${CERTIFICATES.etcdCA.crtPath} \\
+      --cert=${CERTIFICATES.etcdClient.crtPath} \\
+      --key=${CERTIFICATES.etcdClient.keyPath} \\
+      -w table
+  `}
+</CodeBlock>
+
+### Использование диска
+
+<CodeBlock language="bash">
+  {dedent`
+    etcdctl endpoint status \\
+      --endpoints=https://127.0.0.1:${PORTS.etcdServer.portNumber} \\
+      --cacert=${CERTIFICATES.etcdCA.crtPath} \\
+      --cert=${CERTIFICATES.etcdClient.crtPath} \\
+      --key=${CERTIFICATES.etcdClient.keyPath} \\
+      -w json | python3 -m json.tool | grep dbSize
+  `}
+</CodeBlock>
+
+### Проверка алармов
+
+<CodeBlock language="bash">
+  {dedent`
+    etcdctl alarm list \\
+      --endpoints=https://127.0.0.1:${PORTS.etcdServer.portNumber} \\
+      --cacert=${CERTIFICATES.etcdCA.crtPath} \\
+      --cert=${CERTIFICATES.etcdClient.crtPath} \\
+      --key=${CERTIFICATES.etcdClient.keyPath}
+  `}
+</CodeBlock>
+
+---
+
+## Типовые ошибки
+
+### connection refused
+
+| | |
+|---|---|
+| **Симптом** | `dial tcp 127.0.0.1:2379: connect: connection refused` |
+| **Причина** | Процесс etcd не запущен или слушает на другом адресе/порту. |
+| **Решение** | Проверьте статус пода/сервиса etcd: `crictl ps \| grep etcd`. Проверьте логи: `crictl logs <container-id>`. Убедитесь, что `--listen-client-urls` содержит нужный адрес. |
+
+### certificate expired
+
+<table>
+<tbody>
+<tr><td><strong>Симптом</strong></td><td><code>certificate has expired or is not yet valid</code></td></tr>
+<tr><td><strong>Причина</strong></td><td>Срок действия TLS-сертификата etcd истёк.</td></tr>
+<tr><td><strong>Решение</strong></td><td>Проверьте срок: <code>openssl x509 -in {CERTIFICATES.etcdServer.crtPath} -noout -dates</code>. Перевыпустите сертификаты и перезапустите etcd.</td></tr>
+</tbody>
+</table>
+
+### quorum lost
+
+| | |
+|---|---|
+| **Симптом** | `etcdserver: request timed out` или `rafthttp: failed to reach the peer` |
+| **Причина** | Более половины участников кластера недоступны — кворум потерян. |
+| **Решение** | Восстановите доступность узлов. Если узел не восстанавливается — удалите его из кластера (`etcdctl member remove`) и добавьте заново. В критическом случае восстановите кластер из snapshot: `etcdctl snapshot restore`. |
+
+### database size exceeded
+
+| | |
+|---|---|
+| **Симптом** | `mvcc: database space exceeded` |
+| **Причина** | Размер базы данных etcd превысил квоту (по умолчанию 2 GB). |
+| **Решение** | 1. Выполните компактацию: `etcdctl compact $(etcdctl endpoint status -w json \| python3 -c "import sys,json; print(json.load(sys.stdin)[0]['Status']['header']['revision'])")`. 2. Запустите дефрагментацию: `etcdctl defrag`. 3. Снимите аларм: `etcdctl alarm disarm`. 4. Рассмотрите увеличение квоты через `--quota-backend-bytes`. |

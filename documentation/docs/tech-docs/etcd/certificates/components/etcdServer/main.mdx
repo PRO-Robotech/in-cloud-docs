@@ -5,6 +5,8 @@ import Kubeadm from '@site/docs/tech-docs/etcd/certificates/components/etcdServe
 import { CertificateStatusCheck } from '@site/src/components/commonBlocks/CertificateStatusCheck'
 import { CERTIFICATES } from '@site/src/constants/kubernetes/certs'
 
+> **Назначение:** Серверный сертификат etcd для обслуживания клиентских подключений на порту 2379. Предъявляется при TLS-соединении от kube-apiserver и других клиентов etcd. Подписан **etcd-ca**.
+
 <Tabs groupId="install-type">
 
   <TabItem value="HardWay">

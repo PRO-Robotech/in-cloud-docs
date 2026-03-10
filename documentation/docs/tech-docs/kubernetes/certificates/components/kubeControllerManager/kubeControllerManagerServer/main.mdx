@@ -4,6 +4,8 @@ import Openssl from '@site/docs/tech-docs/kubernetes/certificates/components/kub
 import { CertificateStatusCheck } from '@site/src/components/commonBlocks/CertificateStatusCheck'
 import { CERTIFICATES } from '@site/src/constants/kubernetes/certs'
 
+> **Назначение:** Серверный сертификат kube-controller-manager для TLS на порту метрик и healthz-эндпоинтов. Подписан **kubernetes-ca**. Обратите внимание: kubeadm не управляет этим сертификатом — он создаётся только в режиме HardWay.
+
 <Tabs groupId="install-type">
 
   <TabItem value="HardWay">

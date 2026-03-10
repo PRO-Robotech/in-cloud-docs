@@ -103,7 +103,7 @@ import Tabs from '@theme/Tabs'
                   cluster-domain: cluster.local
                   cluster-dns: "${CUSTOM_VALUE.kubernetesDNSAddress.value}"
 
-                # TODO тут нужно подумать, нужно ли определение имени узла при инициализации УК
+                # Раскомментируйте для явного указания имени узла (рекомендуется при использовании cloud-init)
                 # name: {{ local_hostname }}
 
                 ignorePreflightErrors:
@@ -120,7 +120,7 @@ import Tabs from '@theme/Tabs'
               kind: ClusterConfiguration
 
               clusterName: "${CUSTOM_VALUE.clusterName.value}"
-              # TODO нужно указывать VIP LoadBalancer
+              # Раскомментируйте и укажите VIP Load Balancer вместо {{ local_hostname }} для HA-кластера
               controlPlaneEndpoint: {{ local_hostname }}:${KUBE_API_ARGS.securePort.value}
 
               imageRepository: "${CUSTOM_VALUE.baseDockerRegistry.value}"

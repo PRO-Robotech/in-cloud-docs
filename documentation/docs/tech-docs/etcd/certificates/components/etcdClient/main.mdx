@@ -5,6 +5,8 @@ import Kubeadm from '@site/docs/tech-docs/etcd/certificates/components/etcdClien
 import { CertificateStatusCheck } from '@site/src/components/commonBlocks/CertificateStatusCheck'
 import { CERTIFICATES } from '@site/src/constants/kubernetes/certs'
 
+> **Назначение:** Клиентский сертификат для healthcheck-проверок etcd (liveness probe). Используется для подключения к client API etcd при проверке доступности кластера. Подписан **etcd-ca**.
+
 <Tabs groupId="install-type">
 
   <TabItem value="HardWay">
