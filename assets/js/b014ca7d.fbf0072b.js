@@ -1,0 +1,45 @@
+"use strict";(globalThis.webpackChunkdocumentation=globalThis.webpackChunkdocumentation||[]).push([[1655],{51684(e,n,r){r.r(n),r.d(n,{assets:()=>h,contentTitle:()=>p,default:()=>f,frontMatter:()=>d,metadata:()=>t,toc:()=>m});const t=JSON.parse('{"id":"tech-docs/kubernetes/components/containerd/payload/configFiles","title":"configFiles","description":"\u0421\u043e\u0437\u0434\u0430\u043d\u0438\u0435 \u0440\u0430\u0431\u043e\u0447\u0438\u0445 \u0434\u0438\u0440\u0435\u043a\u0442\u043e\u0440\u0438\u0439","source":"@site/docs/tech-docs/kubernetes/components/containerd/payload/configFiles.mdx","sourceDirName":"tech-docs/kubernetes/components/containerd/payload","slug":"/tech-docs/kubernetes/components/containerd/payload/configFiles","permalink":"/tech-docs/kubernetes/components/containerd/payload/configFiles","draft":false,"unlisted":false,"tags":[],"version":"current","frontMatter":{}}');var a=r(74848),o=r(28453),i=r(60513),s=r(57390),c=r(44349),u=r(9792),l=r(76331);const d={},p=void 0,h={},m=[];function g(e){return(0,a.jsxs)(l.A,{groupId:"install-type",children:[(0,a.jsxs)(u.A,{value:"Bash",children:[(0,a.jsx)("h4",{children:"\u0421\u043e\u0437\u0434\u0430\u043d\u0438\u0435 \u0440\u0430\u0431\u043e\u0447\u0438\u0445 \u0434\u0438\u0440\u0435\u043a\u0442\u043e\u0440\u0438\u0439"}),(0,a.jsx)(s.A,{language:"bash",children:i.A`
+      mkdir -p /etc/containerd/
+      mkdir -p /etc/containerd/conf.d
+      mkdir -p /etc/containerd/certs.d
+    `}),(0,a.jsx)("h4",{children:"\u0411\u0430\u0437\u043e\u0432\u044b\u0439 \u043a\u043e\u043d\u0444\u0438\u0433\u0443\u0440\u0430\u0446\u0438\u043e\u043d\u043d\u044b\u0439 \u0444\u0430\u0439\u043b"}),(0,a.jsx)(s.A,{language:"bash",children:i.A`
+      cat <<"EOF" > /etc/containerd/config.toml
+      version = 2
+      imports = ["/etc/containerd/conf.d/*.toml"]
+      EOF
+    `}),(0,a.jsx)("h4",{children:"\u0428\u0430\u0431\u043b\u043e\u043d \u043a\u0430\u0441\u0442\u043e\u043c\u043d\u043e\u0433\u043e \u043a\u043e\u043d\u0444\u0438\u0433\u0443\u0440\u0430\u0446\u0438\u043e\u043d\u043d\u043e\u0433\u043e \u0444\u0430\u0439\u043b\u0430"}),(0,a.jsx)(s.A,{language:"bash",children:i.A`
+      cat <<"EOF" > /etc/containerd/conf.d/in-cloud.toml
+      version = 2
+      [plugins]
+        [plugins."io.containerd.grpc.v1.cri"]
+          sandbox_image = "${c.M.baseDockerRegistry.value}/${c.M.pausedImage.value}"
+        [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
+          runtime_type = "io.containerd.runc.v2"
+        [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
+          SystemdCgroup = true
+        [plugins."io.containerd.grpc.v1.cri".registry]
+          config_path = "/etc/containerd/certs.d/"
+      EOF
+    `})]}),(0,a.jsxs)(u.A,{value:"Cloud-init",children:[(0,a.jsx)("h4",{children:"\u0411\u0430\u0437\u043e\u0432\u044b\u0439 \u043a\u043e\u043d\u0444\u0438\u0433\u0443\u0440\u0430\u0446\u0438\u043e\u043d\u043d\u044b\u0439 \u0444\u0430\u0439\u043b"}),(0,a.jsx)(s.A,{language:"yaml",children:i.A`
+      - path: /etc/containerd/config.toml
+        owner: root:root
+        permissions: '0644'
+        content: |
+          version = 2
+          imports = ["/etc/containerd/conf.d/*.toml"]
+    `}),(0,a.jsx)("h4",{children:"\u0428\u0430\u0431\u043b\u043e\u043d \u043a\u0430\u0441\u0442\u043e\u043c\u043d\u043e\u0433\u043e \u043a\u043e\u043d\u0444\u0438\u0433\u0443\u0440\u0430\u0446\u0438\u043e\u043d\u043d\u043e\u0433\u043e \u0444\u0430\u0439\u043b\u0430"}),(0,a.jsx)(s.A,{language:"yaml",children:i.A`
+      - path: /etc/containerd/conf.d/in-cloud.toml
+        owner: root:root
+        permissions: '0644'
+        content: |
+          version = 2
+          [plugins]
+            [plugins."io.containerd.grpc.v1.cri"]
+              sandbox_image = "${c.M.baseDockerRegistry.value}/${c.M.pausedImage.value}"
+            [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
+              runtime_type = "io.containerd.runc.v2"
+            [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
+              SystemdCgroup = true
+            [plugins."io.containerd.grpc.v1.cri".registry]
+              config_path = "/etc/containerd/certs.d/"
+    `})]})]})}function f(e={}){const{wrapper:n}={...(0,o.R)(),...e.components};return n?(0,a.jsx)(n,{...e,children:(0,a.jsx)(g,{...e})}):g()}},9792(e,n,r){r.d(n,{A:()=>i});r(96540);var t=r(34164);const a="tabItem_Ymn6";var o=r(74848);function i({children:e,hidden:n,className:r}){return(0,o.jsx)("div",{role:"tabpanel",className:(0,t.A)(a,r),hidden:n,children:e})}},76331(e,n,r){r.d(n,{A:()=>w});var t=r(96540),a=r(34164),o=r(17559),i=r(23104),s=r(56347),c=r(205),u=r(57485),l=r(31682),d=r(70679);function p(e){return t.Children.toArray(e).filter(e=>"\n"!==e).map(e=>{if(!e||(0,t.isValidElement)(e)&&function(e){const{props:n}=e;return!!n&&"object"==typeof n&&"value"in n}(e))return e;throw new Error(`Docusaurus error: Bad <Tabs> child <${"string"==typeof e.type?e.type:e.type.name}>: all children of the <Tabs> component should be <TabItem>, and every <TabItem> should have a unique "value" prop.`)})?.filter(Boolean)??[]}function h(e){const{values:n,children:r}=e;return(0,t.useMemo)(()=>{const e=n??function(e){return p(e).map(({props:{value:e,label:n,attributes:r,default:t}})=>({value:e,label:n,attributes:r,default:t}))}(r);return function(e){const n=(0,l.XI)(e,(e,n)=>e.value===n.value);if(n.length>0)throw new Error(`Docusaurus error: Duplicate values "${n.map(e=>e.value).join(", ")}" found in <Tabs>. Every value needs to be unique.`)}(e),e},[n,r])}function m({value:e,tabValues:n}){return n.some(n=>n.value===e)}function g({queryString:e=!1,groupId:n}){const r=(0,s.W6)(),a=function({queryString:e=!1,groupId:n}){if("string"==typeof e)return e;if(!1===e)return null;if(!0===e&&!n)throw new Error('Docusaurus error: The <Tabs> component groupId prop is required if queryString=true, because this value is used as the search param name. You can also provide an explicit value such as queryString="my-search-param".');return n??null}({queryString:e,groupId:n});return[(0,u.aZ)(a),(0,t.useCallback)(e=>{if(!a)return;const n=new URLSearchParams(r.location.search);n.set(a,e),r.replace({...r.location,search:n.toString()})},[a,r])]}function f(e){const{defaultValue:n,queryString:r=!1,groupId:a}=e,o=h(e),[i,s]=(0,t.useState)(()=>function({defaultValue:e,tabValues:n}){if(0===n.length)throw new Error("Docusaurus error: the <Tabs> component requires at least one <TabItem> children component");if(e){if(!m({value:e,tabValues:n}))throw new Error(`Docusaurus error: The <Tabs> has a defaultValue "${e}" but none of its children has the corresponding value. Available values are: ${n.map(e=>e.value).join(", ")}. If you intend to show no default tab, use defaultValue={null} instead.`);return e}const r=n.find(e=>e.default)??n[0];if(!r)throw new Error("Unexpected error: 0 tabValues");return r.value}({defaultValue:n,tabValues:o})),[u,l]=g({queryString:r,groupId:a}),[p,f]=function({groupId:e}){const n=function(e){return e?`docusaurus.tab.${e}`:null}(e),[r,a]=(0,d.Dv)(n);return[r,(0,t.useCallback)(e=>{n&&a.set(e)},[n,a])]}({groupId:a}),b=(()=>{const e=u??p;return m({value:e,tabValues:o})?e:null})();(0,c.A)(()=>{b&&s(b)},[b]);return{selectedValue:i,selectValue:(0,t.useCallback)(e=>{if(!m({value:e,tabValues:o}))throw new Error(`Can't select invalid tab value=${e}`);s(e),l(e),f(e)},[l,f,o]),tabValues:o}}var b=r(92303);const v="tabList__CuJ",y="tabItem_LNqP";var x=r(74848);function A({className:e,block:n,selectedValue:r,selectValue:t,tabValues:o}){const s=[],{blockElementScrollPositionUntilNextRender:c}=(0,i.a_)(),u=e=>{const n=e.currentTarget,a=s.indexOf(n),i=o[a].value;i!==r&&(c(n),t(i))},l=e=>{let n=null;switch(e.key){case"Enter":u(e);break;case"ArrowRight":{const r=s.indexOf(e.currentTarget)+1;n=s[r]??s[0];break}case"ArrowLeft":{const r=s.indexOf(e.currentTarget)-1;n=s[r]??s[s.length-1];break}}n?.focus()};return(0,x.jsx)("ul",{role:"tablist","aria-orientation":"horizontal",className:(0,a.A)("tabs",{"tabs--block":n},e),children:o.map(({value:e,label:n,attributes:t})=>(0,x.jsx)("li",{role:"tab",tabIndex:r===e?0:-1,"aria-selected":r===e,ref:e=>{s.push(e)},onKeyDown:l,onClick:u,...t,className:(0,a.A)("tabs__item",y,t?.className,{"tabs__item--active":r===e}),children:n??e},e))})}function k({lazy:e,children:n,selectedValue:r}){const o=(Array.isArray(n)?n:[n]).filter(Boolean);if(e){const e=o.find(e=>e.props.value===r);return e?(0,t.cloneElement)(e,{className:(0,a.A)("margin-top--md",e.props.className)}):null}return(0,x.jsx)("div",{className:"margin-top--md",children:o.map((e,n)=>(0,t.cloneElement)(e,{key:n,hidden:e.props.value!==r}))})}function j(e){const n=f(e);return(0,x.jsxs)("div",{className:(0,a.A)(o.G.tabs.container,"tabs-container",v),children:[(0,x.jsx)(A,{...n,...e}),(0,x.jsx)(k,{...n,...e})]})}function w(e){const n=(0,b.A)();return(0,x.jsx)(j,{...e,children:p(e.children)},String(n))}}}]);
