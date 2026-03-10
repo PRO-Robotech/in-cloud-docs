@@ -5,7 +5,7 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 import { PORTS } from '@site/src/constants/kubernetes/ports'
 import { TCustomValueItems } from '../../customTypes/customValue'
 
-export const KUBELET_COFNIG_DATA: TCustomValueItems = {
+export const KUBELET_CONFIG_DATA: TCustomValueItems = {
   data: {
     value: dedent`
       apiVersion: kubelet.config.k8s.io/v1beta1

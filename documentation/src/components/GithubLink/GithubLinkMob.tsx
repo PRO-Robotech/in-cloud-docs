@@ -20,7 +20,7 @@ export const GithubLinkMob: FC = () => {
         rel="noopener noreferrer"
         aria-label="GitHub repository"
       >
-        H-BF/sgroups
+        in-cloud-docs
       </a>
       <ul className="github-facts github-facts-mob">
         {tag && <li className="github-fact github-fact--version">{tag}</li>}

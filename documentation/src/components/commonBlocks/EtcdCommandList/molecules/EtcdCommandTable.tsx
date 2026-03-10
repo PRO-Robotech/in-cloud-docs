@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import CodeBlock from '@theme/CodeBlock'
 
-export const CommandTable: FC<{ command: string }> = ({ command }) => (
+export const EtcdCommandTable: FC<{ command: string }> = ({ command }) => (
   <table>
     <tr>
       <th>Команды</th>

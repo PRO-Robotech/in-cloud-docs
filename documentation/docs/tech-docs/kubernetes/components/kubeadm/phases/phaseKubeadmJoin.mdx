@@ -22,43 +22,43 @@ Available Commands:
     <tbody>
       <tr>
         <td>`$control-plane-join.all`</td>
-        <td>Устанавливает все дополнения</td>
+        <td>Выполняет все шаги присоединения узла к control plane</td>
       </tr>
       <tr>
         <td>`$control-plane-join.etcd`</td>
-        <td>Устанавливает CoreDNS</td>
+        <td>Регистрирует новый узел как участник etcd-кластера</td>
       </tr>
       <tr>
         <td>`$control-plane-join.mark-control-plane`</td>
-        <td>Устанавливает kube-proxy</td>
+        <td>Помечает узел как control plane (labels и taints)</td>
       </tr>
       <tr>
         <td>`$control-plane-prepare.all`</td>
-        <td>Генерирует все сертификаты</td>
+        <td>Выполняет все подготовительные шаги для control plane</td>
       </tr>
       <tr>
         <td>`$control-plane-prepare.control-plane`</td>
-        <td>Генерирует сертификат для Kubernetes API</td>
+        <td>Генерирует манифесты статических подов для компонентов control plane</td>
       </tr>
       <tr>
         <td>`$control-plane-prepare.certs`</td>
-        <td>Генерирует сертификат apiserver для доступа к etcd</td>
+        <td>Генерирует сертификаты для присоединяемого узла</td>
       </tr>
       <tr>
         <td>`$control-plane-prepare.download-certs`</td>
-        <td>Генерирует сертификат apiserver для подключения к kubelet</td>
+        <td>Загружает общие сертификаты из кластера</td>
       </tr>
       <tr>
         <td>`$control-plane-prepare.kubeconfig`</td>
-        <td>Генерирует самоподписанный Kubernetes ЦА</td>
+        <td>Генерирует kubeconfig-файлы для присоединяемого control plane</td>
       </tr>
       <tr>
         <td>`$kubelet-start` </td>
-        <td>Генерирует самоподписанный ETCD ЦА</td>
+        <td>Настраивает и перезапускает kubelet</td>
       </tr>
       <tr>
         <td>`$preflight`</td>
-        <td>Генерирует самоподписанный Front Proxy ЦА</td>
+        <td>Выполняет предварительные проверки перед присоединением</td>
       </tr>
     </tbody>
   </table>

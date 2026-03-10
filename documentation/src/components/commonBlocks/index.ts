@@ -1,3 +1,6 @@
 export * from './CodeAndInputExportPods'
 export * from './CodeAndInputDownloadCreds'
 export * from './EtcdCommandList'
+export * from './Fancybox'
+export * from './FancyboxImage'
+export * from './FancyboxDiagram'

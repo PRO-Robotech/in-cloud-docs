@@ -1,7 +1,7 @@
 import dedent from 'ts-dedent'
 import CodeBlock from '@theme/CodeBlock'
 import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
-import { KUBELET_COFNIG_DATA } from '@site/src/constants/kubernetes/kubeletConfigData'
+import { KUBELET_CONFIG_DATA } from '@site/src/constants/kubernetes/kubeletConfigData'
 import TabItem from '@theme/TabItem'
 import Tabs from '@theme/Tabs'
 
@@ -14,7 +14,7 @@ import Tabs from '@theme/Tabs'
       {dedent`
         cat <<EOF > ${CUSTOM_VALUE.kuberneteKubeletFolderPath.value}/config-custom.yaml
         ---
-        ${KUBELET_COFNIG_DATA.data.value}
+        ${KUBELET_CONFIG_DATA.data.value}
         EOF
       `}
       </CodeBlock>
@@ -31,7 +31,7 @@ import Tabs from '@theme/Tabs'
           permissions: '0644'
           content: |
             ---
-            ${KUBELET_COFNIG_DATA.data.value}
+            ${KUBELET_CONFIG_DATA.data.value}
       `}
       </CodeBlock>
 

@@ -6,7 +6,7 @@ import {ETCD_ARGS}              from '@site/src/constants/kubernetes/etcdArgs'
 import {KUBE_API_ARGS}          from '@site/src/constants/kubernetes/kubeAPIArgs'
 import { CUSTOM_VALUE }         from '@site/src/constants/kubernetes/customValue'
 import { COMPONENTS_VERSION }   from '@site/src/constants/kubernetes/componentsVersion'
-import { KUBEADM_COFNIG_DATA } from '@site/src/constants/kubernetes/kubeadmConfigData'
+import { KUBEADM_CONFIG_DATA } from '@site/src/constants/kubernetes/kubeadmConfigData'
 import {KUBERNETES_ETCD_API_ARGS} from '@site/src/constants/kubernetes/kubernetesArgs'
 import {KUBERNETES_KUBE_API_ARGS} from '@site/src/constants/kubernetes/kubernetesArgs'
 import {KUBERNETES_KUBE_CONTROLLER_MANAGER_ARGS} from '@site/src/constants/kubernetes/kubernetesArgs'
@@ -70,7 +70,7 @@ import Tabs from '@theme/Tabs'
               - FileAvailable--etc-kubernetes-manifests-kube-scheduler.yaml
               - FileAvailable--etc-kubernetes-manifests-etcd.yaml
           ---
-          ${KUBEADM_COFNIG_DATA.data.value}
+          ${KUBEADM_CONFIG_DATA.data.value}
           EOF
         `}
       </CodeBlock>

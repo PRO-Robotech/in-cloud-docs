@@ -9,7 +9,7 @@ import {KUBERNETES_KUBE_SCHEDULER_ARGS} from '@site/src/constants/kubernetes/kub
 import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 
 
-export const KUBEADM_COFNIG_DATA: TCustomValueItems = {
+export const KUBEADM_CONFIG_DATA: TCustomValueItems = {
   data: {
     value: dedent`
       apiVersion: kubeadm.k8s.io/v1beta3
