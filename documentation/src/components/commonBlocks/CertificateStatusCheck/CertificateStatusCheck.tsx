@@ -50,7 +50,7 @@ export const CertificateStatusCheck: FC<CertificateStatusCheckProps> = ({
       className="custom-blue-block"
       summary={<summary>Проверка готовности сертификата</summary>}
     >
-      <Admonition type="warning" title="Обратите ВНИМАНИЕ!">
+      <Admonition type="warning" title="Обратите внимание">
         {warningContent}
       </Admonition>
       <CodeBlock language="bash">{command}</CodeBlock>

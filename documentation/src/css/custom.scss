@@ -15,30 +15,41 @@
   overflow-y: auto; /* этот параметр исправляет в нужную сторону */
 }
 
-.custom-gray-block {
-  background-color: #55555573; /* светло-голубой */
+.custom-gray-block,
+.custom-blue-block {
+  &.alert {
+    --ifm-alert-background-color: transparent;
+    --ifm-alert-foreground-color: inherit;
+    box-shadow: none;
+  }
+
   border-radius: 6px;
   padding: 10px;
   margin-top: 10px;
+
+  summary {
+    color: #ffffff;
+    font-weight: bold;
+    cursor: pointer;
+  }
 }
 
-.custom-gray-block summary {
-  color: #ffffff;
-  font-weight: bold;
-  cursor: pointer;
+.custom-gray-block {
+  background-color: rgba(85, 85, 85, 0.35);
+
+  &.alert {
+    --ifm-alert-border-color: rgba(160, 160, 160, 0.5);
+    --docusaurus-details-decoration-color: rgba(200, 200, 200, 0.6);
+  }
 }
 
 .custom-blue-block {
-  background-color: #544c9292; /* светло-голубой */
-  border-radius: 6px;
-  padding: 10px;
-  margin-top: 10px;
-}
+  background-color: rgba(84, 76, 146, 0.4);
 
-.custom-blue-block summary {
-  color: #ffffff;
-  font-weight: bold;
-  cursor: pointer;
+  &.alert {
+    --ifm-alert-border-color: rgba(120, 110, 200, 0.5);
+    --docusaurus-details-decoration-color: rgba(160, 150, 230, 0.7);
+  }
 }
 
 /* В styles.module.css */
