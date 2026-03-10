@@ -30,7 +30,7 @@ export const main = [
       },
       {
         type: 'category',
-        label: '5.2. Kubernetes',
+        label: '5.2. Kubernetes CP',
         collapsed: true,
         items: kubernetes,
       },
