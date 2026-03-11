@@ -1,8 +1,9 @@
-const getBasePrefix = () => window.BASEURL || ''
+const getBasePrefix = () => (window.BASEURL || '').replace(/\/+$/, '')
 
 const createMedusScript = () => {
   const script = document.createElement('script')
-  script.src = `${getBasePrefix()}js/header.bundle.js`
+  const prefix = getBasePrefix()
+  script.src = prefix ? `${prefix}/js/header.bundle.js` : '/js/header.bundle.js'
   script.type = 'text/javascript'
   document.body.appendChild(script)
 }
@@ -24,7 +25,9 @@ const hideMedusa = () => {
 const isLanding = () => {
   const base = getBasePrefix()
   const current = document.location.pathname.replace(/\/+$/, '')
-  return current === base
+  if (current === base) return true
+  const tail = current.slice(base.length)
+  return /^\/[a-z]{2}$/.test(tail)
 }
 
 const handleRouteChange = () => {
