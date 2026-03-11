@@ -1,0 +1,39 @@
+---
+id: all-marking
+title: "5.2.4.1. Node marking"
+---
+
+import MarkingInitComponent from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/additional-setup/marking/markingInitComponent.mdx'
+import MarkingJoinComponent from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/additional-setup/marking/markingJoinComponent.mdx'
+
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+> This section covers marking and restricting control plane nodes.
+> It describes how to assign the control-plane role to a node and apply a taint that prevents scheduling workload pods on master nodes.
+> These actions are necessary to ensure isolation of control plane components and to comply with the cluster architecture model.
+
+<Tabs groupId="phase">
+  <TabItem value="init" label="Init">
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Node marking and restriction</p>
+          <p className="obligatory-note-orange">● Required</p>
+        </div>
+      </summary>
+      <MarkingInitComponent />
+    </details>
+  </TabItem>
+  <TabItem value="join" label="Join">
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Node marking and restriction</p>
+          <p className="obligatory-note-orange">● Required</p>
+        </div>
+      </summary>
+      <MarkingJoinComponent />
+    </details>
+  </TabItem>
+</Tabs>

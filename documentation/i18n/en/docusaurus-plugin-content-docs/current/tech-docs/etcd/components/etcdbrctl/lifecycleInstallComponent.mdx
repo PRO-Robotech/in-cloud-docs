@@ -1,0 +1,26 @@
+import HelmInstall from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/etcd/components/etcdbrctl/payload/helmInstall.mdx'
+import StaticPodInstall from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/etcd/components/etcdbrctl/payload/staticPodInstall.mdx'
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+import EtcdbrctlCheckInstall from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/etcd/components/etcdbrctl/checkInstall.mdx'
+
+:::info Information
+  Note that each installation method has its own strengths and weaknesses. From our experience, the most convenient option is installation via Helm: this approach simplifies the update process and provides safer handling of S3 secrets through Vault integration.
+:::
+
+<Tabs groupId="install-type">
+
+  <TabItem value='Helm'>
+    <h3>Component installation steps</h3>
+
+    - Environment variables.
+    - Creating the values file.
+    - Installing the component.
+    - Installation verification.
+
+    <HelmInstall />
+    <EtcdbrctlCheckInstall />
+  </TabItem>
+
+
+</Tabs>

@@ -1,6 +1,7 @@
 /* eslint-disable react/button-has-type */
 import React, { useState, useEffect, useRef, useMemo } from 'react'
 import Editor from '@monaco-editor/react'
+import { translate } from '@docusaurus/Translate'
 
 interface YamlModalProps {
   yamlContent: string
@@ -62,7 +63,7 @@ export const YamlModal: React.FC<YamlModalProps> = ({ yamlContent, onCloseOtherM
           cursor: 'pointer',
         }}
       >
-        Открыть пример
+        {translate({ id: 'yaml.openExample', message: 'Открыть пример' })}
       </button>
 
       {isOpen && (
@@ -95,7 +96,7 @@ export const YamlModal: React.FC<YamlModalProps> = ({ yamlContent, onCloseOtherM
             }}
           >
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <div style={{ padding: '1rem', fontWeight: 'bold', color: '#ccc' }}>Пример политики</div>
+              <div style={{ padding: '1rem', fontWeight: 'bold', color: '#ccc' }}>{translate({ id: 'yaml.policyExample', message: 'Пример политики' })}</div>
               <div style={{ padding: '0 1rem 1rem', overflow: 'auto', maxHeight: '70vh' }}>
                 <Editor
                   height={editorHeight}
@@ -125,7 +126,7 @@ export const YamlModal: React.FC<YamlModalProps> = ({ yamlContent, onCloseOtherM
                     cursor: 'pointer',
                   }}
                 >
-                  Скопировать
+                  {translate({ id: 'yaml.copy', message: 'Скопировать' })}
                 </button>
                 <button
                   onClick={() => setIsOpen(false)}
@@ -139,7 +140,7 @@ export const YamlModal: React.FC<YamlModalProps> = ({ yamlContent, onCloseOtherM
                     cursor: 'pointer',
                   }}
                 >
-                  Закрыть
+                  {translate({ id: 'yaml.close', message: 'Закрыть' })}
                 </button>
               </div>
             </div>
@@ -162,7 +163,7 @@ export const YamlModal: React.FC<YamlModalProps> = ({ yamlContent, onCloseOtherM
             zIndex: 1100,
           }}
         >
-          Сохранено в буфер обмена
+          {translate({ id: 'yaml.copiedToClipboard', message: 'Сохранено в буфер обмена' })}
         </div>
       )}
     </>

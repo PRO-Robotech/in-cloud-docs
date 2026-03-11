@@ -1,0 +1,14 @@
+{
+  "title": {
+    "message": "In Cloud",
+    "description": "The title in the navbar"
+  },
+  "item.label.Техническая документация": {
+    "message": "Technical Documentation",
+    "description": "Navbar item with label Техническая документация"
+  },
+  "item.label.Blog": {
+    "message": "Blog",
+    "description": "Navbar item with label Blog"
+  }
+}

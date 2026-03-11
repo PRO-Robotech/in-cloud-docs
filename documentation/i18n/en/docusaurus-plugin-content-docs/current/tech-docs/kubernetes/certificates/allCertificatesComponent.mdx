@@ -1,0 +1,41 @@
+import JoinCertsGen from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/certificates/components/_kubeadm/joinAllCertsGen.mdx'
+import InitCertsGen from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/certificates/components/_kubeadm/initAllCertsGen.mdx'
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+> This section describes the generation of all certificates.
+
+:::caution
+If you **have not performed manual certificate generation**, use this block to automatically create the necessary files.
+:::
+
+<Tabs groupId="phase">
+  <TabItem value="init" label="Init">
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Generation of all certificates</p>
+          <p className="obligatory-note-green">● Optional</p>
+        </div>
+      </summary>
+      <InitCertsGen />
+    </details>
+  </TabItem>
+
+  <TabItem value="join" label="Join">
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Generation of all certificates</p>
+          <p className="obligatory-note-green">● Optional</p>
+        </div>
+      </summary>
+      :::warning Note
+
+      This section depends on the following sections:
+      - [CA Download](/tech-docs/kubernetes/certificates/center-authority/all-ca).
+      :::
+      <JoinCertsGen />
+    </details>
+  </TabItem>
+</Tabs>

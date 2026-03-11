@@ -1,0 +1,22 @@
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+import Openssl from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/etcd/certificates/components/etcdServer/openssl.mdx'
+import Kubeadm from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/etcd/certificates/components/etcdServer/kubeadm.mdx'
+import { CertificateStatusCheck } from '@site/src/components/commonBlocks/CertificateStatusCheck'
+import { CERTIFICATES } from '@site/src/constants/kubernetes/certs'
+
+> **Purpose:** Server certificate for etcd serving client connections on port 2379. Presented during TLS connection from kube-apiserver and other etcd clients. Signed by **etcd-ca**.
+
+<Tabs groupId="install-type">
+
+  <TabItem value="HardWay">
+    <Openssl />
+    <CertificateStatusCheck method="openssl" certPath={CERTIFICATES.etcdServer.crtPath} certDisplayName="etcd-server" caDisplayName="etcd-ca" />
+  </TabItem>
+
+  <TabItem value="Kubeadm">
+    <Kubeadm />
+    <CertificateStatusCheck method="kubeadm" certDisplayName="etcd-server" caDisplayName="etcd-ca" />
+  </TabItem>
+
+</Tabs>

@@ -1,0 +1,332 @@
+---
+id: SingleNodeK8s
+---
+
+import CodeBlock                  from '@theme/CodeBlock'
+import dedent                     from 'ts-dedent'
+import { CUSTOM_VALUE }           from '@site/src/constants/kubernetes/customValue'
+import TabItem                    from '@theme/TabItem'
+import Tabs                       from '@theme/Tabs'
+import { ETCD_ARGS }              from '@site/src/constants/kubernetes/etcdArgs'
+import { CodeAndInputExportPods } from '@site/src/components/commonBlocks'
+import { SingleNodeFunctionsK8s } from './blocks'
+
+<SingleNodeFunctionsK8s.Provider>
+  <SingleNodeFunctionsK8s.Input1 />
+  <SingleNodeFunctionsK8s.Output1 />
+
+  :::warning
+  If the first node's address is specified in the configuration of other still-running nodes, they will fail with an error until they are connected to the new cluster.
+  :::
+
+  <Tabs groupId="etcd-node">
+    <TabItem value='Master-1'>
+      1. Upload the snapshot file to the first cluster node VM at <code>{ETCD_ARGS.workDir.value}/backup.db</code> using rsync
+
+      <CodeBlock language="bash">
+        {dedent`
+          ssh \${K8S_NODE_USERNAME}@\${K8S_NODE_ADDRESS_1} "mkdir -p ${ETCD_ARGS.workDir.value}"
+          rsync --rsync-path="sudo rsync" \
+          ${ETCD_ARGS.workDir.value}/backup.db \
+            \${K8S_NODE_USERNAME}@\${K8S_NODE_ADDRESS_1}:${ETCD_ARGS.workDir.value}/backup.db
+        `}
+      </CodeBlock>
+
+      2. Connect to the first cluster node VM via ssh and switch to superuser.
+      Then stop `kubelet` to prevent it from starting ETCD.
+
+      <CodeBlock language="bash">{`systemctl stop kubelet`}</CodeBlock>
+
+      3. Stop and remove the `etcd` container:
+
+      List running containers with etcd in the pod name, container name, or namespace
+
+      <CodeBlock language="bash">
+        {dedent`
+          crictl ps -o json |
+          jq -r \
+            '(["PODNAME","PODNAMESPACE","CONTAINERNAME","CONTAINERID"] | (., map(length*"-"))), (.containers[] | [.labels."io.kubernetes.pod.name", .labels."io.kubernetes.pod.namespace", .metadata.name, .id ])| @tsv' |
+          grep -e "etcd" -e "PODNAME" -e "---"  |
+          column -t
+        `}
+      </CodeBlock>
+
+      Using the output of the previous command, set the namespace and pod name to delete:
+
+      <CodeAndInputExportPods />
+
+      Execute the command:
+
+      <CodeBlock language="bash">
+        {dedent`
+          crictl stop $(cidsearch \${SEARCH_POD_NAME} \${SEARCH_NAMESPACE})
+          crictl rm $(cidsearch \${SEARCH_POD_NAME} \${SEARCH_NAMESPACE})
+        `}
+      </CodeBlock>
+
+      4. Create a backup.
+
+      5. Remove old files from the <code>{ETCD_ARGS.dataDir.value}</code> directory
+
+      <CodeBlock language="bash">{`rm -rf ${ETCD_ARGS.dataDir.value}/*`}</CodeBlock>
+
+      6. Prepare the DB from the snapshot:
+      <CodeBlock language="bash">
+        {dedent`
+          etcdctl snapshot restore ${ETCD_ARGS.workDir.value}/backup.db \
+            --name=\${ETCD_NODE_NAME_1} \
+            --data-dir ${ETCD_ARGS.dataDir.value} \
+            --initial-advertise-peer-urls=https://\${K8S_NODE_ADDRESS_1}:\${ETCD_PEER_PORT} \
+            --initial-cluster=\${ETCD_NODE_NAME_1}=https://\${K8S_NODE_ADDRESS_1}:\${ETCD_PEER_PORT}
+        `}
+      </CodeBlock>
+
+      :::note
+      Note that the local `etcdctl` file is used and the snapshot is also located on the master in the <code>{ETCD_ARGS.workDir.value}</code> directory.
+      The `data-dir` specifies the directory mounted inside the ETCD container that will be used for storing DB files.
+      :::
+
+      7. Check and if necessary edit the ETCD startup parameters in the file <code>${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/manifests/etcd.yaml</code>
+      specified in the `spec.containers[0].command` section.
+      Specifically, check for the presence of required fields and their values; fields not in this list should not be deleted!
+
+      <SingleNodeFunctionsK8s.Master1ETCDArgs />
+
+      <table>
+        <tr><th>Parameter</th><th>Description</th></tr>
+        <tr><td>`advertise-client-urls` </td><td>Advertised connection endpoints for client connections. Matches the K8s cluster node IP address</td></tr>
+        <tr><td>`cert-file`             </td><td>Path to the ETCD cluster certificate</td></tr>
+        <tr><td>`client-cert-auth`      </td><td>Enable/disable certificate-based user authorization</td></tr>
+        <tr><td>`data-dir`              </td><td>Directory where ETCD DB files are stored</td></tr>
+        <tr><td>`key-file`              </td><td>Path to the ETCD cluster certificate key</td></tr>
+        <tr><td>`listen-client-urls`    </td><td>Endpoint where ETCD will accept client requests (`0.0.0.0`, `127.0.0.1`, or K8s cluster node IP address)</td></tr>
+        <tr><td>`listen-metrics-urls`   </td><td>Endpoint where ETCD will accept metrics requests (`0.0.0.0`, `127.0.0.1`, or K8s cluster node IP address)</td></tr>
+        <tr><td>`listen-peer-urls`      </td><td>Endpoint where ETCD will accept requests from other ETCD cluster nodes (`0.0.0.0`, `127.0.0.1`, or K8s cluster node IP address)</td></tr>
+        <tr><td>`name`                  </td><td>ETCD cluster node name</td></tr>
+        <tr><td>`peer-cert-file`        </td><td>Path to the certificate for inter-node ETCD cluster connections</td></tr>
+        <tr><td>`peer-client-cert-auth` </td><td>Path to the certificate for authorizing inter-node ETCD cluster connections</td></tr>
+        <tr><td>`peer-key-file`         </td><td>Path to the certificate key for inter-node ETCD cluster connections</td></tr>
+        <tr><td>`peer-trusted-ca-file`  </td><td>Path to the trusted root certificate for inter-node ETCD cluster connections</td></tr>
+        <tr><td>`trusted-ca-file`       </td><td>Path to the trusted root certificate of the ETCD cluster</td></tr>
+      </table>
+
+      :::warning
+      If the `initial-cluster-state` parameter equals `existing` or there are no DB files and metadata, then all other parameters whose names start with `initial` will be ignored. In our case, we have already restored the DB files and added metadata during the DB preparation from the snapshot.
+      :::
+
+      8. Start kubelet:
+
+      <CodeBlock language="bash">
+        {dedent`
+          systemctl start kubelet
+        `}
+      </CodeBlock>
+
+      9. Check the container status and logs
+
+      List running containers with etcd in the pod name, container name, or namespace
+
+      <CodeBlock language="bash">
+        {dedent`
+          crictl ps -o json |
+          jq -r \
+            '(["PODNAME","PODNAMESPACE","CONTAINERNAME","CONTAINERID"] | (., map(length*"-"))), (.containers[] | [.labels."io.kubernetes.pod.name", .labels."io.kubernetes.pod.namespace", .metadata.name, .id ])| @tsv' |
+          grep -e "etcd" -e "PODNAME" -e "---"  |
+          column -t
+        `}
+      </CodeBlock>
+
+      Using the output of the previous command, set the namespace and pod name to inspect:
+
+      <CodeAndInputExportPods />
+
+      <CodeBlock language="bash">
+        {dedent`
+          crictl ps $(cidsearch \${SEARCH_POD_NAME} \${SEARCH_NAMESPACE})
+          crictl logs $(cidsearch \${SEARCH_POD_NAME} \${SEARCH_NAMESPACE})
+        `}
+      </CodeBlock>
+
+      11. Using the `etcdctl member list` and `etcdctl endpoint status --cluster` commands, check the cluster status.
+
+      12. Proceed to configuring the second node.
+
+    </TabItem>
+    <TabItem value='Master-2'>
+
+      1. On the first ETCD cluster node, add the second cluster node in learner mode:
+
+      <CodeBlock language="bash">{`etcdctl member add \${ETCD_NODE_NAME_2} --peer-urls=https://\${K8S_NODE_ADDRESS_2}:\${ETCD_PEER_PORT} --learner ;`}</CodeBlock>
+
+      2. Connect to the second cluster node VM via ssh and stop `kubelet` to prevent it from starting ETCD.
+
+      <CodeBlock language="bash">{`systemctl stop kubelet`}</CodeBlock>
+
+      3. Stop and remove the `etcd` container:
+
+      <CodeBlock language="bash">
+        {dedent`
+          export CONTAINER_ID="$(crictl ps -a  \
+            --label io.kubernetes.container.name=etcd \
+            --label io.kubernetes.pod.namespace=kube-system \
+            | awk 'NR>1{r=$1} $0~/Running/{exit} END{print r}')"
+          crictl stop \${CONTAINER_ID}
+          crictl rm \${CONTAINER_ID}
+        `}
+      </CodeBlock>
+
+      4. Create a backup.
+
+      5. Remove old files from the <code>{ETCD_ARGS.dataDir.value}</code> directory
+
+      <CodeBlock language="bash">{`rm -rf ${ETCD_ARGS.workDir.value}/*`}</CodeBlock>
+
+      6. Open the file <code>${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/manifests/etcd.yaml</code> for editing:
+      Find and replace the values of the following keys in the `spec.containers[0].command` section similar to the example below
+      according to your parameters and the description table:
+
+      <SingleNodeFunctionsK8s.Master2ETCDArgs />
+
+      <table>
+        <tr><th>Parameter</th><th>Description</th></tr>
+        <tr><td>`advertise-client-urls`       </td><td>Advertised connection endpoints for client connections. Matches the K8s cluster node IP address</td></tr>
+        <tr><td>`cert-file`                   </td><td>Path to the ETCD cluster certificate</td></tr>
+        <tr><td>`client-cert-auth`            </td><td>Enable/disable certificate-based user authorization</td></tr>
+        <tr><td>`data-dir`                    </td><td>Directory where ETCD DB files are stored</td></tr>
+        <tr><td>`key-file`                    </td><td>Path to the ETCD cluster certificate key</td></tr>
+        <tr><td>`initial-advertise-peer-urls` </td><td>Advertised connection endpoints for inter-node ETCD cluster connections</td></tr>
+        <tr><td>`initial-cluster`             </td><td>List of ETCD cluster nodes and their connection endpoints for inter-node communication, to be added to DB metadata on current node startup.</td></tr>
+        <tr><td>`listen-client-urls`          </td><td>Endpoint where ETCD will accept client requests (`0.0.0.0`, `127.0.0.1`, or K8s cluster node IP address)</td></tr>
+        <tr><td>`listen-metrics-urls`         </td><td>Endpoint where ETCD will accept metrics requests (`0.0.0.0`, `127.0.0.1`, or K8s cluster node IP address)</td></tr>
+        <tr><td>`listen-peer-urls`            </td><td>Endpoint where ETCD will accept requests from other ETCD cluster nodes (`0.0.0.0`, `127.0.0.1`, or K8s cluster node IP address)</td></tr>
+        <tr><td>`name`                        </td><td>ETCD cluster node name</td></tr>
+        <tr><td>`peer-cert-file`              </td><td>Path to the certificate for inter-node ETCD cluster connections</td></tr>
+        <tr><td>`peer-client-cert-auth`       </td><td>Path to the certificate for authorizing inter-node ETCD cluster connections</td></tr>
+        <tr><td>`peer-key-file`               </td><td>Path to the certificate key for inter-node ETCD cluster connections</td></tr>
+        <tr><td>`peer-trusted-ca-file`        </td><td>Path to the trusted root certificate for inter-node ETCD cluster connections</td></tr>
+        <tr><td>`trusted-ca-file`             </td><td>Path to the trusted root certificate of the ETCD cluster</td></tr>
+      </table>
+
+      7. Start kubelet:
+
+      <CodeBlock language="bash">{`systemctl start kubelet`}</CodeBlock>
+
+      8. Check the container status and for errors
+
+      <CodeBlock language="bash">
+        {dedent`
+          export CONTAINER_ID="$(crictl ps -a  \
+            --label io.kubernetes.container.name=etcd \
+            --label io.kubernetes.pod.namespace=kube-system \
+            | awk 'NR>1{r=$1} $0~/Running/{exit} END{print r}')"
+
+          crictl ps --id $CONTAINER_ID
+
+          crictl logs $CONTAINER_ID
+        `}
+      </CodeBlock>
+
+      9. Return to the first cluster node and verify that the second node has been detected (its state should be `started`):
+
+      <CodeBlock language="bash">{`ectl member list -w table`}</CodeBlock>
+
+      10. Then promote the second node to active mode:
+
+      <CodeBlock language="bash">{`ectl member promote \${ETCD_NODE_NAME_2}`}</CodeBlock>
+
+      11. Using the `member list` and `endpoint status` commands described above, check the cluster status.
+
+      12. Proceed to the third cluster node
+    </TabItem>
+    <TabItem value='Master-3'>
+
+      1. Connect to the first ETCD cluster node and add the third cluster node in learner mode:
+
+      <CodeBlock language="bash">{`etcdctl member add \${ETCD_NODE_NAME_3} --peer-urls=https://\${K8S_NODE_ADDRESS_3}:\${ETCD_PEER_PORT} --learner ;`}</CodeBlock>
+
+      2. Connect to the third cluster node VM via ssh and stop `kubelet` to prevent it from starting ETCD.
+
+      <CodeBlock language="bash">{`systemctl stop kubelet`}</CodeBlock>
+
+      3. Stop and remove the `etcd` container:
+
+      <CodeBlock language="bash">
+        {dedent`
+          export CONTAINER_ID="$(crictl ps -a  \
+            --label io.kubernetes.container.name=etcd \
+            --label io.kubernetes.pod.namespace=kube-system \
+            | awk 'NR>1{r=$1} $0~/Running/{exit} END{print r}')"
+          crictl stop \${CONTAINER_ID}
+          crictl rm \${CONTAINER_ID}
+        `}
+      </CodeBlock>
+
+      4. Create a backup.
+
+      5. Remove old files from the <code>{ETCD_ARGS.dataDir.value}</code> directory
+
+      <CodeBlock language="bash">{`rm -rf ${ETCD_ARGS.workDir.value}/*`}</CodeBlock>
+
+      6. Open the file <code>${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/manifests/etcd.yaml</code> for editing:
+      Find and replace the values of the following keys in the `spec.containers[0].command` section similar to the example below
+      according to your parameters and the description table:
+
+      <SingleNodeFunctionsK8s.Master3ETCDArgs />
+
+      <table>
+        <tr><th>Parameter</th><th>Description</th></tr>
+        <tr><td>`advertise-client-urls`       </td><td>Advertised connection endpoints for client connections. Matches the K8s cluster node IP address</td></tr>
+        <tr><td>`cert-file`                   </td><td>Path to the ETCD cluster certificate</td></tr>
+        <tr><td>`client-cert-auth`            </td><td>Enable/disable certificate-based user authorization</td></tr>
+        <tr><td>`data-dir`                    </td><td>Directory where ETCD DB files are stored</td></tr>
+        <tr><td>`key-file`                    </td><td>Path to the ETCD cluster certificate key</td></tr>
+        <tr><td>`initial-advertise-peer-urls` </td><td>Advertised connection endpoints for inter-node ETCD cluster connections</td></tr>
+        <tr><td>`initial-cluster`             </td><td>List of ETCD cluster nodes and their connection endpoints for inter-node communication, to be added to DB metadata on current node startup.</td></tr>
+        <tr><td>`listen-client-urls`          </td><td>Endpoint where ETCD will accept client requests (`0.0.0.0`, `127.0.0.1`, or K8s cluster node IP address)</td></tr>
+        <tr><td>`listen-metrics-urls`         </td><td>Endpoint where ETCD will accept metrics requests (`0.0.0.0`, `127.0.0.1`, or K8s cluster node IP address)</td></tr>
+        <tr><td>`listen-peer-urls`            </td><td>Endpoint where ETCD will accept requests from other ETCD cluster nodes (`0.0.0.0`, `127.0.0.1`, or K8s cluster node IP address)</td></tr>
+        <tr><td>`name`                        </td><td>ETCD cluster node name</td></tr>
+        <tr><td>`peer-cert-file`              </td><td>Path to the certificate for inter-node ETCD cluster connections</td></tr>
+        <tr><td>`peer-client-cert-auth`       </td><td>Path to the certificate for authorizing inter-node ETCD cluster connections</td></tr>
+        <tr><td>`peer-key-file`               </td><td>Path to the certificate key for inter-node ETCD cluster connections</td></tr>
+        <tr><td>`peer-trusted-ca-file`        </td><td>Path to the trusted root certificate for inter-node ETCD cluster connections</td></tr>
+        <tr><td>`trusted-ca-file`             </td><td>Path to the trusted root certificate of the ETCD cluster</td></tr>
+      </table>
+
+
+      7. Start kubelet:
+
+      <CodeBlock language="bash">{`systemctl start kubelet`}</CodeBlock>
+
+      8. Check the container status and for errors
+
+      <CodeBlock language="bash">
+        {dedent`
+          export CONTAINER_ID="$(crictl ps -a  \
+            --label io.kubernetes.container.name=etcd \
+            --label io.kubernetes.pod.namespace=kube-system \
+            | awk 'NR>1{r=$1} $0~/Running/{exit} END{print r}')"
+
+          crictl ps --id $CONTAINER_ID
+
+          crictl logs $CONTAINER_ID
+        `}
+      </CodeBlock>
+
+      9. Return to the first cluster node and verify that the third node has been detected (its state should be `started`):
+
+      <CodeBlock language="bash">{`ectl member list -w table`}</CodeBlock>
+
+      10. Then promote the third node to active mode:
+
+      <CodeBlock language="bash">{`ectl member promote \${ETCD_NODE_NAME_3}`}</CodeBlock>
+
+      11. Using the `member list` and `endpoint status` commands described above, check the cluster status.
+
+    </TabItem>
+  </Tabs>
+
+  After completing the work on all three ETCD cluster nodes, the cluster is restored and ready for operation.
+
+</SingleNodeFunctionsK8s.Provider>
+

@@ -1,0 +1,30 @@
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+import { PORTS } from '@site/src/constants/kubernetes/ports'
+import { COMPONENTS_VERSION } from '@site/src/constants/kubernetes/componentsVersion'
+import { ETCD_ARGS } from '@site/src/constants/kubernetes/etcdArgs'
+
+import dedent from 'ts-dedent'
+import CodeBlock from '@theme/CodeBlock'
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+import RestoreScriptCloudInit from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/etcd/components/etcdbrctl/restoreScriptCloudInit.mdx'
+import RestoreScriptBash from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/etcd/components/etcdbrctl/restoreScriptBash.mdx'
+
+
+:::info Information
+  This script is optional but will be needed if you plan to configure ETCD cluster restoration from backups.
+:::
+
+
+<Tabs groupId="install-type">
+
+  <TabItem value='Bash'>
+    <RestoreScriptBash/>
+  </TabItem>
+
+  <TabItem value='Cloud-init'>
+    <RestoreScriptCloudInit/>
+  </TabItem>
+
+</Tabs>

@@ -1,0 +1,65 @@
+
+```text
+root@compute:/home/user# kubeadm join phase
+
+*****
+Available Commands:
+  control-plane-join    Join a machine as a control plane instance
+  control-plane-prepare Prepare the machine for serving a control plane
+  kubelet-start         Write kubelet settings, certificates and (re)start the kubelet
+  preflight             Run join pre-flight checks
+  wait-control-plane    EXPERIMENTAL: Wait for the control plane to start
+```
+
+<div className="scrollable-x">
+  <table>
+    <thead>
+      <tr>
+        <th>Path</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>`$control-plane-join.all`</td>
+        <td>Performs all steps for joining a node to the control plane</td>
+      </tr>
+      <tr>
+        <td>`$control-plane-join.etcd`</td>
+        <td>Registers a new node as an etcd cluster member</td>
+      </tr>
+      <tr>
+        <td>`$control-plane-join.mark-control-plane`</td>
+        <td>Marks the node as control plane (labels and taints)</td>
+      </tr>
+      <tr>
+        <td>`$control-plane-prepare.all`</td>
+        <td>Performs all preparatory steps for the control plane</td>
+      </tr>
+      <tr>
+        <td>`$control-plane-prepare.control-plane`</td>
+        <td>Generates static pod manifests for control plane components</td>
+      </tr>
+      <tr>
+        <td>`$control-plane-prepare.certs`</td>
+        <td>Generates certificates for the joining node</td>
+      </tr>
+      <tr>
+        <td>`$control-plane-prepare.download-certs`</td>
+        <td>Downloads shared certificates from the cluster</td>
+      </tr>
+      <tr>
+        <td>`$control-plane-prepare.kubeconfig`</td>
+        <td>Generates kubeconfig files for the joining control plane</td>
+      </tr>
+      <tr>
+        <td>`$kubelet-start` </td>
+        <td>Configures and restarts kubelet</td>
+      </tr>
+      <tr>
+        <td>`$preflight`</td>
+        <td>Runs pre-flight checks before joining</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

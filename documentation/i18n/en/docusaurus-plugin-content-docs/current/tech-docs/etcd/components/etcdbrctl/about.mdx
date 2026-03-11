@@ -1,0 +1,14 @@
+**Description**: **etcdbrctl** is a component developed as part of the Gardener project for backing up and restoring ETCD data.
+
+#### Functions
+- Creating full and incremental ETCD backups on a schedule (cron).
+- Storing backups in a local file system or S3-compatible storage.
+- Managing the number of stored snapshots and their automatic cleanup (garbage collection).
+- Supporting backup compression (gzip) and chunk uploads.
+- Restoring ETCD data from a selected backup.
+- Automatic defragmentation and compaction of ETCD on a schedule.
+
+#### Features
+- CLI utility (`etcdbrctl snapshot`, `etcdbrctl restore`, `etcdbrctl server`).
+- HTTP endpoint (in server mode) for health checks and metrics.
+- Deployment format via DaemonSet, static pod, or systemd unit.

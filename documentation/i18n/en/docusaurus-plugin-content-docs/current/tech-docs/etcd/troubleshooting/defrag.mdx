@@ -1,0 +1,83 @@
+---
+id: defrag
+toc_min_heading_level: 2
+toc_max_heading_level: 2
+---
+
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+import dedent from 'ts-dedent'
+import CodeBlock from '@theme/CodeBlock'
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+
+# 5.1.5.4.2. Defragmentation
+
+> Defragmentation is the process of physically reclaiming disk space after compaction. Although compaction logically removes old revisions, the actual disk space is not automatically freed due to the specifics of the underlying database (BoltDB in etcd).
+
+## 5.1.5.4.2.1. How it works
+
+- Defragmentation is performed manually using the `etcdctl defrag` command or via the API.
+
+- ETCD reads the active data and writes it to a new database, ignoring empty space left by deleted revisions.
+
+- After rewriting, the old database is replaced with the new one, and unused disk space is returned to the operating system.
+
+## 5.1.5.4.2.2. Prerequisites
+
+- Due to BoltDB specifics, even after data deletion, physical space is not automatically freed.
+
+- For efficient disk space usage and to prevent exhaustion, periodic defragmentation is required.
+
+- Defragmentation can improve I/O performance by organizing data and reducing database file sizes.
+
+## 5.1.5.4.2.3. Instructions
+
+:::warning Note
+Please note that there is an external dependency on aliases.
+:::
+
+<Tabs groupId="install-type">
+
+    <TabItem value='etcdctl'>
+      <CodeBlock language="bash">
+          {dedent`
+              etcdctlDefrag --cluster
+          `}
+      </CodeBlock>
+    </TabItem>
+
+    <TabItem value='ectl'>
+      <CodeBlock language="bash">
+          {dedent`
+              ectlDefrag --cluster
+          `}
+      </CodeBlock>
+    </TabItem>
+
+    <TabItem value='nectl'>
+      <CodeBlock language="bash">
+          {dedent`
+              nectlDefrag --cluster
+          `}
+      </CodeBlock>
+    </TabItem>
+
+</Tabs>
+
+:::note Command output
+
+> On successful command execution, you will get the following message.
+
+<CodeBlock language="bash">
+  {dedent`
+        Finished defrag --clustermenting etcd member[https://master-1.${CUSTOM_VALUE.clusterName.value}.${CUSTOM_VALUE.kubernetesBaseDomain.value}:2379]
+        Finished defrag --clustermenting etcd member[https://master-2.${CUSTOM_VALUE.clusterName.value}.${CUSTOM_VALUE.kubernetesBaseDomain.value}:2379]
+        Finished defrag --clustermenting etcd member[https://master-3.${CUSTOM_VALUE.clusterName.value}.${CUSTOM_VALUE.kubernetesBaseDomain.value}:2379]
+    `}
+</CodeBlock>
+:::
+
+:::warning Note
+For correct etcd cluster operation, including running defragmentation, the RAM size must be larger than the database size.
+During operation, ETCD may load the entire data volume into RAM.
+:::

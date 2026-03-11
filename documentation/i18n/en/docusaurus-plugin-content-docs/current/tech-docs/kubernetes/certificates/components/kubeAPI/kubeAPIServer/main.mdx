@@ -1,0 +1,22 @@
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+import Openssl from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/certificates/components/kubeAPI/kubeAPIServer/openssl.mdx'
+import Kubeadm from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/certificates/components/kubeAPI/kubeAPIServer/kubeadm.mdx'
+import { CertificateStatusCheck } from '@site/src/components/commonBlocks/CertificateStatusCheck'
+import { CERTIFICATES } from '@site/src/constants/kubernetes/certs'
+
+> **Purpose:** API Server server certificate, presented to clients during TLS connection. Contains SAN (Subject Alternative Names) for all API access addresses: node IP addresses, load balancer VIP, DNS names, and the `kubernetes.default` service ClusterIP address. Signed by **kubernetes-ca**.
+
+<Tabs groupId="install-type">
+
+  <TabItem value="HardWay">
+    <Openssl />
+    <CertificateStatusCheck method="openssl" certPath={CERTIFICATES.kubernetesServer.crtPath} certDisplayName="apiserver" caDisplayName="ca" />
+  </TabItem>
+
+  <TabItem value="Kubeadm">
+    <Kubeadm />
+    <CertificateStatusCheck method="kubeadm" certDisplayName="apiserver" caDisplayName="ca" />
+  </TabItem>
+
+</Tabs>

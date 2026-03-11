@@ -1,0 +1,27 @@
+---
+id: all-ca
+title: "5.2.4.4. CA upload"
+---
+
+import UploadCAInit from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/additional-setup/upload-ca/uploadCAComponent.mdx'
+
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+> This section covers uploading root certificates to the Kubernetes cluster.
+> The kubeadm-certs secret is created manually and contains the keys and certificates required when adding new control plane nodes (`kubeadm join`).
+> This approach allows sensitive data to be securely transferred between control plane nodes.
+
+<Tabs groupId="phase">
+  <TabItem value="init" label="Init">
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Uploading root certificates to Kubernetes</p>
+          <p className="obligatory-note-orange">● Required</p>
+        </div>
+      </summary>
+      <UploadCAInit />
+    </details>
+  </TabItem>
+</Tabs>

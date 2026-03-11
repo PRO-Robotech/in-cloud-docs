@@ -1,0 +1,474 @@
+---
+id: alias
+toc_min_heading_level: 2
+toc_max_heading_level: 2
+---
+
+import dedent from 'ts-dedent'
+import CodeBlock from '@theme/CodeBlock'
+import { CodeAndInputExportPods } from '@site/src/components/commonBlocks'
+import { CERTIFICATES } from '@site/src/constants/kubernetes/certs'
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+
+# 5.1.5.2. Aliases
+
+> This section will be useful for optimizing connection requests. Let's look at several options for connecting to the ETCD cluster.
+
+- (alias=**cidsearch**) Container ID lookup
+- (alias=**cpidsearch**) Container PID lookup
+- (alias=**etcdctl**) Direct connection
+- (alias=**ectl**) Connection via crictl
+- (alias=**nectl**) Connection via nsenter
+- (alias=**kectl**) Connection via kubelet
+
+:::warning Note
+Please note that all commands except section 5.1.5.2.5 (Connection via kubectl) are executed on nodes where the ETCD instance is deployed.
+:::
+
+## 5.1.5.2.1. Container ID lookup
+
+> This alias helps quickly find the container ID by labels `io.kubernetes.pod.name` and `io.kubernetes.pod.namespace`
+
+<CodeBlock language="bash">
+  {dedent`
+      cidsearch() {
+        crictl ps \\
+          --label io.kubernetes.pod.name="$1" \\
+          --label io.kubernetes.pod.namespace="$2" \\
+          -o json | jq -r '.containers[].id'
+      }
+    `}
+</CodeBlock>
+
+## 5.1.5.2.2. Container PID lookup
+
+> This alias helps quickly find the container PID by labels `io.kubernetes.container.name` and `io.kubernetes.pod.namespace`
+
+<CodeBlock language="bash">
+  {dedent`
+      cpidsearch() {
+        crictl inspect \\
+          $(cidsearch "$1" "$2") | jq .info.pid
+      }
+    `}
+</CodeBlock>
+
+## 5.1.5.2.3. Direct connection
+
+> Direct connection is suitable when we know which node the ETCD instance is on, and the certificates are in the host filesystem.
+
+### Connection
+
+<CodeBlock language="bash">
+  {dedent`
+    alias etcdctl='etcdctl \\
+      --cert=${CERTIFICATES.etcdPeer.crtPath} \\
+      --key=${CERTIFICATES.etcdPeer.keyPath} \\
+      --cacert=${CERTIFICATES.etcdCA.crtPath}'
+  `}
+</CodeBlock>
+
+### Cluster member list
+
+<CodeBlock language="bash">
+  {dedent`
+    etcdctlMembers() {
+      etcdctl member list \\
+      --write-out=json | jq \\
+      -r '[.members[].clientURLs[]] | join(",")'
+    }
+  `}
+</CodeBlock>
+
+### Current revision
+
+<CodeBlock language="bash">
+  {dedent`
+    etcdctlRevision() {
+      etcdctl \\
+        --endpoints=$(etcdctlMembers) \\
+        endpoint status \\
+        -w json | jq \\
+        -r .[].Status.header.revision
+    }
+  `}
+</CodeBlock>
+
+### Connection
+
+<CodeBlock language="bash">
+  {dedent`
+    alias etcdctl='etcdctl \\
+      --cert=${CERTIFICATES.etcdPeer.crtPath} \\
+      --key=${CERTIFICATES.etcdPeer.keyPath} \\
+      --cacert=${CERTIFICATES.etcdCA.crtPath}'
+  `}
+</CodeBlock>
+
+### Compaction
+
+<CodeBlock language="bash">
+  {dedent`
+    alias etcdctlCompaction='etcdctl \\
+      --endpoints=$(etcdctlMembers) \\
+      compaction $(etcdctlRevision)'
+  `}
+</CodeBlock>
+
+### Defragmentation
+
+<CodeBlock language="bash">
+  {dedent`
+    alias etcdctlDefrag='etcdctl \\
+      --endpoints=$(etcdctlMembers) \\
+      defrag'
+  `}
+</CodeBlock>
+
+## 5.1.5.2.4. Connection via crictl
+
+> Connection via container is suitable when the application is running as a container and all data is mounted inside the container filesystem.
+
+:::warning Note
+To ensure requests are sent to the correct container, specify the `Namespace` and `PodName` you want to interact with.
+:::
+
+<CodeAndInputExportPods />
+
+:::info
+Please note the dependency on alias=(`cidsearch`, `ectlflagsearch`) listed below
+:::
+
+### Container ID lookup
+
+<CodeBlock language="bash">
+  {dedent`
+    cidsearch() {
+      crictl ps \\
+        --label io.kubernetes.pod.name="$1" \\
+        --label io.kubernetes.pod.namespace="$2" \\
+        -o json | jq -r '.containers[].id'
+    }
+  `}
+</CodeBlock>
+
+### Flags for connecting to etcdctl
+
+> alias function that substitutes flags specifying the PEER certificate, PEER key, ETCD cluster CA certificate, and ENDPOINT.
+
+<CodeBlock language="bash">
+  {dedent`
+    ectlflagsearch() {
+      ETCD_ARGS=$( \\
+        crictl inspect $(cidsearch "$1" "$2") | jq -r \\
+          '.info.runtimeSpec.process.args[]' ) ; \\
+        echo -n \\
+          '--cert='$(grep --\\
+          '--peer-cert-file=' <<< $ETCD_ARGS | sed 's/[^=]*=//') \\
+          '--key='$(grep --\\
+          '--peer-key-file=' <<< $ETCD_ARGS | sed 's/[^=]*=//') \\
+          '--cacert='$(grep --\\
+          '--trusted-ca-file=' <<< $ETCD_ARGS | sed 's/[^=]*=//') \\
+          '--endpoints='$(grep --\\
+          '--advertise-client-urls=' <<< $ETCD_ARGS | sed 's/[^=]*=//')
+    }
+  `}
+</CodeBlock>
+
+### Connection
+
+<CodeBlock language="bash">
+  {dedent`
+    alias ectl='crictl exec \\
+      -ti $(cidsearch $\{SEARCH_POD_NAME} $\{SEARCH_NAMESPACE}) \\
+      etcdctl \\
+      $(ectlflagsearch $\{SEARCH_POD_NAME} $\{SEARCH_NAMESPACE})'
+  `}
+</CodeBlock>
+
+### Cluster member list
+
+<CodeBlock language="bash">
+  {dedent`
+    ectlMembers() {
+      ectl member list \\
+      --write-out=json | jq \\
+      -r '[.members[].clientURLs[]] | join(",")'
+    }
+  `}
+</CodeBlock>
+
+### Current revision
+
+<CodeBlock language="bash">
+  {dedent`
+    ectlRevision() {
+      ectl \\
+        endpoint status \\
+        --cluster \\
+        -w json | jq -r  \\
+        '[.[].Status.header.revision] | join(" ")'
+    }
+  `}
+</CodeBlock>
+
+### Compaction
+
+<CodeBlock language="bash">
+  {dedent`
+    alias ectlCompaction='ectl \\
+      compaction $(ectlRevision) \\
+      --cluster'
+  `}
+</CodeBlock>
+
+### Defragmentation
+
+<CodeBlock language="bash">
+  {dedent`
+    alias ectlDefrag='ectl \\
+      defrag \\
+      --cluster'
+  `}
+</CodeBlock>
+
+## 5.1.5.2.5. Connection via nsenter
+
+> To use etcdctl located inside the process namespace of a running container, you first need to get the CONTAINER_ID. Based on this identifier, you can determine the process PID. Next, we'll create a nectl alias (to avoid conflicts with other aliases). Each time this alias is called, we'll update the data about the current container and process. It's also important to specify the path to the certificates.
+
+:::info
+Please note the dependency on alias=(`cpidsearch`)
+:::
+
+:::warning Note
+To ensure requests are sent to the correct container, specify the `Namespace` and `PodName` you want to interact with.
+:::
+
+<CodeAndInputExportPods />
+
+### Container ID lookup
+
+> This alias helps quickly find the container ID by labels `io.kubernetes.container.name` and `io.kubernetes.pod.namespace`
+
+<CodeBlock language="bash">
+  {dedent`
+    cidsearch() {
+      crictl ps \\
+        --label io.kubernetes.pod.name="$1" \\
+        --label io.kubernetes.pod.namespace="$2" \\
+        -o json | jq -r '.containers[].id'
+    }
+  `}
+</CodeBlock>
+
+### Container PID lookup
+
+> This alias helps quickly find the container PID by labels `io.kubernetes.container.name` and `io.kubernetes.pod.namespace`
+
+<CodeBlock language="bash">
+  {dedent`
+    cpidsearch() {
+      crictl inspect \\
+        $(cidsearch "$1" "$2") | jq .info.pid
+    }
+  `}
+</CodeBlock>
+
+### Cluster member list
+
+<CodeBlock language="bash">
+  {dedent`
+    nectlMembers() {
+      nectl member list \\
+      --write-out=json | jq \\
+      -r '[.members[].clientURLs[]] | join(",")'
+    }
+  `}
+</CodeBlock>
+
+### Current revision
+
+<CodeBlock language="bash">
+  {dedent`
+    nectlMembers() {
+      nectl member list \\
+      --write-out=json | jq \\
+      -r '[.members[].clientURLs[]] | join(",")'
+    }
+  `}
+</CodeBlock>
+
+### Connection
+
+<CodeBlock language="bash">
+  {dedent`
+    alias nectl='nsenter \\
+      -m -n -t \\
+      $(cpidsearch $\{SEARCH_CONTAINER_NAME} $\{SEARCH_NAMESPACE}) \\
+      etcdctl \\
+      --cert=${CERTIFICATES.etcdPeer.crtPath} \\
+      --key=${CERTIFICATES.etcdPeer.keyPath} \\
+      --cacert=${CERTIFICATES.etcdCA.crtPath}'
+  `}
+</CodeBlock>
+
+### Compaction
+
+<CodeBlock language="bash">
+  {dedent`
+    alias nectlCompaction='nectl \\
+      --endpoints=$(nectlMembers) \\
+      compaction $(nectlRevision)'
+  `}
+</CodeBlock>
+
+### Defragmentation
+
+<CodeBlock language="bash">
+  {dedent`
+    alias nectlDefrag='nectl \\
+      --endpoints=$(nectlMembers) \\
+      defrag'
+  `}
+</CodeBlock>
+
+## 5.1.5.2.5. Connection via kubectl
+
+> Connection via kubectl is suitable when the application is running as a pod in the k8s cluster, all data is mounted inside the container filesystem, and operations are performed through kube-api.
+
+:::warning Note
+To ensure requests are sent to the correct container, specify the `Namespace` and `PodName` you want to interact with.
+:::
+
+<CodeAndInputExportPods />
+
+:::info
+Please note the dependency on alias=(`kectlflagsearch`) listed below
+:::
+
+### Flags for connecting to kectl
+
+> alias function that substitutes flags specifying the PEER certificate, PEER key, ETCD cluster CA certificate, and ENDPOINT.
+
+<CodeBlock language="bash">
+  {dedent`
+    kectlflagsearch() {
+      ETCD_ARGS=$( kubectl get pod \\
+        -n $\{SEARCH_NAMESPACE} \\
+           $\{SEARCH_POD_NAME} \\
+        -o yaml) ; \\
+        echo -n \\
+          '--cert='$(grep --\\
+          '--peer-cert-file=' <<< $ETCD_ARGS | sed 's/[^=]*=//') \\
+          '--key='$(grep --\\
+          '--peer-key-file=' <<< $ETCD_ARGS | sed 's/[^=]*=//') \\
+          '--cacert='$(grep --\\
+          '--trusted-ca-file=' <<< $ETCD_ARGS | sed 's/[^=]*=//') \\
+          '--endpoints='$(grep --\\
+          '--advertise-client-urls=' <<< $ETCD_ARGS \|
+          sed 's/[^=]*=//' \|
+          sed 's/$(POD_NAME)/'$\{SEARCH_POD_NAME}'/' \|
+          sed 's/$(POD_NAMESPACE)/'$\{SEARCH_NAMESPACE}'/')
+      }
+  `}
+</CodeBlock>
+
+### Connection
+
+<CodeBlock language="bash">
+  {dedent`
+    alias kectl='kubectl exec -it \\
+      -n $\{SEARCH_NAMESPACE} \\
+      $\{SEARCH_POD_NAME} \\
+      -- \\
+      etcdctl \\
+      $(kectlflagsearch $\{SEARCH_POD_NAME} $\{SEARCH_NAMESPACE})'
+  `}
+</CodeBlock>
+
+### Cluster member list
+
+<CodeBlock language="bash">
+  {dedent`
+    kectlMembers() {
+      kectl member list \\
+      --write-out=json | jq \\
+      -r '[.members[].clientURLs[]] | join(",")'
+    }
+  `}
+</CodeBlock>
+
+### Current revision
+
+<CodeBlock language="bash">
+  {dedent`
+    kectlRevision() {
+      kectl \\
+        endpoint status \\
+        --cluster \\
+        -w json | jq -r  \\
+        '[.[].Status.header.revision] | join(" ")'
+    }
+  `}
+</CodeBlock>
+
+### Compaction
+
+<CodeBlock language="bash">
+  {dedent`
+    alias kectlCompaction='kectl \\
+      compaction $(kectlRevision) \\
+      --cluster'
+  `}
+</CodeBlock>
+
+### Defragmentation
+
+<CodeBlock language="bash">
+  {dedent`
+    alias kectlDefrag='kectl \\
+      defrag \\
+      --cluster'
+  `}
+</CodeBlock>
+
+### Getting the `data-dir` path
+
+<CodeBlock language="bash">
+  {dedent`
+    kgdatadirpath() {
+      jq -r '.spec.containers[0].command[], .spec.containers[0].args[]? | select(startswith("--data-dir"))' <<< "$(kubectl get pod -n "$1" "$2" -o json)" \|
+        awk -F= '{print $2}' | head -n1
+    }
+  `}
+</CodeBlock>
+
+### Downloading a backup file
+
+This function will download the backup file from the data-dir to the local machine in the current directory.
+
+<CodeBlock language="bash">
+  {dedent`
+    dlbackupfile() {
+      local POD_JSON=$(kubectl get pod -n "$1" "$2" -o json)
+      local DATA_DIR_PATH=$(jq -r '.spec.containers[0].command[], .spec.containers[0].args[]? | select(startswith("--data-dir"))' <<< "$POD_JSON" |
+        awk -F= '{print $2}' | head -n1)
+      local MOUNT_PATH=$DATA_DIR_PATH
+      while [[ -n "$MOUNT_PATH" ]]; do
+        local MOUNT_NAME=$(jq -r --arg path "$MOUNT_PATH" '.spec.containers[0].volumeMounts[] | select(.mountPath==$path) | .name' <<< "$POD_JSON") ;
+        [[ -n "$MOUNT_NAME" ]] && break
+        MOUNT_PATH=\${MOUNT_PATH%/*}
+      done
+      local VOLUME_JSON=$(jq -r --arg name "$MOUNT_NAME" '.spec.volumes[] | select(.name==$name)' <<< "$POD_JSON")
+      local NODE_IP=$(kubectl get node "$(jq -r .spec.nodeName <<< "$POD_JSON")" -o json | jq -r '.status.addresses[] | select(.type=="ExternalIP") | .address')
+      if jq -e '.hostPath' <<< "$VOLUME_JSON" > /dev/null; then
+        local PVC_MOUNT_PATH=$(jq -r '.hostPath.path' <<< "$VOLUME_JSON")
+      else
+        local PVC_NAME=$(jq -r '.persistentVolumeClaim.claimName' <<< "$VOLUME_JSON")
+        local VOLUME_NAME=$(kubectl get pvc -n "$1" "$PVC_NAME" -o json | jq -r .spec.volumeName)
+        local PVC_MOUNT_PATH=$(ssh "$3@$NODE_IP" "sudo lsblk -o MOUNTPOINT | grep '$VOLUME_NAME'")
+      fi
+      rsync  --rsync-path="sudo rsync" $3@$NODE_IP:\${PVC_MOUNT_PATH}\${DATA_DIR_PATH#"$MOUNT_PATH"}/$4 ./
+    }
+  `}
+</CodeBlock>

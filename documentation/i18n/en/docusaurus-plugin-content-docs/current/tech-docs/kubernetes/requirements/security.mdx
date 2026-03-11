@@ -1,0 +1,241 @@
+---
+id: security
+---
+
+# 2.10 Information Security
+
+## 2.10.1 Identification and Authentication Requirements
+
+<table>
+  <thead>
+    <tr>
+      <th>No.</th>
+      <th>Requirement</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>A unique account is created for each user</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>Authentication mechanisms are implemented using secure authentication protocols. Password confidentiality during storage and transmission is ensured by encryption or hashing with strong cryptographic algorithms</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>Active Directory authentication capability is provided</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>Two-factor user authentication mechanisms are implemented</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>Credential verification for all accounts is performed on the server-side IS components (no offline authentication capability)</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>During IS authentication, the password is not displayed during input, verification of entered information (login, password) is performed only after complete input, in case of error, the system does not specify which data was entered incorrectly</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+## 2.10.2 Information Security Event Collection and Analysis
+
+<table>
+  <thead>
+    <tr>
+      <th>No.</th>
+      <th>Requirement</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>Security event logging capability is provided, including: identification attempts, privilege changes, user profile modifications, privileged user actions, access to protected objects</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>Information is recorded for each security event: event type, date and time, identification information, event result, access subject and object, action description</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>Access to security event logs is restricted to authorized users only</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+## 2.10.3 Information Protection When Using Mobile Devices
+
+<table>
+  <thead>
+    <tr>
+      <th>No.</th>
+      <th>Requirement</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>User access is restricted using approved mobile software versions</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>SSL/TLS Pinning technology is applied to protect root certificates</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>Secure storage is used for storing user authentication data</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>Event logging to unprotected areas is not permitted</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>Transfer of confidential information between applications is restricted</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+## 2.10.4 Password Protection and Account Requirements
+
+<table>
+  <thead>
+    <tr>
+      <th>No.</th>
+      <th>Requirement</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>Users are provided with the ability to independently set and change their password</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>The IS administrator can assign an initial password with mandatory password change by the user at first authentication</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>A user account unused for 30 (thirty) days is locked in the IS</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>Users are notified in advance (at least 14 days) about the need to change their password (via messages, hints, or email notifications)</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>Session idle timeout (no more than 15 minutes) can be configured, after which the session is forcibly locked until re-authentication</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>Password history (password hashes) storage is provided to prevent reuse. The last 7 passwords are checked for repetition</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>Password length and complexity restrictions can be configured (uppercase and lowercase letters, numbers, and special characters)</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>Account lockout for a predetermined period after a specified number of failed authentication attempts is provided</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>Mandatory password change at set intervals is enforced</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>Password input complication techniques are implemented: CAPTCHA, increased wait time</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+## 2.10.5 Access Rights Management/Privilege Separation Requirements
+
+<table>
+  <thead>
+    <tr>
+      <th>No.</th>
+      <th>Requirement</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>User authorization mechanisms with access rights separation for information/data and functions within the IS are implemented</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>User access rights are provided based on attribute-based or role-based models</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>Explicit restriction or prohibition of user actions in the IS is enforced until identification and authentication procedures are completed</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>Direct access by users, administrators, and third parties to production IS databases is prohibited by default</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>Storage and processing of Bank information in external cloud services is prohibited</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>IS users are informed before directly gaining access to the IS/IA in the form of a system notification/banner. The notification or banner remains on the screen until users confirm the terms of use and take explicit action to log in to the IS</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+## 2.10.6 General Information Security Requirements
+
+<table>
+  <thead>
+    <tr>
+      <th>No.</th>
+      <th>Requirement</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>Viewing summary information on cluster security policies, primarily Network Policy</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>Supports access control based on role-based (RBAC) or attribute-based (ABAC) models</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>Supports access control at the record/entity level of the same type (row-level security)</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>Stored data encryption mechanism is available (specify which data and encryption algorithm requirements)</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>Audit of events for configuration changes, information system settings, and update installations</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>Audit of data change events resulting from business process execution and chronological user action sequence</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>Ability to exclude sensitive data from event log records, such as card PAN numbers, etc.</td>
+    </tr>
+  </tbody>
+</table>

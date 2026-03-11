@@ -1,0 +1,223 @@
+import KubeletServerOpenssl from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/certificates/components/kubelet/kubeletServer/openssl.mdx'
+
+import KubeAPIETCDClientOpenssl from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/certificates/components/kubeAPI/etcdClient/openssl.mdx'
+
+import KubeletClientOpenssl from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/certificates/components/kubeAPI/kubeletClient/openssl.mdx'
+
+import FrontProxyClientOpenssl from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/certificates/components/kubeAPI/frontProxyClient/openssl.mdx'
+
+import KubeAPIServerOpenssl from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/certificates/components/kubeAPI/kubeAPIServer/openssl.mdx'
+
+import ETCDClientETCDOpenssl from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/etcd/certificates/components/etcdClient/openssl.mdx'
+
+import ETCDServerOpenssl from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/etcd/certificates/components/etcdServer/openssl.mdx'
+
+import ETCDPeerOpenssl from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/etcd/certificates/components/etcdPeer/openssl.mdx'
+
+import KubeControllerManagerOpenssl from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/certificates/components/kubeControllerManager/kubeControllerManagerServer/openssl.mdx'
+
+import KubeSchedulerOpenssl from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/certificates/components/kubeScheduler/kubeSchedulerServer/openssl.mdx'
+
+import JoinAllCertsGen from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/certificates/components/_kubeadm/joinAllCertsGen.mdx'
+
+import { CertificateStatusCheck } from '@site/src/components/commonBlocks/CertificateStatusCheck'
+import { CERTIFICATES } from '@site/src/constants/kubernetes/certs'
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+<Tabs groupId="Certs-APPS">
+  <TabItem value="Kubelet Server">
+    <details open className="custom-gray-block">
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Kubelet server</p>
+        </div>
+      </summary>
+      <Tabs groupId="install-type">
+        <TabItem value="HardWay">
+          <KubeletServerOpenssl />
+          <CertificateStatusCheck method="openssl" certPath={CERTIFICATES.kubeletServer.crtPath} certDisplayName="kubelet-server-current" caDisplayName="kubernetes" />
+        </TabItem>
+        <TabItem value="Kubeadm">
+          <JoinAllCertsGen />
+          <CertificateStatusCheck method="kubeadm" certDisplayName="kubelet-server-current" caDisplayName="kubernetes" />
+        </TabItem>
+      </Tabs>
+    </details>
+  </TabItem>
+  <TabItem value="API -> Etcd">
+    <details open className="custom-gray-block">
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>K8S-API client > Etcd server</p>
+        </div>
+      </summary>
+      <Tabs groupId="install-type">
+        <TabItem value="HardWay">
+          <KubeAPIETCDClientOpenssl />
+          <CertificateStatusCheck method="openssl" certPath={CERTIFICATES.kubernetesEtcdClient.crtPath} certDisplayName="apiserver-etcd-client" caDisplayName="etcd-ca" />
+        </TabItem>
+        <TabItem value="Kubeadm">
+          <JoinAllCertsGen />
+          <CertificateStatusCheck method="kubeadm" certDisplayName="apiserver-etcd-client" caDisplayName="etcd-ca" />
+        </TabItem>
+      </Tabs>
+    </details>
+  </TabItem>
+  <TabItem value="API -> Kubelet">
+    <details open className="custom-gray-block">
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>K8S-API client > Kubelet server</p>
+        </div>
+      </summary>
+      <Tabs groupId="install-type">
+        <TabItem value="HardWay">
+          <KubeletClientOpenssl />
+          <CertificateStatusCheck method="openssl" certPath={CERTIFICATES.kubernetesKubeletClient.crtPath} certDisplayName="apiserver-kubelet-client" caDisplayName="ca" />
+        </TabItem>
+        <TabItem value="Kubeadm">
+          <JoinAllCertsGen />
+          <CertificateStatusCheck method="kubeadm" certDisplayName="apiserver-kubelet-client" caDisplayName="ca" />
+        </TabItem>
+      </Tabs>
+    </details>
+  </TabItem>
+  <TabItem value="API Server">
+    <details open className="custom-gray-block">
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>K8S-API server</p>
+        </div>
+      </summary>
+      <Tabs groupId="install-type">
+        <TabItem value="HardWay">
+          <KubeAPIServerOpenssl />
+          <CertificateStatusCheck method="openssl" certPath={CERTIFICATES.kubernetesServer.crtPath} certDisplayName="apiserver" caDisplayName="ca" />
+        </TabItem>
+        <TabItem value="Kubeadm">
+          <JoinAllCertsGen />
+          <CertificateStatusCheck method="kubeadm" certDisplayName="apiserver" caDisplayName="ca" />
+        </TabItem>
+      </Tabs>
+    </details>
+  </TabItem>
+  <TabItem value="Proxy -> API">
+    <details open className="custom-gray-block">
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>FrontProxy client > K8S-API</p>
+        </div>
+      </summary>
+      <Tabs groupId="install-type">
+        <TabItem value="HardWay">
+          <FrontProxyClientOpenssl />
+          <CertificateStatusCheck method="openssl" certPath={CERTIFICATES.kubernetesFrontProxyClient.crtPath} certDisplayName="front-proxy-client" caDisplayName="front-proxy-ca" />
+        </TabItem>
+        <TabItem value="Kubeadm">
+          <JoinAllCertsGen />
+          <CertificateStatusCheck method="kubeadm" certDisplayName="front-proxy-client" caDisplayName="front-proxy-ca" />
+        </TabItem>
+      </Tabs>
+    </details>
+  </TabItem>
+  <TabItem value="Etcd Client">
+    <details open className="custom-gray-block">
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Etcd client > Etcd</p>
+        </div>
+      </summary>
+      <Tabs groupId="install-type">
+        <TabItem value="HardWay">
+          <ETCDClientETCDOpenssl />
+          <CertificateStatusCheck method="openssl" certPath={CERTIFICATES.etcdClient.crtPath} certDisplayName="etcd-healthcheck-client" caDisplayName="etcd-ca" />
+        </TabItem>
+        <TabItem value="Kubeadm">
+          <JoinAllCertsGen />
+          <CertificateStatusCheck method="kubeadm" certDisplayName="etcd-healthcheck-client" caDisplayName="etcd-ca" />
+        </TabItem>
+      </Tabs>
+    </details>
+  </TabItem>
+  <TabItem value="Etcd Server">
+    <details open className="custom-gray-block">
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Etcd server</p>
+        </div>
+      </summary>
+      <Tabs groupId="install-type">
+        <TabItem value="HardWay">
+          <ETCDServerOpenssl />
+          <CertificateStatusCheck method="openssl" certPath={CERTIFICATES.etcdServer.crtPath} certDisplayName="etcd-server" caDisplayName="etcd-ca" />
+        </TabItem>
+        <TabItem value="Kubeadm">
+          <JoinAllCertsGen />
+          <CertificateStatusCheck method="kubeadm" certDisplayName="etcd-server" caDisplayName="etcd-ca" />
+        </TabItem>
+      </Tabs>
+    </details>
+  </TabItem>
+  <TabItem value="Etcd Peer">
+    <details open className="custom-gray-block">
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Etcd peer > Etcd</p>
+        </div>
+      </summary>
+      <Tabs groupId="install-type">
+        <TabItem value="HardWay">
+          <ETCDPeerOpenssl />
+          <CertificateStatusCheck method="openssl" certPath={CERTIFICATES.etcdPeer.crtPath} certDisplayName="etcd-peer" caDisplayName="etcd-ca" />
+        </TabItem>
+        <TabItem value="Kubeadm">
+          <JoinAllCertsGen />
+          <CertificateStatusCheck method="kubeadm" certDisplayName="etcd-peer" caDisplayName="etcd-ca" />
+        </TabItem>
+      </Tabs>
+    </details>
+  </TabItem>
+  <TabItem value="Controller server">
+    <details open className="custom-gray-block">
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Controller server</p>
+        </div>
+      </summary>
+      <Tabs groupId="install-type">
+        <TabItem value="HardWay">
+          <KubeControllerManagerOpenssl />
+          <CertificateStatusCheck method="openssl" certPath={CERTIFICATES.kubernetesControllerManagerServer.crtPath} certDisplayName="controller-manager-server" caDisplayName="kubernetes" />
+        </TabItem>
+        <TabItem value="Kubeadm">
+          :::danger
+          Please note that kubeadm does not manage these certificates.
+          Use HardWay mode
+          :::
+        </TabItem>
+      </Tabs>
+    </details>
+  </TabItem>
+  <TabItem value="Scheduler server">
+    <details open className="custom-gray-block">
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Scheduler server</p>
+        </div>
+      </summary>
+      <Tabs groupId="install-type">
+        <TabItem value="HardWay">
+          <KubeSchedulerOpenssl />
+          <CertificateStatusCheck method="openssl" certPath={CERTIFICATES.kubernetesSchedulerServer.crtPath} certDisplayName="scheduler-server" caDisplayName="kubernetes" />
+        </TabItem>
+        <TabItem value="Kubeadm">
+          :::danger
+          Please note that kubeadm does not manage these certificates.
+          Use HardWay mode
+          :::
+        </TabItem>
+      </Tabs>
+    </details>
+  </TabItem>
+</Tabs>

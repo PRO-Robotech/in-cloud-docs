@@ -1,0 +1,181 @@
+
+```text
+root@compute:/home/user# kubeadm init phase
+
+*****
+Available Commands:
+  addon              Install required addons for passing conformance tests
+  bootstrap-token    Generates bootstrap tokens used to join a node to a cluster
+  certs              Certificate generation
+  control-plane      Generate all static Pod manifest files necessary to establish the control plane
+  etcd               Generate static Pod manifest file for local etcd
+  kubeconfig         Generate all kubeconfig files necessary to establish the control plane and the admin kubeconfig file
+  kubelet-finalize   Updates settings relevant to the kubelet after TLS bootstrap
+  kubelet-start      Write kubelet settings and (re)start the kubelet
+  mark-control-plane Mark a node as a control-plane
+  preflight          Run pre-flight checks
+  show-join-command  Show the join command for control-plane and worker node
+  upload-certs       Upload certificates to kubeadm-certs
+  upload-config      Upload the kubeadm and kubelet configuration to a ConfigMap
+```
+
+<div className="scrollable-x">
+  <table>
+    <thead>
+      <tr>
+        <th>Path</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>`$addon.all`</td>
+        <td>Installs all addons</td>
+      </tr>
+      <tr>
+        <td>`$addon.coredns`</td>
+        <td>Installs CoreDNS</td>
+      </tr>
+      <tr>
+        <td>`$addon.kube-proxy`</td>
+        <td>Installs kube-proxy</td>
+      </tr>
+      <tr>
+        <td>`$certs.all`</td>
+        <td>Generates all certificates</td>
+      </tr>
+      <tr>
+        <td>`$certs.apiserver`</td>
+        <td>Generates certificate for the Kubernetes API</td>
+      </tr>
+      <tr>
+        <td>`$certs.apiserver-etcd-client`</td>
+        <td>Generates apiserver certificate for accessing etcd</td>
+      </tr>
+      <tr>
+        <td>`$certs.apiserver-kubelet-client`</td>
+        <td>Generates apiserver certificate for connecting to kubelet</td>
+      </tr>
+      <tr>
+        <td>`ca`</td>
+        <td>Generates self-signed Kubernetes CA</td>
+      </tr>
+      <tr>
+        <td>`etcd-ca` </td>
+        <td>Generates self-signed ETCD CA</td>
+      </tr>
+      <tr>
+        <td>`front-proxy-ca`</td>
+        <td>Generates self-signed Front Proxy CA</td>
+      </tr>
+      <tr>
+        <td>`etcd-healthcheck-client`</td>
+        <td>Generates certificate for etcd liveness probes</td>
+      </tr>
+      <tr>
+        <td>`etcd-peer`</td>
+        <td>Generates certificate for etcd node communication</td>
+      </tr>
+      <tr>
+        <td>`etcd-server`</td>
+        <td>Generates etcd server certificate</td>
+      </tr>
+      <tr>
+        <td>`front-proxy-client`</td>
+        <td>Generates front-proxy client certificate</td>
+      </tr>
+      <tr>
+        <td>`sa`</td>
+        <td>Generates keys for signing service account tokens</td>
+      </tr>
+      <tr>
+        <td>`bootstrap-token`</td>
+        <td>Generates bootstrap tokens</td>
+      </tr>
+      <tr>
+        <td>`$control-plane.all`</td>
+        <td>Generates all static Pod manifests</td>
+      </tr>
+      <tr>
+        <td>`$control-plane.apiserver`</td>
+        <td>Generates Pod manifest for kube-apiserver</td>
+      </tr>
+      <tr>
+        <td>`$control-plane.controller-manager`</td>
+        <td>Generates Pod manifest for kube-controller-manager</td>
+      </tr>
+      <tr>
+        <td>`$control-plane.scheduler`</td>
+        <td>Generates Pod manifest for kube-scheduler</td>
+      </tr>
+      <tr>
+        <td>`$etcd.local`</td>
+        <td>Generates Pod manifest for local etcd</td>
+      </tr>
+      <tr>
+        <td>`$kubeconfig.all`</td>
+        <td>Generates all kubeconfig files</td>
+      </tr>
+      <tr>
+        <td>`$kubeconfig.controller-manager`</td>
+        <td>Generates kubeconfig for kube-controller-manager</td>
+      </tr>
+      <tr>
+        <td>`$kubeconfig.kubelet`</td>
+        <td>Generates kubeconfig for kubelet (cluster initialization)</td>
+      </tr>
+      <tr>
+        <td>`$kubeconfig.scheduler`</td>
+        <td>Generates kubeconfig for scheduler</td>
+      </tr>
+      <tr>
+        <td>`$kubeconfig.admin`</td>
+        <td>Generates kubeconfig for administrator and kubeadm</td>
+      </tr>
+      <tr>
+        <td>`$kubeconfig.super-admin`</td>
+        <td>Generates kubeconfig for super-administrator</td>
+      </tr>
+      <tr>
+        <td>`$kubelet-finalize.all`</td>
+        <td>Runs all kubelet-finalize phases</td>
+      </tr>
+      <tr>
+        <td>`$kubelet-finalize.experimental-cert-rotation`</td>
+        <td>Enables kubelet certificate rotation</td>
+      </tr>
+      <tr>
+        <td>`kubelet-start`</td>
+        <td>Configures and starts kubelet</td>
+      </tr>
+      <tr>
+        <td>`mark-control-plane`</td>
+        <td>Marks a node as control plane</td>
+      </tr>
+      <tr>
+        <td>`preflight`</td>
+        <td>Runs pre-flight checks</td>
+      </tr>
+      <tr>
+        <td>`show-join-command`</td>
+        <td>Shows the command for joining nodes</td>
+      </tr>
+      <tr>
+        <td>`upload-certs`</td>
+        <td>Uploads certificates to kubeadm-certs</td>
+      </tr>
+      <tr>
+        <td>`$upload-config.all`</td>
+        <td>Uploads all configuration to ConfigMap</td>
+      </tr>
+      <tr>
+        <td>`$upload-config.kubeadm`</td>
+        <td>Uploads kubeadm ClusterConfiguration to ConfigMap</td>
+      </tr>
+      <tr>
+        <td>`$upload-config.kubelet`</td>
+        <td>Uploads kubelet configuration to ConfigMap</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

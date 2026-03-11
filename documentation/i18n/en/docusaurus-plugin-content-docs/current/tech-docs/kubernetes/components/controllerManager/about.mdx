@@ -1,0 +1,18 @@
+**Description**: **Kube-controller-manager** is a Kubernetes component responsible for managing the state of resources in the cluster through various controllers. It monitors the state of resources (e.g., pods, replica sets, deployments) and takes action to bring the actual state to the desired state, ensuring fault tolerance and scalability of applications. Controllers perform tasks such as creating, updating, and deleting resources, as well as enforcing scaling rules and ensuring availability.
+
+#### Functions
+- Performing control operations to maintain the desired state of resources in the cluster.
+- Managing the lifecycle of Kubernetes objects such as replica sets, deployments, pods, and services.
+- Implementing scaling, update, and rollback strategies for resources.
+- Ensuring fault tolerance and recovery from failures by automatically creating or deleting resources.
+
+#### Features
+- Includes several types of controllers for performing specific tasks, for example:
+  - **Replication Controller** — maintains the specified number of pod replicas.
+  - **Deployment Controller** — manages smooth updates and rollbacks of deployments.
+  - **StatefulSet Controller** — provides pod state management while preserving stable identifiers and volumes.
+- Provides automatic resource scaling management, including vertical and horizontal scaling.
+- Implements automatic resource state checks, with subsequent correction of desired state violations.
+
+
+**Kube-controller-manager** plays a key role in maintaining the stability and availability of applications by automating the processes of creating, updating, and recovering resources in Kubernetes.

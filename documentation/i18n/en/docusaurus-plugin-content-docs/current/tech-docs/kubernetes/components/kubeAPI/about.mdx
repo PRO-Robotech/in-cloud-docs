@@ -1,0 +1,13 @@
+**Description**: API Server is the central management component of a Kubernetes cluster, providing a RESTful API for interacting with the system. It provides access to cluster data, their modification and deletion, and coordinates all operations related to component and resource management. API Server serves as the link between all other Kubernetes components.
+
+#### Functions
+
+- Processing all incoming requests (via REST API), including creation, updating, and deletion of resources.
+- Interacting with etcd for storing and retrieving configuration data.
+- Authentication and authorization of requests through integration with RBAC/ABAC.
+- Ensuring internal synchronization with cluster components through queue and notification mechanisms.
+
+#### Interfaces
+
+- HTTP/HTTPS RESTful API.
+- WebSocket for real-time notifications (e.g., via Watch).

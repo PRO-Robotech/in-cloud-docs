@@ -1,0 +1,22 @@
+import dedent from 'ts-dedent'
+import CodeBlock from '@theme/CodeBlock'
+
+<CodeBlock language="bash">
+  {dedent`
+    crictl pods --name etcd-backup -o yaml | head -20
+  `}
+</CodeBlock>
+
+:::note Command output
+
+<CodeBlock language="bash">
+  {dedent`
+    items:
+    - id: ...
+      metadata:
+        name: etcd-backup-...
+        namespace: kube-system
+      state: SANDBOX_READY
+  `}
+</CodeBlock>
+:::

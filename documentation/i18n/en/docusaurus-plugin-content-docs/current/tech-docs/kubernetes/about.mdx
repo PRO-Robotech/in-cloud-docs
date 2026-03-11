@@ -1,0 +1,33 @@
+---
+id: about
+---
+
+import BrowserOnly from '@docusaurus/BrowserOnly'
+import Link from '@docusaurus/Link'
+import { getBasePrefix } from '@site/src/utils/getBasePrefix'
+
+# 0. Introduction
+
+<div className="headerContainer">
+  <div className="textContainer">
+    <p>
+      This documentation is intended for engineers responsible for operating, deploying, and configuring the
+      in-cloud platform built on top of Kubernetes. The primary goal is to provide detailed instructions
+      for creating, configuring, and managing the in-cloud platform, as well as describing the key components
+      and mechanisms of the Control Plane powered by Kubernetes.
+    </p>
+    <p>
+      The in-cloud platform is an open-source solution designed to automate the deployment,
+      scaling, and management of containerized applications in cloud infrastructure...
+    </p>
+  </div>
+  <div className="logoContainer">
+    <BrowserOnly>
+      {() => (
+        <Link to={`${getBasePrefix()}tech-docs/kubernetes/about`}>
+          <img src={`${getBasePrefix()}img/paws2.svg`} alt="Logo" className="logo" />
+        </Link>
+      )}
+    </BrowserOnly>
+  </div>
+</div>

@@ -1,0 +1,115 @@
+---
+id: check-box
+---
+
+import dedent from 'ts-dedent'
+import CodeBlock from '@theme/CodeBlock'
+import { CERTIFICATES } from '@site/src/constants/kubernetes/certs'
+import { PORTS } from '@site/src/constants/kubernetes/ports'
+
+# 5.1.5.1. etcd Diagnostic Checklist
+
+> Before starting diagnostics, make sure the `ETCDCTL_API=3` variable is set and TLS certificates for connecting to the cluster are available.
+
+## Preliminary checks
+
+### Cluster health
+
+<CodeBlock language="bash">
+  {dedent`
+    etcdctl endpoint health \\
+      --endpoints=https://127.0.0.1:${PORTS.etcdServer.portNumber} \\
+      --cacert=${CERTIFICATES.etcdCA.crtPath} \\
+      --cert=${CERTIFICATES.etcdClient.crtPath} \\
+      --key=${CERTIFICATES.etcdClient.keyPath}
+  `}
+</CodeBlock>
+
+### Cluster member list
+
+<CodeBlock language="bash">
+  {dedent`
+    etcdctl member list \\
+      --endpoints=https://127.0.0.1:${PORTS.etcdServer.portNumber} \\
+      --cacert=${CERTIFICATES.etcdCA.crtPath} \\
+      --cert=${CERTIFICATES.etcdClient.crtPath} \\
+      --key=${CERTIFICATES.etcdClient.keyPath} \\
+      -w table
+  `}
+</CodeBlock>
+
+### Endpoint status
+
+<CodeBlock language="bash">
+  {dedent`
+    etcdctl endpoint status \\
+      --endpoints=https://127.0.0.1:${PORTS.etcdServer.portNumber} \\
+      --cacert=${CERTIFICATES.etcdCA.crtPath} \\
+      --cert=${CERTIFICATES.etcdClient.crtPath} \\
+      --key=${CERTIFICATES.etcdClient.keyPath} \\
+      -w table
+  `}
+</CodeBlock>
+
+### Disk usage
+
+<CodeBlock language="bash">
+  {dedent`
+    etcdctl endpoint status \\
+      --endpoints=https://127.0.0.1:${PORTS.etcdServer.portNumber} \\
+      --cacert=${CERTIFICATES.etcdCA.crtPath} \\
+      --cert=${CERTIFICATES.etcdClient.crtPath} \\
+      --key=${CERTIFICATES.etcdClient.keyPath} \\
+      -w json | python3 -m json.tool | grep dbSize
+  `}
+</CodeBlock>
+
+### Alarm check
+
+<CodeBlock language="bash">
+  {dedent`
+    etcdctl alarm list \\
+      --endpoints=https://127.0.0.1:${PORTS.etcdServer.portNumber} \\
+      --cacert=${CERTIFICATES.etcdCA.crtPath} \\
+      --cert=${CERTIFICATES.etcdClient.crtPath} \\
+      --key=${CERTIFICATES.etcdClient.keyPath}
+  `}
+</CodeBlock>
+
+---
+
+## Common errors
+
+### connection refused
+
+| | |
+|---|---|
+| **Symptom** | `dial tcp 127.0.0.1:2379: connect: connection refused` |
+| **Cause** | The etcd process is not running or is listening on a different address/port. |
+| **Solution** | Check the etcd pod/service status: `crictl ps \| grep etcd`. Check logs: `crictl logs <container-id>`. Make sure `--listen-client-urls` contains the required address. |
+
+### certificate expired
+
+<table>
+<tbody>
+<tr><td><strong>Symptom</strong></td><td><code>certificate has expired or is not yet valid</code></td></tr>
+<tr><td><strong>Cause</strong></td><td>The etcd TLS certificate has expired.</td></tr>
+<tr><td><strong>Solution</strong></td><td>Check the expiration date: <code>openssl x509 -in {CERTIFICATES.etcdServer.crtPath} -noout -dates</code>. Reissue the certificates and restart etcd.</td></tr>
+</tbody>
+</table>
+
+### quorum lost
+
+| | |
+|---|---|
+| **Symptom** | `etcdserver: request timed out` or `rafthttp: failed to reach the peer` |
+| **Cause** | More than half of the cluster members are unavailable — quorum is lost. |
+| **Solution** | Restore node availability. If a node cannot be recovered — remove it from the cluster (`etcdctl member remove`) and add it again. In a critical case, restore the cluster from a snapshot: `etcdctl snapshot restore`. |
+
+### database size exceeded
+
+| | |
+|---|---|
+| **Symptom** | `mvcc: database space exceeded` |
+| **Cause** | The etcd database size has exceeded the quota (default is 2 GB). |
+| **Solution** | 1. Perform compaction: `etcdctl compact $(etcdctl endpoint status -w json \| python3 -c "import sys,json; print(json.load(sys.stdin)[0]['Status']['header']['revision'])")`. 2. Run defragmentation: `etcdctl defrag`. 3. Disarm the alarm: `etcdctl alarm disarm`. 4. Consider increasing the quota via `--quota-backend-bytes`. |

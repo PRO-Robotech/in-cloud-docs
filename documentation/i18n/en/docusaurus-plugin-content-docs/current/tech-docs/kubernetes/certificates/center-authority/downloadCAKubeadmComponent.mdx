@@ -1,0 +1,31 @@
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+
+import CodeBlock from '@theme/CodeBlock'
+import dedent from 'ts-dedent'
+
+:::warning Note
+
+This section depends on the following sections:
+
+- [Kubeadm Configs](/tech-docs/kubernetes/components/kubeadm/lifecycleSettings.mdx).
+  :::
+
+<h4>Manifest generation</h4>
+<CodeBlock language="bash">
+  {dedent`
+    kubeadm join phase control-plane-prepare download-certs \\
+      --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
+  `}
+</CodeBlock>
+
+:::note Command output
+
+<CodeBlock language="bash">
+  {dedent`
+    [preflight] Reading configuration from the cluster...
+    [preflight] FYI: You can look at this config file with 'kubectl -n kube-system get cm kubeadm-config -o yaml'
+    [download-certs] Downloading the certificates in Secret "kubeadm-certs" in the "kube-system" Namespace
+    [download-certs] Saving the certificates to the folder: "/etc/kubernetes/pki"
+  `}
+</CodeBlock>
+:::

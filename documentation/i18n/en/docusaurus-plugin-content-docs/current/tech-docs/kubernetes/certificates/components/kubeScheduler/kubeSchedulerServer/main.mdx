@@ -1,0 +1,23 @@
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+import Openssl from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/certificates/components/kubeScheduler/kubeSchedulerServer/openssl.mdx'
+import { CertificateStatusCheck } from '@site/src/components/commonBlocks/CertificateStatusCheck'
+import { CERTIFICATES } from '@site/src/constants/kubernetes/certs'
+
+> **Purpose:** kube-scheduler server certificate for TLS on the metrics port and healthz endpoints. Signed by **kubernetes-ca**. Note: kubeadm does not manage this certificate — it is only created in HardWay mode.
+
+<Tabs groupId="install-type">
+
+  <TabItem value="HardWay">
+    <Openssl />
+    <CertificateStatusCheck method="openssl" certPath={CERTIFICATES.kubernetesSchedulerServer.crtPath} certDisplayName="scheduler-server" caDisplayName="kubernetes" />
+  </TabItem>
+
+  <TabItem value="Kubeadm">
+    :::danger
+    Please note that kubeadm does not manage these certificates.
+    Use HardWay mode
+    :::
+  </TabItem>
+
+</Tabs>

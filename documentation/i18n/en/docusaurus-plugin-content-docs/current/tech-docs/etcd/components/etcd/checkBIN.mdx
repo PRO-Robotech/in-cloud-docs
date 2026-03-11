@@ -1,0 +1,22 @@
+import { BinaryVersionCheck, BinaryInstallCheck } from '@site/src/components/commonBlocks/BinaryCheck'
+import { COMPONENTS_VERSION } from '@site/src/constants/kubernetes/componentsVersion'
+
+<h4>Installation verification</h4>
+
+<details className="custom-blue-block">
+  <summary>Installation verification</summary>
+  <BinaryInstallCheck
+    binaryName="etcd"
+    version={COMPONENTS_VERSION.etcd.value}
+    installSteps={['Installing etcd...']}
+    successMessage="etcd successfully updated to"
+    grepCommand="'etcd'"
+    lsOutput={`-rwxr-xr-x  1 root root  23760896 Mar 29 16:21 etcd
+-rwxr-xr-x  1 root root  17960960 Mar 29 16:21 etcdctl
+-rwxr-xr-x  1 root root  16031744 Mar 29 16:21 etcdutl`}
+  />
+  <BinaryVersionCheck command="etcd --version" output={`etcd Version: 3.5.5
+Git SHA: 19002cfc6
+Go Version: go1.16.15
+Go OS/Arch: linux/amd64`} />
+</details>

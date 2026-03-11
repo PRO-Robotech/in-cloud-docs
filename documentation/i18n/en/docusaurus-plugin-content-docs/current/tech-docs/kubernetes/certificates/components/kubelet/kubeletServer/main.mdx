@@ -1,0 +1,22 @@
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+import Openssl from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/certificates/components/kubelet/kubeletServer/openssl.mdx'
+import Kubeadm from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/certificates/components/kubelet/kubeletServer/kubeadm.mdx'
+import { CertificateStatusCheck } from '@site/src/components/commonBlocks/CertificateStatusCheck'
+import { CERTIFICATES } from '@site/src/constants/kubernetes/certs'
+
+> **Purpose:** kubelet server certificate for TLS on port 10250. Presented when kube-apiserver and other clients connect to the kubelet API. Signed by **kubernetes-ca**.
+
+<Tabs groupId="install-type">
+
+  <TabItem value="HardWay">
+    <Openssl />
+    <CertificateStatusCheck method="openssl" certPath={CERTIFICATES.kubeletServer.crtPath} certDisplayName="kubelet-server-current" caDisplayName="kubernetes" />
+  </TabItem>
+
+  <TabItem value="Kubeadm">
+    <Kubeadm />
+    <CertificateStatusCheck method="kubeadm" certDisplayName="kubelet-server-current" caDisplayName="kubernetes" />
+  </TabItem>
+
+</Tabs>

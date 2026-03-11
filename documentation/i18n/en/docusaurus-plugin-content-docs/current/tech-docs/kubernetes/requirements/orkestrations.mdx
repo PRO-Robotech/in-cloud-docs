@@ -1,0 +1,220 @@
+---
+id: orkestrations
+---
+
+# 2.1 Orchestration
+## 2.1.1. Orchestration System Requirements
+<table>
+  <thead>
+    <tr>
+      <th>No.</th>
+      <th>Requirement</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>The platform must support resource virtualization system management</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>The platform must support network infrastructure system management</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>The platform must support data storage system management</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>The platform must provide the ability to manage OS/application configurations</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>The platform must provide the ability to manage server equipment configurations</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>The platform must provide the ability to manage network equipment configurations</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>The platform must provide the ability to manage data storage system configurations</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>The platform must support containerized application platform management</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>The platform must support IT infrastructure automation system management</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>The platform must support public cloud environment resource management</td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td>The platform must support management of cloud infrastructure components distributed across data centers/regions</td>
+    </tr>
+    <tr>
+      <td>12</td>
+      <td>The platform must support VM lifecycle management, VM images (creation, configuration, modification, deletion, migration)</td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td>The platform must support lifecycle management of VM distribution rules in the virtualization system, affinity/anti-affinity rules, etc. (creation, configuration, modification, deletion)</td>
+    </tr>
+    <tr>
+      <td>14</td>
+      <td>The platform must support security group lifecycle management (creation, configuration, modification, deletion)</td>
+    </tr>
+    <tr>
+      <td>15</td>
+      <td>The platform must support SSH key lifecycle management (creation, configuration, modification, deletion)</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>The platform must support virtual network lifecycle management (creation, configuration, modification, deletion)</td>
+    </tr>
+    <tr>
+      <td>17</td>
+      <td>The platform must support virtual router lifecycle management (creation, configuration, modification, deletion)</td>
+    </tr>
+    <tr>
+      <td>18</td>
+      <td>The platform must support virtual load balancer lifecycle management (creation, configuration, modification, deletion)</td>
+    </tr>
+    <tr>
+      <td>19</td>
+      <td>The platform must support IP address lifecycle management (creation, allocation, modification, release, deletion)</td>
+    </tr>
+    <tr>
+      <td>20</td>
+      <td>The platform must support virtual disk lifecycle management (creation, configuration, modification, deletion)</td>
+    </tr>
+    <tr>
+      <td>21</td>
+      <td>The platform must support snapshot lifecycle management (creation, modification, deletion)</td>
+    </tr>
+    <tr>
+      <td>22</td>
+      <td>The platform must support k8s cluster lifecycle management (creation, expansion, modification, deletion)</td>
+    </tr>
+    <tr>
+      <td>23</td>
+      <td>The platform must support lifecycle management of customized IT infrastructure automation workflows (creation, modification, deletion, execution)</td>
+    </tr>
+    <tr>
+      <td>24</td>
+      <td>The platform must support IaaS service lifecycle management</td>
+    </tr>
+    <tr>
+      <td>25</td>
+      <td>The platform must support PaaS service lifecycle management</td>
+    </tr>
+    <tr>
+      <td>26</td>
+      <td>The platform must support SaaS service lifecycle management</td>
+    </tr>
+    <tr>
+      <td>27</td>
+      <td>The platform must support the ability to track cloud component state</td>
+    </tr>
+    <tr>
+      <td>28</td>
+      <td>The platform must support the ability to track VM state</td>
+    </tr>
+    <tr>
+      <td>29</td>
+      <td>The platform must support the ability to track service state</td>
+    </tr>
+    <tr>
+      <td>30</td>
+      <td>The platform must support the ability to track virtual router state</td>
+    </tr>
+    <tr>
+      <td>31</td>
+      <td>The platform must support the ability to track virtual network state</td>
+    </tr>
+    <tr>
+      <td>32</td>
+      <td>The platform must support task scheduling by schedule/triggers</td>
+    </tr>
+    <tr>
+      <td>33</td>
+      <td>The platform must support automated compliance monitoring of cloud component policies/configurations (hardware, software components)</td>
+    </tr>
+    <tr>
+      <td>34</td>
+      <td>The platform must support automated compliance monitoring of policies/configurations for services deployed in the cloud (VMs, OS, Applications)</td>
+    </tr>
+    <tr>
+      <td>35</td>
+      <td>The platform must support integration with other information systems</td>
+    </tr>
+    <tr>
+      <td>36</td>
+      <td>The platform must support logging of all events and actions</td>
+    </tr>
+    <tr>
+      <td>37</td>
+      <td>The platform must support retrieving/modifying data from CMDB</td>
+    </tr>
+    <tr>
+      <td>38</td>
+      <td>The platform must provide automated OS and application deployment/configuration for provisioned resources and IT services</td>
+    </tr>
+    <tr>
+      <td>39</td>
+      <td>The platform must provide remote script launch and execution on deployed resources and IT services</td>
+    </tr>
+    <tr>
+      <td>40</td>
+      <td>The platform must support script execution on operating systems used for implementing IaaS, PaaS, and SaaS resources in the service catalog</td>
+    </tr>
+    <tr>
+      <td>41</td>
+      <td>The platform must provide the ability to build automation workflows for cloud services (platform components, services deployed in the cloud)</td>
+    </tr>
+    <tr>
+      <td>42</td>
+      <td>The platform must provide the ability to build automation workflows for infrastructure components (components and services deployed outside the cloud)</td>
+    </tr>
+    <tr>
+      <td>43</td>
+      <td>The platform must provide centralized storage of scripts and automation scenarios with version control capability for cloud services (platform components, services deployed in the cloud)</td>
+    </tr>
+    <tr>
+      <td>44</td>
+      <td>The platform must provide centralized storage of scripts and automation scenarios with version control capability for infrastructure components (components and services deployed outside the cloud)</td>
+    </tr>
+    <tr>
+      <td>45</td>
+      <td>The platform must provide the ability to create/modify/delete scripts and automation scenarios for cloud services (platform components, services deployed in the cloud) through a graphical interface</td>
+    </tr>
+    <tr>
+      <td>46</td>
+      <td>The platform must provide the ability to create/modify/delete scripts and automation scenarios for infrastructure components (components and services deployed outside the cloud) through a graphical interface</td>
+    </tr>
+    <tr>
+      <td>47</td>
+      <td>The platform must provide the ability to monitor execution of scripts and automation scenarios for cloud services (platform components, services deployed in the cloud)</td>
+    </tr>
+    <tr>
+      <td>48</td>
+      <td>The platform must provide the ability to monitor execution of scripts and automation scenarios for infrastructure components (components and services deployed outside the cloud)</td>
+    </tr>
+    <tr>
+      <td>49</td>
+      <td>The platform must provide the ability to display task sequence execution status with indication of the current execution step for cloud services (platform components, services deployed in the cloud)</td>
+    </tr>
+    <tr>
+      <td>50</td>
+      <td>The platform must provide the ability to display task sequence execution status with indication of the current execution step for infrastructure components (components and services deployed outside the cloud)</td>
+    </tr>
+    <tr>
+      <td>51</td>
+      <td>The platform must provide service registry capability for controlling URLs used by developers</td>
+    </tr>
+  </tbody>
+</table>

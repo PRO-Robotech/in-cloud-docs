@@ -1,6 +1,7 @@
 import React, { FC } from 'react'
 import CodeBlock from '@theme/CodeBlock'
 import Admonition from '@theme/Admonition'
+import { translate } from '@docusaurus/Translate'
 
 interface BinaryVersionCheckProps {
   command: string
@@ -13,7 +14,7 @@ export const BinaryVersionCheck: FC<BinaryVersionCheckProps> = ({
 }) => (
   <>
     <CodeBlock language="bash">{command}</CodeBlock>
-    <Admonition type="note" title="Вывод команды">
+    <Admonition type="note" title={translate({ id: 'common.commandOutput', message: 'Вывод команды' })}>
       <CodeBlock language="bash">{output}</CodeBlock>
     </Admonition>
   </>

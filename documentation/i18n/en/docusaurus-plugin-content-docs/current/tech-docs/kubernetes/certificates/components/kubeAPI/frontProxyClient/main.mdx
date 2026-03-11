@@ -1,0 +1,22 @@
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+import Openssl from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/certificates/components/kubeAPI/frontProxyClient/openssl.mdx'
+import Kubeadm from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/certificates/components/kubeAPI/frontProxyClient/kubeadm.mdx'
+import { CertificateStatusCheck } from '@site/src/components/commonBlocks/CertificateStatusCheck'
+import { CERTIFICATES } from '@site/src/constants/kubernetes/certs'
+
+> **Purpose:** Client certificate for the API aggregation mechanism (extension API servers). Used by kube-apiserver when proxying requests to extended API servers (e.g., metrics-server). Signed by **front-proxy-ca**.
+
+<Tabs groupId="install-type">
+
+  <TabItem value="HardWay">
+    <Openssl />
+    <CertificateStatusCheck method="openssl" certPath={CERTIFICATES.kubernetesFrontProxyClient.crtPath} certDisplayName="front-proxy-client" caDisplayName="front-proxy-ca" />
+  </TabItem>
+
+  <TabItem value="Kubeadm">
+    <Kubeadm />
+    <CertificateStatusCheck method="kubeadm" certDisplayName="front-proxy-client" caDisplayName="front-proxy-ca" />
+  </TabItem>
+
+</Tabs>

@@ -1,0 +1,17 @@
+import { BinaryVersionCheck, BinaryInstallCheck } from '@site/src/components/commonBlocks/BinaryCheck'
+import { COMPONENTS_VERSION } from '@site/src/constants/kubernetes/componentsVersion'
+
+<h4>Installation check</h4>
+
+<details className="custom-blue-block">
+  <summary>Installation check</summary>
+  <BinaryInstallCheck
+    binaryName="kubelet"
+    version={COMPONENTS_VERSION.kubernetes.value}
+    installSteps={['Installing kubelet...']}
+    successMessage="kubelet successfully updated to"
+    grepCommand="'kubelet$'"
+    lsOutput="-rwxr-xr-x  1 root root 100125080 Aug 14  2024 kubelet"
+  />
+  <BinaryVersionCheck command="kubelet --version" output="Kubernetes v1.30.4" />
+</details>

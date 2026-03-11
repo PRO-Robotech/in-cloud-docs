@@ -1,0 +1,118 @@
+---
+id: all-install
+title: "5.2.1.2. Software Installation"
+---
+
+import ContainerdDownloadBIN from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/containerd/lifecycleDownloadComponent.mdx'
+import ContainerdCheckBIN from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/containerd/checkBIN.mdx'
+
+import RuncDownloadBIN from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/runc/lifecycleDownloadComponent.mdx'
+import RuncCheckBIN from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/runc/checkBIN.mdx'
+
+import KubeletDownloadBIN from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/kubelet/lifecycleDownloadComponent.mdx'
+import KubeletCheckBIN from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/kubelet/checkBIN.mdx'
+
+import KubectlDownloadBIN from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/kubectl/lifecycleDownloadComponent.mdx'
+import KubectlCheckBIN from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/kubectl/checkBIN.mdx'
+
+import CrictlDownloadBIN from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/crictl/lifecycleDownloadComponent.mdx'
+import CrictlCheckBIN from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/crictl/checkBIN.mdx'
+
+import KubeadmDownloadBIN from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/kubeadm/lifecycleDownloadComponent.mdx'
+import KubeadmCheckBIN from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/kubeadm/checkBIN.mdx'
+
+import EtcdDownloadBIN from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/etcd/components/etcd/lifecycleDownloadComponent.mdx'
+import EtcdCheckBIN from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/etcd/components/etcd/checkBIN.mdx'
+
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+> This section describes the installation process for the core components required for a Kubernetes cluster.
+> The installation is performed manually and prepares the environment for subsequent initialization and control plane configuration stages.
+
+<Tabs groupId="component">
+  <TabItem value="runc">
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Installation of runc</p>
+          <p className="obligatory-note-orange">● Required</p>
+        </div>
+      </summary>
+      <RuncDownloadBIN />
+      <RuncCheckBIN />
+    </details>
+  </TabItem>
+  <TabItem value="containerd">
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Installation of containerd</p>
+          <p className="obligatory-note-orange">● Required</p>
+        </div>
+      </summary>
+      <ContainerdDownloadBIN />
+      <ContainerdCheckBIN />
+    </details>
+  </TabItem>
+  <TabItem value="kubelet">
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Installation of kubelet</p>
+          <p className="obligatory-note-orange">● Required</p>
+        </div>
+      </summary>
+      <KubeletDownloadBIN />
+      <KubeletCheckBIN />
+    </details>
+  </TabItem>
+  <TabItem value="etcd">
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Installation of etcd</p>
+          <p className="obligatory-note-orange">● Required</p>
+        </div>
+      </summary>
+      <EtcdDownloadBIN />
+      <EtcdCheckBIN />
+    </details>
+  </TabItem>
+  <TabItem value="kubectl">
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Installation of kubectl</p>
+          <p className="obligatory-note-green">● Optional</p>
+        </div>
+      </summary>
+      <KubectlDownloadBIN />
+      <KubectlCheckBIN />
+    </details>
+  </TabItem>
+  <TabItem value="crictl">
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Installation of crictl</p>
+          <p className="obligatory-note-green">● Optional</p>
+        </div>
+      </summary>
+      <CrictlDownloadBIN />
+      <CrictlCheckBIN />
+    </details>
+  </TabItem>
+  <TabItem value="kubeadm">
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Installation of kubeadm</p>
+          <p className="obligatory-note-green">● Optional</p>
+        </div>
+      </summary>
+      <KubeadmDownloadBIN />
+      <KubeadmCheckBIN />
+    </details>
+  </TabItem>
+</Tabs>

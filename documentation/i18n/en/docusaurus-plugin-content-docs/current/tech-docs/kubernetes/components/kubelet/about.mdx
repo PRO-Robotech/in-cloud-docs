@@ -1,0 +1,16 @@
+**Description**: **Kubelet** is an agent running on each node of a Kubernetes cluster. It is responsible for starting and managing containers (pods), as well as maintaining their current state. Kubelet performs operations related to container monitoring, interacts with the API Server and the container runtime, and provides information about the state of pods and containers to **etcd**.
+
+#### Functions
+- Starting and managing containers on the node, including creating, starting, and stopping pods.
+- Monitoring the state of containers, performing **liveness** and **readiness** checks.
+- Reporting the current state of pods and containers to **etcd** via the API Server.
+- Processing commands from the API Server, such as restarting or updating containers.
+
+#### Features
+- Interacts with the **Container Runtime Interface (CRI)**, providing integration with container engines (e.g., **containerd** or **CRI-O**).
+- Supports **liveness** and **readiness probes**, which help determine when containers are ready to serve traffic or when they should be restarted.
+- Ensures the accuracy and consistency of the container state on the node by transmitting the current state information to the **API Server**.
+- Uses **RBAC (Role-Based Access Control)** (ABAC) to manage access to Kubernetes resources, allowing the definition of what actions Kubelet can perform within the cluster. This includes access to the API Server and interaction with other components, ensuring security at the node and resource level.
+- Works with **ServiceAccount** for authentication and authorization of requests to the API Server, using the corresponding **role** and **rolebinding**.
+
+**Kubelet** is a critical element in maintaining the health and security of containers on each node. It ensures correct container execution, monitoring, and interaction with other components through controlled access using RBAC.

@@ -1,0 +1,14 @@
+import CoreModulesComponent from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/setup-environments/modprobe/coreModulesComponent.mdx'
+
+> This section covers loading kernel modules required for the correct operation of Kubernetes.
+> The setup includes modprobe configuration and activation of the overlay and br_netfilter modules, which provide support for the container filesystem and network functions. These steps are mandatory for the functioning of network policies, iptables, and container runtimes.
+
+<details>
+  <summary>
+    <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+      <p style={{ marginBottom: 0 }}>Loading kernel modules</p>
+      <p className="obligatory-note-orange">● Required</p>
+    </div>
+  </summary>
+  <CoreModulesComponent />
+</details>

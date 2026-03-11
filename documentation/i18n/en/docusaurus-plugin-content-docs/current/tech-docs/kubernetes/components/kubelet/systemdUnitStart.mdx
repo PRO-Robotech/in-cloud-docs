@@ -1,0 +1,54 @@
+import dedent                   from 'ts-dedent'
+import CodeBlock                from '@theme/CodeBlock'
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+import StatusSystemdUnit from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/kubelet/checks/statusSystemdUnitRunning.mdx'
+
+<h4>Environment variables</h4>
+
+:::warning Note
+This configuration block is applicable **only** when installing Kubernetes manually (using the _"Kubernetes the Hard Way"_ method). When using the **kubeadm** utility, the configuration file will be created automatically based on the specification provided in the `kubeadm-config` file.
+
+<Tabs groupId="install-type">
+
+  <TabItem value='Bash'>
+    <CodeBlock language="bash">
+        {dedent`
+          cat <<EOF > ${CUSTOM_VALUE.kuberneteKubeletFolderPath.value}/kubeadm-flags.env
+          KUBELET_KUBEADM_ARGS="--container-runtime-endpoint=unix://${CUSTOM_VALUE.criEndpoint.value} --pod-infra-container-image=${CUSTOM_VALUE.baseDockerRegistry.value}/${CUSTOM_VALUE.pausedImage.value} --config=${CUSTOM_VALUE.kuberneteKubeletFolderPath.value}/config-custom.yaml --cluster-domain=${CUSTOM_VALUE.kubernetesClusterDomain.value} --cluster-dns=${CUSTOM_VALUE.kubernetesDNSAddress.value}
+          "
+          EOF
+        `}
+    </CodeBlock>
+  </TabItem>
+
+  <TabItem value='Cloud-init'>
+      <CodeBlock language="bash">
+        {dedent`
+          - path: ${CUSTOM_VALUE.kuberneteKubeletFolderPath.value}/kubeadm-flags.env
+            owner: root:root
+            permissions: '0644'
+            content: |
+              KUBELET_KUBEADM_ARGS="--container-runtime-endpoint=unix://${CUSTOM_VALUE.criEndpoint.value} --pod-infra-container-image=${CUSTOM_VALUE.baseDockerRegistry.value}/${CUSTOM_VALUE.pausedImage.value} --config=${CUSTOM_VALUE.kuberneteKubeletFolderPath.value}/config-custom.yaml --cluster-domain=${CUSTOM_VALUE.kubernetesClusterDomain.value} --cluster-dns=${CUSTOM_VALUE.kubernetesDNSAddress.value}                "
+        `}
+      </CodeBlock>
+  </TabItem>
+</Tabs>
+
+:::
+
+> This command starts the Kubelet service, which is responsible for deploying all containers based on Static Pods manifests.
+
+<CodeBlock language="bash">
+    {dedent`
+        systemctl start kubelet
+    `}
+</CodeBlock>
+
+<h3>Systemd Unit Status</h3>
+
+<details className="custom-blue-block">
+  <summary>Systemd unit readiness check</summary>
+  <StatusSystemdUnit />
+</details>

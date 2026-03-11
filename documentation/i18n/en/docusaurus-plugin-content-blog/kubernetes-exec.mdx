@@ -1,0 +1,480 @@
+---
+title: 'Kubernetes pods/exec'
+description: 'The pods/exec transition to WebSocket (GET instead of POST), impact on RBAC and permission risks in Kubernetes.'
+date: 2025-08-18
+slug: kubernetes-pods-exec
+authors: [dlputilin]
+toc_min_heading_level: 2
+toc_max_heading_level: 2
+tags: [Kubernetes, RBAC, Security, pods/exec]
+---
+
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
+import CodeBlock from '@theme/CodeBlock'
+import dedent from 'ts-dedent'
+import { YamlModal } from '@site/src/components/YamlModal/YamlModal'
+import { getBasePrefix } from '@site/src/utils/getBasePrefix'
+import { YANDEX_KUBERNETES_AUDIT_POLICY } from '@site/src/constants/kubernetes/kubernetesAudit'
+import './kubernetes-exec.css'
+
+<h3>
+  Kubernetes pods/exec <span style={{ color: '#1cc5ac' }}>#</span>{' '}
+</h3>
+
+<div
+  style={{
+    display: 'flex',
+    flexWrap: 'wrap',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    gap: '30px',
+    marginTop: '1.5rem',
+  }}
+>
+  <div style={{ flex: '1 1 58%', minWidth: '280px', maxWidth: '620px' }}>
+    <p>
+      <code>pods/exec</code> is a convenient way to execute commands inside a container for debugging and administration. But
+      here's a challenge right off the bat: how safe do you think the following Kubernetes role is — one that could be granted
+      to any user, assuming the absurd scenario that the Secret resource is not used in the cluster?
+    </p>
+  </div>
+  <div className="execImageWrapper">
+    <img
+      src={`${getBasePrefix()}img/blog/pod-exec-promo.png`}
+      alt="pods/exec audit"
+      style={{
+        width: '100%',
+        maxWidth: '330px',
+        filter: 'drop-shadow(0 0 30px rgba(196, 202, 255, 0.2))',
+        transition: 'transform 0.3s ease-in-out',
+      }}
+    />
+  </div>
+</div>
+
+<CodeBlock language="bash">
+  {dedent`
+    ---
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: ClusterRole
+    metadata:
+      name: test-role
+    rules:
+      - apiGroups: [""]
+        resources: ["*"]
+        verbs: ["get"]
+  `}
+</CodeBlock>
+
+<p>
+  If you answered "safe," you're not alone — and you would have granted <code>pods/exec</code> access to any
+  user in the cluster, provided you also created a ClusterRoleBinding on top of it.
+</p>
+
+{/* truncate */}
+
+## Table of Contents
+
+- [What changed](#what-changed)
+- [Impact on kubectl and RBAC](#impact-on-kubectl-and-rbac)
+- [Testing on Minikube](#testing-on-minikube)
+- [Demonstration (kubectl 1.33.3 vs 1.29.0)](#demonstration-kubectl-1333-vs-1290)
+- [Conclusions and recommendations](#conclusions-and-recommendations)
+
+## What changed
+
+In reality — nothing. The issue has been around for over 7 years, yet few people are aware of it. The problem is that a widespread belief has taken root among knowledgeable engineers that access to <code>pods/exec</code> can be granted with a simple rule like this:
+
+<CodeBlock language="bash">
+  {dedent`
+    ---
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: ClusterRole
+    metadata:
+      name: test-role
+    rules:
+      - apiGroups: [""]
+        resources: ["pods/exec"]
+        verbs: ["create"]
+  `}
+</CodeBlock>
+
+In principle, you would be right, but as practice has shown — that's not the whole story =)
+
+The first mention of the issue was found with the help of the folks from [ever_secure](https://t.me/ever_secure):
+
+[kubernetes RBAC role verbs to exec to pod](https://stackoverflow.com/questions/48118125/kubernetes-rbac-role-verbs-to-exec-to-pod)
+
+> I had to add the verb "get" to my pods/exec section as well since the client library I'm using is doing an http GET to negotiate a websocket first.
+> Using kubectl it sends an http POST and requires the "create" verb in that case.
+> It may be worth updating this example to include the "get" verb.
+
+So, as early as 7 years ago there was a warning sign: `kubectl exec` can work not only via POST, but also via GET.
+
+This was definitively confirmed after `kubectl` transitioned to WebSocket in version 1.31, where `kubectl exec` now uses **GET** to establish the connection instead of **POST** by default.
+
+Source: [Streaming Transitions from SPDY to WebSockets](https://kubernetes.io/blog/2024/08/20/websockets-transition/)
+
+## Impact on kubectl and RBAC
+
+To understand why `get` is now required, you need to understand how HTTP methods map to Kubernetes verbs:
+
+<table>
+  <thead>
+    <tr>
+      <th>HTTP method</th>
+      <th>Kubernetes verb</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <code>GET</code>
+      </td>
+      <td>
+        <code>get</code>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>POST</code>
+      </td>
+      <td>
+        <code>create</code>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>PUT</code>
+      </td>
+      <td>
+        <code>update</code>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>DELETE</code>
+      </td>
+      <td>
+        <code>delete</code>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+Some clients use GET to establish a WebSocket connection with pods/exec rather than POST, as kubectl used to. Therefore, for exec to work, not only `create` but also `get` may be required in RBAC.
+
+## Testing on Minikube
+
+### Cluster and contexts
+
+<CodeBlock language="bash">
+  {dedent`
+    minikube -p 13201 start --kubernetes-version=1.32.1 --ssh-port=13201
+  `}
+</CodeBlock>
+
+<CodeBlock language="bash">
+  {dedent`
+    kubectl get nodes
+  `}
+</CodeBlock>
+
+<CodeBlock language="bash">
+  {dedent`
+    NAME     STATUS   ROLES           AGE   VERSION
+    13201    Ready    control-plane   60s   v1.32.1
+  `}
+</CodeBlock>
+
+### cluster-admin and anonymous
+
+<CodeBlock language="bash">
+  {dedent`
+    export KUBECONFIG=cluster-admin
+    minikube -p 13201 update-context
+  `}
+</CodeBlock>
+
+<CodeBlock language="bash">
+  {dedent`
+    export KUBECONFIG=anonymous-view
+    minikube -p 13201 update-context
+    sed -i '/^[[:space:]]*users:/,$d' anonymous-view
+  `}
+</CodeBlock>
+
+### Pod and exec verification
+
+<CodeBlock language="bash">
+  {dedent`
+    kubectl \\
+      --kubeconfig=cluster-admin \\
+      apply -f - <<EOF
+    ---
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
+    EOF
+  `}
+</CodeBlock>
+
+<CodeBlock language="bash">
+  {dedent`
+    kubectl --kubeconfig=cluster-admin get po
+  `}
+</CodeBlock>
+
+<CodeBlock language="bash">
+  {dedent`
+    NAME    READY   STATUS    RESTARTS   AGE
+    nginx   1/1     Running   0          23s
+  `}
+</CodeBlock>
+
+### exec: cluster-admin vs anonymous
+
+<CodeBlock language="bash">
+  {dedent`
+    kubectl --kubeconfig=cluster-admin exec -it nginx -- sh
+  `}
+</CodeBlock>
+
+<CodeBlock language="bash">
+  {dedent`
+    # ls -al
+    total 76
+    drwxr-xr-x 1 root root 4096 Aug 18 15:09 .
+    drwxr-xr-x 1 root root 4096 Aug 18 15:09 ..
+  `}
+</CodeBlock>
+
+<CodeBlock language="bash">
+  {dedent`
+    kubectl --kubeconfig=anonymous-view exec -it nginx -- sh
+  `}
+</CodeBlock>
+
+<CodeBlock language="bash">
+  {dedent`
+    Error from server (Forbidden): pods "nginx" is forbidden: User "system:anonymous" cannot get resource "pods" in API group "" in the namespace "default"
+  `}
+</CodeBlock>
+
+### Adding <code>get</code> access only
+
+:::note
+Please note that along with `pods/exec`, access to `pods` is also added, otherwise `exec` will not work.
+:::
+
+<CodeBlock language="bash">
+  {dedent`
+    kubectl \\
+      --kubeconfig=cluster-admin \\
+      apply -f - <<EOF
+    ---
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: ClusterRole
+    metadata:
+      name: anonymous-view
+    rules:
+      - apiGroups: [""]
+        resources:
+          - pods
+          - pods/exec
+        verbs: ["get"]
+    ---
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: ClusterRoleBinding
+    metadata:
+      name: anonymous-view
+    roleRef:
+      apiGroup: rbac.authorization.k8s.io
+      kind: ClusterRole
+      name: anonymous-view
+    subjects:
+      - kind: User
+        name: system:anonymous
+        apiGroup: rbac.authorization.k8s.io
+    EOF
+  `}
+</CodeBlock>
+
+<CodeBlock language="bash">
+  {dedent`
+    clusterrole.rbac.authorization.k8s.io/anonymous-view created
+    clusterrolebinding.rbac.authorization.k8s.io/anonymous-view created
+  `}
+</CodeBlock>
+
+<CodeBlock language="bash">
+  {dedent`
+    kubectl --kubeconfig=anonymous-view exec -it nginx -- sh
+  `}
+</CodeBlock>
+
+<CodeBlock language="bash">
+  {dedent`
+    # ls -la
+    total 76
+    drwxr-xr-x 1 root root 4096 Aug 18 15:09 .
+    drwxr-xr-x 1 root root 4096 Aug 18 15:09 ..
+    -rwxr-xr-x 1 root root    0 Aug 18 15:09 .dockerenv
+    drwxr-xr-x 2 root root 4096 Mar 26 2019 bin
+    drwxr-xr-x 2 root root 4096 Feb  3 2019 boot
+    drwxr-xr-x 5 root root  360 Aug 18 15:09 dev
+  `}
+</CodeBlock>
+
+## Demonstration (kubectl 1.33.3 vs 1.29.0)
+
+<details open>
+<summary>
+  <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+    <p style={{ marginBottom: 0 }}>kubectl v1.33.3</p>
+  </div>
+</summary>
+
+<CodeBlock language="bash">
+  {dedent`
+    kubectl version
+    Client Version: v1.33.3
+  `}
+</CodeBlock>
+
+<CodeBlock language="bash">
+  {dedent`
+    kubectl exec -it nginx -- sh
+  `}
+</CodeBlock>
+
+<CodeBlock language="bash">
+  {dedent`
+    ****** verb="GET" url="/api/v1/namespaces/default/pods/incloud-web-incloud-web-chart-d99877d74-27tcd/exec?command=sh&container=nginx&stdin=true&stdout=true&tty=true" ******
+  `}
+</CodeBlock>
+
+<CodeBlock language="bash">
+  {dedent`
+    / $ ls -al
+    total 76
+    drwxr-xr-x 1 root root 4096 Aug 16 20:43 .
+    drwxr-xr-x 1 root root 4096 Aug 16 20:43 ..
+    drwxr-xr-x 2 root root 4096 Jul 15 10:42 bin
+    drwxr-xr-x 5 root root  360 Aug 16 20:43 dev
+  `}
+</CodeBlock>
+</details>
+
+<details open>
+<summary>
+  <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+    <p style={{ marginBottom: 0 }}>kubectl v1.29.0</p>
+  </div>
+</summary>
+
+<CodeBlock language="bash">
+  {dedent`
+    kubectl version
+    Client Version: v1.29.0
+  `}
+</CodeBlock>
+
+<CodeBlock language="bash">
+  {dedent`
+    kubectl exec -it nginx -- sh
+  `}
+</CodeBlock>
+
+<CodeBlock language="bash">
+  {dedent`
+    ****** POST https://api/v1/namespaces/default/pods/incloud-web-incloud-web-chart-d99877d74-27tcd/exec?command=sh&container=nginx&stdin=true&stdout=true&tty=true ******
+  `}
+</CodeBlock>
+
+<CodeBlock language="bash">
+  {dedent`
+    Error from server (Forbidden): pods "nginx" is forbidden:
+    User "system:anonymous" cannot get resource "pods" in API group "" in the namespace "default"
+  `}
+</CodeBlock>
+</details>
+
+:::danger Warning!
+In this example, we wanted to demonstrate the behavior of `kubectl exec` across different client versions. With the same cluster and role configuration. As you can see, the behavior differs, and depending on the client version, a different RBAC configuration may be required.
+:::
+
+---
+
+<h3>Kubernetes Audit</h3>
+
+<CodeBlock language="bash">
+  {dedent`
+    {
+      "annotations": {
+        "authorization.k8s.io/decision": "allow",
+        "authorization.k8s.io/reason": "RBAC: allowed by ClusterRoleBinding \\"anonymous-view-all\\" of ClusterRole \\"anonymous-view\\" to User \\"system:anonymous\\""
+      },
+      "apiVersion": "audit.k8s.io/v1",
+      "auditID": "142e967e-4958-4a77-b691-2f71e26ba6ec",
+      "kind": "Event",
+      "level": "Request",
+      "objectRef": {
+        "apiVersion": "v1",
+        "name": "nginx",
+        "namespace": "default",
+        "resource": "pods",
+        "subresource": "exec"
+      },
+      "requestURI": "/api/v1/namespaces/default/pods/nginx/exec?...",
+      "responseStatus": {
+        "code": 101,
+        "metadata": {}
+      },
+      "sourceIPs": ["10.0.0.33"],
+      "stage": "ResponseComplete",
+      "stageTimestamp": "2025-08-15T16:46:50.296700Z",
+      "user": {
+        "groups": ["system:unauthenticated"],
+        "username": "system:anonymous"
+      },
+      "userAgent": "Mozilla/5.0 (...) Safari/537.36",
+      "verb": "get"
+    }
+  `}
+</CodeBlock>
+
+## Conclusions and recommendations
+
+Unfortunately, you can't know everything, but you can try to minimize the risks.
+
+Review your RBAC — don't blindly trust roles with `*` in `resources` and `verbs`.
+
+<CodeBlock language="bash">
+  {dedent`
+    ---
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: ClusterRole
+    metadata:
+      name: test-role
+    rules:
+      - apiGroups: [""]
+        resources: ["pods"]
+        verbs: ["get"]
+      - apiGroups: [""]
+        resources: ["pods/exec"]
+        verbs: ["create", "get"]
+  `}
+</CodeBlock>
+
+:::danger Dangerous pattern
+The best policies are explicit. Do not use `*` in `resources` or `verbs`. This will save you from unexpected surprises.
+:::

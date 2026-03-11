@@ -3,6 +3,7 @@ import CodeBlock from '@theme/CodeBlock'
 import Admonition from '@theme/Admonition'
 import Details from '@theme/Details'
 import Link from '@docusaurus/Link'
+import Translate, { translate } from '@docusaurus/Translate'
 import dedent from 'ts-dedent'
 import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 
@@ -27,7 +28,7 @@ export const CertificateStatusCheck: FC<CertificateStatusCheckProps> = ({
 
   const warningContent = isOpenssl ? (
     <>
-      Данный раздел зависит от следующих разделов:
+      <Translate id="cert.dependsOnSections">Данный раздел зависит от следующих разделов:</Translate>
       <ul>
         <li>
           <Link to="/tech-docs/kubernetes/certificates/examination/all-examination">
@@ -37,7 +38,7 @@ export const CertificateStatusCheck: FC<CertificateStatusCheckProps> = ({
       </ul>
     </>
   ) : (
-    <>Данная команда не способна отображать статус конкретного сертификата, только список доступных.</>
+    <Translate id="cert.kubeadmLimitation">Данная команда не способна отображать статус конкретного сертификата, только список доступных.</Translate>
   )
 
   const outputLine = dedent`
@@ -48,13 +49,13 @@ export const CertificateStatusCheck: FC<CertificateStatusCheckProps> = ({
   return (
     <Details
       className="custom-blue-block"
-      summary={<summary>Проверка готовности сертификата</summary>}
+      summary={<summary>{translate({ id: 'cert.checkReadiness', message: 'Проверка готовности сертификата' })}</summary>}
     >
-      <Admonition type="warning" title="Обратите внимание">
+      <Admonition type="warning" title={translate({ id: 'common.attention', message: 'Обратите внимание' })}>
         {warningContent}
       </Admonition>
       <CodeBlock language="bash">{command}</CodeBlock>
-      <Admonition type="note" title="Вывод команды">
+      <Admonition type="note" title={translate({ id: 'common.commandOutput', message: 'Вывод команды' })}>
         <CodeBlock language="bash">{outputLine}</CodeBlock>
       </Admonition>
     </Details>

@@ -1,0 +1,76 @@
+import CodeBlock from '@theme/CodeBlock'
+import dedent from 'ts-dedent'
+
+:::warning Note
+`kubeadm` does not manage the server certificate used by the `kubelet` component.
+
+When the `kubelet` systemd unit starts, it initiates a certificate signing request.
+To complete the process, manual approval is required using the command:
+`kubectl certificate approve $CERT_NAME`.
+
+<h4>RotateKubeletServerCertificate</h4>
+For automatic `kubelet` certificate rotation, additional configuration is required:
+:::
+
+<h4>Kube-Apiserver configuration</h4>
+
+- [Static Pod](/tech-docs/kubernetes/components/kubeAPI/setup.mdx)
+
+<CodeBlock language="yaml">
+  {dedent`
+    spec:
+      containers:
+      - command:
+        - --feature-gates=RotateKubeletServerCertificate=true
+  `}
+</CodeBlock>
+
+- [Kubeadm Configs](/tech-docs/kubernetes/components/kubeadm/lifecycleSettings.mdx)
+
+<CodeBlock language="yaml">
+  {dedent`
+    apiServer:
+      extraArgs:
+        feature-gates: "RotateKubeletServerCertificate=true"
+  `}
+</CodeBlock>
+
+<h4>Kube-Controller-Manager configuration</h4>
+
+- [Static Pod](/tech-docs/kubernetes/components/controllerManager/setup.mdx)
+
+<CodeBlock language="yaml">
+  {dedent`
+    spec:
+      containers:
+      - command:
+        - --feature-gates=RotateKubeletServerCertificate=true
+  `}
+</CodeBlock>
+
+- [Kubeadm Configs](/tech-docs/kubernetes/components/kubeadm/lifecycleSettings.mdx)
+
+<CodeBlock language="yaml">
+  {dedent`
+    controllerManager:
+      extraArgs:
+        feature-gates: "RotateKubeletServerCertificate=true"
+  `}
+</CodeBlock>
+
+<h4>Kubelet configuration</h4>
+
+- [Kubelet Custom Config](/tech-docs/kubernetes/components/kubelet/lifecycleSettings.mdx)
+
+<CodeBlock language="yaml">
+  {dedent`
+    rotateCertificates: true
+    featureGates:
+      RotateKubeletServerCertificate: true
+  `}
+</CodeBlock>
+
+:::danger Important for cloud environments!
+  If you are using Cloud Controller Manager (CCM), the certificate will not be issued until
+  `CCM` assigns an address to the `Node` in the `INTERNAL_IP` field.
+:::

@@ -1,0 +1,21 @@
+
+import TabItem                from '@theme/TabItem'
+import Tabs                   from '@theme/Tabs'
+import FrontProxyCACert       from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/certificates/center-authority/frontProxyCA/openssl.mdx'
+import FrontProxyCAKubeadm    from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/certificates/center-authority/frontProxyCA/kubeadm.mdx'
+
+
+> **Purpose:** CA for the API aggregation mechanism (extension API servers). Signs the `front-proxy-client` certificate, which kube-apiserver uses when proxying requests to extended API servers (e.g., metrics-server, custom API servers).
+
+:::warning Note
+**Note:** this block describes only the process of creating ```Front Proxy CA``` root certificates.
+:::
+
+<Tabs groupId="install-type">
+  <TabItem value='HardWay'>
+    <FrontProxyCACert />
+  </TabItem>
+  <TabItem value='Kubeadm'>
+    <FrontProxyCAKubeadm />
+  </TabItem>
+</Tabs>

@@ -1,0 +1,31 @@
+---
+id: restore
+---
+
+import SingleNodeK8s            from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/etcd/troubleshooting/restore/singleNodeK8s.mdx'
+import ThreeNodeK8s             from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/etcd/troubleshooting/restore/threeNodeK8sNEW.mdx'
+import CrushedNodeK8s           from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/etcd/troubleshooting/restore/crushedNodeK8s.mdx'
+import TabItem                  from '@theme/TabItem'
+import Tabs                     from '@theme/Tabs'
+
+# 5.1.5.7. Restoration
+
+> In this chapter, we will consider options for restoring ETCD.
+
+
+:::warning Note
+
+This section depends on the following sections:
+- [Backups](/tech-docs/etcd/components/etcdbrctl/etcd-backups).
+:::
+
+
+<Tabs groupId="etcd-recovery-mode">
+  <TabItem value='etcdbrctl'>
+    <details>
+      <summary>Instructions</summary>
+      <ThreeNodeK8s />
+    </details>
+  </TabItem>
+</Tabs>
+

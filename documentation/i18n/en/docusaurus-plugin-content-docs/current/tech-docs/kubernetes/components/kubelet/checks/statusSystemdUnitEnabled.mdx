@@ -1,0 +1,26 @@
+import dedent                   from 'ts-dedent'
+import CodeBlock                from '@theme/CodeBlock'
+
+:::warning Note
+Note that when creating a cluster with ***Kubeadm*** without running `kubeadm init` or `kubeadm join`, the Systemd Unit will be added to autostart but will be disabled.
+:::
+
+
+<CodeBlock language="bash">
+    {dedent`
+        systemctl status kubelet
+    `}
+</CodeBlock>
+
+:::note Command output
+<CodeBlock language="bash">
+    {dedent`
+        ○ kubelet.service - kubelet: The Kubernetes Node Agent
+            Loaded: loaded (/usr/lib/systemd/system/kubelet.service; enabled; preset: enabled)
+            Drop-In: /usr/lib/systemd/system/kubelet.service.d
+                    └─10-kubeadm.conf
+            Active: inactive (dead)
+            Docs: https://kubernetes.io/docs/
+    `}
+</CodeBlock>
+:::

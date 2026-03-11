@@ -1,0 +1,21 @@
+
+import TabItem                from '@theme/TabItem'
+import Tabs                   from '@theme/Tabs'
+import ETCDCACert             from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/etcd/certificates/center-authority/etcdCA/openssl.mdx'
+import ETCDCAKubeadm          from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/etcd/certificates/center-authority/etcdCA/kubeadm.mdx'
+
+
+> **Purpose:** CA for all etcd cluster certificates. Signs server, client, and peer certificates for etcd: `etcd-server` (client connections, port 2379), `etcd-peer` (inter-node replication, port 2380), and `etcd-healthcheck-client` (health checks). Also used by kube-apiserver to verify the connection to etcd via the `apiserver-etcd-client` certificate.
+
+:::warning Note
+**Note:** this section only describes the process of creating ```ETCD CA``` root certificates.
+:::
+
+<Tabs groupId="install-type">
+  <TabItem value='HardWay'>
+    <ETCDCACert />
+  </TabItem>
+  <TabItem value='Kubeadm'>
+    <ETCDCAKubeadm />
+  </TabItem>
+</Tabs>

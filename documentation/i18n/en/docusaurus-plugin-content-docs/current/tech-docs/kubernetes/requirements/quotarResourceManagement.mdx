@@ -1,0 +1,226 @@
+---
+id: quota-resource-management
+---
+# 2.5. Quota
+
+## 2.5.1. Quota Management System Requirements
+### 2.5.1.1. Calculation and Reporting Requirements
+<table>
+  <thead>
+    <tr>
+      <th>No.</th>
+      <th>Requirement</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>The platform must provide the ability to configure and generate reports on resource utilization by individual projects/tenants.</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>The platform must provide the ability to configure and generate reports on the number (and names) of microservices, projects, and project instances by environments and the platform as a whole.</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>The platform must provide the ability to configure and generate reports on resource utilization by the platform as a whole.</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>The platform must provide the ability to export resource utilization reports in xlsx format.</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>The platform must provide the ability to export resource utilization reports in pdf format.</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>The platform must provide the ability to export resource utilization reports in csv format.</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>The platform must provide the ability to export resource utilization reports in xml format.</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### 2.5.1.2. Information Display Requirements
+<table>
+  <thead>
+    <tr>
+      <th>No.</th>
+      <th>Requirement</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>The platform must provide resource accounting for individual projects (tenants) on the self-service portal.</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>The platform must provide a list of available compute resources on the self-service portal according to the role model.</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>The platform must provide compute resource accounting for individual projects (tenants) on the administrator portal.</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>The platform must provide accounting of distributed and reserve compute resources on the administrator portal.</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>The platform must display information about the current status of resource allocation requests on the self-service portal.</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>The platform must display information about the current status of resource allocation requests on the administration portal.</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>Availability of image/artifact storage repositories (specify product name in comments).</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>Ability to use existing Sonatype Nexus image/artifact storage repositories.</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>Ability to use existing GitLab Runner CI/CD automation tool.</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>Availability of an automated testing launch system (Jenkins).</td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td>Ability to use existing external Selenium automated testing system.</td>
+    </tr>
+    <tr>
+      <td>12</td>
+      <td>Ability to use existing GitLab automated test storage system.</td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td>Ability to use existing Zephyr Scale manual test storage system.</td>
+    </tr>
+    <tr>
+      <td>14</td>
+      <td>Ability to integrate with code quality analysis systems.</td>
+    </tr>
+    <tr>
+      <td>15</td>
+      <td>Ability to integrate with code vulnerability scanning tools.</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>Availability of GitOps tools: GitLab, ArgoCD, Ansible, Terraform.</td>
+    </tr>
+    <tr>
+      <td>17</td>
+      <td>Ability to use existing Jira development project management system.</td>
+    </tr>
+    <tr>
+      <td>18</td>
+      <td>Availability of Vault configuration management system.</td>
+    </tr>
+    <tr>
+      <td>19</td>
+      <td>Ability to deploy temporary containers for end-to-end testing (without impacting shared test environments).</td>
+    </tr>
+    <tr>
+      <td>20</td>
+      <td>Ability to manage feature toggles from the GitLab interface.</td>
+    </tr>
+    <tr>
+      <td>21</td>
+      <td>Ability to configure deployment for canary deployment.</td>
+    </tr>
+    <tr>
+      <td>22</td>
+      <td>Ability to configure deployment for Blue/Green deployment.</td>
+    </tr>
+    <tr>
+      <td>23</td>
+      <td>Ability to clone a repository from another VCS.</td>
+    </tr>
+    <tr>
+      <td>24</td>
+      <td>Availability of a configurable application deployment template.</td>
+    </tr>
+    <tr>
+      <td>25</td>
+      <td>Ability to generate/supplement operational documentation for IS components according to the current component state in in-cloud (which environments exist, IPs, VLANs, etc.).</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+### 2.5.1.3. General Requirements
+
+<table>
+  <thead>
+    <tr>
+      <th rowSpan="2">No.</th>
+      <th rowSpan="2">Requirement</th>
+      <th colSpan="5">Attributes </th>
+    </tr>
+    <tr>
+      <th>CPU</th>
+      <th>GPU</th>
+      <th>RAM</th>
+      <th>DISK</th>
+      <th>Network</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>The platform must provide accounting of available and project-allocated (tenant) resources:</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>The platform must provide the ability to set and manage quotas and limits:</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>The platform must provide the ability to set and manage multi-level (granular) quotas and limits.</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>The platform must provide accounting of temporarily allocated resources to projects (tenants), allocation period control. (e.g., pilot projects)</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>The platform must provide the ability to forecast resource usage by individual projects (tenants), information systems, and the platform as a whole.</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+    </tr>
+  </tbody>
+</table>

@@ -1,0 +1,95 @@
+import dedent from 'ts-dedent'
+import CodeBlock from '@theme/CodeBlock'
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+> `Delegate=yes` delegates cgroup subsystem management to the container runtime (required for proper Kubernetes operation). `KillMode=process` ensures that when the service is stopped, only the main containerd process is terminated, not the child containers. `OOMScoreAdjust=-999` protects the process from OOM Killer — without the runtime, all containers on the node become unmanageable.
+
+<Tabs groupId="install-type">
+
+  <TabItem value='Bash'>
+    <CodeBlock language="bash">
+      {dedent`
+        cat <<EOF > /usr/lib/systemd/system/containerd.service
+        [Unit]
+        Description=containerd container runtime
+        Documentation=https://containerd.io
+        After=network.target local-fs.target containerd-install.service runc-install.service
+        Wants=containerd-install.service runc-install.service
+
+        [Service]
+        ExecStartPre=-/sbin/modprobe overlay
+        ExecStart=/usr/local/bin/containerd
+
+        Type=notify
+        Delegate=yes
+        KillMode=process
+        Restart=always
+        RestartSec=5
+        LimitNPROC=infinity
+        LimitCORE=infinity
+        LimitNOFILE=infinity
+        TasksMax=infinity
+        OOMScoreAdjust=-999
+
+        [Install]
+        WantedBy=multi-user.target
+        EOF
+      `}
+    </CodeBlock>
+
+    <CodeBlock language="bash">
+      {dedent`
+        systemctl enable containerd
+        systemctl start containerd
+      `}
+    </CodeBlock>
+
+
+  </TabItem>
+
+  <TabItem value='Cloud-init'>
+    <CodeBlock language="yaml">
+        {dedent`
+          # write_files:
+          - path: /usr/lib/systemd/system/containerd.service
+            owner: root:root
+            permissions: '0644'
+            content: |
+              [Unit]
+              Description=containerd container runtime
+              Documentation=https://containerd.io
+              After=network.target local-fs.target containerd-install.service runc-install.service
+              Wants=containerd-install.service runc-install.service
+
+              [Service]
+              ExecStartPre=-/sbin/modprobe overlay
+              ExecStart=/usr/local/bin/containerd
+
+              Type=notify
+              Delegate=yes
+              KillMode=process
+              Restart=always
+              RestartSec=5
+              LimitNPROC=infinity
+              LimitCORE=infinity
+              LimitNOFILE=infinity
+              TasksMax=infinity
+              OOMScoreAdjust=-999
+
+              [Install]
+              WantedBy=multi-user.target
+        `}
+    </CodeBlock>
+
+    <CodeBlock language="bash">
+      {dedent`
+        #runcmd:
+        - systemctl enable containerd
+        - systemctl start containerd
+      `}
+    </CodeBlock>
+
+  </TabItem>
+
+</Tabs>

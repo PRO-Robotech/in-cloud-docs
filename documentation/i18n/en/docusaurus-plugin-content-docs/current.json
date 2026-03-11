@@ -1,0 +1,194 @@
+{
+  "version.label": {
+    "message": "Next",
+    "description": "The label for version current"
+  },
+  "sidebar.techDocs.category.In-Cloud": {
+    "message": "In-Cloud",
+    "description": "The label for category In-Cloud in sidebar techDocs"
+  },
+  "sidebar.techDocs.category.5. Настройка": {
+    "message": "5. Setup",
+    "description": "The label for category 5. Настройка in sidebar techDocs"
+  },
+  "sidebar.techDocs.category.5.1. Etcd": {
+    "message": "5.1. Etcd",
+    "description": "The label for category 5.1. Etcd in sidebar techDocs"
+  },
+  "sidebar.techDocs.category.5.1.1. Окружение": {
+    "message": "5.1.1. Environment",
+    "description": "The label for category 5.1.1. Окружение in sidebar techDocs"
+  },
+  "sidebar.techDocs.category.5.1.2. Аутентификация": {
+    "message": "5.1.2. Authentication",
+    "description": "The label for category 5.1.2. Аутентификация in sidebar techDocs"
+  },
+  "sidebar.techDocs.category.5.1.3. Настройка": {
+    "message": "5.1.3. Configuration",
+    "description": "The label for category 5.1.3. Настройка in sidebar techDocs"
+  },
+  "sidebar.techDocs.category.5.1.5. Диагностика": {
+    "message": "5.1.5. Diagnostics",
+    "description": "The label for category 5.1.5. Диагностика in sidebar techDocs"
+  },
+  "sidebar.techDocs.category.5.2. Kubernetes CP": {
+    "message": "5.2. Kubernetes CP",
+    "description": "The label for category 5.2. Kubernetes CP in sidebar techDocs"
+  },
+  "sidebar.techDocs.category.5.2.1. Окружение": {
+    "message": "5.2.1. Environment",
+    "description": "The label for category 5.2.1. Окружение in sidebar techDocs"
+  },
+  "sidebar.techDocs.category.5.2.2. Аутентификация": {
+    "message": "5.2.2. Authentication",
+    "description": "The label for category 5.2.2. Аутентификация in sidebar techDocs"
+  },
+  "sidebar.techDocs.category.5.2.3. Установка УК": {
+    "message": "5.2.3. CP Installation",
+    "description": "The label for category 5.2.3. Установка УК in sidebar techDocs"
+  },
+  "sidebar.techDocs.category.5.2.4. Настройка УК": {
+    "message": "5.2.4. CP Configuration",
+    "description": "The label for category 5.2.4. Настройка УК in sidebar techDocs"
+  },
+  "sidebar.techDocs.doc.0. Введение": {
+    "message": "0. Introduction",
+    "description": "The label for the doc item 0. Введение in sidebar techDocs, linking to the doc tech-docs/kubernetes/about"
+  },
+  "sidebar.techDocs.doc.1. Общее описание": {
+    "message": "1. Overview",
+    "description": "The label for the doc item 1. Общее описание in sidebar techDocs, linking to the doc tech-docs/kubernetes/introduction"
+  },
+  "sidebar.techDocs.doc.4. Компоненты": {
+    "message": "4. Components",
+    "description": "The label for the doc item 4. Компоненты in sidebar techDocs, linking to the doc tech-docs/kubernetes/components/components"
+  },
+  "sidebar.techDocs.doc.5.1.1.1. Настройка ОС": {
+    "message": "5.1.1.1. OS Setup",
+    "description": "The label for the doc item 5.1.1.1. Настройка ОС in sidebar techDocs, linking to the doc tech-docs/etcd/setup-environments/os-setup"
+  },
+  "sidebar.techDocs.doc.5.1.1.2. Установка ПО": {
+    "message": "5.1.1.2. Software Installation",
+    "description": "The label for the doc item 5.1.1.2. Установка ПО in sidebar techDocs, linking to the doc tech-docs/etcd/components/all-setup"
+  },
+  "sidebar.techDocs.doc.5.1.2.1. ЦА": {
+    "message": "5.1.2.1. CA",
+    "description": "The label for the doc item 5.1.2.1. ЦА in sidebar techDocs, linking to the doc tech-docs/etcd/certificates/all-center-authority"
+  },
+  "sidebar.techDocs.doc.5.1.2.2. Сертификаты": {
+    "message": "5.1.2.2. Certificates",
+    "description": "The label for the doc item 5.1.2.2. Сертификаты in sidebar techDocs, linking to the doc tech-docs/etcd/certificates/all-certificates"
+  },
+  "sidebar.techDocs.doc.5.1.3.1. Инициализация": {
+    "message": "5.1.3.1. Initialization",
+    "description": "The label for the doc item 5.1.3.1. Инициализация in sidebar techDocs, linking to the doc tech-docs/etcd/components/etcd/setup-init-component"
+  },
+  "sidebar.techDocs.doc.5.1.3.2. Добавление узла": {
+    "message": "5.1.3.2. Adding a Node",
+    "description": "The label for the doc item 5.1.3.2. Добавление узла in sidebar techDocs, linking to the doc tech-docs/etcd/components/etcd/setup-join-component"
+  },
+  "sidebar.techDocs.doc.5.1.3.3. Удаление узла": {
+    "message": "5.1.3.3. Removing a Node",
+    "description": "The label for the doc item 5.1.3.3. Удаление узла in sidebar techDocs, linking to the doc tech-docs/etcd/components/etcd/remove-members"
+  },
+  "sidebar.techDocs.doc.5.1.3.4. Бекапы": {
+    "message": "5.1.3.4. Backups",
+    "description": "The label for the doc item 5.1.3.4. Бекапы in sidebar techDocs, linking to the doc tech-docs/etcd/components/etcdbrctl/etcd-backups"
+  },
+  "sidebar.techDocs.doc.5.1.4. Тюнинг": {
+    "message": "5.1.4. Tuning",
+    "description": "The label for the doc item 5.1.4. Тюнинг in sidebar techDocs, linking to the doc tech-docs/etcd/etcd-tuning"
+  },
+  "sidebar.techDocs.doc.5.1.5.1. Чек боксы": {
+    "message": "5.1.5.1. Checklists",
+    "description": "The label for the doc item 5.1.5.1. Чек боксы in sidebar techDocs, linking to the doc tech-docs/etcd/troubleshooting/check-box"
+  },
+  "sidebar.techDocs.doc.5.1.5.2. Алиасы": {
+    "message": "5.1.5.2. Aliases",
+    "description": "The label for the doc item 5.1.5.2. Алиасы in sidebar techDocs, linking to the doc tech-docs/etcd/troubleshooting/alias"
+  },
+  "sidebar.techDocs.doc.5.1.5.3. Команды": {
+    "message": "5.1.5.3. Commands",
+    "description": "The label for the doc item 5.1.5.3. Команды in sidebar techDocs, linking to the doc tech-docs/etcd/troubleshooting/commands"
+  },
+  "sidebar.techDocs.doc.5.1.5.5. Уплотнение": {
+    "message": "5.1.5.5. Compaction",
+    "description": "The label for the doc item 5.1.5.5. Уплотнение in sidebar techDocs, linking to the doc tech-docs/etcd/troubleshooting/compaction"
+  },
+  "sidebar.techDocs.doc.5.1.5.6. Дефраг-ция": {
+    "message": "5.1.5.6. Defragmentation",
+    "description": "The label for the doc item 5.1.5.6. Дефраг-ция in sidebar techDocs, linking to the doc tech-docs/etcd/troubleshooting/defrag"
+  },
+  "sidebar.techDocs.doc.5.1.5.7. Восстановление": {
+    "message": "5.1.5.7. Recovery",
+    "description": "The label for the doc item 5.1.5.7. Восстановление in sidebar techDocs, linking to the doc tech-docs/etcd/troubleshooting/restore"
+  },
+  "sidebar.techDocs.doc.5.2.1.1. Настройка ОС": {
+    "message": "5.2.1.1. OS Setup",
+    "description": "The label for the doc item 5.2.1.1. Настройка ОС in sidebar techDocs, linking to the doc tech-docs/kubernetes/setup-environments/os-setup"
+  },
+  "sidebar.techDocs.doc.5.2.1.2. Установка ПО": {
+    "message": "5.2.1.2. Software Install",
+    "description": "The label for the doc item 5.2.1.2. Установка ПО in sidebar techDocs, linking to the doc tech-docs/kubernetes/components/all-install"
+  },
+  "sidebar.techDocs.doc.5.2.1.3. Настройка ПО": {
+    "message": "5.2.1.3. Software Config",
+    "description": "The label for the doc item 5.2.1.3. Настройка ПО in sidebar techDocs, linking to the doc tech-docs/kubernetes/components/all-setup"
+  },
+  "sidebar.techDocs.doc.5.2.1.4. Настройка SP": {
+    "message": "5.2.1.4. Static Pods Setup",
+    "description": "The label for the doc item 5.2.1.4. Настройка SP in sidebar techDocs, linking to the doc tech-docs/kubernetes/components/all-static-pods-cp"
+  },
+  "sidebar.techDocs.doc.5.2.1.5. Проверка": {
+    "message": "5.2.1.5. Verification",
+    "description": "The label for the doc item 5.2.1.5. Проверка in sidebar techDocs, linking to the doc tech-docs/kubernetes/components/all-components-ready"
+  },
+  "sidebar.techDocs.doc.5.2.2.1. ЦА": {
+    "message": "5.2.2.1. CA",
+    "description": "The label for the doc item 5.2.2.1. ЦА in sidebar techDocs, linking to the doc tech-docs/kubernetes/certificates/center-authority/all-ca"
+  },
+  "sidebar.techDocs.doc.5.2.2.2. Сертификаты": {
+    "message": "5.2.2.2. Certificates",
+    "description": "The label for the doc item 5.2.2.2. Сертификаты in sidebar techDocs, linking to the doc tech-docs/kubernetes/certificates/components/all-certificates"
+  },
+  "sidebar.techDocs.doc.5.2.2.3. Kubeconfigs": {
+    "message": "5.2.2.3. Kubeconfigs",
+    "description": "The label for the doc item 5.2.2.3. Kubeconfigs in sidebar techDocs, linking to the doc tech-docs/kubernetes/certificates/components/all-kubeconfigs"
+  },
+  "sidebar.techDocs.doc.5.2.2.4. Сервис Аккаунт": {
+    "message": "5.2.2.4. Service Account",
+    "description": "The label for the doc item 5.2.2.4. Сервис Аккаунт in sidebar techDocs, linking to the doc tech-docs/kubernetes/certificates/service-account/all-service-account"
+  },
+  "sidebar.techDocs.doc.5.2.2.5. Проверка": {
+    "message": "5.2.2.5. Verification",
+    "description": "The label for the doc item 5.2.2.5. Проверка in sidebar techDocs, linking to the doc tech-docs/kubernetes/certificates/examination/all-examination"
+  },
+  "sidebar.techDocs.doc.5.2.3.1. Инициализация": {
+    "message": "5.2.3.1. Initialization",
+    "description": "The label for the doc item 5.2.3.1. Инициализация in sidebar techDocs, linking to the doc tech-docs/kubernetes/k8s-init"
+  },
+  "sidebar.techDocs.doc.5.2.3.2. Расширение": {
+    "message": "5.2.3.2. Scaling",
+    "description": "The label for the doc item 5.2.3.2. Расширение in sidebar techDocs, linking to the doc tech-docs/kubernetes/k8s-join"
+  },
+  "sidebar.techDocs.doc.5.2.3.3. Kubelet Start": {
+    "message": "5.2.3.3. Kubelet Start",
+    "description": "The label for the doc item 5.2.3.3. Kubelet Start in sidebar techDocs, linking to the doc tech-docs/kubernetes/components/kubelet/all-kubelet-start"
+  },
+  "sidebar.techDocs.doc.5.2.4.1. Маркировка": {
+    "message": "5.2.4.1. Node Labeling",
+    "description": "The label for the doc item 5.2.4.1. Маркировка in sidebar techDocs, linking to the doc tech-docs/kubernetes/additional-setup/marking/all-marking"
+  },
+  "sidebar.techDocs.doc.5.2.4.2. Ролевая модель": {
+    "message": "5.2.4.2. RBAC",
+    "description": "The label for the doc item 5.2.4.2. Ролевая модель in sidebar techDocs, linking to the doc tech-docs/kubernetes/additional-setup/upload-rbac/all-rbac"
+  },
+  "sidebar.techDocs.doc.5.2.4.3. Загрузка CFG": {
+    "message": "5.2.4.3. Config Upload",
+    "description": "The label for the doc item 5.2.4.3. Загрузка CFG in sidebar techDocs, linking to the doc tech-docs/kubernetes/additional-setup/upload-configs/all-configs"
+  },
+  "sidebar.techDocs.doc.5.2.4.4. Загрузка ЦА": {
+    "message": "5.2.4.4. CA Upload",
+    "description": "The label for the doc item 5.2.4.4. Загрузка ЦА in sidebar techDocs, linking to the doc tech-docs/kubernetes/additional-setup/upload-ca/all-ca"
+  }
+}

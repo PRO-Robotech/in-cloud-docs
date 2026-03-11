@@ -304,7 +304,7 @@ export const Master: FC = () => {
             `}
           </CodeBlock>
 
-          4. Создайте [резервную копию](#создание-резервной-копии-файлов-бд).
+          4. Создайте резервную копию.
 
           5. Удалите старые файлы из директории <code>{ETCD_ARGS.dataDir.value}</code>
 
@@ -382,7 +382,7 @@ export const Master: FC = () => {
 
           <CodeBlock language="bash">{`ectl member promote \${ETCD_NODE_NAME_2}`}</CodeBlock>
 
-          11. При помощи команд `member list` и `endpoint status` описанных выше [проверьте состояние кластера](#проверка-подключения-и-состояния-кластера).
+          11. При помощи команд `member list` и `endpoint status` описанных выше проверьте состояние кластера.
 
           12. Переходите к третьему узла кластера
         </TabItem>
@@ -409,7 +409,7 @@ export const Master: FC = () => {
             `}
           </CodeBlock>
 
-          4. Создайте [резервную копию](#создание-резервной-копии-файлов-бд).
+          4. Создайте резервную копию.
 
           5. Удалите старые файлы из директории <code>{ETCD_ARGS.dataDir.value}</code>
 
@@ -488,7 +488,7 @@ export const Master: FC = () => {
 
           <CodeBlock language="bash">{`ectl member promote \${ETCD_NODE_NAME_3}`}</CodeBlock>
 
-          11. При помощи команд `member list` и `endpoint status` описанных выше [проверьте состояние кластера](#проверка-подключения-и-состояния-кластера).
+          11. При помощи команд `member list` и `endpoint status` описанных выше проверьте состояние кластера.
 
         </TabItem>
       </Tabs>

@@ -1,0 +1,43 @@
+---
+id: all-configs
+title: "5.2.4.3. Configuration upload"
+---
+
+import UploadConfigsInit from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/additional-setup/upload-configs/uploadConfigsInitComponent.mdx'
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+> This section covers uploading the current `kubeadm` and `kubelet` configuration to the cluster as a `ConfigMap`. This configuration is required for the correct execution of the `kubeadm join` command, as it is used during initialization of new control plane nodes.
+> Uploading the configuration centralizes cluster parameter management and ensures consistency across all nodes, including both `master` and `worker` nodes.
+
+<Tabs groupId="phase">
+  <TabItem value="init" label="Init">
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Uploading configuration to the cluster</p>
+          <p className="obligatory-note-orange">● Required</p>
+        </div>
+      </summary>
+      <UploadConfigsInit />
+    </details>
+  </TabItem>
+  <TabItem value="join" label="Join">
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Uploading configuration to the cluster</p>
+          <p className="obligatory-note-orange">● Required</p>
+        </div>
+      </summary>
+
+      When adding a new control plane node (`join`), configuration upload is performed automatically
+      as part of the `kubeadm join` phase. The `kubeadm` and `kubelet` configuration is read from the existing `ConfigMap`
+      in the `kube-system` namespace, which was uploaded during the initialization of the first node.
+
+      A separate manual `upload-config` call is not required during join — `kubeadm join` independently
+      retrieves the necessary parameters from the cluster.
+
+    </details>
+  </TabItem>
+</Tabs>

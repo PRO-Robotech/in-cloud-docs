@@ -1,0 +1,25 @@
+---
+id: all-rbac
+title: "5.2.4.2. Role model"
+---
+
+import RbacComponent from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/additional-setup/upload-rbac/rbacComponent.mdx'
+
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+> This section covers the configuration of the role model (RBAC) required for the correct operation of the kubeadm join mechanism. It describes the Roles/ClusterRoles, RoleBindings/ClusterRoleBindings, and Bootstrap token that allow new nodes to securely connect to the cluster, request certificates, and obtain API server configuration information.
+
+<Tabs groupId="phase">
+  <TabItem value="init" label="Init">
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Kubeadm role model setup</p>
+          <p className="obligatory-note-orange">● Required</p>
+        </div>
+      </summary>
+      <RbacComponent />
+    </details>
+  </TabItem>
+</Tabs>

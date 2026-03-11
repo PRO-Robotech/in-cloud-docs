@@ -1,0 +1,431 @@
+---
+id: portal
+---
+
+# 2.7. Portal
+
+## 2.7.1. General Interface Requirements
+
+<table>
+  <thead>
+    <tr>
+      <th>No.</th>
+      <th>Requirement</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>The portal must be implemented through a graphical web interface.</td>
+      <td>int +</td>
+      <td>out +</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>The platform must support service provisioning in multiple virtualization clusters from a single console with a graphical interface.</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>The portal must be accessible in various browsers (Google Chrome, Edge, Firefox).</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>The portal must have a responsive interface for different screen sizes to work on various devices.</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>The portal must support a multilingual interface.</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>The portal must implement user notification functionality within the platform interface.</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>The portal must support multitenancy functionality and provide RBAC-based object visibility management.</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>The portal must provide an access interface for managing allocated resources, including virtual machine consoles.</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>The portal must have the ability to customize styling according to the customer's corporate template.</td>
+    </tr>
+  </tbody>
+</table>
+
+
+## 2.7.2. Service Catalog Requirements
+### 2.7.2.1. List of Provided Services
+<table>
+  <thead>
+    <tr>
+      <th rowSpan="2">No.</th>
+      <th rowSpan="2">Service</th>
+      <th colSpan="3">Actions</th>
+      <th rowSpan="2">Dedicated</th>
+      <th rowSpan="2">Scope</th>
+    </tr>
+    <tr>
+      <th>Create</th>
+      <th>Delete</th>
+      <th>Modify</th>
+    </tr>
+  </thead>
+  <tbody>
+    {/* <tr>
+      <td>1</td>
+      <td>Virtual Machine</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center"></td>
+    </tr> */}
+    <tr>
+      <td>2</td>
+      <td>S3 Bucket Order</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center"></td>
+      <td className="green center">✔</td>
+    </tr>
+
+    <tr>
+      <td>3</td>
+      <td>RDB Order</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center"></td>
+      <td className="green center">✔</td>
+    </tr>
+    {/* <tr>
+      <td>4</td>
+      <td>Subnet</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+    </tr> */}
+    <tr>
+      <td>5</td>
+      <td>Load Balancing Endpoint</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center"></td>
+    </tr>
+    {/* <tr>
+      <td>6</td>
+      <td>Private IP Address</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center"></td>
+    </tr> */}
+    {/* <tr>
+      <td>7</td>
+      <td>Network Security Group (NAG)</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center"></td>
+    </tr> */}
+    <tr>
+      <td>8</td>
+      <td>KeyCloak Integration</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center"></td>
+    </tr>
+    {/* <tr>
+      <td>8</td>
+      <td>KeyCloak Product</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center"></td>
+    </tr> */}
+    {/* <tr>
+      <td>9</td>
+      <td>Vault</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+    </tr> */}
+    <tr>
+      <td>9</td>
+      <td>Vault Integration</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+    </tr>
+    {/* <tr>
+      <td>10</td>
+      <td>Microsoft SQL Server</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+    </tr> */}
+    {/* <tr>
+      <td>11</td>
+      <td>Postgres Product</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+    </tr> */}
+    {/* <tr>
+      <td>12</td>
+      <td>Redis Product</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td>MongoDB Product</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+    </tr>
+    <tr>
+      <td>14</td>
+      <td>Kafka Product</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+    </tr> */}
+    {/* <tr>
+      <td>15</td>
+      <td>Veeam B&R</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+    </tr> */}
+    <tr>
+      <td>16</td>
+      <td>Gitlab Docker-Registry Integration</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+    </tr>
+    <tr>
+      <td>17</td>
+      <td>OpenSearch Integration</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+      <td className="green center">✔</td>
+    </tr>
+  </tbody>
+</table>
+
+### 2.7.2.2. General Service Catalog Requirements
+<table>
+  <thead>
+    <tr>
+      <th>No.</th>
+      <th>Requirement</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>The service catalog must support creating services based on pre-built VM images.</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>The service catalog must support creating services for software deployed in k8s containers.</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>The service catalog must support creating services based on k8s container images or VMs with the ability to subsequently add and configure necessary software using automation technologies (Ansible, Terraform).</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>The service catalog must support providing SaaS applications.</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>The service catalog must support service publication/archiving.</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>The service catalog must support software version management when ordering a service.</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>The platform must support ordering services from the service catalog.</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>The platform must support integration with workflow systems for implementing the service approval process within the platform.</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>The platform must support integration with workflow systems for implementing the service deployment process within the platform.</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>The service catalog must support service search and filtering by attributes/tags.</td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td>The service catalog must support service categorization.</td>
+    </tr>
+  </tbody>
+</table>
+
+## 2.7.3. Administration Section Requirements
+<table>
+  <thead>
+    <tr>
+      <th>No.</th>
+      <th>Requirement</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>The administration portal must provide an interface for displaying information about cloud infrastructure objects.</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>The administration portal must provide an interface for displaying reports on cloud infrastructure object usage: current and historical utilization.</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>The administration portal must provide an interface for managing roles and access to the platform/projects (including RBAC-based).</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>The administration portal must provide an interface for managing the lifecycle of internal cloud user accounts.</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>The administration portal must provide an interface for managing projects (creation, modification, archiving).</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>The administration portal must provide an interface for managing resource quotas.</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>The administration portal must provide an interface for managing billing for projects.</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>The administration portal must provide an interface for displaying project information (resources, quotas, tariffs, balance, etc.).</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>The administration portal must provide an interface for displaying catalog service statuses.</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>The administration portal must provide an interface for managing the service catalog.</td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td>The administration portal must support template and image management for OS, IaaS, PaaS, SaaS services, etc.</td>
+    </tr>
+  </tbody>
+</table>
+
+## 2.7.4. Interface and Training Requirements
+
+<table>
+  <thead>
+    <tr>
+      <th>No.</th>
+      <th>Requirement</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>Supports user interface localization (Russian, Kazakh, English).</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>Availability of a demonstration stand for training.</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>Training courses/videos on working with the product are available.</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>Expected system learning time for a user does not exceed 10 hours.</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>A user interface for administration is available.</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>Input data validation functionality is available.</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>The user interface can be customized according to the bank's design system.</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>A built-in help/hint system is available to assist beginner users.</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>Interactive interface elements must be visually distinguished from inactive ones.</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>The system allows configuring tooltips that appear when hovering over an interface element.</td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td>The system must correctly handle simultaneous modification conflicts of the same object by multiple users.</td>
+    </tr>
+    <tr>
+      <td>12</td>
+      <td>All user-made settings must be saved individually for each authenticated user.</td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td>Administrative user and role settings must be centralized (collected in a single system interface).</td>
+    </tr>
+    <tr>
+      <td>14</td>
+      <td>Functionally similar interactive interface elements must look uniform throughout the System.</td>
+    </tr>
+  </tbody>
+</table>

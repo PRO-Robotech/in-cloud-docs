@@ -1,0 +1,43 @@
+---
+id: RestoreEtcdK8sOld
+---
+
+import SingleNodeK8s            from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/etcd/troubleshooting/restore/singleNodeK8s.mdx'
+import ThreeNodeK8s             from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/etcd/troubleshooting/restore/threeNodeK8s.mdx'
+import CrushedNodeK8s           from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/etcd/troubleshooting/restore/crushedNodeK8s.mdx'
+
+### 5.1.5.8.1.1. Single-node restoration from a snapshot
+
+This option assumes that the backup is deployed on the first node and the cluster starts in single-node mode.
+Then other cluster nodes will be added sequentially.
+
+<details>
+  <summary>Instructions</summary>
+  <SingleNodeK8s />
+</details>
+
+*****
+
+### 5.1.5.8.1.2. Three-node restoration from a snapshot
+
+This option assumes restoring the DB and its metadata on all three nodes simultaneously.
+
+<details>
+  <summary>Instructions</summary>
+  <ThreeNodeK8s />
+</details>
+
+******
+
+### 5.1.5.8.1.3. Cluster restoration during conflicts or quorum issues
+
+This may be necessary in the following cases:
+
+I. During cluster upgrade, more or fewer than 3 control plane nodes of the K8s cluster appeared.
+II. ETCD cluster quorum was lost.
+III. DB metadata is corrupted on one or more ETCD cluster nodes.
+
+<details>
+  <summary>Instructions</summary>
+  <CrushedNodeK8s />
+</details>

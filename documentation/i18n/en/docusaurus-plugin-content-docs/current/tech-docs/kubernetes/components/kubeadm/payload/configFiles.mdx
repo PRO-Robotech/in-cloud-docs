@@ -1,0 +1,30 @@
+import JoinConfig from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/kubeadm/configs/joinConfig.mdx'
+import InitConfig from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/kubeadm/configs/initConfig.mdx'
+import InitMasterTabs from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/setup-environments/initMaster.mdx'
+import SecondaryMasterTabs from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/setup-environments/secondaryMasters.mdx'
+
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+> The `kubeadm` configuration describes `InitConfiguration` parameters (bootstrap tokens, nodeRegistration, skipPhases) and `ClusterConfiguration` (controlPlaneEndpoint, network subnets, control plane component arguments). The `init` tab is used when creating the first node, `join` — when adding subsequent ones.
+
+<Tabs groupId="phase">
+
+  <TabItem value="init" label="Init">
+    <details open className="custom-gray-block">
+      <summary>Kubeadm Configuration</summary>
+      <InitMasterTabs />
+      <InitConfig />
+    </details>
+  </TabItem>
+
+  <TabItem value="join" label="Join">
+    <details open className="custom-gray-block">
+      <summary>Kubeadm Configuration</summary>
+      <SecondaryMasterTabs />
+      <JoinConfig />
+    </details>
+
+  </TabItem>
+
+</Tabs>

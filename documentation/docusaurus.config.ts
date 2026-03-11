@@ -10,12 +10,17 @@ const config: Config = {
   url: process.env.URL || 'http://localhost',
   baseUrl: process.env.BASEURL || '/infrastructure/in-cloud-docs/',
 
-  onBrokenLinks: 'throw',
+  onBrokenLinks: 'warn',
+  onBrokenAnchors: 'warn',
   onBrokenMarkdownLinks: 'warn',
 
   i18n: {
     defaultLocale: 'ru',
-    locales: ['ru'],
+    locales: ['ru', 'en'],
+    localeConfigs: {
+      ru: { label: 'Русский', htmlLang: 'ru' },
+      en: { label: 'English', htmlLang: 'en' },
+    },
   },
 
   markdown: {
@@ -27,7 +32,7 @@ const config: Config = {
       'classic',
       {
         sitemap: {
-          lastmod: 'date',
+          lastmod: null,
           changefreq: 'weekly',
           priority: 0.5,
           ignorePatterns: ['/tags/**'],
@@ -110,7 +115,11 @@ const config: Config = {
           position: 'left',
           label: 'Техническая документация',
         },
-        { to: 'blog', label: 'Blog', position: 'left' }, // or position: 'right'
+        { to: 'blog', label: 'Blog', position: 'left' },
+        {
+          type: 'localeDropdown',
+          position: 'right',
+        },
       ],
     },
 

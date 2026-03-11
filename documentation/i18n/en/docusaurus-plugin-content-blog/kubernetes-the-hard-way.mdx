@@ -1,0 +1,752 @@
+---
+title: 'Kubernetes The Hard Way'
+description: 'Step-by-step manual deployment of a Kubernetes cluster without kubeadm: certificates, static pods, kubeconfig, and full control plane setup.'
+date: 2025-03-23
+slug: kubernetes-the-hard-way
+authors: [dlputilin]
+tags: [Kubernetes, Hard-Way]
+---
+
+import { PORTS } from '@site/src/constants/kubernetes/ports'
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+import { COMPONENTS_VERSION } from '@site/src/constants/kubernetes/componentsVersion'
+
+import {
+  AllInstallComponent,
+  AllSetupComponent,
+  AllCAComponent,
+  AllComponentsCertificatesComponent,
+  AllComponentsKubeconfigsComponent,
+  AllSysctlsComponent,
+  AllMarkingComponent,
+  AllUploadCA,
+  AllUploadConfigs,
+  AllUploadRbac,
+  AllStaticPodsCPPhasesComponent,
+  AllStaticPodsCPComponent,
+  AllStaticPodsETCDComponent,
+  AllComponentsReady,
+  AllServiceAccountComponent,
+  AllExaminationComponent,
+  AllCertificatesComponent,
+  AllKubeconfigsComponent,
+  AllModprobeComponent,
+  AllBaseOSSetupComponent,
+  AllServiceStartComponent,
+  KubernetesStatusReady,
+  AboutAllCertificates,
+} from '@site/src/blog-components-en'
+import { getBasePrefix } from '@site/src/utils/getBasePrefix'
+
+import { FancyboxImage } from '@site/src/components/commonBlocks/FancyboxImage'
+import { AaaBug } from '@site/src/components/AaaBug'
+
+<h3>
+  Kubernetes The Hard Way <span style={{ color: '#1cc5ac' }}>#</span>
+</h3>
+
+<p style={{ fontStyle: 'italic', fontWeight: 600 }}>Resuming the Kubernetes article series in a new format.</p>
+
+<div
+  style={{
+    display: 'flex',
+    flexWrap: 'wrap',
+    alignItems: 'flex-start',
+    gap: '30px',
+    marginTop: '1.5rem',
+  }}
+>
+  <div style={{ flex: '1 1 55%', minWidth: '280px' }}>
+    <p>
+      This article describes the overall experience of manually deploying Kubernetes without
+      using automated tools such as
+      <code>kubeadm</code>. The presented approach is consistent with our
+      documentation, which we maintain according to best practices and
+      <code>IAC</code> methodologies.
+    </p>
+
+    <p>
+      All configuration provided below exactly replicates the behavior of
+      <code>kubeadm</code>. As a result, the final cluster is hard to distinguish — whether
+      it was assembled using <code>kubeadm</code> or manually.
+    </p>
+
+  </div>
+
+  <div
+    style={{
+      flex: '1 1 40%',
+      minWidth: '220px',
+      textAlign: 'center',
+      marginTop: '0rem',
+    }}
+  >
+    <img
+      src={`${getBasePrefix()}img/blog/kthw-promo.png`}
+      alt="comics"
+      style={{
+        width: '90%',
+        maxWidth: '330px',
+        filter: 'drop-shadow(0 0 12px rgba(255, 255, 255, 0.2))',
+        transition: 'transform 0.3s ease-in-out',
+      }}
+    />
+
+  </div>
+</div>
+
+{/* truncate */}
+
+### 1. Introduction
+
+**Kubernetes** has become the de facto standard for managing containerized applications. Its installation and configuration have been greatly simplified thanks to tools like `kubeadm`, which handle certificate generation, component startup, and basic cluster configuration.
+
+However, behind this convenience lies a complex architecture, understanding of which is critical when designing fault-tolerant solutions, creating custom automations, or debugging production issues. To truly understand _how a Kubernetes cluster works_, it is important to go through the deployment process manually — from initialization to full readiness.
+
+**Kubernetes The Hard Way** is a guide in which a cluster is deployed step by step, **without using `kubeadm` or other automated tools**. Instead of a black box — sequential execution of all the steps that are usually performed under the hood.
+
+Each stage corresponds to a specific phase of `kubeadm init` or `kubeadm join`, but is implemented manually, with explicit key generation, configuration preparation, process startup, and system state verification.
+
+> 💡 **Result** — a fully functional Kubernetes cluster, virtually indistinguishable from one assembled via `kubeadm`, but prepared with a complete understanding of all internal dependencies.
+
+:::info Skill Level
+
+This article is intended for readers who are already familiar with the basic concepts of containerization and Kubernetes in general.
+Without this background, the level of detail will be overwhelming.
+If you are just getting started, we recommend reviewing the official [Kubernetes Bootcamp](https://kubernetes.io/docs/tutorials/kubernetes-basics/).
+
+:::
+
+---
+
+<h4>🔧 Preface: Why the Startup Order Matters</h4>
+
+<p>
+  Some systems are designed so that components are <strong>interdependent</strong>, and their management is partially performed{' '}
+  <strong>within the system itself</strong>. This requires a strict order of operations:
+</p>
+
+<ul>
+  <li>
+    ⚙️ <strong>Component Interdependency</strong><br />
+    One component cannot start without another.<br />
+    <em>Example:</em> API requires storage, and storage requires networking and configuration.
+  </li>
+  <li>
+    ⏱ <strong>Cannot Start Everything Simultaneously</strong><br />
+    Parallel startup leads to undesirable results.<br />
+    <em>Example:</em> Scheduler waits for API, and API waits for data loading and initialization.
+  </li>
+  <li>
+    🔄 <strong>Some Components Are Started Externally</strong><br />
+    Before the system is ready, some processes are started through the environment.<br />
+    <em>Example:</em> <code>kubelet</code> is started via systemd, not as part of the cluster.
+  </li>
+  <li>
+    🛠 <strong>A Bootstrap Stage Is Required</strong><br />
+    Configs, certificates, addresses — everything is prepared manually.<br />
+    <em>Example:</em> Initial generation of root CA, <code>kubeconfig</code>, static pod manifests.
+  </li>
+  <li>
+    🤖 <strong>Transition to Self-Management</strong><br />
+    After startup, the system begins to manage its own processes and state.<br />
+    <em>Example:</em> Control plane components begin to control each other through the API.
+  </li>
+</ul>
+
+:::danger Important
+
+Without a strictly defined sequence, such a system will not work.
+This is exactly why tools and utilities like <code>kubeadm</code> exist — they solve the
+"chicken and egg" problem and establish the correct deployment order.
+
+:::
+
+<div style={{position: 'relative'}}>
+<h4>Chapters:</h4>
+
+<ul>
+  <li>
+    <a href="#1-introduction">1. Introduction</a>
+  </li>
+  <li>
+    <a href="#2-why-the-hard-way">2. Why "The Hard Way"</a>
+  </li>
+  <li>
+    <a href="#3-deployment-architecture">3. Deployment Architecture</a>
+  </li>
+  <li>
+    <a href="#4-creating-the-infrastructure">4. Creating the Infrastructure</a>
+  </li>
+  <li>
+    <a href="#5-basic-node-setup">5. Basic Node Setup</a>
+  </li>
+  <li>
+    <a href="#6-loading-kernel-modules">6. Loading Kernel Modules</a>
+  </li>
+  <li>
+    <a href="#7-configuring-sysctl-parameters">7. Configuring sysctl Parameters</a>
+  </li>
+  <li>
+    <a href="#8-installing-components">8. Installing Components</a>
+  </li>
+  <li>
+    <a href="#9-configuring-components">9. Configuring Components</a>
+  </li>
+  <li>
+    <a href="#10-verifying-component-readiness">10. Verifying Component Readiness</a>
+  </li>
+  <li>
+    <a href="#11-working-with-certificates">11. Working with Certificates</a>
+  </li>
+  <li>
+    <a href="#12-creating-root-certificates">12. Creating Root Certificates</a>
+  </li>
+  <li>
+    <a href="#13-creating-application-certificates">13. Creating Application Certificates</a>
+  </li>
+  <li>
+    <a href="#14-creating-the-serviceaccount-signing-key">14. Creating the ServiceAccount Signing Key</a>
+  </li>
+  <li>
+    <a href="#15-creating-all-certificates">15*. Creating All Certificates</a>
+  </li>
+  <li>
+    <a href="#16-creating-kubeconfig-configurations">16. Creating kubeconfig Configurations</a>
+  </li>
+  <li>
+    <a href="#17-creating-all-kubeconfigs">17*. Creating All kubeconfigs</a>
+  </li>
+  <li>
+    <a href="#18-verifying-the-certificate-block">18. Verifying the Certificate Block</a>
+  </li>
+  <li>
+    <a href="#19-creating-control-plane-static-pods">19. Creating Control Plane Static Pods</a>
+  </li>
+  <li>
+    <a href="#20-creating-all-control-plane-static-pods">20*. Creating All Control Plane Static Pods</a>
+  </li>
+  <li>
+    <a href="#21-creating-etcd-cluster-static-pods">21. Creating ETCD Cluster Static Pods</a>
+  </li>
+  <li>
+    <a href="#22-starting-the-kubelet-service">22. Starting the Kubelet Service</a>
+  </li>
+  <li>
+    <a href="#23-checking-cluster-status">23. Checking Cluster Status</a>
+  </li>
+  <li>
+    <a href="#24-configuring-the-role-model">24. Configuring the Role Model</a>
+  </li>
+  <li>
+    <a href="#25-uploading-configuration-to-the-cluster">25. Uploading Configuration to the Cluster</a>
+  </li>
+  <li>
+    <a href="#26-uploading-root-certificates-to-the-cluster">26. Uploading Root Certificates to the Cluster</a>
+  </li>
+  <li>
+    <a href="#27-labeling-and-tainting-nodes">27. Labeling and Tainting Nodes</a>
+  </li>
+</ul>
+
+<AaaBug />
+</div>
+
+---
+
+### 2. Why "The Hard Way"
+
+<p>Deploying Kubernetes manually requires additional effort. However, this approach has several advantages:</p>
+
+<ul>
+  <li>It provides a deep understanding of the architecture and internal logic of Kubernetes components.</li>
+  <li>It allows flexible configuration of each cluster component to meet specific technical requirements.</li>
+</ul>
+
+---
+
+### 3. Deployment Architecture
+
+<h4>Component Layer</h4>
+
+<figure style={{ textAlign: 'center', display: 'contents' }}>
+  <FancyboxImage src={`${getBasePrefix()}img/components/pie.svg`} style={{ width: '100%', maxWidth: 'none' }} />
+  <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
+    Technology layer.
+  </figcaption>
+</figure>
+
+<p>
+  Below is a list of components required for manual cluster deployment. To ensure compatibility, all
+  versions must be synchronized with each other.
+</p>
+
+<div style={{ overflowX: 'auto' }}>
+  <table>
+    <thead>
+      <tr>
+        <th>Component</th>
+        <th>Version</th>
+        <th>Purpose</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>containerd</td>
+        <td>{COMPONENTS_VERSION.containerd.value}</td>
+        <td>Container runtime that manages the container lifecycle.</td>
+      </tr>
+      <tr>
+        <td>runc</td>
+        <td>{COMPONENTS_VERSION.runc.value}</td>
+        <td>Low-level tool for running containers using Linux kernel capabilities.</td>
+      </tr>
+      <tr>
+        <td>crictl</td>
+        <td>{COMPONENTS_VERSION.crictl.value}</td>
+        <td>Utility for debugging CRI runtimes with containerd interaction support.</td>
+      </tr>
+      <tr>
+        <td>kubectl</td>
+        <td>{COMPONENTS_VERSION.kubernetes.value}</td>
+        <td>Client for interacting with the Kubernetes API.</td>
+      </tr>
+      <tr>
+        <td>kubeadm</td>
+        <td>{COMPONENTS_VERSION.kubernetes.value}</td>
+        <td>
+          Tool for automating Kubernetes installation and configuration (used for configuration validation).
+        </td>
+      </tr>
+      <tr>
+        <td>kubelet</td>
+        <td>{COMPONENTS_VERSION.kubernetes.value}</td>
+        <td>Agent running on each node, responsible for pod execution and health monitoring.</td>
+      </tr>
+      <tr>
+        <td>etcd</td>
+        <td>{COMPONENTS_VERSION.etcd.value}</td>
+        <td>Distributed key-value store for storing cluster configuration and state.</td>
+      </tr>
+      <tr>
+        <td>kube-apiserver</td>
+        <td>{COMPONENTS_VERSION.kubernetes.value}</td>
+        <td>Component providing a REST API for cluster interaction.</td>
+      </tr>
+      <tr>
+        <td>kube-controller-manager</td>
+        <td>{COMPONENTS_VERSION.kubernetes.value}</td>
+        <td>Manages the state of cluster objects using built-in controllers.</td>
+      </tr>
+      <tr>
+        <td>kube-scheduler</td>
+        <td>{COMPONENTS_VERSION.kubernetes.value}</td>
+        <td>Responsible for scheduling pod placement on nodes.</td>
+      </tr>
+      <tr>
+        <td>conntrack</td>
+        <td>v1.4.+</td>
+        <td>Utility for tracking network connections (used by iptables and kubelet).</td>
+      </tr>
+      <tr>
+        <td>socat</td>
+        <td>1.8.+</td>
+        <td>Utility for port forwarding and TCP tunneling (used for debugging and proxying).</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<h4>Switching Layer</h4>
+
+<figure style={{ textAlign: 'center', display: 'contents' }}>
+  <FancyboxImage
+    src={`${getBasePrefix()}img/control-plane/transport.svg`}
+    style={{ width: '100%', maxWidth: 'none' }}
+  />
+  <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
+    Network deployment diagram.
+  </figcaption>
+</figure>
+
+<div style={{ overflowX: 'auto' }}>
+  <table>
+    <thead>
+      <tr>
+        <th>Component</th>
+        <th>Port</th>
+        <th>Protocol</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>etcd-server</td>
+        <td>{PORTS.etcdServer.portNumber}</td>
+        <td>TCP</td>
+      </tr>
+      <tr>
+        <td>etcd-peer</td>
+        <td>{PORTS.etcdPeer.portNumber}</td>
+        <td>TCP</td>
+      </tr>
+      <tr>
+        <td>etcd-metrics</td>
+        <td>{PORTS.etcdMetricServer.portNumber}</td>
+        <td>TCP</td>
+      </tr>
+      <tr>
+        <td>kube-apiserver</td>
+        <td>{PORTS.kubeAPIServer.portNumber}</td>
+        <td>TCP</td>
+      </tr>
+      <tr>
+        <td>kube-controller-manager</td>
+        <td>{PORTS.kubeControllerManager.portNumber}</td>
+        <td>TCP</td>
+      </tr>
+      <tr>
+        <td>kube-scheduler</td>
+        <td>{PORTS.kubeScheduler.portNumber}</td>
+        <td>TCP</td>
+      </tr>
+      <tr>
+        <td>kubelet-healthz</td>
+        <td>{PORTS.kubeletHealthz.portNumber}</td>
+        <td>TCP</td>
+      </tr>
+      <tr>
+        <td>kubelet-server</td>
+        <td>{PORTS.kubeletServer.portNumber}</td>
+        <td>TCP</td>
+      </tr>
+      <tr>
+        <td>kubelet-read-only-port</td>
+        <td>{PORTS.kubeletReadOnlyPort.portNumber}</td>
+        <td>TCP</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<h4>Load Balancing Layer</h4>
+
+<figure style={{ textAlign: 'center', display: 'contents' }}>
+  <FancyboxImage
+    src={`${getBasePrefix()}img/control-plane/load-balancer.svg`}
+    style={{ width: '100%', maxWidth: 'none' }}
+  />
+  <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
+    Technology layer.
+  </figcaption>
+</figure>
+
+<div style={{ overflowX: 'auto' }}>
+  <table>
+    <thead>
+      <tr>
+        <th>IP Address</th>
+        <th>Target Group</th>
+        <th>Port</th>
+        <th>Target Port</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>VIP-LB</td>
+        <td>- NODE-IP-1 - NODE-IP-2 - NODE-IP-3</td>
+        <td>6443</td>
+        <td>6443</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<h4>DNS Records</h4>
+
+<div style={{ overflowX: 'auto' }}>
+  <table>
+    <thead>
+      <tr>
+        <th>A Record</th>
+        <th>IP Address</th>
+        <th>TTL</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          api.{CUSTOM_VALUE.clusterName.value}.{CUSTOM_VALUE.kubernetesBaseDomain.value}
+        </td>
+        <td>VIP-LB</td>
+        <td>60s</td>
+      </tr>
+      <tr>
+        <td>
+          master-1.{CUSTOM_VALUE.clusterName.value}.{CUSTOM_VALUE.kubernetesBaseDomain.value}
+        </td>
+        <td>NODE-IP-1</td>
+        <td>60s</td>
+      </tr>
+      <tr>
+        <td>
+          master-2.{CUSTOM_VALUE.clusterName.value}.{CUSTOM_VALUE.kubernetesBaseDomain.value}
+        </td>
+        <td>NODE-IP-2</td>
+        <td>60s</td>
+      </tr>
+      <tr>
+        <td>
+          master-3.{CUSTOM_VALUE.clusterName.value}.{CUSTOM_VALUE.kubernetesBaseDomain.value}
+        </td>
+        <td>NODE-IP-3</td>
+        <td>60s</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+---
+
+### 4. Creating the Infrastructure
+
+<p>
+  At this stage, the basic cluster architecture is defined, including its network topology, control plane nodes, and core parameters.
+</p>
+
+<h4>Cluster Information</h4>
+
+<div style={{ overflowX: 'auto' }}>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>External Domain</th>
+        <th>Kubernetes Version</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>{CUSTOM_VALUE.clusterName.value}</td>
+        <td>{CUSTOM_VALUE.kubernetesBaseDomain.value}</td>
+        <td>{COMPONENTS_VERSION.kubernetes.value}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<h4>Control Plane Nodes</h4>
+
+<div style={{ overflowX: 'auto' }}>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>IP Address</th>
+        <th>Operating System</th>
+        <th>Resources</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          master-1.{CUSTOM_VALUE.clusterName.value}.{CUSTOM_VALUE.kubernetesBaseDomain.value}
+        </td>
+        <td>NODE-IP-1</td>
+        <td>ubuntu-24-04-lts</td>
+        <td>2CPU / 2RAM / 20GB</td>
+      </tr>
+      <tr>
+        <td>
+          master-2.{CUSTOM_VALUE.clusterName.value}.{CUSTOM_VALUE.kubernetesBaseDomain.value}
+        </td>
+        <td>NODE-IP-2</td>
+        <td>ubuntu-24-04-lts</td>
+        <td>2CPU / 2RAM / 20GB</td>
+      </tr>
+      <tr>
+        <td>
+          master-3.{CUSTOM_VALUE.clusterName.value}.{CUSTOM_VALUE.kubernetesBaseDomain.value}
+        </td>
+        <td>NODE-IP-3</td>
+        <td>ubuntu-24-04-lts</td>
+        <td>2CPU / 2RAM / 20GB</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+---
+
+### 5. Basic Node Setup
+
+<AllBaseOSSetupComponent />
+
+---
+
+### 6. Loading Kernel Modules
+
+<AllModprobeComponent />
+
+---
+
+### 7. Configuring sysctl Parameters
+
+<AllSysctlsComponent />
+
+---
+
+### 8. Installing Components
+
+<AllInstallComponent />
+
+---
+
+### 9. Configuring Components
+
+<AllSetupComponent />
+
+---
+
+### 10. Verifying Component Readiness
+
+<AllComponentsReady />
+
+---
+
+### 11. Working with Certificates
+
+<AboutAllCertificates />
+
+---
+
+### 12. Creating Root Certificates
+
+<AllCAComponent />
+
+---
+
+### 13. Creating Application Certificates
+
+<AllComponentsCertificatesComponent />
+
+---
+
+### 14. Creating the ServiceAccount Signing Key
+
+<AllServiceAccountComponent />
+
+---
+
+### 15\*. Creating All Certificates
+
+<AllCertificatesComponent />
+
+---
+
+### 16. Creating kubeconfig Configurations
+
+<AllComponentsKubeconfigsComponent />
+
+---
+
+### 17\*. Creating All kubeconfigs
+
+<AllKubeconfigsComponent />
+
+---
+
+### 18. Verifying the Certificate Block
+
+<AllExaminationComponent />
+
+---
+
+### 19. Creating Control Plane Static Pods
+
+<AllStaticPodsCPPhasesComponent />
+
+---
+
+### 20\*. Creating All Control Plane Static Pods
+
+<AllStaticPodsCPComponent />
+
+---
+
+### 21. Creating ETCD Cluster Static Pods
+
+<AllStaticPodsETCDComponent />
+
+---
+
+### 22. Starting the Kubelet Service
+
+<AllServiceStartComponent />
+
+---
+
+### 23. Checking Cluster Status
+
+> This section is dedicated to verifying the status of cluster components after kubelet startup. It describes commands for monitoring image pulls, container startup, and successful initialization of cluster resources. This allows you to confirm that the cluster has started correctly before proceeding to the next stages.
+
+<details>
+  <summary>
+    <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+      <p style={{ marginBottom: 0 }}>Checking Cluster Status</p>
+      <p className="obligatory-note-green">● Not required</p>
+    </div>
+  </summary>
+  <KubernetesStatusReady />
+</details>
+
+---
+
+### 24. Configuring the Role Model
+
+<AllUploadRbac />
+
+---
+
+### 25. Uploading Configuration to the Cluster
+
+<AllUploadConfigs />
+
+---
+
+### 26. Uploading Root Certificates to the Cluster
+
+<AllUploadCA />
+
+---
+
+### 27 Labeling and Tainting Nodes
+
+<AllMarkingComponent />
+
+---
+
+## 🍀 Conclusion
+
+The **Kubernetes The Hard Way** journey for me has been a path spanning nearly two years. It opened up a wealth of new knowledge, opportunities... And, of course, challenges 🙂
+
+This is far from my first article on this topic — if you're interested, check out my previous drafts on Habr:
+
+- [K8S Certificates or How to Untangle the Spaghetti. Part 1](https://habr.com/ru/articles/673730/)
+- [K8S Certificates or How to Untangle the Spaghetti. Part 2](https://habr.com/ru/articles/695344/)
+- [Kubernetes the Hard Way](https://habr.com/ru/articles/699074/)
+- [Kubernetes the Hard Way — Evolution. Part 1](https://habr.com/ru/articles/704410/)
+- [Managed Kubernetes the Hard Way](https://habr.com/ru/articles/727820/)
+- [Three Levels of Kubernetes in Kubernetes](https://habr.com/ru/articles/730850/)
+
+To sum it up: this article took about **four months** to write.
+Every script was hand-polished (with the help of `chatGPT`) and tested in real-world conditions.
+No kidding — during all this time I spun up **over 400 clusters**.
+
+Thanks to those who understood the idea, and special thanks to those who read all the way to the end 🙌
+I'd love to hear your feedback and will definitely continue sharing my experience — in the same spirit, but in a new format.
+
+:::note
+🐾 During all four months, no animals were harmed... except for the Good Cat 😼
+It was an amazing experience that I wouldn't recommend unless you have a slight inclination toward masochism 😅
+And if you do — welcome!
+:::

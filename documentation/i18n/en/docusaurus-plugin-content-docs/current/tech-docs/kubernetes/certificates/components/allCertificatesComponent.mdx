@@ -1,0 +1,43 @@
+---
+id: all-certificates
+title: "5.2.2.2. Certificates"
+---
+
+import AllCertificatesAppsInitComponent from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/certificates/components/allCertificatesAppsInitComponent.mdx'
+import AllCertificatesAppsJoinComponent from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/certificates/components/allCertificatesAppsJoinComponent.mdx'
+
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+> Certificates are digital documents that verify the authenticity of components within a Kubernetes cluster. They provide **secure communication, authentication, and encryption** during interactions between nodes, control components, and users.
+
+> All certificates are created based on **Public Key Infrastructure (PKI)** and contain information about the owner, validity period, and the Certificate Authority (CA) that issued the certificate.
+
+> This section generates the certificates required for various Kubernetes components (API server, kubelet, controller-manager, etc.).
+
+
+<Tabs groupId="phase">
+  <TabItem value="init" label="Init">
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Creating application certificates</p>
+          <p className="obligatory-note-orange">● Required</p>
+        </div>
+      </summary>
+      <AllCertificatesAppsInitComponent />
+    </details>
+  </TabItem>
+
+  <TabItem value="join" label="Join">
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Creating application certificates</p>
+          <p className="obligatory-note-orange">● Required</p>
+        </div>
+      </summary>
+      <AllCertificatesAppsJoinComponent />
+    </details>
+  </TabItem>
+</Tabs>

@@ -1,0 +1,43 @@
+import KubeApiSetup from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/kubeAPI/setupInitComponent.mdx'
+import KubeControllerManagerSetup from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/controllerManager/setupInitComponent.mdx'
+import KubeSchedulerSetup from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/scheduler/setupInitComponent.mdx'
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+> This section describes the manual creation of static pod manifests for Kubernetes control plane components.
+
+<Tabs groupId="component">
+  <TabItem value="Kube-API">
+    <details open className="custom-gray-block">
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Kube-API setup</p>
+          <p className="obligatory-note-orange">● Required</p>
+        </div>
+      </summary>
+      <KubeApiSetup />
+    </details>
+  </TabItem>
+  <TabItem value="Kube Controller Manager">
+    <details open className="custom-gray-block">
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Kube Controller Manager setup</p>
+          <p className="obligatory-note-orange">● Required</p>
+        </div>
+      </summary>
+      <KubeControllerManagerSetup />
+    </details>
+  </TabItem>
+  <TabItem value="Kube Scheduler">
+    <details open className="custom-gray-block">
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Kube Scheduler setup</p>
+          <p className="obligatory-note-orange">● Required</p>
+        </div>
+      </summary>
+      <KubeSchedulerSetup />
+    </details>
+  </TabItem>
+</Tabs>

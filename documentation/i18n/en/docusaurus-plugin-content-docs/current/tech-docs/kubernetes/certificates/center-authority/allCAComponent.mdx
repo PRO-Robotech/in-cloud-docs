@@ -1,0 +1,63 @@
+---
+id: all-ca
+title: "5.2.2.1. Root certificates"
+---
+
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+import KubernetesCA from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/certificates/center-authority/kubernetesCA/main.mdx'
+import FrontProxyCA from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/certificates/center-authority/frontProxyCA/main.mdx'
+import ETCDCA from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/etcd/certificates/center-authority/etcdCA/main.mdx'
+import KubernetesDownloadCA from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/certificates/center-authority/downloadCA.mdx'
+
+> **Certificate Authority (CA)** is a trusted source that issues root certificates used to sign all other certificates within the Kubernetes cluster.
+
+> CA certificates play a key role in establishing trust between components, ensuring **authentication**, **encryption**, and **integrity** of communications.
+
+> This section describes the process of obtaining root certificates that are used to sign the remaining certificates in the Kubernetes cluster.
+
+<Tabs groupId="phase">
+  <TabItem value="init" label="Init">
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Creating root certificates</p>
+          <p className="obligatory-note-orange">● Required</p>
+        </div>
+      </summary>
+      <Tabs groupId="CA">
+        <TabItem value="Kubernetes CA" label="Kubernetes CA">
+          <details open className="custom-gray-block">
+            <summary>Kubernetes CA</summary>
+            <KubernetesCA />
+          </details>
+        </TabItem>
+        <TabItem value="FrontProxy CA" label="FrontProxy CA">
+          <details open className="custom-gray-block">
+            <summary>FrontProxy CA</summary>
+            <FrontProxyCA />
+          </details>
+        </TabItem>
+        <TabItem value="ETCD CA" label="ETCD CA">
+          <details open className="custom-gray-block">
+            <summary>ETCD CA</summary>
+            <ETCDCA />
+          </details>
+        </TabItem>
+      </Tabs>
+    </details>
+  </TabItem>
+
+  <TabItem value="join" label="Join">
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Downloading existing CAs</p>
+          <p className="obligatory-note-orange">● Required</p>
+        </div>
+      </summary>
+      <KubernetesDownloadCA />
+    </details>
+  </TabItem>
+</Tabs>

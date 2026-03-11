@@ -1,0 +1,55 @@
+---
+id: RestoreEtcdKubeApi
+---
+
+import SingleNodeKubeApi        from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/etcd/troubleshooting/restore/singleNodeKubeApi.mdx'
+import ThreeNodeKubeApi         from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/etcd/troubleshooting/restore/threeNodeKubeApi.mdx'
+import CrushedNodeKubeApi       from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/etcd/troubleshooting/restore/crushedNodeKubeApi.mdx'
+import ThreeNodeKubeApiGardener from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/etcd/troubleshooting/restore/threeNodeKubeApiGardener.mdx'
+
+### 5.1.5.8.2.1. Single-node restoration from a snapshot
+
+This option assumes that the backup is deployed on the first node and the cluster starts in single-node mode.
+Then other cluster nodes will be added sequentially.
+
+<details>
+  <summary>Instructions</summary>
+  <SingleNodeKubeApi/>
+</details>
+
+*****
+
+### 5.1.5.8.2.2. Three-node restoration from a snapshot
+
+This option assumes restoring the DB and its metadata on all three nodes simultaneously.
+
+<details>
+  <summary>Instructions</summary>
+  <ThreeNodeKubeApi />
+</details>
+
+******
+
+### 5.1.5.8.2.3. Cluster restoration during conflicts or quorum issues
+
+This may be necessary in the following cases:
+
+I. During cluster upgrade, more or fewer than 3 control plane nodes of the K8s cluster appeared.
+II. ETCD cluster quorum was lost.
+III. DB metadata is corrupted on one or more ETCD cluster nodes.
+
+<details>
+  <summary>Instructions</summary>
+  <CrushedNodeKubeApi />
+</details>
+
+******
+
+### 5.1.5.8.2.4. Three-node restoration using Gardener's etcdbrctl utility
+
+This option assumes that backups were previously made using the etcdbrctl utility and stored in S3.
+
+<details>
+  <summary>Instructions</summary>
+  <ThreeNodeKubeApiGardener />
+</details>

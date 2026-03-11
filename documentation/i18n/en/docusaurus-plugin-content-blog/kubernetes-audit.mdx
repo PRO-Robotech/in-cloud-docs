@@ -1,0 +1,1167 @@
+---
+title: 'Kubernetes Audit'
+description: 'Configuring Kubernetes audit policies: logging levels, event filtering, suppressing system noise, and configuration examples for production clusters.'
+date: 2025-03-23
+slug: kubernetes-audit
+authors: [dlputilin]
+toc_min_heading_level: 2
+toc_max_heading_level: 2
+tags: [Kubernetes, Handler-Pipeline, Audit]
+---
+
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
+import CodeBlock from '@theme/CodeBlock'
+import dedent from 'ts-dedent'
+import { YamlModal } from '@site/src/components/YamlModal/YamlModal'
+import { getBasePrefix } from '@site/src/utils/getBasePrefix'
+import { YANDEX_KUBERNETES_AUDIT_POLICY } from '@site/src/constants/kubernetes/kubernetesAudit'
+
+<h3>
+  Kubernetes Audit <span style={{ color: '#1cc5ac' }}>#</span>
+</h3>
+
+<p style={{ fontStyle: 'italic', fontWeight: 600 }}>Continuing the Kubernetes article series in a new format.</p>
+
+<div
+  style={{
+    display: 'flex',
+    flexWrap: 'wrap',
+    alignItems: 'flex-start',
+    gap: '30px',
+    marginTop: '1.5rem',
+  }}
+>
+  <div style={{ flex: '1 1 55%', minWidth: '280px' }}>
+    <p>
+      Kubernetes is a powerful interaction interface via gRPC and REST API, but it requires significant effort to ensure security and protection against unauthorized access. One of the key tools for this is the audit system, which allows you to track all actions in the cluster. In this article, we will cover the basics of configuring audit in Kubernetes, its capabilities, and configuration examples that will help you build an effective audit policy for your cluster.
+    </p>
+
+  </div>
+
+  <div
+    style={{
+      flex: '1 1 40%',
+      minWidth: '220px',
+      textAlign: 'center',
+      marginTop: '-3rem',
+    }}
+  >
+    <img
+      src={`${getBasePrefix()}img/blog/audit-policies-promo.png`}
+      alt="audit"
+      style={{
+        width: '85%',
+        maxWidth: '330px',
+        filter: 'drop-shadow(0 0 30px rgba(196, 202, 255, 0.2))',
+        transition: 'transform 0.3s ease-in-out',
+      }}
+    />
+
+  </div>
+</div>
+
+{/* truncate */}
+
+## Table of Contents
+
+- [What is Audit](#what-is-audit)
+- [Audit Policy](#audit-policy)
+- [Filtering Parameters](#filtering-parameters)
+- [Logging Levels](#logging-levels)
+- [omitStages Stages](#omitstages-stages)
+- [Suppressing System Noise](#suppressing-system-noise)
+- [Filtering by Users](#filtering-by-users)
+- [Protecting Sensitive Data](#protecting-sensitive-data)
+- [Detailed Logging for Important APIs](#detailed-logging-for-important-apis)
+- [API Server Configuration](#api-server-configuration)
+- [Conclusion](#conclusion)
+- [Bonus: Yandex Cloud Example](#bonus-yandex-cloud-example)
+
+## What is Audit
+
+Audit in Kubernetes is a mechanism that records all requests to the API server, including access attempts before the authentication stage. This allows tracking both actions of authorized users and any unauthorized or anonymous requests. This approach is essential for timely detection of security incidents, analysis of cluster activity, and meeting regulatory requirements.
+
+Audit events are generated according to a policy described in a configuration file. Each event contains:
+
+- a timestamp.
+- a user identifier (if available).
+- the requested resource and action.
+- the result (success/failure).
+- a unique `auditID` that can be used to trace the chain of calls.
+
+Events themselves can be directed to a file, a remote webhook, or a logging system.
+
+## Audit Policy
+
+An audit policy is a YAML file describing a set of rules that determine which events should be logged and with what level of detail. Each rule consists of conditions (filters) and a logging `level` that defines the amount of information to be saved.
+
+The API server processes the list of rules top-down and applies the first matching rule. If no rule matches, the default behavior or event skip is applied.
+
+## Filtering Parameters
+
+Below are the attributes that can be used to configure event filtering:
+
+<table>
+  <thead>
+    <tr>
+      <th>Parameter</th>
+      <th>Description</th>
+      <th>Example Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <code>level</code>
+      </td>
+      <td>Detail level</td>
+      <td>
+        <code>None</code>, <code>Metadata</code>, <code>Request</code>, <code>RequestResponse</code>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>users</code>, <code>userGroups</code>
+      </td>
+      <td>Filtering by user or group</td>
+      <td>
+        <code>system:serviceaccount:default:my-app</code>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>verbs</code>
+      </td>
+      <td>Operations on resources</td>
+      <td>
+        <code>get</code>, <code>list</code>, <code>watch</code>, <code>create</code>, <code>update</code>,{' '}
+        <code>patch</code>, <code>delete</code>, <code>deletecollection</code>, <code>proxy</code>,{' '}
+        <code>redirect</code>, <code>head</code>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>resources</code>
+      </td>
+      <td>Target Kubernetes objects</td>
+      <td>
+        <code>pods</code>, <code>configmaps</code>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>namespaces</code>
+      </td>
+      <td>Namespace restriction</td>
+      <td>
+        <code>default</code>, <code>kube-system</code>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>nonResourceURLs</code>
+      </td>
+      <td>Requests to system paths outside API objects</td>
+      <td>
+        <code>/metrics</code>, <code>/healthz</code>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>omitStages</code>
+      </td>
+      <td>Excluding processing stages</td>
+      <td>
+        <code>RequestReceived</code>, <code>ResponseStarted</code>, <code>ResponseComplete</code>, <code>Panic</code>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## Logging Levels
+
+<table>
+  <thead>
+    <tr>
+      <th>Value</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <code>None</code>
+      </td>
+      <td>Do not log the event at all</td>
+    </tr>
+    <tr>
+      <td>
+        <code>Metadata</code>
+      </td>
+      <td>Only request metadata is logged (user, resource, verb, etc.)</td>
+    </tr>
+    <tr>
+      <td>
+        <code>Request</code>
+      </td>
+      <td>Metadata and request body are logged. Response is not logged</td>
+    </tr>
+    <tr>
+      <td>
+        <code>RequestResponse</code>
+      </td>
+      <td>Metadata, request body, and response body are logged</td>
+    </tr>
+  </tbody>
+</table>
+
+## omitStages Stages
+
+<table>
+  <thead>
+    <tr>
+      <th>Stage</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <code>RequestReceived</code>
+      </td>
+      <td>Request received by the API server but not yet processed</td>
+    </tr>
+    <tr>
+      <td>
+        <code>ResponseStarted</code>
+      </td>
+      <td>Response has started being sent to the client</td>
+    </tr>
+    <tr>
+      <td>
+        <code>ResponseComplete</code>
+      </td>
+      <td>Request fully completed</td>
+    </tr>
+    <tr>
+      <td>
+        <code>Panic</code>
+      </td>
+      <td>Request processing ended with a fatal error</td>
+    </tr>
+  </tbody>
+</table>
+
+## Audit Policy Examples
+
+> These examples will help you get started with configuring audit in Kubernetes. They cover the main scenarios and allow you to adapt the policy to your needs.
+
+### Suppressing System Noise
+
+:::info
+Suppressing system noise allows you to focus only on events that are important for cluster security. This is especially useful for reducing the number of log entries related to internal Kubernetes processes that are not of interest to most users.
+:::
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: "76%" }}>Description</th>
+      <th style={{ width: "24%" }}>Example</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <strong>Suppressing noise from kube-apiserver</strong><br/>
+        <small>Not needed if you want to see all technical requests from the API server itself (e.g., for deep auditing of internal processes). Usually these events are not needed for analyzing user actions.</small>
+      </td>
+      <td>
+        <YamlModal
+          yamlContent={dedent`
+            ---
+            apiVersion: audit.k8s.io/v1
+            kind: Policy
+            rules:
+
+              # 1. Silence GET on /readyz from kube-apiserver
+              - level: None
+                verbs: ["get"]
+                users:
+                  - "system:apiserver"
+                nonResourceURLs:
+                  - "/readyz"
+
+              # 2. Silence all LIST and WATCH requests from kube-apiserver to key API groups and resources
+              - level: None
+                verbs: ["list", "watch"]
+                users:
+                  - "system:apiserver"
+                resources:
+                  - group: "storage.k8s.io"
+                    resources:
+                      - "volumeattachments"
+                      - "storageclasses"
+
+                  - group: "rbac.authorization.k8s.io"
+                    resources:
+                      - "roles"
+                      - "rolebindings"
+                      - "clusterroles"
+                      - "clusterrolebindings"
+
+                  - group: "scheduling.k8s.io"
+                    resources:
+                      - "priorityclasses"
+
+                  - group: "node.k8s.io"
+                    resources:
+                      - "runtimeclasses"
+
+                  - group: "networking.k8s.io"
+                    resources:
+                      - "ingressclasses"
+
+                  - group: "flowcontrol.apiserver.k8s.io"
+                    resources:
+                      - "flowschemas"
+                      - "prioritylevelconfigurations"
+
+                  - group: "discovery.k8s.io"
+                    namespaces: ["kube-system"]
+                    resources:
+                      - "endpointslices"
+                    resourceNames:
+                      - "kubernetes"
+
+                  - group: "coordination.k8s.io"
+                    resources:
+                      - "leases"
+
+                  - group: "apiregistration.k8s.io"
+                    resources:
+                      - "apiservices"
+
+                  - group: "apiextensions.k8s.io"
+                    resources:
+                      - "customresourcedefinitions"
+
+                  - group: "admissionregistration.k8s.io"
+                    resources:
+                      - "validatingwebhookconfigurations"
+                      - "mutatingwebhookconfigurations"
+                      - "validatingadmissionpolicybindings"
+                      - "validatingadmissionpolicies"
+
+                  - group: ""
+                    resources:
+                      - "endpoints"
+                      - "limitranges"
+                      - "namespaces"
+                      - "nodes"
+                      - "persistentvolumes"
+                      - "pods"
+                      - "resourcequotas"
+                      - "secrets"
+                      - "serviceaccounts"
+                      - "services"
+                      - "configmaps"
+
+              # 3. Silence CREATE requests from kube-apiserver to the same API groups and resources
+              - level: None
+                verbs: ["create"]
+                users:
+                  - "system:apiserver"
+                resources:
+                  - group: "scheduling.k8s.io"
+                    resources:
+                      - "priorityclasses"
+                  - group: "rbac.authorization.k8s.io"
+                    resources:
+                      - "roles"
+                      - "rolebindings"
+                      - "clusterroles"
+                      - "clusterrolebindings"
+                  - group: "flowcontrol.apiserver.k8s.io"
+                    resources:
+                      - "flowschemas"
+                      - "prioritylevelconfigurations"
+                  - group: "discovery.k8s.io"
+                    resources:
+                      - "endpointslices"
+                  - group: "coordination.k8s.io"
+                    resources:
+                      - "leases"
+                  - group: "apiregistration.k8s.io"
+                    resources:
+                      - "apiservices"
+                  - group: ""
+                    resources:
+                      - "configmaps"
+                      - "services"
+                      - "endpoints"
+                      - "namespaces"
+
+              # 4. Silence PATCH requests from kube-apiserver to the status subresource in flowcontrol.apiserver.k8s.io/flowschemas
+              - level: None
+                verbs: ["patch"]
+                users:
+                  - "system:apiserver"
+                resources:
+                  - group: "flowcontrol.apiserver.k8s.io"
+                    resources:
+                      - "flowschemas/status"
+
+              # 5. Silence UPDATE requests from kube-apiserver to coordination.k8s.io/leases and core/v1/configmaps
+              - level: None
+                verbs: ["update"]
+                users:
+                  - "system:apiserver"
+                resources:
+                  - group: "coordination.k8s.io"
+                    resources:
+                      - "leases"
+                  - group: ""
+                    resources:
+                      - "configmaps"
+          `}
+        />
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Suppressing noise from kube-controller-manager</strong><br/>
+        <small>Not needed if full auditing of controller operations is required (e.g., for debugging their logic). In most cases, these events only clutter the audit log.</small>
+      </td>
+      <td>
+        <YamlModal
+          yamlContent={dedent`
+            ---
+            apiVersion: audit.k8s.io/v1
+            kind: Policy
+            rules:
+
+              # 1. Silence LIST and WATCH requests from kube-controller-manager for numerous API groups and resources
+              - level: None
+                verbs: ["list", "watch"]
+                users:
+                  - "system:kube-controller-manager"
+                resources:
+                  - group: "storage.k8s.io"
+                    resources:
+                      - "volumeattributesclasses"
+                      - "volumeattachments"
+                      - "storageclasses"
+                      - "csistoragecapacities"
+                      - "csinodes"
+                      - "csidrivers"
+                  - group: "scheduling.k8s.io"
+                    resources:
+                      - "priorityclasses"
+                  - group: "resource.k8s.io"
+                    resources:
+                      - "resourceslices"
+                      - "resourceclassparameters"
+                      - "resourceclasses"
+                      - "resourceclaimtemplates"
+                      - "resourceclaims"
+                      - "resourceclaimparameters"
+                      - "podschedulingcontexts"
+                  - group: "rbac.authorization.k8s.io"
+                    resources:
+                      - "roles"
+                      - "rolebindings"
+                      - "clusterroles"
+                      - "clusterrolebindings"
+                  - group: "policy"
+                    resources:
+                      - "poddisruptionbudgets"
+                  - group: "node.k8s.io"
+                    resources:
+                      - "runtimeclasses"
+                  - group: "networking.k8s.io"
+                    resources:
+                      - "servicecidrs"
+                      - "ipaddresses"
+                      - "networkpolicies"
+                      - "ingresses"
+                      - "ingressclasses"
+                  - group: "internal.apiserver.k8s.io"
+                    resources:
+                      - "storageversions"
+                  - group: "flowcontrol.apiserver.k8s.io"
+                    resources:
+                      - "prioritylevelconfigurations"
+                      - "flowschemas"
+                  - group: "discovery.k8s.io"
+                    resources:
+                      - "endpointslices"
+                  - group: "coordination.k8s.io"
+                    resources:
+                      - "leases"
+                  - group: "certificates.k8s.io"
+                    resources:
+                      - "certificatesigningrequests"
+                  - group: "batch"
+                    resources:
+                      - "jobs"
+                      - "cronjobs"
+                  - group: "autoscaling"
+                    resources:
+                      - "horizontalpodautoscalers"
+                  - group: "apps"
+                    resources:
+                      - "statefulsets"
+                      - "replicasets"
+                      - "deployments"
+                      - "daemonsets"
+                      - "controllerrevisions"
+                  - group: "apiregistration.k8s.io"
+                    resources:
+                      - "apiservices"
+                  - group: "apiextensions.k8s.io"
+                    resources:
+                      - "customresourcedefinitions"
+                  - group: "admissionregistration.k8s.io"
+                    resources:
+                      - "validatingwebhookconfigurations"
+                      - "mutatingwebhookconfigurations"
+                      - "validatingadmissionpolicybindings"
+                      - "validatingadmissionpolicies"
+                  - group: ""
+                    resources:
+                      - "services"
+                      - "serviceaccounts"
+                      - "secrets"
+                      - "resourcequotas"
+                      - "replicationcontrollers"
+                      - "podtemplates"
+                      - "pods"
+                      - "persistentvolumes"
+                      - "persistentvolumeclaims"
+                      - "nodes"
+                      - "namespaces"
+                      - "limitranges"
+                      - "endpoints"
+                      - "configmaps"
+
+              # 2. Silence GET and UPDATE requests from kube-controller-manager to coordination.k8s.io/leases
+              - level: None
+                verbs: ["get", "update"]
+                users:
+                  - "system:kube-controller-manager"
+                resources:
+                  - group: "coordination.k8s.io"
+                    namespaces: ["kube-system"]
+                    resources:
+                      - "leases"
+                    resourceNames:
+                      - "kube-controller-manager"
+
+              # 3. Silence CREATE tokens for ServiceAccount in kube-system from kube-controller-manager
+              - level: None
+                verbs: ["create"]
+                users:
+                  - "system:kube-controller-manager"
+                resources:
+                  - group: ""
+                    namespaces: ["kube-system"]
+                    resources:
+                      - "serviceaccounts/token"
+                    resourceNames:
+                      - "ttl-controller"
+                      - "node-controller"
+
+              # 4. Silence GET requests to ServiceAccount in kube-system from kube-controller-manager
+              - level: None
+                verbs: ["get"]
+                users:
+                  - "system:kube-controller-manager"
+                resources:
+                  - group: ""
+                    namespaces: ["kube-system"]
+                    resources:
+                      - "serviceaccounts"
+                    resourceNames:
+                      - "ttl-controller"
+                      - "node-controller"
+          `}
+        />
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Suppressing noise from kube-scheduler</strong><br/>
+        <small>Not needed if you are analyzing the scheduler's operation. For most users, these events are not of interest.</small>
+      </td>
+      <td>
+        <YamlModal
+          yamlContent={dedent`
+            ---
+            apiVersion: audit.k8s.io/v1
+            kind: Policy
+            rules:
+
+              # 1. Silence all LIST and WATCH requests from kube-scheduler
+              - level: None
+                verbs: ["list", "watch"]
+                users:
+                  - "system:kube-scheduler"
+                resources:
+                  - group: "storage.k8s.io"
+                    resources:
+                      - "storageclasses"
+                      - "csistoragecapacities"
+                      - "csinodes"
+                      - "csidrivers"
+
+                  - group: "policy"
+                    resources:
+                      - "poddisruptionbudgets"
+
+                  - group: "apps"
+                    resources:
+                      - "statefulsets"
+                      - "replicasets"
+
+                  - group: ""
+                    resources:
+                      - "services"
+                      - "replicationcontrollers"
+                      - "pods"
+                      - "persistentvolumes"
+                      - "persistentvolumeclaims"
+                      - "nodes"
+                      - "namespaces"
+
+                  - group: ""
+                    namespaces: ["kube-system"]
+                    resources:
+                      - "configmaps"
+                    resourceNames:
+                      - "extension-apiserver-authentication"
+
+              # 2. Silence GET and UPDATE requests from kube-scheduler to coordination.k8s.io/leases
+              - level: None
+                verbs: ["get", "update"]
+                users:
+                  - "system:kube-scheduler"
+                resources:
+                  - group: "coordination.k8s.io"
+                    namespaces: ["kube-system"]
+                    resources:
+                      - "leases"
+                    resourceNames:
+                      - "kube-scheduler"
+          `}
+        />
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Suppressing noise from kubelet</strong><br/>
+        <small>Not needed if auditing of all kubelet and node actions is required. Usually these events are only needed for diagnosing node problems.</small>
+      </td>
+      <td>
+        <YamlModal
+          yamlContent={dedent`
+            ---
+            apiVersion: audit.k8s.io/v1
+            kind: Policy
+            rules:
+
+              # 1. Silence LIST and WATCH requests from all nodes (system:nodes)
+              - level: None
+                verbs: ["list", "watch"]
+                userGroups:
+                  - "system:nodes"
+                resources:
+                  - group: "storage.k8s.io"
+                    resources:
+                      - "csinodes"
+                      - "csidrivers"
+                  - group: "node.k8s.io"
+                    resources:
+                      - "runtimeclasses"
+                  - group: ""
+                    resources:
+                      - "services"
+                      - "pods"
+                      - "nodes"
+
+              # 2. Silence GET requests from system:nodes
+              - level: None
+                verbs: ["get"]
+                userGroups:
+                  - "system:nodes"
+                resources:
+                  - group: "coordination.k8s.io"
+                    namespaces: ["kube-node-lease"]
+                    resources:
+                      - "leases"
+                  - group: ""
+                    namespaces: ["kube-system"]
+                    resources:
+                      - "pods"
+                  - group: ""
+                    resources:
+                      - "nodes"
+                  - group: "storage.k8s.io"
+                    resources:
+                      - "csinodes"
+
+              # 3. Silence UPDATE requests from system:nodes
+              - level: None
+                verbs: ["update"]
+                userGroups:
+                  - "system:nodes"
+                resources:
+                  - group: "coordination.k8s.io"
+                    namespaces: ["kube-node-lease"]
+                    resources:
+                      - "leases"
+                  - group: ""
+                    namespaces: ["kube-system"]
+                    resources:
+                      - "pods"
+
+              # 4. Silence PATCH requests from system:nodes
+              - level: None
+                verbs: ["patch"]
+                userGroups:
+                  - "system:nodes"
+                resources:
+                  - group: ""
+                    resources:
+                      - "nodes/status"
+                  - group: ""
+                    namespaces: ["kube-system"]
+                    resources:
+                      - "pods/status"
+                  - group: ""
+                    namespaces:
+                      - "kube-system"
+                      - "default"
+                    resources:
+                      - "pods"
+                      - "events"
+
+              # 5. Silence CREATE requests from system:nodes
+              - level: None
+                verbs: ["create"]
+                userGroups:
+                  - "system:nodes"
+                resources:
+                  - group: ""
+                    resources:
+                      - "nodes"
+                  - group: ""
+                    namespaces:
+                      - "kube-system"
+                      - "default"
+                    resources:
+                      - "events"
+                  - group: ""
+                    namespaces:
+                      - "kube-system"
+                    resources:
+                      - "pods"
+          `}
+        />
+      </td>
+    </tr>
+
+  </tbody>
+</table>
+
+### Filtering by Users
+
+:::info
+Event filtering by users and groups allows you to focus on actions that matter for cluster security. For example, tracking the use of system groups such as `system:masters`, which have full access to the cluster.
+:::
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '76%' }}>Description</th>
+      <th style={{ width: '24%' }}>Example</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <strong>Logging actions of the `system:masters` group</strong>
+      </td>
+      <td>
+        <YamlModal
+          yamlContent={dedent`
+            ---
+            apiVersion: audit.k8s.io/v1
+            kind: Policy
+            rules:
+              - level: Metadata
+                # omitStages excludes specified audit stages (e.g., RequestReceived)
+                # from logging — this reduces noise.
+                omitStages:
+                  - "RequestReceived"
+                # Filtering by user group
+                userGroups:
+                  - "system:masters"
+            `}
+        />
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### Protecting Sensitive Data
+
+:::warning Important!
+Protecting sensitive data is critical in Kubernetes, especially if you are not using external secrets management solutions such as HashiCorp Vault or Sealed Secrets.
+
+:::
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '76%' }}>Description</th>
+      <th style={{ width: '24%' }}>Example</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <strong>Logging actions with secrets and tokens.</strong>
+      </td>
+      <td>
+        <YamlModal
+          yamlContent={dedent`
+            ---
+            apiVersion: audit.k8s.io/v1
+            kind: Policy
+            rules:
+              - level: Metadata
+                omitStages:
+                  - "RequestReceived"
+                verbs: ["get","list","watch"]
+                resources:
+                  - group: ""
+                    resources:
+                      - "secrets"
+
+              - level: Metadata
+                omitStages:
+                  - "RequestReceived"
+                verbs: ["delete"]
+                resources:
+                  - group: ""
+                    resources:
+                      - "secrets"
+
+              - level: Metadata
+                omitStages:
+                  - "RequestReceived"
+                verbs: ["create","patch"]
+                resources:
+                  - group: ""
+                    resources:
+                      - "secrets"
+            `}
+        />
+      </td>
+    </tr>
+
+  </tbody>
+</table>
+
+### Detailed Logging for Important APIs
+
+:::warning Important!
+Kubernetes also has plenty of resources that can be used for privilege escalation — for example, role-based policies (RBAC), workload resources (Deployments, Pods), and Admission resources. Logging actions on these resources allows you to track changes and identify potential security threats.
+:::
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '76%' }}>Description</th>
+      <th style={{ width: '24%' }}>Example</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <strong>Logging actions on role-based policies.</strong><br/>
+        <small>Scenarios: auditing RBAC changes to investigate privilege escalation, detecting unauthorized role and access changes.</small>
+      </td>
+      <td>
+        <YamlModal
+          yamlContent={dedent`
+            ---
+            apiVersion: audit.k8s.io/v1
+            kind: Policy
+
+            # omitStages is specified globally — applies to all rules to avoid logging the early RequestReceived stage and reduce noise.
+            omitStages:
+              - "RequestReceived"
+
+            rules:
+              # Logging read operations on RBAC objects (get, list, watch)
+              - level: Metadata
+                verbs:
+                  - get
+                  - list
+                  - watch
+                resources:
+                  - group: rbac.authorization.k8s.io
+                    resources:
+                      - roles
+                      - rolebindings
+                      - clusterroles
+                      - clusterrolebindings
+
+              # Logging create operations on RBAC objects and SubjectAccessReview
+              - level: Metadata
+                verbs:
+                  - create
+                resources:
+                  - group: rbac.authorization.k8s.io
+                    resources:
+                      - roles
+                      - rolebindings
+                      - clusterroles
+                      - clusterrolebindings
+                  - group: authorization.k8s.io
+                    resources:
+                      - subjectaccessreviews
+
+              # Logging update operations on RBAC objects
+              - level: Metadata
+                verbs:
+                  - update
+                  - patch
+                resources:
+                  - group: rbac.authorization.k8s.io
+                    resources:
+                      - roles
+                      - rolebindings
+                      - clusterroles
+                      - clusterrolebindings
+
+              # Logging deletion of RBAC objects
+              - level: Metadata
+                verbs:
+                  - delete
+                resources:
+                  - group: rbac.authorization.k8s.io
+                    resources:
+                      - roles
+                      - rolebindings
+                      - clusterroles
+                      - clusterrolebindings
+          `}
+        />
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Logging actions on workloads.</strong><br/>
+        <small>Scenarios: auditing deployment changes, investigating incidents with pod creation/deletion, tracking manual interventions in workloads.</small>
+      </td>
+      <td>
+        <YamlModal
+          yamlContent={dedent`
+            ---
+            apiVersion: audit.k8s.io/v1
+            kind: Policy
+
+            # omitStages globally — for all rules, to avoid logging RequestReceived.
+            omitStages:
+              - "RequestReceived"
+
+            rules:
+              # Logging read operations on workload objects
+              - level: Metadata
+                verbs:
+                  - get
+                  - list
+                  - watch
+                resources:
+                  - group: ""
+                    resources:
+                      - pods
+                  - group: apps
+                    resources:
+                      - deployments
+                      - statefulsets
+                      - daemonsets
+                      - replicasets
+                  - group: batch
+                    resources:
+                      - jobs
+                      - cronjobs
+
+              # Logging update operations on workload objects
+              - level: Metadata
+                verbs:
+                  - create
+                  - update
+                  - patch
+                resources:
+                  - group: ""
+                    resources:
+                      - pods
+                  - group: apps
+                    resources:
+                      - deployments
+                      - statefulsets
+                      - daemonsets
+                      - replicasets
+                  - group: batch
+                    resources:
+                      - jobs
+                      - cronjobs
+
+              # Logging deletion of workload objects
+              - level: Metadata
+                verbs:
+                  - delete
+                resources:
+                  - group: ""
+                    resources:
+                      - pods
+                  - group: apps
+                    resources:
+                      - deployments
+                      - statefulsets
+                      - daemonsets
+                      - replicasets
+                  - group: batch
+                    resources:
+                      - jobs
+                      - cronjobs
+          `}
+        />
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Logging actions on Admission resources.</strong><br/>
+        <small>Scenarios: debugging and auditing Admission Webhooks, investigating issues with validation/mutation policies, controlling changes to admission rules.</small>
+      </td>
+      <td>
+        <YamlModal
+          yamlContent={dedent`
+            ---
+            apiVersion: audit.k8s.io/v1
+            kind: Policy
+
+            # omitStages globally — for all rules, to avoid logging RequestReceived.
+            omitStages:
+              - "RequestReceived"
+
+            rules:
+              # Logging read operations on Admission resources
+              - level: Metadata
+                verbs:
+                  - get
+                  - list
+                  - watch
+                resources:
+                  - group: admissionregistration.k8s.io
+                    resources:
+                      - validatingwebhookconfigurations
+                      - mutatingwebhookconfigurations
+                      - validatingadmissionpolicies
+                      - validatingadmissionpolicybindings
+
+              # Logging update operations on Admission resources
+              - level: Metadata
+                verbs:
+                  - create
+                  - update
+                  - patch
+                resources:
+                  - group: admissionregistration.k8s.io
+                    resources:
+                      - validatingwebhookconfigurations
+                      - mutatingwebhookconfigurations
+                      - validatingadmissionpolicies
+                      - validatingadmissionpolicybindings
+
+              # Logging deletion of Admission resources
+              - level: Metadata
+                verbs:
+                  - delete
+                resources:
+                  - group: admissionregistration.k8s.io
+                    resources:
+                      - validatingwebhookconfigurations
+                      - mutatingwebhookconfigurations
+                      - validatingadmissionpolicies
+                      - validatingadmissionpolicybindings
+          `}
+        />
+      </td>
+    </tr>
+
+  </tbody>
+</table>
+
+## API Server Configuration
+
+To enable audit, specify the path to the policy file:
+
+<CodeBlock language="bash">
+  {dedent`
+    --audit-policy-file=/etc/kubernetes/audit-policy.yaml
+    --audit-log-path=/var/log/kubernetes/audit/audit.log
+  `}
+</CodeBlock>
+
+:::danger Note!
+Please note that policy configuration files are loaded into the API server only at startup. Therefore, if you change the policy, you will need to restart the API server for the changes to take effect.
+:::
+
+## Conclusion
+
+Kubernetes audit is a powerful security tool. Proper policy configuration allows you to track actions of users and services, minimize data leaks, and focus on critically important events. The policy examples in this article are a starting point, but audit policies are always written to meet the requirements of your company and infrastructure.
+
+### Basic Recommendations
+
+- Suppress system noise (e.g., from internal components)
+- Filter by users and groups
+- Log only metadata for sensitive data (secrets, tokens)
+- Add detailed logging only for important APIs (CRD, Admission, Webhook)
+- Decompose policies into modules for easier management
+- Use `omitStages` to reduce log volume
+- Regularly review and update the policy as the cluster evolves
+- Test the policy on a staging cluster before applying to production
+- Use tools for audit analysis and visualization (e.g., ELK Stack, Loki, Grafana)
+
+## Bonus: Yandex Cloud Example
+
+The Yandex Cloud policy example is a good starting point for creating your own audit policy.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '76%' }}>Description</th>
+      <th style={{ width: '24%' }}>Example</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <strong>Logging actions on role-based policies.</strong>
+      </td>
+      <td>
+        <YamlModal
+          yamlContent={dedent`
+            ${YANDEX_KUBERNETES_AUDIT_POLICY.data.value}
+          `}
+        />
+      </td>
+    </tr>
+
+  </tbody>
+</table>

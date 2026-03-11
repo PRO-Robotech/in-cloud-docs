@@ -1,6 +1,7 @@
 import React, { FC } from 'react'
 import CodeBlock from '@theme/CodeBlock'
 import Admonition from '@theme/Admonition'
+import { translate } from '@docusaurus/Translate'
 import dedent from 'ts-dedent'
 
 interface BinaryInstallCheckProps {
@@ -36,11 +37,11 @@ export const BinaryInstallCheck: FC<BinaryInstallCheckProps> = ({
   return (
     <>
       <CodeBlock language="bash">{`journalctl -t ${binaryName}-installer`}</CodeBlock>
-      <Admonition type="note" title="Вывод команды">
+      <Admonition type="note" title={translate({ id: 'common.commandOutput', message: 'Вывод команды' })}>
         <CodeBlock language="text">{journalOutput}</CodeBlock>
       </Admonition>
       <CodeBlock language="bash">{`ls -la /usr/local/bin/ | grep ${grepCommand}`}</CodeBlock>
-      <Admonition type="note" title="Вывод команды">
+      <Admonition type="note" title={translate({ id: 'common.commandOutput', message: 'Вывод команды' })}>
         <CodeBlock language="bash">{lsOutput}</CodeBlock>
       </Admonition>
     </>

@@ -1,0 +1,28 @@
+import dedent from 'ts-dedent'
+import CodeBlock from '@theme/CodeBlock'
+import { COMPONENTS_VERSION } from '@site/src/constants/kubernetes/componentsVersion'
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+import {YANDEX_KUBERNETES_AUDIT_POLICY} from '@site/src/constants/kubernetes/kubernetesAudit'
+
+> The audit policy defines which requests to the API Server are logged and with what level of detail. The file is loaded at kube-apiserver startup via `--audit-policy-file`; changes require a restart.
+
+<h3>Component configuration steps</h3>
+
+- Creating the working directory
+- Preparing the audit policy
+
+<h3>Creating the working directory</h3>
+<CodeBlock language="bash">
+  {dedent`
+    mkdir -p /var/log/kubernetes/audit
+  `}
+</CodeBlock>
+
+<h3>Preparing the audit policy</h3>
+<CodeBlock language="bash">
+    {dedent`
+      cat <<EOF > ${CUSTOM_VALUE.kubernetesAPIAuditPolicyPath.value}
+      ${YANDEX_KUBERNETES_AUDIT_POLICY.data.value}
+      EOF
+    `}
+</CodeBlock>

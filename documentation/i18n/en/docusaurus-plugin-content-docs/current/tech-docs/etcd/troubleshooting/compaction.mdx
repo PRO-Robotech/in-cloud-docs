@@ -1,0 +1,76 @@
+---
+id: compaction
+toc_min_heading_level: 2
+toc_max_heading_level: 2
+---
+
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+import dedent from 'ts-dedent'
+import CodeBlock from '@theme/CodeBlock'
+
+# 5.1.5.4.1. Compaction
+
+> Compaction in etcd is the process of removing old data versions (revisions) from storage. In etcd, all write operations create new key revisions, allowing clients to access historical data. However, over time, the accumulation of these revisions leads to increased disk space usage and slower cluster performance.
+
+## 5.1.5.4.1.1. How it works
+
+- Compaction can be triggered automatically based on a policy (e.g., by time or number of revisions) or manually using the etcdctl compact command.
+
+- During compaction, etcd removes revisions older than the specified revision index. This means clients can no longer access data before this index.
+
+- Internal data structures are updated to reflect the removal of old revisions.
+
+## 5.1.5.4.1.2. Prerequisites
+
+- With intensive write and delete operations, etcd quickly accumulates historical revisions.
+
+- Without compaction, the database size will continuously grow, which can lead to disk space exhaustion.
+
+- Too many revisions can slow down etcd performance, especially when querying historical data.
+
+## 5.1.5.4.1.3. Instructions
+
+:::warning Note
+Please note that there is an external dependency on aliases.
+:::
+
+<Tabs groupId="install-type">
+
+  <TabItem value='etcdctl'>
+    <CodeBlock language="bash">
+      {dedent`
+        etcdctlCompaction
+      `}
+    </CodeBlock>
+  </TabItem>
+
+  <TabItem value='ectl'>
+    <CodeBlock language="bash">
+      {dedent`
+        ectlCompaction
+      `}
+    </CodeBlock>
+  </TabItem>
+
+  <TabItem value='nectl'>
+    <CodeBlock language="bash">
+      {dedent`
+        nectlCompaction
+      `}
+    </CodeBlock>
+  </TabItem>
+
+</Tabs>
+
+:::note Command output
+
+> On successful command execution, you will get the following message.
+
+<CodeBlock language="bash">
+  {dedent`
+    compacted revision 75704
+  `}
+</CodeBlock>
+
+:::

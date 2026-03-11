@@ -1,0 +1,14 @@
+---
+id: etcd-tuning
+---
+
+# Tuning
+
+## ETCD DB Size
+
+
+1.  Maximum request size (Request size limit)
+    ETCD is designed to handle small requests in the form of "key/value" pairs, typical for metadata. Large requests will work but may increase latency for other requests. By default, the maximum size of any request is 1.5 MiB. This limit is configurable using the `--max-request-bytes` flag for the ETCD server.
+
+2.  Maximum storage size (Storage size limit)
+    By default, the maximum ETCD DB size on disk is 2GB. This value is configured using the `--quota-backend-bytes` flag. 8GB is the suggested maximum size for this storage. When specifying a value greater than 8GB, corresponding warnings will be shown in the service logs.

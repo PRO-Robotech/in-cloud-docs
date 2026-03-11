@@ -1,0 +1,30 @@
+import AllStaticPodsCPInitComponent from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/allStaticPodsCPInitComponent.mdx'
+import AllStaticPodsCPJoinComponent from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/allStaticPodsCPJoinComponent.mdx'
+
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+<Tabs groupId="phase">
+  <TabItem value="init" label="Init">
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Static Pods setup</p>
+          <p className="obligatory-note-orange">● Required</p>
+        </div>
+      </summary>
+      <AllStaticPodsCPInitComponent />
+    </details>
+  </TabItem>
+  <TabItem value="join" label="Join">
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Static Pods setup</p>
+          <p className="obligatory-note-orange">● Required</p>
+        </div>
+      </summary>
+      <AllStaticPodsCPJoinComponent />
+    </details>
+  </TabItem>
+</Tabs>

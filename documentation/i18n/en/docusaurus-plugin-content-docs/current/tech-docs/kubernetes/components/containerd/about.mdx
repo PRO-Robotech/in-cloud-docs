@@ -1,0 +1,22 @@
+**Description**: **Containerd** is a high-performance, open-source container runtime used for running and managing containers. It provides the functionality needed to work with containers, such as creation, execution, lifecycle management, and image handling. **Containerd** integrates with **CRI (Container Runtime Interface)**, providing the necessary abstraction for interaction with Kubernetes through **kubelet**.
+
+**Containerd** is a low-level component used for interacting with containers and their execution, while it does not provide full container orchestration or scheduling — these functions are performed by Kubernetes.
+
+#### Functions
+
+- Container lifecycle management, including creation, execution, stopping, and deletion of containers.
+- Working with container images: downloading, extracting, and storing images.
+- Support for CRI interaction for integration with Kubernetes through kubelet.
+- Handling network settings and mounting disk volumes for containers.
+- Managing container resources such as CPU, memory, and I/O.
+- Integration with **containerd-shim** for managing isolation and communication with containers at the operating system level.
+
+#### Features
+
+- Compatible with **Open Container Initiative (OCI)**, ensuring support for container image standards and specifications.
+- Lightweight and highly efficient container runtime, focused on supporting scalable and performant container solutions.
+- Uses **gRPC API** for container management and interaction with other system components.
+- Can be used not only with Kubernetes but also with other container orchestrators and solutions.
+- Supports extensibility through plugins for interaction with various networking solutions, storage, and other systems.
+
+**Containerd** provides the foundational infrastructure for container management that can be used as part of larger systems such as Kubernetes for working with containers in a distributed environment.

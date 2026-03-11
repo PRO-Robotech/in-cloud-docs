@@ -1,0 +1,28 @@
+---
+id: all-examination
+title: "5.2.2.5. Verification"
+---
+
+import KubeadmExamination from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/certificates/examination/examinationKubeadmComponent.mdx'
+import OpensslExamination from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/certificates/examination/examinationOpensslComponent.mdx'
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+> This section covers the verification of the correctness of created certificates and keys, as well as the correspondence between them. This is important for eliminating errors before launching Kubernetes components.
+
+<details>
+  <summary>
+    <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+      <p style={{ marginBottom: 0 }}>Certificate block verification</p>
+      <p className="obligatory-note-green">● Optional</p>
+    </div>
+  </summary>
+  <Tabs groupId="install-type">
+    <TabItem value="HardWay">
+      <OpensslExamination />
+    </TabItem>
+    <TabItem value="Kubeadm">
+      <KubeadmExamination />
+    </TabItem>
+  </Tabs>
+</details>

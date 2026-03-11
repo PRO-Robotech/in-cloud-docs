@@ -1,0 +1,40 @@
+---
+id: all-setup
+title: "5.1.1.2. Software Installation"
+---
+
+import EtcdlifecycleDownloadComponent from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/etcd/components/etcd/lifecycleDownloadComponent.mdx'
+import EtcdCheckBIN from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/etcd/components/etcd/checkBIN.mdx'
+import EtcdbrctlLifecycleInstallComponent from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/etcd/components/etcdbrctl/lifecycleInstallComponent.mdx'
+
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+> This section describes the installation process for the main components required for the ETCD cluster operation.
+> The installation is performed manually and prepares the environment for subsequent initialization and control plane configuration stages.
+
+<Tabs groupId="component">
+  <TabItem value="etcd">
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Installing etcd</p>
+          <p className="obligatory-note-orange">● Required</p>
+        </div>
+      </summary>
+      <EtcdlifecycleDownloadComponent />
+      <EtcdCheckBIN />
+    </details>
+  </TabItem>
+  <TabItem value="etcdbrctl">
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Installing etcdbrctl</p>
+          <p className="obligatory-note-green">● Optional</p>
+        </div>
+      </summary>
+      <EtcdbrctlLifecycleInstallComponent />
+    </details>
+  </TabItem>
+</Tabs>

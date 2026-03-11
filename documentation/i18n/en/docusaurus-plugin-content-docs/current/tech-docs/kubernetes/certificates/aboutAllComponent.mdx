@@ -1,0 +1,57 @@
+import { FancyboxImage } from '@site/src/components/commonBlocks/FancyboxImage'
+
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+import { getBasePrefix } from '@site/src/utils/getBasePrefix'
+
+> This section covers the rules for using certificates in a Kubernetes cluster: which components use certificates, who signs them, and how authentication is performed.
+
+<Tabs groupId="group">
+
+  <TabItem value="masters">
+    <figure style={{ textAlign: 'center', display: 'contents' }}>
+      <FancyboxImage
+        src={`${getBasePrefix()}img/certificates/certificates-masters.svg`}
+        style={{ width: '100%', maxWidth: 'none' }}
+      />
+      <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
+        Basic certificate structure
+      </figcaption>
+    </figure>
+
+    <figure style={{ textAlign: 'center', display: 'contents' }}>
+      <FancyboxImage
+        src={`${getBasePrefix()}img/certificates/certificates-masters-transport.svg`}
+        style={{ width: '100%', maxWidth: 'none' }}
+      />
+      <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
+        Network communication using certificates
+      </figcaption>
+    </figure>
+
+  </TabItem>
+
+  <TabItem value="workers">
+    <figure style={{ textAlign: 'center', display: 'contents' }}>
+      <FancyboxImage
+        src={`${getBasePrefix()}img/certificates/certificates-workers.svg`}
+        style={{ width: '100%', maxWidth: 'none' }}
+      />
+      <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
+        Basic certificate structure
+      </figcaption>
+    </figure>
+
+    <figure style={{ textAlign: 'center', display: 'contents' }}>
+      <FancyboxImage
+        src={`${getBasePrefix()}img/certificates/certificates-workers-transport.svg`}
+        style={{ width: '100%', maxWidth: 'none' }}
+      />
+      <figcaption style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
+        Network communication using certificates
+      </figcaption>
+    </figure>
+
+  </TabItem>
+
+</Tabs>

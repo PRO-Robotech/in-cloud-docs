@@ -1,0 +1,26 @@
+import SetupSystemdUnit from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/kubelet/payload/setupSystemdUnit.mdx'
+import ConfigFiles from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/kubelet/payload/configFiles.mdx'
+
+<h3>Component configuration steps</h3>
+
+- Component Systemd Unit configuration
+- Add Systemd Unit to autostart
+- Custom component configuration
+
+:::warning Note
+This section depends on the following documents:
+
+- [Containerd Install](/tech-docs/kubernetes/components/containerd/lifecycleDownload).
+- [Runc Install](/tech-docs/kubernetes/components/runc/lifecycleDownload).
+  :::
+
+<h3>Component Systemd Unit configuration</h3>
+
+<SetupSystemdUnit />
+
+<h3>Custom component configuration</h3>
+
+<details className="custom-gray-block">
+  <summary>Kubelet config</summary>
+  <ConfigFiles />
+</details>

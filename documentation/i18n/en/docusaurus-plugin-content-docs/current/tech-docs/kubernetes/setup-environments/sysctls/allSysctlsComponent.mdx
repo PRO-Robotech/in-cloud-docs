@@ -1,0 +1,14 @@
+import SysctlsComponent from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/setup-environments/sysctls/sysctlsComponent.mdx'
+
+> This section covers configuring kernel parameters using sysctl, which are necessary for Kubernetes networking.
+> Changes are made to ensure traffic routing between pods and correct iptables operation for bridges. These parameters are mandatory for enabling IP packet forwarding and network flow filtering in the cluster.
+
+<details>
+  <summary>
+    <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+      <p style={{ marginBottom: 0 }}>Configuring sysctl parameters</p>
+      <p className="obligatory-note-orange">● Required</p>
+    </div>
+  </summary>
+  <SysctlsComponent />
+</details>

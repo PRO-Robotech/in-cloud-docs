@@ -1,0 +1,15 @@
+**Description**: **Kube-scheduler** is a Kubernetes component responsible for distributing pods across cluster nodes. It makes decisions about which node should run a new pod, considering available node resources, labels and annotations, as well as preferences set by users or placement policies. The Scheduler performs the task of optimal load distribution and ensuring efficient resource utilization in the cluster.
+
+#### Functions
+- Scheduling pods to nodes based on available resources such as CPU, memory, and others.
+- Determining preferences for pod placement, for example, considering geographic proximity or specific network configurations.
+- Evaluating resource state on nodes and distributing load to ensure optimal cluster operation.
+
+#### Features
+- Plans pod placement based on available node resources such as CPU, memory, network interfaces, and other parameters.
+- Supports pod placement policies through affinity (placing on nodes with specific labels) and anti-affinity (avoiding placement on nodes with specific labels).
+- Ensures fault tolerance and high availability through even load distribution between nodes.
+- Integrates with other Kubernetes components to apply priority strategies, for example, with **Taints** and **Tolerations** to exclude nodes with non-standard configurations or state.
+- Uses dynamic node state checking and automatic pod reassignment when resources change or nodes fail.
+
+**Kube-scheduler** plays a key role in ensuring load balancing and efficiency of the Kubernetes cluster, correctly distributing pods depending on current conditions and constraints.

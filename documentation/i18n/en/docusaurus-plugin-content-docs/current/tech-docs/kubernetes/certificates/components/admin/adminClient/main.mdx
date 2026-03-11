@@ -1,0 +1,22 @@
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+import Openssl from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/certificates/components/admin/adminClient/openssl.mdx'
+import Kubeadm from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/certificates/components/admin/adminClient/kubeadm.mdx'
+import Kubeconfig from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/certificates/components/admin/adminClient/kubeconfig.mdx'
+import { CertificateStatusCheck } from '@site/src/components/commonBlocks/CertificateStatusCheck'
+import { CERTIFICATES } from '@site/src/constants/kubernetes/certs'
+
+<Tabs groupId="install-type">
+
+  <TabItem value="HardWay">
+    <Openssl />
+    <Kubeconfig />
+    <CertificateStatusCheck method="openssl" certPath={CERTIFICATES.kubernetesAdminClient.crtPath} certDisplayName="admin.conf" caDisplayName="kubernetes" />
+  </TabItem>
+
+  <TabItem value="Kubeadm">
+    <Kubeadm />
+    <CertificateStatusCheck method="kubeadm" certDisplayName="admin.conf" caDisplayName="kubernetes" />
+  </TabItem>
+
+</Tabs>

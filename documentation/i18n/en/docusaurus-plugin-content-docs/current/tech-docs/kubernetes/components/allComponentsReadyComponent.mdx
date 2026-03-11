@@ -1,0 +1,37 @@
+---
+id: all-components-ready
+title: "5.2.1.5. Verification"
+---
+
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
+import ComponentsReadyInitComponent from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/componentsReadyInitComponent.mdx'
+import ComponentsReadyJoinComponent from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/componentsReadyJoinComponent.mdx'
+
+> This section describes the process of verifying the readiness of Kubernetes components before cluster initialization or joining new nodes.
+
+<Tabs groupId="phase">
+  <TabItem value="init" label="Init">
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Component readiness verification</p>
+          <p className="obligatory-note-green">● Optional</p>
+        </div>
+      </summary>
+      <ComponentsReadyInitComponent />
+    </details>
+  </TabItem>
+
+  <TabItem value="join" label="Join">
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Component readiness verification</p>
+          <p className="obligatory-note-green">● Optional</p>
+        </div>
+      </summary>
+      <ComponentsReadyJoinComponent />
+    </details>
+  </TabItem>
+</Tabs>

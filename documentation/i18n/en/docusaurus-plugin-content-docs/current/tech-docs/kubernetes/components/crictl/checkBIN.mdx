@@ -1,0 +1,17 @@
+import { BinaryVersionCheck, BinaryInstallCheck } from '@site/src/components/commonBlocks/BinaryCheck'
+import { COMPONENTS_VERSION } from '@site/src/constants/kubernetes/componentsVersion'
+
+<h4>Installation verification</h4>
+
+<details className="custom-blue-block">
+  <summary>Installation verification</summary>
+  <BinaryInstallCheck
+    binaryName="crictl"
+    version={COMPONENTS_VERSION.crictl.value}
+    installSteps={['Installing crictl...']}
+    successMessage="crictl successfully updated to"
+    grepCommand="'crictl$'"
+    lsOutput="-rwxr-xr-x  1 1001  127  58376628 Apr 18  2024 crictl"
+  />
+  <BinaryVersionCheck command="crictl --version" output="crictl version v1.30.0" />
+</details>

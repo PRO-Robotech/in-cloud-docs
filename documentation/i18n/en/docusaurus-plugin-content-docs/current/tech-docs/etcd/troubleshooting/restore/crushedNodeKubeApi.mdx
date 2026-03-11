@@ -1,0 +1,95 @@
+---
+id: CrushedNodeKubeApi
+---
+
+import CodeBlock                    from '@theme/CodeBlock'
+import dedent                       from 'ts-dedent'
+import { CUSTOM_VALUE }             from '@site/src/constants/kubernetes/customValue'
+import TabItem                      from '@theme/TabItem'
+import Tabs                         from '@theme/Tabs'
+import { ETCD_ARGS }                from '@site/src/constants/kubernetes/etcdArgs'
+import { CodeAndInputExportPods }   from '@site/src/components/commonBlocks'
+
+import { CERTIFICATES }             from '@site/src/constants/kubernetes/certs'
+import { PORTS }                    from '@site/src/constants/kubernetes/ports'
+import { CrushedNodeFunctionsKubeApi }  from './blocks'
+
+export const ETCD_endpoints           = 'https://10.10.10.3:2379,https://10.10.10.4:2379,https://10.10.10.5:2379'
+export const ETCD_endpoint_1          = 'https://10.10.10.3:2379'
+export const ETCD_endpoint_2          = 'https://10.10.10.4:2379'
+export const ETCD_endpoint_3          = 'https://10.10.10.5:2379'
+export const ETCD_etcd_pod_1          = 'etcd-in-cloud-k8s-sandbox-dev-csko-1-tcgzn-7plhz'
+export const ETCD_etcd_pod_2          = 'etcd-in-cloud-k8s-sandbox-dev-csko-1-tcgzn-h9g49'
+export const ETCD_etcd_pod_3          = 'etcd-in-cloud-k8s-sandbox-dev-csko-1-tcgzn-wps6k'
+export const ETCD_k8s_node_1          = 'in-cloud-k8s-sandbox-dev-csko-1-tcgzn-7plhz'
+export const ETCD_k8s_node_2          = 'in-cloud-k8s-sandbox-dev-csko-1-tcgzn-h9g49'
+export const ETCD_k8s_node_3          = 'in-cloud-k8s-sandbox-dev-csko-1-tcgzn-wps6k'
+export const ETCD_k8s_node_address_1  = '10.10.10.3'
+export const ETCD_k8s_node_address_2  = '10.10.10.4'
+export const ETCD_k8s_node_address_3  = '10.10.10.5'
+export const ETCD_api_address         = '10.10.10.2'
+export const ETCD_k8s_cluster_name    = 'in-cloud-k8s-sandbox-test-csko-1'
+
+<CrushedNodeFunctionsKubeApi.Master />
+
+  1. Determine the current number of ETCD cluster nodes.
+
+  <Tabs groupId="etcd-kubeapi">
+    <TabItem value='KubeAPI of the cluster being restored'>
+      If the KubeAPI of the cluster being restored is available, use this option.
+
+      2. Connect to KubeAPI and enter the command:
+      <CodeBlock language="bash">{`kubectl get pod -n kube-system -l component=etcd -o wide`}</CodeBlock>
+
+      3. Select the ETCD cluster node pod from the obtained table, based on which you will restore the cluster.
+
+    </TabItem>
+    <TabItem value='Infrastructure cluster KubeAPI'>
+      2. Connect to the infrastructure cluster KubeAPI and enter the command:
+
+      <CodeBlock language="bash">
+  {`kubectl get machine -n in-cloud-k8s-sandbox-test-csko-1
+    -l cluster.x-k8s.io/control-plane=
+    -o custom-columns=NAME:.metadata.name,ADDRESSES:status.addresses\[0\].address
+  `}
+      </CodeBlock>
+      3. Select the k8s cluster node from which you will restore the cluster.
+    </TabItem>
+  </Tabs>
+
+  4. Connect to the K8s cluster node you selected or the K8s cluster node of the pod you selected.
+
+  5. Collect all possible prerequisites for connecting to the ETCD and K8s cluster.
+
+  <Tabs groupId="etcd-status">
+    <TabItem value='ETCD cluster is running'>
+      6. If you can connect to the ETCD cluster, then create a backup
+      and perform cluster restoration with subsequent connection
+      of the remaining ETCD cluster nodes.
+    </TabItem>
+    <TabItem value='ETCD cluster is not running'>
+      6. If connecting to the ETCD cluster is not possible, create a DB file backup.
+
+      7. Open the file <code>${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/manifests/etcd.yaml</code> for editing.
+      8. In the ETCD startup parameters specified in the `spec.containers[0].command` section,
+      add the key:
+      <CodeBlock language="bash">{`--force-new-cluster`}</CodeBlock>
+      Also change the `initial-cluster` parameter so that only the current ETCD cluster node remains.
+      <CodeBlock language="bash">{`\--initial-cluster=${ETCD_k8s_node_1}=https://${ETCD_k8s_node_address_1}:${PORTS.etcdPeer.portNumber} `}</CodeBlock>
+      This way, on the next ETCD startup, all current metadata will be removed from the DB files,
+      and new ones specified in the `spec.containers[0].command` section with the initial suffix will be written.
+
+      9. Wait for the ETCD node pod to be recreated and check its status.
+
+      10. In the file <code>${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/manifests/etcd.yaml</code>,
+      in the ETCD startup parameters specified in the `spec.containers[0].command` section,
+      remove the key:
+      <CodeBlock language="bash">{`--force-new-cluster`}</CodeBlock>
+      Otherwise, all metadata will be deleted from the DB on every pod/container restart.
+
+      10. Add the 2nd and 3rd ETCD cluster nodes as described in the
+      single-node restoration instructions for `Master-2` and `Master-3`.
+    </TabItem>
+  </Tabs>
+
+  The cluster restoration is now complete.
