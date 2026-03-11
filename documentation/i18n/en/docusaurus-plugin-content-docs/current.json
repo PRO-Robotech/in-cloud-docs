@@ -68,7 +68,7 @@
     "description": "The label for the doc item 5.1.1.1. Настройка ОС in sidebar techDocs, linking to the doc tech-docs/etcd/setup-environments/os-setup"
   },
   "sidebar.techDocs.doc.5.1.1.2. Установка ПО": {
-    "message": "5.1.1.2. Software Installation",
+    "message": "5.1.1.2. Software Install",
     "description": "The label for the doc item 5.1.1.2. Установка ПО in sidebar techDocs, linking to the doc tech-docs/etcd/components/all-setup"
   },
   "sidebar.techDocs.doc.5.1.2.1. ЦА": {
