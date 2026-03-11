@@ -1,0 +1,7 @@
+"use strict";(globalThis.webpackChunkdocumentation=globalThis.webpackChunkdocumentation||[]).push([[1663],{7228(e,n,t){t.r(n),t.d(n,{assets:()=>l,contentTitle:()=>d,default:()=>k,frontMatter:()=>u,metadata:()=>s,toc:()=>m});const s=JSON.parse('{"id":"tech-docs/kubernetes/components/kubeAPI/kubeadm","title":"kubeadm","description":"Manifest generation","source":"@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/kubeAPI/kubeadm.mdx","sourceDirName":"tech-docs/kubernetes/components/kubeAPI","slug":"/tech-docs/kubernetes/components/kubeAPI/kubeadm","permalink":"/en/tech-docs/kubernetes/components/kubeAPI/kubeadm","draft":false,"unlisted":false,"tags":[],"version":"current","frontMatter":{}}');var o=t(74848),a=t(28453),c=t(44349),r=t(57390),i=t(60513);const u={},d=void 0,l={},m=[];function b(e){const n={admonition:"admonition",...(0,a.R)(),...e.components};return(0,o.jsxs)(o.Fragment,{children:[(0,o.jsx)("h4",{children:"Manifest generation"}),"\n",(0,o.jsx)(r.A,{language:"bash",children:i.A`
+      kubeadm init phase  control-plane apiserver \\
+        --config=${c.M.kubeadmBaseConfigPath.value}/kubeadm.yaml
+  `}),"\n",(0,o.jsx)(n.admonition,{type:"note",children:(0,o.jsx)(r.A,{language:"bash",children:i.A`
+      #### Kube API
+      [control-plane] Creating static Pod manifest for "apiserver"
+  `})})]})}function k(e={}){const{wrapper:n}={...(0,a.R)(),...e.components};return n?(0,o.jsx)(n,{...e,children:(0,o.jsx)(b,{...e})}):b(e)}}}]);

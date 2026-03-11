@@ -1,0 +1,7 @@
+"use strict";(globalThis.webpackChunkdocumentation=globalThis.webpackChunkdocumentation||[]).push([[2577],{42201(e,n,t){t.r(n),t.d(n,{assets:()=>d,contentTitle:()=>u,default:()=>b,frontMatter:()=>l,metadata:()=>o,toc:()=>m});const o=JSON.parse('{"id":"tech-docs/kubernetes/components/controllerManager/kubeadm","title":"kubeadm","description":"Manifest generation","source":"@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/controllerManager/kubeadm.mdx","sourceDirName":"tech-docs/kubernetes/components/controllerManager","slug":"/tech-docs/kubernetes/components/controllerManager/kubeadm","permalink":"/en/tech-docs/kubernetes/components/controllerManager/kubeadm","draft":false,"unlisted":false,"tags":[],"version":"current","frontMatter":{}}');var a=t(74848),r=t(28453),s=t(44349),c=t(57390),i=t(60513);const l={},u=void 0,d={},m=[];function g(e){const n={admonition:"admonition",...(0,r.R)(),...e.components};return(0,a.jsxs)(a.Fragment,{children:[(0,a.jsx)("h4",{children:"Manifest generation"}),"\n",(0,a.jsx)(c.A,{language:"bash",children:i.A`
+      kubeadm init phase  control-plane controller-manager \\
+        --config=${s.M.kubeadmBaseConfigPath.value}/kubeadm.yaml
+  `}),"\n",(0,a.jsx)(n.admonition,{type:"note",children:(0,a.jsx)(c.A,{language:"bash",children:i.A`
+      #### Kube API
+      [control-plane] Creating static Pod manifest for "kube-controller-manager"
+  `})})]})}function b(e={}){const{wrapper:n}={...(0,r.R)(),...e.components};return n?(0,a.jsx)(n,{...e,children:(0,a.jsx)(g,{...e})}):g(e)}}}]);

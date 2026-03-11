@@ -1,0 +1,13 @@
+"use strict";(globalThis.webpackChunkdocumentation=globalThis.webpackChunkdocumentation||[]).push([[9882],{25202(e,t,n){n.r(t),n.d(t,{assets:()=>d,contentTitle:()=>c,default:()=>m,frontMatter:()=>r,metadata:()=>s,toc:()=>h});const s=JSON.parse('{"id":"tech-docs/kubernetes/components/kubelet/kubeadm/systemdUnitStartJoin","title":"systemdUnitStartJoin","description":"This command starts the Kubelet service as part of a dedicated Kubeadm utility phase.","source":"@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/kubelet/kubeadm/systemdUnitStartJoin.mdx","sourceDirName":"tech-docs/kubernetes/components/kubelet/kubeadm","slug":"/tech-docs/kubernetes/components/kubelet/kubeadm/systemdUnitStartJoin","permalink":"/en/tech-docs/kubernetes/components/kubelet/kubeadm/systemdUnitStartJoin","draft":false,"unlisted":false,"tags":[],"version":"current","frontMatter":{}}');var i=n(74848),a=n(28453),o=n(60513),l=n(57390),u=n(44349);const r={},c=void 0,d={},h=[];function b(e){const t={a:"a",admonition:"admonition",blockquote:"blockquote",li:"li",p:"p",ul:"ul",...(0,a.R)(),...e.components};return(0,i.jsxs)(i.Fragment,{children:[(0,i.jsxs)(t.blockquote,{children:["\n",(0,i.jsx)(t.p,{children:"This command starts the Kubelet service as part of a dedicated Kubeadm utility phase."}),"\n"]}),"\n",(0,i.jsxs)(t.admonition,{title:"Note",type:"warning",children:[(0,i.jsx)(t.p,{children:"This section depends on the following sections:"}),(0,i.jsxs)(t.ul,{children:["\n",(0,i.jsxs)(t.li,{children:[(0,i.jsx)(t.a,{href:"/en/tech-docs/kubernetes/components/kubeadm/lifecycleSettings",children:"Kubeadm Configs"}),"."]}),"\n"]})]}),"\n",(0,i.jsx)("h4",{children:"Start kubelet"}),"\n",(0,i.jsx)(l.A,{language:"bash",children:o.A`
+  kubeadm join phase kubelet-start \\
+    --config=${u.M.kubeadmBaseConfigPath.value}/kubeadm.yaml
+`}),"\n",(0,i.jsx)(t.admonition,{title:"Command output",type:"note",children:(0,i.jsx)(l.A,{language:"bash",children:o.A`
+  [preflight] Reading configuration from the cluster...
+  [preflight] FYI: You can look at this config file with 'kubectl -n kube-system get cm kubeadm-config -o yaml'
+  [kubelet-start] Writing kubelet configuration to file "/var/lib/kubelet/config.yaml"
+  [kubelet-start] Writing kubelet environment file with flags to file "/var/lib/kubelet/kubeadm-flags.env"
+  [kubelet-start] Starting the kubelet
+  [kubelet-check] Waiting for a healthy kubelet at http://127.0.0.1:10248/healthz. This can take up to 4m0s
+  [kubelet-check] The kubelet is healthy after 502.252318ms
+  [kubelet-start] Waiting for the kubelet to perform the TLS Bootstrap
+`})})]})}function m(e={}){const{wrapper:t}={...(0,a.R)(),...e.components};return t?(0,i.jsx)(t,{...e,children:(0,i.jsx)(b,{...e})}):b(e)}}}]);

@@ -1,0 +1,8 @@
+"use strict";(globalThis.webpackChunkdocumentation=globalThis.webpackChunkdocumentation||[]).push([[6223],{29673(e,t,n){n.r(t),n.d(t,{assets:()=>m,contentTitle:()=>u,default:()=>f,frontMatter:()=>d,metadata:()=>c,toc:()=>l});const c=JSON.parse('{"id":"tech-docs/etcd/certificates/components/etcdServer/kubeadm","title":"kubeadm","description":"Certificate generation","source":"@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/etcd/certificates/components/etcdServer/kubeadm.mdx","sourceDirName":"tech-docs/etcd/certificates/components/etcdServer","slug":"/tech-docs/etcd/certificates/components/etcdServer/kubeadm","permalink":"/en/tech-docs/etcd/certificates/components/etcdServer/kubeadm","draft":false,"unlisted":false,"tags":[],"version":"current","frontMatter":{}}');var r=n(74848),s=n(28453),a=n(44349),i=n(57390),o=n(60513);const d={},u=void 0,m={},l=[];function h(e){const t={admonition:"admonition",p:"p",...(0,s.R)(),...e.components};return(0,r.jsxs)(r.Fragment,{children:[(0,r.jsx)("h4",{children:"Certificate generation"}),"\n",(0,r.jsx)(i.A,{language:"bash",children:o.A`
+  kubeadm init phase certs etcd-server \\
+    --config=${a.M.kubeadmBaseConfigPath.value}/kubeadm.yaml
+`}),"\n",(0,r.jsxs)(t.admonition,{type:"note",children:[(0,r.jsx)(t.p,{children:"After running the command, we get the following output."}),(0,r.jsx)(i.A,{language:"bash",children:o.A`
+  #### Certificate generation
+  [certs] Generating "etcd/server" certificate and key
+  [certs] etcd/server serving cert is signed for DNS names [localhost master-1.my-first-cluster.example.com] and IPs [192.168.10.27 127.0.0.1 ::1]
+`})]})]})}function f(e={}){const{wrapper:t}={...(0,s.R)(),...e.components};return t?(0,r.jsx)(t,{...e,children:(0,r.jsx)(h,{...e})}):h(e)}}}]);

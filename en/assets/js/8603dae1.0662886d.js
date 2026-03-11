@@ -1,0 +1,7 @@
+"use strict";(globalThis.webpackChunkdocumentation=globalThis.webpackChunkdocumentation||[]).push([[2401],{56879(e,n,t){t.r(n),t.d(n,{assets:()=>l,contentTitle:()=>i,default:()=>b,frontMatter:()=>d,metadata:()=>s,toc:()=>h});const s=JSON.parse('{"id":"tech-docs/kubernetes/components/scheduler/kubeadm","title":"kubeadm","description":"Manifest generation","source":"@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/scheduler/kubeadm.mdx","sourceDirName":"tech-docs/kubernetes/components/scheduler","slug":"/tech-docs/kubernetes/components/scheduler/kubeadm","permalink":"/en/tech-docs/kubernetes/components/scheduler/kubeadm","draft":false,"unlisted":false,"tags":[],"version":"current","frontMatter":{}}');var o=t(74848),a=t(28453),c=t(44349),r=t(57390),u=t(60513);const d={},i=void 0,l={},h=[];function m(e){const n={admonition:"admonition",...(0,a.R)(),...e.components};return(0,o.jsxs)(o.Fragment,{children:[(0,o.jsx)("h4",{children:"Manifest generation"}),"\n",(0,o.jsx)(r.A,{language:"bash",children:u.A`
+  kubeadm init phase  control-plane scheduler \\
+    --config=${c.M.kubeadmBaseConfigPath.value}/kubeadm.yaml
+`}),"\n",(0,o.jsx)(n.admonition,{type:"note",children:(0,o.jsx)(r.A,{language:"bash",children:u.A`
+  #### Kube API
+  [control-plane] Creating static Pod manifest for "kube-scheduler"
+`})})]})}function b(e={}){const{wrapper:n}={...(0,a.R)(),...e.components};return n?(0,o.jsx)(n,{...e,children:(0,o.jsx)(m,{...e})}):m(e)}}}]);

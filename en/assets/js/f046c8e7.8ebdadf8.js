@@ -1,0 +1,28 @@
+"use strict";(globalThis.webpackChunkdocumentation=globalThis.webpackChunkdocumentation||[]).push([[676,5082,8186],{63390(t,e,c){c.r(e),c.d(e,{assets:()=>d,contentTitle:()=>r,default:()=>m,frontMatter:()=>l,metadata:()=>n,toc:()=>i});const n=JSON.parse('{"id":"tech-docs/etcd/components/etcdbrctl/checkInstall","title":"checkInstall","description":"Installation verification","source":"@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/etcd/components/etcdbrctl/checkInstall.mdx","sourceDirName":"tech-docs/etcd/components/etcdbrctl","slug":"/tech-docs/etcd/components/etcdbrctl/checkInstall","permalink":"/en/tech-docs/etcd/components/etcdbrctl/checkInstall","draft":false,"unlisted":false,"tags":[],"version":"current","frontMatter":{}}');var s=c(74848),o=c(28453),a=c(39845);c(76392);const l={},r=void 0,d={},i=[...a.toc];function u(t){const{Details:e}={...(0,o.R)(),...t.components};return e||function(t,e){throw new Error("Expected "+(e?"component":"object")+" `"+t+"` to be defined: you likely forgot to import, pass, or provide it.")}("Details",!0),(0,s.jsxs)(s.Fragment,{children:[(0,s.jsx)("h4",{children:"Installation verification"}),"\n",(0,s.jsxs)(e,{className:"custom-blue-block",children:[(0,s.jsx)("summary",{children:"Installation verification"}),(0,s.jsx)(a.default,{})]})]})}function m(t={}){const{wrapper:e}={...(0,o.R)(),...t.components};return e?(0,s.jsx)(e,{...t,children:(0,s.jsx)(u,{...t})}):u(t)}},39845(t,e,c){c.r(e),c.d(e,{assets:()=>i,contentTitle:()=>d,default:()=>p,frontMatter:()=>r,metadata:()=>n,toc:()=>u});const n=JSON.parse('{"id":"tech-docs/etcd/components/etcdbrctl/checks/statusHelmInstall","title":"statusHelmInstall","description":"{dedent`","source":"@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/etcd/components/etcdbrctl/checks/statusHelmInstall.mdx","sourceDirName":"tech-docs/etcd/components/etcdbrctl/checks","slug":"/tech-docs/etcd/components/etcdbrctl/checks/statusHelmInstall","permalink":"/en/tech-docs/etcd/components/etcdbrctl/checks/statusHelmInstall","draft":false,"unlisted":false,"tags":[],"version":"current","frontMatter":{}}');var s=c(74848),o=c(28453),a=c(60513),l=c(57390);c(68741);const r={},d=void 0,i={},u=[];function m(t){const e={admonition:"admonition",...(0,o.R)(),...t.components};return(0,s.jsxs)(s.Fragment,{children:[(0,s.jsx)(l.A,{language:"bash",children:a.A`
+  kubectl -n "\${NAMESPACE}" get pods -l app=etcd-backup-snapshot
+  kubectl -n "\${NAMESPACE}" logs -l app=etcd-backup-snapshot --tail=50
+`}),"\n",(0,s.jsx)(e.admonition,{title:"Command output",type:"note",children:(0,s.jsx)(l.A,{language:"bash",children:a.A`
+  level=info msg="Creating leaderElector..." actor=backup-restore-server
+  level=info msg="Starting leaderElection..." actor=leader-elector
+  level=info msg="backup-restore started leading..." actor=leader-elector
+  level=info msg="Successfully saved full snapshot at: Full-00000000-01953405-1757675894.gz" actor=snapshotter
+  level=info msg="Will take next full snapshot at time: 2025-09-12 11:20:00 +0000 UTC" actor=snapshotter
+  level=info msg="Successfully saved delta snapshot at: Incr-01954818-01961242-1757676502.gz" actor=snapshotter
+`})}),"\n",(0,s.jsx)(l.A,{language:"bash",children:a.A`
+  # using mc utility (minio client)
+  mc alias set myS3 "\${S3_ENDPOINT}" "\${S3_ACCESS_KEY_ID}" "\${S3_SECRET_ACCESS_KEY}" --api S3v4
+  mc ls myS3/\${STORE_CONTAINER}/\${STORE_PREFIX}
+`}),"\n",(0,s.jsx)(e.admonition,{title:"Command output",type:"note",children:(0,s.jsx)(l.A,{language:"bash",children:a.A`
+  [2025-09-12 13:40:14 MSK]  14MiB STANDARD Full-00000000-01924106-1757673605.gz
+  [2025-09-12 14:00:13 MSK]  14MiB STANDARD Full-00000000-01939464-1757674805.gz
+  [2025-09-12 13:48:55 MSK]  19MiB STANDARD Incr-01924107-01930792-1757674123.gz
+`})})]})}function p(t={}){const{wrapper:e}={...(0,o.R)(),...t.components};return e?(0,s.jsx)(e,{...t,children:(0,s.jsx)(m,{...t})}):m(t)}},76392(t,e,c){c.r(e),c.d(e,{assets:()=>i,contentTitle:()=>d,default:()=>p,frontMatter:()=>r,metadata:()=>n,toc:()=>u});const n=JSON.parse('{"id":"tech-docs/etcd/components/etcdbrctl/checks/statusStaticPodInstall","title":"statusStaticPodInstall","description":"{dedent`","source":"@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/etcd/components/etcdbrctl/checks/statusStaticPodInstall.mdx","sourceDirName":"tech-docs/etcd/components/etcdbrctl/checks","slug":"/tech-docs/etcd/components/etcdbrctl/checks/statusStaticPodInstall","permalink":"/en/tech-docs/etcd/components/etcdbrctl/checks/statusStaticPodInstall","draft":false,"unlisted":false,"tags":[],"version":"current","frontMatter":{}}');var s=c(74848),o=c(28453),a=c(60513),l=c(57390);const r={},d=void 0,i={},u=[];function m(t){const e={admonition:"admonition",...(0,o.R)(),...t.components};return(0,s.jsxs)(s.Fragment,{children:[(0,s.jsx)(l.A,{language:"bash",children:a.A`
+  crictl pods --name etcd-backup -o yaml | head -20
+`}),"\n",(0,s.jsx)(e.admonition,{title:"Command output",type:"note",children:(0,s.jsx)(l.A,{language:"bash",children:a.A`
+  items:
+  - id: ...
+    metadata:
+      name: etcd-backup-...
+      namespace: kube-system
+    state: SANDBOX_READY
+`})})]})}function p(t={}){const{wrapper:e}={...(0,o.R)(),...t.components};return e?(0,s.jsx)(e,{...t,children:(0,s.jsx)(m,{...t})}):m(t)}},68741(t,e,c){c.d(e,{M:()=>n});const n={kubernetes:{value:"v1.30.4"},etcd:{value:"3.5.12-0"},etcdctl:{value:"v3.5.12"},runc:{value:"v1.1.12"},containerd:{value:"1.7.19"},crictl:{value:"v1.30.0"}}}}]);

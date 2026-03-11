@@ -1,0 +1,8 @@
+"use strict";(globalThis.webpackChunkdocumentation=globalThis.webpackChunkdocumentation||[]).push([[5803],{77794(e,t,n){n.r(t),n.d(t,{assets:()=>m,contentTitle:()=>u,default:()=>h,frontMatter:()=>d,metadata:()=>c,toc:()=>l});const c=JSON.parse('{"id":"tech-docs/etcd/certificates/components/etcdPeer/kubeadm","title":"kubeadm","description":"Certificate generation","source":"@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/etcd/certificates/components/etcdPeer/kubeadm.mdx","sourceDirName":"tech-docs/etcd/certificates/components/etcdPeer","slug":"/tech-docs/etcd/certificates/components/etcdPeer/kubeadm","permalink":"/en/tech-docs/etcd/certificates/components/etcdPeer/kubeadm","draft":false,"unlisted":false,"tags":[],"version":"current","frontMatter":{}}');var s=n(74848),a=n(28453),r=n(44349),i=n(57390),o=n(60513);const d={},u=void 0,m={},l=[];function p(e){const t={admonition:"admonition",p:"p",...(0,a.R)(),...e.components};return(0,s.jsxs)(s.Fragment,{children:[(0,s.jsx)("h4",{children:"Certificate generation"}),"\n",(0,s.jsx)(i.A,{language:"bash",children:o.A`
+  kubeadm init phase certs etcd-peer \\
+    --config=${r.M.kubeadmBaseConfigPath.value}/kubeadm.yaml
+`}),"\n",(0,s.jsxs)(t.admonition,{type:"note",children:[(0,s.jsx)(t.p,{children:"After running the command, we get the following output."}),(0,s.jsx)(i.A,{language:"bash",children:o.A`
+  #### Certificate generation
+  [certs] Generating "etcd/peer" certificate and key
+  [certs] etcd/peer serving cert is signed for DNS names [localhost master-1.my-first-cluster.example.com] and IPs [192.168.10.27 127.0.0.1 ::1]
+`})]})]})}function h(e={}){const{wrapper:t}={...(0,a.R)(),...e.components};return t?(0,s.jsx)(t,{...e,children:(0,s.jsx)(p,{...e})}):p(e)}}}]);

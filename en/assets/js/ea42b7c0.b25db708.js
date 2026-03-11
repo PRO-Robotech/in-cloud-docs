@@ -1,0 +1,7 @@
+"use strict";(globalThis.webpackChunkdocumentation=globalThis.webpackChunkdocumentation||[]).push([[5559],{86170(e,n,t){t.r(n),t.d(n,{assets:()=>l,contentTitle:()=>u,default:()=>p,frontMatter:()=>r,metadata:()=>o,toc:()=>m});const o=JSON.parse('{"id":"tech-docs/etcd/components/etcd/kubeadmJoin","title":"kubeadmJoin","description":"Manifest generation","source":"@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/etcd/components/etcd/kubeadmJoin.mdx","sourceDirName":"tech-docs/etcd/components/etcd","slug":"/tech-docs/etcd/components/etcd/kubeadmJoin","permalink":"/en/tech-docs/etcd/components/etcd/kubeadmJoin","draft":false,"unlisted":false,"tags":[],"version":"current","frontMatter":{}}');var c=t(74848),a=t(28453),s=t(44349),d=t(57390),i=t(60513);const r={},u=void 0,l={},m=[];function h(e){const n={admonition:"admonition",...(0,a.R)(),...e.components};return(0,c.jsxs)(c.Fragment,{children:[(0,c.jsx)("h4",{children:"Manifest generation"}),"\n",(0,c.jsx)(d.A,{language:"bash",children:i.A`
+  kubeadm join phase control-plane-join etcd \\
+    --config=${s.M.kubeadmBaseConfigPath.value}/kubeadm.yaml
+`}),"\n",(0,c.jsx)(n.admonition,{type:"note",children:(0,c.jsx)(d.A,{language:"bash",children:i.A`
+  #### Kube API
+  [etcd] Creating static Pod manifest for local etcd in "${s.M.kubernetesBaseFolderPath.value}"
+`})})]})}function p(e={}){const{wrapper:n}={...(0,a.R)(),...e.components};return n?(0,c.jsx)(n,{...e,children:(0,c.jsx)(h,{...e})}):h(e)}}}]);
