@@ -7,14 +7,12 @@ import KubeletConfigFilesDefault from '@site/docs/tech-docs/kubernetes/component
 import KubeletSystemdUnitStart from '@site/docs/tech-docs/kubernetes/components/kubelet/systemdUnitStart.mdx'
 import TabItem from '@theme/TabItem'
 import Tabs from '@theme/Tabs'
-import dedent from 'ts-dedent'
 import CodeBlock from '@theme/CodeBlock'
+import dedent from 'ts-dedent'
 import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 
-> В данном разделе рассматривается подключение worker-ноды к кластеру Kubernetes и запуск Kubelet.
-> Для ручной установки (Hard Way) необходимо создать bootstrap kubeconfig с токеном аутентификации,
-> базовый конфигурационный файл kubelet и запустить systemd-сервис.
-> При использовании kubeadm достаточно выполнить команду `kubeadm join`.
+> На этом шаге нода получает все, что нужно для старта `kubelet`, и регистрируется в кластере.
+> В ручном сценарии собираем конфиг и поднимаем сервис сами, а в варианте с `kubeadm` достаточно одной команды.
 
 <details>
   <summary>
@@ -26,87 +24,30 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
   <Tabs groupId="install-type">
     <TabItem value="HardWay">
 
-      > Данный конфигурационный файл требуется для запуска `Kubelet`.
+      > Ниже базовый конфиг `kubelet`, от которого будем стартовать на worker-ноде.
 
       <details className="custom-gray-block">
         <summary>Kubelet default config</summary>
         <KubeletConfigFilesDefault />
       </details>
 
-      <h4>Bootstrap kubeconfig</h4>
-
-      > Для аутентификации kubelet на worker-ноде необходим bootstrap kubeconfig с токеном.
-      > После запуска kubelet автоматически выполнит TLS Bootstrap и получит клиентский сертификат.
-
-      :::info
-      На worker-ноде файл `ca.crt` ещё отсутствует. CA-данные получаем из публичного ConfigMap `cluster-info`
-      в namespace `kube-public`, доступного анонимно через kube-apiserver.
+      :::warning Предварительные требования
+      Перед стартом `kubelet` убедитесь, что вы уже прошли раздел
+      [5.3.2. Аутентификация](/tech-docs/kubernetes/certificates/authentication-dp) и получили:
+      - Получение CA-сертификата (`ca.crt`)
+      - Создание `bootstrap-kubelet.conf` (или сертификатов вручную)
       :::
-
-      <CodeBlock language="bash">
-        {dedent`
-          export BOOTSTRAP_TOKEN=${CUSTOM_VALUE.bootstrapToken.value}
-          export API_SERVER="https://api.${CUSTOM_VALUE.clusterName.value}.${CUSTOM_VALUE.kubernetesBaseDomain.value}:6443"
-        `}
-      </CodeBlock>
-
-      <CodeBlock language="bash">
-        {dedent`
-          mkdir -p ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}
-        `}
-      </CodeBlock>
-
-      <CodeBlock language="bash">
-        {dedent`
-          export CA_DATA=$(curl -sk "$\{API_SERVER}/api/v1/namespaces/kube-public/configmaps/cluster-info" | \\
-            jq -r '.data.kubeconfig' | \\
-            grep 'certificate-authority-data' | \\
-            awk '{print $2}')
-        `}
-      </CodeBlock>
-
-      <CodeBlock language="bash">
-        {dedent`
-          mkdir -p ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/pki
-          echo "$\{CA_DATA}" | base64 -d > ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/pki/ca.crt
-        `}
-      </CodeBlock>
-
-      <CodeBlock language="bash">
-        {dedent`
-          cat <<EOF > ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/bootstrap-kubelet.conf
-          apiVersion: v1
-          clusters:
-          - cluster:
-              certificate-authority-data: $\{CA_DATA}
-              server: $\{API_SERVER}
-            name: ${CUSTOM_VALUE.clusterName.value}
-          contexts:
-          - context:
-              cluster: ${CUSTOM_VALUE.clusterName.value}
-              user: tls-bootstrap-token-user
-            name: tls-bootstrap-token-user@kubernetes
-          current-context: tls-bootstrap-token-user@kubernetes
-          kind: Config
-          preferences: {}
-          users:
-          - name: tls-bootstrap-token-user
-            user:
-              token: $\{BOOTSTRAP_TOKEN}
-          EOF
-        `}
-      </CodeBlock>
 
       <KubeletSystemdUnitStart />
     </TabItem>
     <TabItem value="Kubeadm">
 
-      > Данная команда выполняет подключение worker-ноды к кластеру Kubernetes,
-      > включая запуск kubelet, TLS Bootstrap и регистрацию узла.
+      > Здесь достаточно выполнить `kubeadm join`: команда сама поднимет `kubelet`,
+      > выполнит TLS Bootstrap и зарегистрирует ноду.
 
       :::warning Обратите внимание
-      Данный раздел зависит от следующих разделов:
-      - [Настройка ПО (DP)](/tech-docs/kubernetes/components/all-setup-dp).
+      Перед запуском команды должен быть готов конфиг из раздела
+      [Настройка ПО (DP)](/tech-docs/kubernetes/components/all-setup-dp).
       :::
 
       <CodeBlock language="bash">

@@ -163,7 +163,7 @@ export const BACKUP_SCRIPT: TCustomValueItems = {
       yq -i '(.spec.volumes[] | select(.name == "etcd-data") | .hostPath.path) = env(ETCD_RESTORE_DIR)' \
         "\${MOVED_MANIFEST}"
     else
-      # jq-based yq (kislyuk): env.VAR, без -i (надёжнее через временный файл)
+      # jq-based yq (kislyuk): env.VAR, без -i (надежнее через временный файл)
       ETCD_RESTORE_DIR="$\{ETCD_RESTORE_DIR}" \
       yq -y '(.spec.volumes[] | select(.name=="etcd-data") | .hostPath.path) = env.ETCD_RESTORE_DIR' \
         "$\{MOVED_MANIFEST}" > "$\{MOVED_MANIFEST}.tmp"

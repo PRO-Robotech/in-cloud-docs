@@ -1,0 +1,404 @@
+---
+title: 'Kubernetes The Hard Way: Workers'
+description: 'Подключаем Worker-ноду к Kubernetes-кластеру вручную: подготовка ОС, bootstrap token, CSR API, kubeadm join и запуск kubelet.'
+date: 2026-03-12
+slug: kubernetes-the-hard-way-workers
+authors: [dlputilin]
+tags: [Kubernetes, Hard-Way, Workers]
+---
+
+import CodeBlock from '@theme/CodeBlock'
+import dedent from 'ts-dedent'
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+import { COMPONENTS_VERSION } from '@site/src/constants/kubernetes/componentsVersion'
+
+import {
+  AllModprobeComponent,
+  AllSysctlsComponent,
+  AllBaseOSSetupComponentDP,
+  AllInstallComponentDP,
+  AllSetupComponentDP,
+  AuthenticationDP,
+  AllKubeletStartDP,
+} from '@site/src/blog-components'
+import { getBasePrefix } from '@site/src/utils/getBasePrefix'
+
+<h3>
+  Kubernetes THW: Workers <span style={{ color: '#1cc5ac' }}>#</span>
+</h3>
+
+<p style={{ fontStyle: 'italic', fontWeight: 600 }}>Продолжаем Kubernetes The Hard Way: подключаем рабочие узлы.</p>
+
+<div
+  style={{
+    display: 'flex',
+    flexWrap: 'wrap',
+    alignItems: 'flex-start',
+    gap: '30px',
+    marginTop: '1.5rem',
+  }}
+>
+  <div style={{ flex: '1 1 55%', minWidth: '280px' }}>
+    <p>
+      В <a href="/blog/kubernetes-the-hard-way">предыдущей статье</a> мы собрали control plane вручную: выпустили
+      сертификаты, подготовили конфигурации и запустили управляющие компоненты. API-сервер уже отвечает, но кластер
+      пока остается без рабочих узлов.
+    </p>
+
+    <p>
+      Пока в кластере нет worker-нод, запускать прикладные поды просто негде. В этой статье добавим{' '}
+      <strong>Worker-ноду</strong> и разберем весь путь от чистой VM до зарегистрированного узла в Kubernetes.
+    </p>
+
+    <p>
+      Формат тот же, что и в первой части: подготовим ОС, поставим `containerd` и `kubelet`, настроим подключение к
+      кластеру и проверим регистрацию узла. Покажу два варианта: ручной сценарий через bootstrap token и CSR API или
+      стандартный путь через <code>kubeadm join</code>.
+    </p>
+  </div>
+
+  <div
+    style={{
+      flex: '1 1 40%',
+      minWidth: '220px',
+      textAlign: 'center',
+      marginTop: '0rem',
+    }}
+  >
+    <img
+      src={`${getBasePrefix()}img/blog/kthw-promo.png`}
+      alt="Kubernetes The Hard Way"
+      style={{
+        width: '90%',
+        maxWidth: '330px',
+        filter: 'drop-shadow(0 0 12px rgba(255, 255, 255, 0.2))',
+        transition: 'transform 0.3s ease-in-out',
+      }}
+    />
+  </div>
+</div>
+
+{/* truncate */}
+
+### 1. Введение
+
+Control Plane принимает решения: где запускать поды, как поддерживать желаемое состояние и что делать при сбоях. Но сами приложения живут на **worker-нодах**, то есть в data plane кластера.
+
+Worker-нода обычно сводится к двум главным частям: `kubelet` и контейнерный рантайм, в нашем случае `containerd`. `kubelet` общается с API-сервером, получает спецификации подов и следит за тем, чтобы контейнеры действительно работали.
+
+В отличие от мастер-нод, здесь **нет** etcd, `kube-apiserver`, `kube-controller-manager` и `kube-scheduler`. Нет и static pod-ов control plane. Приватный ключ CA на worker-ноду тоже не попадает.
+
+Из-за этого сама машина настраивается проще, но появляется отдельный bootstrap-вопрос: как новой ноде войти в кластер, если у нее еще нет ни клиентского сертификата, ни доверия к API?
+
+<div className="alert alert--info" role="alert">
+  <strong>Предварительные требования</strong>
+  <p>
+    Эта статья продолжает <a href="/blog/kubernetes-the-hard-way">Kubernetes The Hard Way</a>. Перед началом
+    убедитесь, что:
+  </p>
+  <ul>
+    <li>Управляющий контур (CP) развернут и работает</li>
+    <li>API-сервер доступен по адресу <code>api.{CUSTOM_VALUE.clusterName.value}.{CUSTOM_VALUE.kubernetesBaseDomain.value}:6443</code></li>
+    <li>Настроена ролевая модель (RBAC) и загружены конфигурации в кластер</li>
+  </ul>
+</div>
+
+<div style={{position: 'relative'}}>
+<h4>Главы:</h4>
+
+<ul>
+  <li>
+    <a href="#1-введение">1. Введение</a>
+  </li>
+  <li>
+    <a href="#2-инфраструктура">2. Инфраструктура</a>
+  </li>
+  <li>
+    <a href="#3-базовая-настройка-узлов">3. Базовая настройка узлов</a>
+  </li>
+  <li>
+    <a href="#4-загрузка-модулей-ядра">4. Загрузка модулей ядра</a>
+  </li>
+  <li>
+    <a href="#5-настройка-параметров-sysctl">5. Настройка параметров sysctl</a>
+  </li>
+  <li>
+    <a href="#6-установка-компонентов">6. Установка компонентов</a>
+  </li>
+  <li>
+    <a href="#7-настройка-компонентов">7. Настройка компонентов</a>
+  </li>
+  <li>
+    <a href="#8-аутентификация">8. Аутентификация</a>
+  </li>
+  <li>
+    <a href="#9-запуск-kubelet">9. Запуск Kubelet</a>
+  </li>
+  <li>
+    <a href="#10-проверка">10. Проверка</a>
+  </li>
+</ul>
+
+</div>
+
+---
+
+### 2. Инфраструктура
+
+<p>
+  Ниже минимальный набор параметров, с которым будем добавлять worker-ноду: имя, адрес, DNS и состав ПО. Этого
+  достаточно, чтобы повторить шаги из статьи в своей среде.
+</p>
+
+<h4>Рабочие узлы</h4>
+
+<div style={{ overflowX: 'auto' }}>
+  <table>
+    <thead>
+      <tr>
+        <th>Имя</th>
+        <th>IP-адрес</th>
+        <th>Операционная система</th>
+        <th>Ресурсы</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          worker-1.{CUSTOM_VALUE.clusterName.value}.{CUSTOM_VALUE.kubernetesBaseDomain.value}
+        </td>
+        <td>NODE-IP-4</td>
+        <td>ubuntu-24-04-lts</td>
+        <td>2CPU / 4RAM / 40GB</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<h4>DNS-записи</h4>
+
+<div style={{ overflowX: 'auto' }}>
+  <table>
+    <thead>
+      <tr>
+        <th>A-запись</th>
+        <th>IP-адрес</th>
+        <th>TTL</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          worker-1.{CUSTOM_VALUE.clusterName.value}.{CUSTOM_VALUE.kubernetesBaseDomain.value}
+        </td>
+        <td>NODE-IP-4</td>
+        <td>60s</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<h4>Компоненты</h4>
+
+<p>
+  На worker-ноде оставляем только то, что нужно для запуска рабочих нагрузок. Компоненты control plane и etcd здесь не
+  нужны.
+</p>
+
+<div style={{ overflowX: 'auto' }}>
+  <table>
+    <thead>
+      <tr>
+        <th>Компонент</th>
+        <th>Версия</th>
+        <th>Назначение</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>containerd</td>
+        <td>{COMPONENTS_VERSION.containerd.value}</td>
+        <td>Контейнерный рантайм, управляющий жизненным циклом контейнеров.</td>
+      </tr>
+      <tr>
+        <td>runc</td>
+        <td>{COMPONENTS_VERSION.runc.value}</td>
+        <td>Низкоуровневый инструмент для запуска контейнеров с использованием средств ядра Linux.</td>
+      </tr>
+      <tr>
+        <td>crictl</td>
+        <td>{COMPONENTS_VERSION.crictl.value}</td>
+        <td>Утилита для отладки CRI-сред с поддержкой взаимодействия с containerd.</td>
+      </tr>
+      <tr>
+        <td>kubelet</td>
+        <td>{COMPONENTS_VERSION.kubernetes.value}</td>
+        <td>Агент, запускаемый на каждом узле, обеспечивающий выполнение и контроль состояния подов.</td>
+      </tr>
+      <tr>
+        <td>kubectl</td>
+        <td>{COMPONENTS_VERSION.kubernetes.value}</td>
+        <td>Клиент для взаимодействия с Kubernetes API (опционально).</td>
+      </tr>
+      <tr>
+        <td>kubeadm</td>
+        <td>{COMPONENTS_VERSION.kubernetes.value}</td>
+        <td>Инструмент для автоматизации присоединения узла к кластеру (опционально).</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+---
+
+### 3. Базовая настройка узлов
+
+<p>
+  Сначала приводим ОС в предсказуемое состояние: задаем переменные окружения, меняем hostname и ставим базовые
+  утилиты. Шаг почти такой же, как на master-нодах, меняются только значения для worker-узла.
+</p>
+
+<AllBaseOSSetupComponentDP />
+
+---
+
+### 4. Загрузка модулей ядра
+
+<p>
+  Загружаем модули ядра, которые нужны `containerd` и сетевой части Kubernetes. Набор тот же, что и на master-нодах.
+</p>
+
+<AllModprobeComponent />
+
+---
+
+### 5. Настройка параметров sysctl
+
+<p>
+  Дальше настраиваем `sysctl`: включаем IP forwarding и параметры для bridge-трафика. Значения здесь тоже совпадают с
+  control plane.
+</p>
+
+<AllSysctlsComponent />
+
+---
+
+### 6. Установка компонентов
+
+<p>
+  На worker-ноду ставим только то, что нужно для запуска контейнеров и регистрации узла в кластере: `containerd`,
+  `kubelet` и вспомогательные утилиты. Компоненты control plane здесь <strong>не устанавливаются</strong>.
+</p>
+
+<AllInstallComponentDP />
+
+---
+
+### 7. Настройка компонентов
+
+<p>
+  После установки собираем конфиги для `containerd`, `kubelet`, `crictl` и при необходимости `kubeadm`. Для
+  worker-ноды в `kubeadm` нужен только блок <code>JoinConfiguration</code>, без секции <code>controlPlane</code>.
+</p>
+
+<AllSetupComponentDP />
+
+---
+
+### 8. Аутентификация
+
+<p>
+  Это самый важный шаг во всей статье. У worker-ноды нет доступа к приватному ключу CA, поэтому ей нужно безопасно
+  получить доверие к кластеру одним из двух способов:
+</p>
+
+<ul>
+  <li><strong>Bootstrap Token + CSR API</strong> — ручной путь с полным контролем над TLS Bootstrap</li>
+  <li><strong>Kubeadm</strong> — стандартное подключение через <code>kubeadm join</code></li>
+</ul>
+
+<details>
+  <summary>
+    <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+      <p style={{ marginBottom: 0 }}>Аутентификация worker-ноды</p>
+      <p className="obligatory-note-orange">● Обязателен к применению</p>
+    </div>
+  </summary>
+
+  <p>
+    Внутри ручного сценария получим <code>ca.crt</code> из <code>cluster-info</code>, соберем
+    <code>bootstrap-kubelet.conf</code> и при желании вручную пройдем поток CSR для клиентского и серверного
+    сертификатов kubelet.
+  </p>
+
+  <AuthenticationDP />
+</details>
+
+---
+
+### 9. Запуск Kubelet
+
+<p>
+  Когда аутентификация готова, остается запустить `kubelet`. На этом шаге создаем его конфиг, поднимаем
+  `systemd`-сервис и даем узлу зарегистрироваться в кластере.
+</p>
+
+<AllKubeletStartDP />
+
+---
+
+### 10. Проверка
+
+<p>
+  После старта `kubelet` проверьте, что нода появилась в кластере. До установки сетевого плагина она может
+  оставаться в состоянии <code>NotReady</code> — это нормально.
+</p>
+
+<p>Выполните на мастер-ноде:</p>
+
+<CodeBlock language="bash">
+  {dedent`
+    kubectl --kubeconfig=${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/super-admin.conf get nodes -o wide
+  `}
+</CodeBlock>
+
+<div className="alert alert--secondary" role="alert">
+  <strong>Ожидаемый вывод</strong>
+  <CodeBlock>
+    {dedent`
+      NAME                                          STATUS     ROLES    AGE   VERSION
+      master-1.${CUSTOM_VALUE.clusterName.value}.${CUSTOM_VALUE.kubernetesBaseDomain.value}         NotReady   master   1d    v1.32.0
+      master-2.${CUSTOM_VALUE.clusterName.value}.${CUSTOM_VALUE.kubernetesBaseDomain.value}         NotReady   master   1d    v1.32.0
+      master-3.${CUSTOM_VALUE.clusterName.value}.${CUSTOM_VALUE.kubernetesBaseDomain.value}         NotReady   master   1d    v1.32.0
+      worker-1.${CUSTOM_VALUE.clusterName.value}.${CUSTOM_VALUE.kubernetesBaseDomain.value}         NotReady   <none>   30s   v1.32.0
+    `}
+  </CodeBlock>
+</div>
+
+<div className="alert alert--info" role="alert">
+  <strong>Статус NotReady</strong>
+  <p>
+    Статус <code>NotReady</code> — нормальное поведение до установки сетевого плагина (CNI).
+    После развертывания CNI (Calico, Cilium, Flannel и т.д.) статус узлов сменится на <code>Ready</code>.
+  </p>
+</div>
+
+---
+
+## Вывод
+
+Worker-нода добавлена в кластер. Теперь control plane можно использовать по назначению: он может принимать реальные нагрузки.
+
+По пути мы:
+
+- Подготовили ОС и сетевой стек
+- Установили `containerd`, `kubelet` и сопутствующие утилиты
+- Подключили ноду вручную через bootstrap token и CSR API или через `kubeadm`
+- Запустили `kubelet` и проверили регистрацию узла
+
+Следующий логичный шаг — поставить CNI, поднять DNS внутри кластера и только потом переходить к первым прикладным подам.
+
+:::note
+Если вы дошли до этого места, у вас уже есть вручную собранный control plane и первый worker-узел.
+Дальше можно переходить к сетевому плагину и превращать заготовку кластера в рабочую среду.
+:::

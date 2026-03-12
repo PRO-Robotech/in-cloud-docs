@@ -3,8 +3,6 @@ id: authentication-dp
 title: "5.3.2. Аутентификация"
 ---
 
-import KubeletServerMain from '@site/docs/tech-docs/kubernetes/certificates/components/kubelet/kubeletServer/main.mdx'
-import KubeletClientMain from '@site/docs/tech-docs/kubernetes/certificates/components/kubelet/kubeAPIClient/main.mdx'
 import TabItem from '@theme/TabItem'
 import Tabs from '@theme/Tabs'
 import dedent from 'ts-dedent'
@@ -12,97 +10,26 @@ import CodeBlock from '@theme/CodeBlock'
 import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 import { CERTIFICATES } from '@site/src/constants/kubernetes/certs'
 
-> Данный раздел описывает варианты аутентификации kubelet на worker-нодах при подключении к кластеру Kubernetes.
-> Выбор стратегии зависит от требований безопасности и способа установки.
+> Ниже два рабочих сценария подключения worker-ноды к кластеру.
+> Первый дает полный контроль над bootstrap-процессом, второй повторяет привычный путь через `kubeadm join`.
 
 <Tabs groupId="auth-strategy">
 
-  <TabItem value="certificates" label="Сертификаты (Hard Way)">
-
-    > Ручная генерация серверного и клиентского сертификатов kubelet аналогично CP-узлам.
-    > Этот метод обеспечивает полный контроль над сертификатами, но требует доступа к приватному ключу CA.
-
-    :::danger Внимание
-    Для подписи сертификатов необходим **приватный ключ CA** (`ca.key`), который доступен только на мастер-нодах.
-    Генерация сертификатов должна выполняться на узле с доступом к `ca.key`, после чего файлы переносятся на worker-ноду.
-
-    Подробная процедура генерации описана в разделе [5.2.2. Аутентификация (CP)](/tech-docs/kubernetes/certificates/all-certificates).
-    :::
-
-    <h3>Получение CA-сертификата</h3>
-
-    :::info 🖥️ Worker-нода
-    Kubelet при запуске обращается к `ca.crt` на диске для валидации подключений.
-    На worker-ноде этот файл отсутствует — получаем его из публичного ConfigMap `cluster-info`.
-    :::
-
-    <CodeBlock language="bash">
-      {dedent`
-        export API_SERVER="https://api.${CUSTOM_VALUE.clusterName.value}.${CUSTOM_VALUE.kubernetesBaseDomain.value}:6443"
-      `}
-    </CodeBlock>
-
-    <CodeBlock language="bash">
-      {dedent`
-        export CA_DATA=$(curl -sk "$\{API_SERVER}/api/v1/namespaces/kube-public/configmaps/cluster-info" | \\
-          jq -r '.data.kubeconfig' | \\
-          grep 'certificate-authority-data' | \\
-          awk '{print $2}')
-      `}
-    </CodeBlock>
-
-    <CodeBlock language="bash">
-      {dedent`
-        mkdir -p ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/pki
-        echo "$\{CA_DATA}" | base64 -d > ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/pki/ca.crt
-      `}
-    </CodeBlock>
-
-    <h3>Генерация сертификатов</h3>
-
-    :::warning 🖥️ Мастер-нода
-    Генерация сертификатов выполняется на **мастер-ноде** (требуется `ca.key`). После генерации файлы переносятся на worker-ноду.
-    :::
-
-    <details>
-      <summary>
-        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <p style={{ marginBottom: 0 }}>Kubelet Client Certificate</p>
-          <p className="obligatory-note-orange">● Обязателен к применению</p>
-        </div>
-      </summary>
-
-      > **Назначение:** Клиентский сертификат kubelet для подключения к kube-apiserver. Подписан **kubernetes-ca**.
-
-      <KubeletClientMain />
-    </details>
-
-    <details>
-      <summary>
-        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <p style={{ marginBottom: 0 }}>Kubelet Server Certificate</p>
-          <p className="obligatory-note-orange">● Обязателен к применению</p>
-        </div>
-      </summary>
-      <KubeletServerMain />
-    </details>
-
-  </TabItem>
-
   <TabItem value="bootstrap-token" label="Bootstrap Token (Hard Way)">
 
-    > Создание `bootstrap-kubelet.conf` вручную с использованием bootstrap-токена.
-    > После запуска kubelet автоматически выполнит TLS Bootstrap: получит клиентский сертификат и создаст `kubelet.conf`.
+    > Это ручной сценарий: создаем `bootstrap-kubelet.conf`, запускаем kubelet и при необходимости сами проводим CSR
+    > через Kubernetes API.
+    > Подходит, если хотите видеть весь путь TLS Bootstrap без автоматики `kubeadm`.
 
     :::danger Внимание
-    В данном примере используется **статичный bootstrap-токен** для всех worker-узлов.
-    В продуктивной среде рекомендуется **генерировать уникальный токен для каждой ноды** с ограниченным временем жизни.
+    В примере ниже используется **статичный bootstrap-токен** для всех worker-узлов.
+    Для production-среды лучше выпускать **отдельный токен на каждую ноду** и задавать ему ограниченный срок жизни.
     :::
 
     <h3>Создание bootstrap-токена</h3>
 
-    > Bootstrap-токен — это Secret в namespace `kube-system`, который разрешает новой ноде присоединиться к кластеру.
-    > Ниже представлены два способа создания токена.
+    > Bootstrap-токен хранится в Secret в namespace `kube-system` и дает новой ноде право начать bootstrap-процесс.
+    > Ниже два способа его создать.
 
     <Tabs groupId="token-creation">
 
@@ -187,7 +114,7 @@ import { CERTIFICATES } from '@site/src/constants/kubernetes/certs'
 
     :::info 🖥️ Worker-нода
     Все команды данного этапа выполняются на **worker-ноде**.
-    На worker-ноде файл `ca.crt` ещё отсутствует. CA-данные получаем из публичного ConfigMap `cluster-info`
+    На worker-ноде файл `ca.crt` еще отсутствует. CA-данные получаем из публичного ConfigMap `cluster-info`
     в namespace `kube-public`, доступного анонимно через kube-apiserver.
     :::
 
@@ -257,10 +184,10 @@ import { CERTIFICATES } from '@site/src/constants/kubernetes/certs'
 
     <h3>Kubernetes CSR (имитация TLS Bootstrap)</h3>
 
-    > Данный подход имитирует поведение kubelet при TLS Bootstrap:
-    > приватные ключи генерируются на worker-ноде, CSR отправляются через Kubernetes API
-    > с использованием `bootstrap-kubelet.conf`, а утверждение выполняется администратором на мастере.
-    > Приватный ключ CA **не требуется** на worker-ноде.
+    > Ниже показан тот же поток, который kubelet обычно проходит сам во время TLS Bootstrap:
+    > ключи генерируются на worker-ноде, CSR отправляются через Kubernetes API,
+    > а подпись подтверждает администратор на мастер-ноде.
+    > Приватный ключ CA на worker-ноде для этого **не нужен**.
 
     <details>
       <summary>
@@ -592,12 +519,12 @@ import { CERTIFICATES } from '@site/src/constants/kubernetes/certs'
 
   <TabItem value="kubeadm" label="Kubeadm">
 
-    > При использовании kubeadm аутентификация worker-ноды происходит автоматически в процессе `kubeadm join`.
-    > Kubeadm использует bootstrap-токен из конфигурации для получения cluster-info, запуска kubelet и TLS Bootstrap.
+    > Здесь почти все делает `kubeadm join`: получает `cluster-info`, стартует kubelet и проводит TLS Bootstrap.
+    > Это самый близкий к стандартной установке путь.
 
     <h3>Получение токена</h3>
 
-    > Если токен не был создан заранее или истёк, сгенерируйте новый.
+    > Если токен не был создан заранее или истек, сгенерируйте новый.
 
     :::warning 🖥️ Мастер-нода
     Команда выполняется на **мастер-ноде** или на хосте с kubeconfig, имеющим права на управление bootstrap-токенами.
@@ -624,11 +551,11 @@ import { CERTIFICATES } from '@site/src/constants/kubernetes/certs'
 
     <h3>Конфигурация kubeadm</h3>
 
-    > Используйте полученный токен в конфигурационном файле kubeadm или передайте через аргументы командной строки.
+    > Полученный токен можно подставить в конфиг `kubeadm` или передать прямо в командной строке.
 
     :::warning Обратите внимание
-    Данный раздел зависит от следующих разделов:
-    - [Настройка ПО (DP)](/tech-docs/kubernetes/components/all-setup-dp) — конфигурация kubeadm для worker-ноды.
+    Перед запуском убедитесь, что у вас уже готов файл `kubeadm.yaml` из раздела
+    [Настройка ПО (DP)](/tech-docs/kubernetes/components/all-setup-dp).
     :::
 
     <h4>Использование статичного конфига</h4>

@@ -3,8 +3,6 @@ id: authentication-dp
 title: "5.3.2. Authentication"
 ---
 
-import KubeletServerMain from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/certificates/components/kubelet/kubeletServer/main.mdx'
-import KubeletClientMain from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/certificates/components/kubelet/kubeAPIClient/main.mdx'
 import TabItem from '@theme/TabItem'
 import Tabs from '@theme/Tabs'
 import dedent from 'ts-dedent'
@@ -16,78 +14,6 @@ import { CERTIFICATES } from '@site/src/constants/kubernetes/certs'
 > The strategy depends on security requirements and the installation method.
 
 <Tabs groupId="auth-strategy">
-
-  <TabItem value="certificates" label="Certificates (Hard Way)">
-
-    > Manual generation of kubelet server and client certificates, similar to CP nodes.
-    > This method provides full control over certificates but requires access to the CA private key.
-
-    :::danger Warning
-    Signing certificates requires the **CA private key** (`ca.key`), which is only available on master nodes.
-    Certificate generation must be performed on a node with access to `ca.key`, then the files are transferred to the worker node.
-
-    The detailed generation procedure is described in the [5.2.2. Authentication (CP)](/tech-docs/kubernetes/certificates/all-certificates) section.
-    :::
-
-    <h3>Fetch CA certificate</h3>
-
-    :::info 🖥️ Worker node
-    Kubelet requires `ca.crt` on disk at startup to validate connections.
-    This file is not present on worker nodes — fetch it from the public `cluster-info` ConfigMap.
-    :::
-
-    <CodeBlock language="bash">
-      {dedent`
-        export API_SERVER="https://api.${CUSTOM_VALUE.clusterName.value}.${CUSTOM_VALUE.kubernetesBaseDomain.value}:6443"
-      `}
-    </CodeBlock>
-
-    <CodeBlock language="bash">
-      {dedent`
-        export CA_DATA=$(curl -sk "$\{API_SERVER}/api/v1/namespaces/kube-public/configmaps/cluster-info" | \\
-          jq -r '.data.kubeconfig' | \\
-          grep 'certificate-authority-data' | \\
-          awk '{print $2}')
-      `}
-    </CodeBlock>
-
-    <CodeBlock language="bash">
-      {dedent`
-        mkdir -p ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/pki
-        echo "$\{CA_DATA}" | base64 -d > ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/pki/ca.crt
-      `}
-    </CodeBlock>
-
-    <h3>Certificate generation</h3>
-
-    :::warning 🖥️ Master node
-    Certificate generation is performed on the **master node** (`ca.key` is required). After generation, files are transferred to the worker node.
-    :::
-
-    <details>
-      <summary>
-        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <p style={{ marginBottom: 0 }}>Kubelet Client Certificate</p>
-          <p className="obligatory-note-orange">● Required</p>
-        </div>
-      </summary>
-
-      > **Purpose:** Kubelet client certificate for connecting to kube-apiserver. Signed by **kubernetes-ca**.
-
-      <KubeletClientMain />
-    </details>
-
-    <details>
-      <summary>
-        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <p style={{ marginBottom: 0 }}>Kubelet Server Certificate</p>
-          <p className="obligatory-note-orange">● Required</p>
-        </div>
-      </summary>
-      <KubeletServerMain />
-    </details>
-
-  </TabItem>
 
   <TabItem value="bootstrap-token" label="Bootstrap Token (Hard Way)">
 

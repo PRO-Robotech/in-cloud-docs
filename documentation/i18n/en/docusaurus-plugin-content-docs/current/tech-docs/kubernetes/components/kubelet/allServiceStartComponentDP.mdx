@@ -33,69 +33,11 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
         <KubeletConfigFilesDefault />
       </details>
 
-      <h4>Bootstrap kubeconfig</h4>
-
-      > To authenticate the kubelet on a worker node, a bootstrap kubeconfig with a token is required.
-      > After starting, the kubelet will automatically perform TLS Bootstrap and obtain a client certificate.
-
-      :::info
-      The `ca.crt` file is not yet present on the worker node. CA data is fetched from the public ConfigMap `cluster-info`
-      in the `kube-public` namespace, accessible anonymously via kube-apiserver.
+      :::warning Prerequisites
+      Before starting kubelet, complete the steps in [5.3.2. Authentication](/tech-docs/kubernetes/certificates/authentication-dp):
+      - Fetch the CA certificate (`ca.crt`)
+      - Create `bootstrap-kubelet.conf` (or generate certificates manually)
       :::
-
-      <CodeBlock language="bash">
-        {dedent`
-          export BOOTSTRAP_TOKEN=${CUSTOM_VALUE.bootstrapToken.value}
-          export API_SERVER="https://api.${CUSTOM_VALUE.clusterName.value}.${CUSTOM_VALUE.kubernetesBaseDomain.value}:6443"
-        `}
-      </CodeBlock>
-
-      <CodeBlock language="bash">
-        {dedent`
-          mkdir -p ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}
-        `}
-      </CodeBlock>
-
-      <CodeBlock language="bash">
-        {dedent`
-          export CA_DATA=$(curl -sk "$\{API_SERVER}/api/v1/namespaces/kube-public/configmaps/cluster-info" | \\
-            jq -r '.data.kubeconfig' | \\
-            grep 'certificate-authority-data' | \\
-            awk '{print $2}')
-        `}
-      </CodeBlock>
-
-      <CodeBlock language="bash">
-        {dedent`
-          mkdir -p ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/pki
-          echo "$\{CA_DATA}" | base64 -d > ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/pki/ca.crt
-        `}
-      </CodeBlock>
-
-      <CodeBlock language="bash">
-        {dedent`
-          cat <<EOF > ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/bootstrap-kubelet.conf
-          apiVersion: v1
-          clusters:
-          - cluster:
-              certificate-authority-data: $\{CA_DATA}
-              server: $\{API_SERVER}
-            name: ${CUSTOM_VALUE.clusterName.value}
-          contexts:
-          - context:
-              cluster: ${CUSTOM_VALUE.clusterName.value}
-              user: tls-bootstrap-token-user
-            name: tls-bootstrap-token-user@kubernetes
-          current-context: tls-bootstrap-token-user@kubernetes
-          kind: Config
-          preferences: {}
-          users:
-          - name: tls-bootstrap-token-user
-            user:
-              token: $\{BOOTSTRAP_TOKEN}
-          EOF
-        `}
-      </CodeBlock>
 
       <KubeletSystemdUnitStart />
     </TabItem>

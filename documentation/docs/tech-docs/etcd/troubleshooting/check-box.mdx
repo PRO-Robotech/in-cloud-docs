@@ -93,7 +93,7 @@ import { PORTS } from '@site/src/constants/kubernetes/ports'
 <table>
 <tbody>
 <tr><td><strong>Симптом</strong></td><td><code>certificate has expired or is not yet valid</code></td></tr>
-<tr><td><strong>Причина</strong></td><td>Срок действия TLS-сертификата etcd истёк.</td></tr>
+<tr><td><strong>Причина</strong></td><td>Срок действия TLS-сертификата etcd истек.</td></tr>
 <tr><td><strong>Решение</strong></td><td>Проверьте срок: <code>openssl x509 -in {CERTIFICATES.etcdServer.crtPath} -noout -dates</code>. Перевыпустите сертификаты и перезапустите etcd.</td></tr>
 </tbody>
 </table>
@@ -127,5 +127,5 @@ import { PORTS } from '@site/src/constants/kubernetes/ports'
 | | |
 |---|---|
 | **Симптом** | `rpc error: code = Unavailable desc = etcdserver: rpc not supported for learner` |
-| **Причина** | Узел etcd находится в состоянии learner и ещё не синхронизирован с кластером. Некоторые операции недоступны для learner-узлов до их продвижения в voter. |
+| **Причина** | Узел etcd находится в состоянии learner и еще не синхронизирован с кластером. Некоторые операции недоступны для learner-узлов до их продвижения в voter. |
 | **Решение** | Проверьте состояние узла: `etcdctl member list`. Убедитесь, что узел синхронизирован. После завершения репликации выполните `etcdctl member promote <member-id>` или повторите процедуру `kubeadm join`, чтобы kubeadm автоматически завершил процесс продвижения узла. |
