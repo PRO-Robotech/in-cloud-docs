@@ -73,9 +73,8 @@ Please note that all commands except section 5.1.5.2.5 (Connection via kubectl) 
 <CodeBlock language="bash">
   {dedent`
     etcdctlMembers() {
-      etcdctl member list \\
-      --write-out=json | jq \\
-      -r '[.members[].clientURLs[]] | join(",")'
+      etcdctl member list -w json | \\
+      jq -r '[.members[].clientURLs[]?] | join(",")'
     }
   `}
 </CodeBlock>

@@ -1,0 +1,31 @@
+import CodeBlock                from '@theme/CodeBlock'
+import {KUBE_API_ARGS}          from '@site/src/constants/kubernetes/kubeAPIArgs'
+import dedent                   from 'ts-dedent'
+import { CUSTOM_VALUE }         from '@site/src/constants/kubernetes/customValue'
+
+<details>
+<summary>Kubeadm configuration for joining a worker node to the cluster</summary>
+
+  <h4>Environment variables for configuration file template</h4>
+  <CodeBlock language="bash">
+      {dedent`
+        export CLUSTER_API_ENDPOINT=api.${CUSTOM_VALUE.clusterName.value}.${CUSTOM_VALUE.kubernetesBaseDomain.value}
+        export BOOTSTRAP_TOKEN=${CUSTOM_VALUE.bootstrapToken.value}
+      `}
+  </CodeBlock>
+
+  <h4>Kubeadm configuration file for joining a worker to the cluster</h4>
+  <CodeBlock>
+    {dedent`cat <<EOF > ${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
+      ---
+      apiVersion: kubeadm.k8s.io/v1beta3
+      discovery:
+        bootstrapToken:
+          apiServerEndpoint: $\{CLUSTER_API_ENDPOINT}:${KUBE_API_ARGS.securePort.value}
+          unsafeSkipCAVerification: true
+          token: "$\{BOOTSTRAP_TOKEN}"
+      kind: JoinConfiguration
+      EOF
+    `}
+  </CodeBlock>
+</details>

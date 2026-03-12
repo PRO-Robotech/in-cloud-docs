@@ -191,10 +191,8 @@ import SecondaryMasterTabs from '@site/i18n/en/docusaurus-plugin-content-docs/cu
 <CodeBlock language="bash">
   {dedent`
     etcdctlMembers() {
-      etcdctl member list \\
-        --endpoints="$ETCD_ENDPOINTS" \\
-        --write-out=json | jq \\
-        -r '[.members[].clientURLs[]] | join(",")'
+      etcdctl member list -w json | \\
+      jq -r '[.members[].clientURLs[]?] | join(",")'
     }
   `}
 </CodeBlock>

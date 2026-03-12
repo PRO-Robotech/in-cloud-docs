@@ -112,4 +112,20 @@ import { PORTS } from '@site/src/constants/kubernetes/ports'
 |---|---|
 | **Symptom** | `mvcc: database space exceeded` |
 | **Cause** | The etcd database size has exceeded the quota (default is 2 GB). |
-| **Solution** | 1. Perform compaction: `etcdctl compact $(etcdctl endpoint status -w json \| python3 -c "import sys,json; print(json.load(sys.stdin)[0]['Status']['header']['revision'])")`. 2. Run defragmentation: `etcdctl defrag`. 3. Disarm the alarm: `etcdctl alarm disarm`. 4. Consider increasing the quota via `--quota-backend-bytes`. |
+| **Solution** | 1. Perform compaction: `etcdctl compact $(etcdctl endpoint status -w json \| python3 -c "import sys,json: print(json.load(sys.stdin)[0]['Status']['header']['revision'])")`. 2. Run defragmentation: `etcdctl defrag`. 3. Disarm the alarm: `etcdctl alarm disarm`. 4. Consider increasing the quota via `--quota-backend-bytes`. |
+
+### too many learner members in cluster
+
+| | |
+|---|---|
+| **Symptom** | `etcdserver: too many learner members in cluster` |
+| **Cause** | The etcd cluster already contains one or more nodes in a learner state. When adding a new control-plane node, kubeadm first adds the etcd node as a learner. etcd allows a limited number of learner nodes (usually one), so adding a new node fails with this error. |
+| **Solution** | Check the cluster member list: `etcdctl member list`. If a stuck learner is found, remove it: `etcdctl member remove <member-id>`. Then retry the `kubeadm join` procedure. If the node was supposed to become a voter, try running `etcdctl member promote <member-id>`. |
+
+### rpc not supported for learner
+
+| | |
+|---|---|
+| **Symptom** | `rpc error: code = Unavailable desc = etcdserver: rpc not supported for learner` |
+| **Cause** | The etcd node is in a learner state and has not yet synchronized with the cluster. Some operations are unavailable for learner nodes until they are promoted to voter. |
+| **Solution** | Check the node status: `etcdctl member list`. Ensure the node is synchronized. Once replication is complete, run `etcdctl member promote <member-id>` or retry the `kubeadm join` procedure so that kubeadm automatically completes the node promotion process. |

@@ -1,5 +1,6 @@
 import { etcd } from './etcd'
-import { kubernetes } from './kubernetes'
+import { kubernetesCP } from './kubernetesCP'
+import { kubernetesDP } from './kubernetesDP'
 
 export const main = [
   {
@@ -32,7 +33,13 @@ export const main = [
         type: 'category',
         label: '5.2. Kubernetes CP',
         collapsed: true,
-        items: kubernetes,
+        items: kubernetesCP,
+      },
+      {
+        type: 'category',
+        label: '5.3. Kubernetes DP',
+        collapsed: true,
+        items: kubernetesDP,
       },
     ],
   },

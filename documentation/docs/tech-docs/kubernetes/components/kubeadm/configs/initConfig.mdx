@@ -30,6 +30,7 @@ import Tabs from '@theme/Tabs'
           export MACHINE_LOCAL_ADDRESS=${CUSTOM_VALUE.virtualMachineLocalAddress.value}
           export ETCD_INITIAL_CLUSTER="$\{FULL_HOST_NAME}=${ETCD_ARGS.initialAdvertisePeerUrls.value}"
           export CERTIFICATE_UPLOAD_KEY=0c00c2fd5c67c37656c00d78a9d7e1f2eb794ef8e4fc3e2a4b532eb14323cd59
+          export BOOTSTRAP_TOKEN=${CUSTOM_VALUE.bootstrapToken.value}
         `}
       </CodeBlock>
 
@@ -46,7 +47,7 @@ import Tabs from '@theme/Tabs'
           skipPhases:
             - addon
           bootstrapTokens:
-            - token: "fjt9ex.lwzqgdlvoxtqk4yw"
+            - token: "$\{BOOTSTRAP_TOKEN}"
               description: "kubeadm bootstrap token"
               ttl: "24h"
           certificateKey: $\{CERTIFICATE_UPLOAD_KEY}
@@ -90,7 +91,7 @@ import Tabs from '@theme/Tabs'
               skipPhases:
                 - addon
               bootstrapTokens:
-                - token: "fjt9ex.lwzqgdlvoxtqk4yw"
+                - token: "${CUSTOM_VALUE.bootstrapToken.value}"
                   description: "kubeadm bootstrap token"
                   ttl: "24h"
               certificateKey: 0c00c2fd5c67c37656c00d78a9d7e1f2eb794ef8e4fc3e2a4b532eb14323cd59

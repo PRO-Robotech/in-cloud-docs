@@ -26,7 +26,7 @@ This section provides instructions for downloading root certificates from the Ku
 <CodeBlock language="bash">
   {dedent`
     export CERTIFICATE_UPLOAD_KEY=0c00c2fd5c67c37656c00d78a9d7e1f2eb794ef8e4fc3e2a4b532eb14323cd59
-    export KUBE_API_BOOTSTRAP_TOKEN=fjt9ex.lwzqgdlvoxtqk4yw
+    export KUBE_API_BOOTSTRAP_TOKEN=${CUSTOM_VALUE.bootstrapToken.value}
     export KUBE_API_SERVER=https://api.my-first-cluster.example.com:6443
   `}
 </CodeBlock>

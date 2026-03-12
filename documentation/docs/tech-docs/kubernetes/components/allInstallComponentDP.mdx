@@ -1,6 +1,6 @@
 ---
-id: all-install
-title: "5.2.1.2. Установка ПО"
+id: all-install-dp
+title: "5.3.1.2. Установка ПО"
 ---
 
 import ContainerdDownloadBIN from '@site/docs/tech-docs/kubernetes/components/containerd/lifecycleDownloadComponent.mdx'
@@ -21,14 +21,11 @@ import CrictlCheckBIN from '@site/docs/tech-docs/kubernetes/components/crictl/ch
 import KubeadmDownloadBIN from '@site/docs/tech-docs/kubernetes/components/kubeadm/lifecycleDownloadComponent.mdx'
 import KubeadmCheckBIN from '@site/docs/tech-docs/kubernetes/components/kubeadm/checkBIN.mdx'
 
-import EtcdDownloadBIN from '@site/docs/tech-docs/etcd/components/etcd/lifecycleDownloadComponent.mdx'
-import EtcdCheckBIN from '@site/docs/tech-docs/etcd/components/etcd/checkBIN.mdx'
-
 import TabItem from '@theme/TabItem'
 import Tabs from '@theme/Tabs'
 
-> В этом разделе описан процесс установки основных компонентов, необходимых для работы Kubernetes-кластера.
-> Установка выполняется вручную и позволяет подготовить окружение для последующих этапов инициализации и настройки управляющего контура.
+> В этом разделе описан процесс установки компонентов, необходимых для работы worker-узлов Kubernetes.
+> Установка выполняется вручную и позволяет подготовить окружение для последующего присоединения узла к кластеру.
 
 <Tabs groupId="component">
   <TabItem value="runc">
@@ -65,18 +62,6 @@ import Tabs from '@theme/Tabs'
       </summary>
       <KubeletDownloadBIN />
       <KubeletCheckBIN />
-    </details>
-  </TabItem>
-  <TabItem value="etcd">
-    <details>
-      <summary>
-        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <p style={{ marginBottom: 0 }}>Установка etcd</p>
-          <p className="obligatory-note-orange">● Обязателен к применению</p>
-        </div>
-      </summary>
-      <EtcdDownloadBIN />
-      <EtcdCheckBIN />
     </details>
   </TabItem>
   <TabItem value="kubectl">

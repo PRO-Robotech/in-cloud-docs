@@ -113,3 +113,19 @@ import { PORTS } from '@site/src/constants/kubernetes/ports'
 | **Симптом** | `mvcc: database space exceeded` |
 | **Причина** | Размер базы данных etcd превысил квоту (по умолчанию 2 GB). |
 | **Решение** | 1. Выполните компактацию: `etcdctl compact $(etcdctl endpoint status -w json \| python3 -c "import sys,json; print(json.load(sys.stdin)[0]['Status']['header']['revision'])")`. 2. Запустите дефрагментацию: `etcdctl defrag`. 3. Снимите аларм: `etcdctl alarm disarm`. 4. Рассмотрите увеличение квоты через `--quota-backend-bytes`. |
+
+### too many learner members in cluster
+
+| | |
+|---|---|
+| **Симптом** | `etcdserver: too many learner members in cluster` |
+| **Причина** | В кластере etcd уже присутствует один или несколько узлов в состоянии learner. При добавлении нового control-plane kubeadm сначала добавляет etcd-узел как learner. etcd допускает ограниченное количество learner-узлов (обычно один), поэтому добавление нового узла завершается ошибкой. |
+| **Решение** | Проверьте список участников кластера: `etcdctl member list`. Если обнаружен зависший learner, удалите его: `etcdctl member remove <member-id>`. После этого повторите процедуру `kubeadm join`. Если узел должен был стать voter, попробуйте выполнить `etcdctl member promote <member-id>`. |
+
+### rpc not supported for learner
+
+| | |
+|---|---|
+| **Симптом** | `rpc error: code = Unavailable desc = etcdserver: rpc not supported for learner` |
+| **Причина** | Узел etcd находится в состоянии learner и ещё не синхронизирован с кластером. Некоторые операции недоступны для learner-узлов до их продвижения в voter. |
+| **Решение** | Проверьте состояние узла: `etcdctl member list`. Убедитесь, что узел синхронизирован. После завершения репликации выполните `etcdctl member promote <member-id>` или повторите процедуру `kubeadm join`, чтобы kubeadm автоматически завершил процесс продвижения узла. |

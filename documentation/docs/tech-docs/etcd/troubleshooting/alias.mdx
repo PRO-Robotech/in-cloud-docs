@@ -73,9 +73,8 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
 <CodeBlock language="bash">
   {dedent`
     etcdctlMembers() {
-      etcdctl member list \\
-      --write-out=json | jq \\
-      -r '[.members[].clientURLs[]] | join(",")'
+      etcdctl member list -w json | \\
+      jq -r '[.members[].clientURLs[]?] | join(",")'
     }
   `}
 </CodeBlock>

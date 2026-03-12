@@ -53,4 +53,7 @@ export const CUSTOM_VALUE: TCustomValueItems = {
   kubernetesClusterExternalDomain: {
     value: '${CLUSTER_NAME}.${BASE_DOMAIN}',
   },
+  bootstrapToken: {
+    value: 'fjt9ex.lwzqgdlvoxtqk4yw',
+  },
 }

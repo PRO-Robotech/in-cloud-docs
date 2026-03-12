@@ -84,7 +84,7 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
       [upload-certs] Using certificate key: 0c00c2fd5c67c37656c00d78a9d7e1f2eb794ef8e4fc3e2a4b532eb14323cd59
       [mark-control-plane] Marking the node master-1.my-first-cluster.example.com as control-plane by adding the labels: [node-role.kubernetes.io/control-plane node.kubernetes.io/exclude-from-external-load-balancers]
       [mark-control-plane] Marking the node master-1.my-first-cluster.example.com as control-plane by adding the taints [node-role.kubernetes.io/control-plane:NoSchedule]
-      [bootstrap-token] Using token: fjt9ex.lwzqgdlvoxtqk4yw
+      [bootstrap-token] Using token: ${CUSTOM_VALUE.bootstrapToken.value}
       [bootstrap-token] Configuring bootstrap tokens, cluster-info ConfigMap, RBAC Roles
       [bootstrap-token] Configured RBAC rules to allow Node Bootstrap tokens to get nodes
       [bootstrap-token] Configured RBAC rules to allow Node Bootstrap tokens to post CSRs in order for nodes to get long term certificate credentials
@@ -112,13 +112,13 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
       You can now join any number of control-plane nodes by copying certificate authorities
       and service account keys on each node and then running the following as root:
 
-        kubeadm join api.my-first-cluster.example.com:6443 --token fjt9ex.lwzqgdlvoxtqk4yw \\
+        kubeadm join api.my-first-cluster.example.com:6443 --token ${CUSTOM_VALUE.bootstrapToken.value} \\
         --discovery-token-ca-cert-hash sha256:d0a2cf44fc8c8f4e5b9b021243434d303e1dc690b51a23efed0ba056647c87f6 \\
         --control-plane --certificate-key 0c00c2fd5c67c37656c00d78a9d7e1f2eb794ef8e4fc3e2a4b532eb14323cd59
 
       Then you can join any number of worker nodes by running the following on each as root:
 
-      kubeadm join api.my-first-cluster.example.com:6443 --token fjt9ex.lwzqgdlvoxtqk4yw \\
+      kubeadm join api.my-first-cluster.example.com:6443 --token ${CUSTOM_VALUE.bootstrapToken.value} \\
         --discovery-token-ca-cert-hash sha256:d0a2cf44fc8c8f4e5b9b021243434d303e1dc690b51a23efed0ba056647c87f6
     `}
 </CodeBlock>

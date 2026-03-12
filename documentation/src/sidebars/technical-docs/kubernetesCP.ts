@@ -1,4 +1,4 @@
-export const kubernetes = [
+export const kubernetesCP = [
   {
     type: 'category',
     label: '5.2.1. Окружение',
@@ -7,17 +7,17 @@ export const kubernetes = [
       {
         type: 'doc',
         label: '5.2.1.1. Настройка ОС',
-        id: 'tech-docs/kubernetes/setup-environments/os-setup',
+        id: 'tech-docs/kubernetes/setup-environments/os-setup-cp',
       },
       {
         type: 'doc',
         label: '5.2.1.2. Установка ПО',
-        id: 'tech-docs/kubernetes/components/all-install',
+        id: 'tech-docs/kubernetes/components/all-install-cp',
       },
       {
         type: 'doc',
         label: '5.2.1.3. Настройка ПО',
-        id: 'tech-docs/kubernetes/components/all-setup',
+        id: 'tech-docs/kubernetes/components/all-setup-cp',
       },
       {
         type: 'doc',

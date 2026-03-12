@@ -1,0 +1,115 @@
+---
+id: all-kubelet-start-dp
+title: "5.3.2. Kubelet Start"
+---
+
+import KubeletConfigFilesDefault from '@site/docs/tech-docs/kubernetes/components/kubelet/payload/configFilesDefault.mdx'
+import KubeletSystemdUnitStart from '@site/docs/tech-docs/kubernetes/components/kubelet/systemdUnitStart.mdx'
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+import dedent from 'ts-dedent'
+import CodeBlock from '@theme/CodeBlock'
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+
+> В данном разделе рассматривается подключение worker-ноды к кластеру Kubernetes и запуск Kubelet.
+> Для ручной установки (Hard Way) необходимо создать bootstrap kubeconfig с токеном аутентификации,
+> базовый конфигурационный файл kubelet и запустить systemd-сервис.
+> При использовании kubeadm достаточно выполнить команду `kubeadm join`.
+
+<details>
+  <summary>
+    <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+      <p style={{ marginBottom: 0 }}>Запуск/Настройка kubelet</p>
+      <p className="obligatory-note-orange">● Обязателен к применению</p>
+    </div>
+  </summary>
+  <Tabs groupId="install-type">
+    <TabItem value="HardWay">
+
+      > Данный конфигурационный файл требуется для запуска `Kubelet`.
+
+      <details className="custom-gray-block">
+        <summary>Kubelet default config</summary>
+        <KubeletConfigFilesDefault />
+      </details>
+
+      <h4>Bootstrap kubeconfig</h4>
+
+      > Для аутентификации kubelet на worker-ноде необходим bootstrap kubeconfig с токеном.
+      > После запуска kubelet автоматически выполнит TLS Bootstrap и получит клиентский сертификат.
+
+      <CodeBlock language="bash">
+        {dedent`
+          export BOOTSTRAP_TOKEN=${CUSTOM_VALUE.bootstrapToken.value}
+        `}
+      </CodeBlock>
+
+      <CodeBlock language="bash">
+        {dedent`
+          cat <<EOF > ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/bootstrap-kubelet.conf
+          apiVersion: v1
+          clusters:
+          - cluster:
+              certificate-authority-data: $(base64 -w 0 ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/pki/ca.crt)
+              server: https://api.${CUSTOM_VALUE.clusterName.value}.${CUSTOM_VALUE.kubernetesBaseDomain.value}:6443
+            name: ${CUSTOM_VALUE.clusterName.value}
+          contexts:
+          - context:
+              cluster: ${CUSTOM_VALUE.clusterName.value}
+              user: tls-bootstrap-token-user
+            name: tls-bootstrap-token-user@kubernetes
+          current-context: tls-bootstrap-token-user@kubernetes
+          kind: Config
+          preferences: {}
+          users:
+          - name: tls-bootstrap-token-user
+            user:
+              token: $\{BOOTSTRAP_TOKEN}
+          EOF
+        `}
+      </CodeBlock>
+
+      <KubeletSystemdUnitStart />
+    </TabItem>
+    <TabItem value="Kubeadm">
+
+      > Данная команда выполняет подключение worker-ноды к кластеру Kubernetes,
+      > включая запуск kubelet, TLS Bootstrap и регистрацию узла.
+
+      :::warning Обратите внимание
+      Данный раздел зависит от следующих разделов:
+      - [Настройка ПО (DP)](/tech-docs/kubernetes/components/all-setup-dp).
+      :::
+
+      <CodeBlock language="bash">
+        {dedent`
+          kubeadm join \\
+            --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
+        `}
+      </CodeBlock>
+
+      :::note Вывод команды
+      <CodeBlock language="bash">
+        {dedent`
+          [preflight] Running pre-flight checks
+          [preflight] Reading configuration from the cluster...
+          [preflight] FYI: You can look at this config file with 'kubectl -n kube-system get cm kubeadm-config -o yaml'
+          [kubelet-start] Writing kubelet configuration to file "/var/lib/kubelet/config.yaml"
+          [kubelet-start] Writing kubelet environment file with flags to file "/var/lib/kubelet/kubeadm-flags.env"
+          [kubelet-start] Starting the kubelet
+          [kubelet-check] Waiting for a healthy kubelet at http://127.0.0.1:10248/healthz. This can take up to 4m0s
+          [kubelet-check] The kubelet is healthy after 1.001250916s
+          [kubelet-start] Waiting for the kubelet to perform the TLS Bootstrap
+
+          This node has joined the cluster:
+          * Certificate signing request was sent to apiserver and approval was received.
+          * The Kubelet was informed of the new secure connection details.
+
+          Run 'kubectl get nodes' on the control-plane to see this node join the cluster.
+        `}
+      </CodeBlock>
+      :::
+
+    </TabItem>
+  </Tabs>
+</details>

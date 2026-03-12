@@ -6,19 +6,20 @@ import { PORTS }                from '@site/src/constants/kubernetes/ports'
 
 
 <details>
-<summary>Kubeadm configuration for joining a master node to the cluster</summary>
+<summary>Конфигурация Kubeadm для подключения мастер ноды к кластеру</summary>
 
-  <h4>Environment variables for configuration file template</h4>
+  <h4>Переменные окружения для шаблона конфигурационного файла</h4>
   <CodeBlock language="bash">
       {dedent`
         export MACHINE_LOCAL_ADDRESS="${CUSTOM_VALUE.virtualMachineLocalAddress.value}"
         export CLUSTER_API_ENDPOINT=api.${CUSTOM_VALUE.clusterName.value}.${CUSTOM_VALUE.kubernetesBaseDomain.value}
         export CERTIFICATE_UPLOAD_KEY=0c00c2fd5c67c37656c00d78a9d7e1f2eb794ef8e4fc3e2a4b532eb14323cd59
+        export BOOTSTRAP_TOKEN=${CUSTOM_VALUE.bootstrapToken.value}
 
       `}
   </CodeBlock>
 
-  <h4>Kubeadm configuration file for joining a master to the cluster</h4>
+  <h4>Конфигурационный файл kubeadm для подключения мастера к кластеру</h4>
   <CodeBlock>
     {dedent`cat <<EOF > ${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
       ---
@@ -32,7 +33,7 @@ import { PORTS }                from '@site/src/constants/kubernetes/ports'
         bootstrapToken:
           apiServerEndpoint: $\{CLUSTER_API_ENDPOINT}:${KUBE_API_ARGS.securePort.value}
           unsafeSkipCAVerification: true
-          token: "fjt9ex.lwzqgdlvoxtqk4yw"
+          token: "$\{BOOTSTRAP_TOKEN}"
       kind: JoinConfiguration
       EOF
     `}

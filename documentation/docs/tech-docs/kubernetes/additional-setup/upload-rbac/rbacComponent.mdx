@@ -337,7 +337,7 @@ import { KUBE_API_ARGS } from '@site/src/constants/kubernetes/kubeAPIArgs'
     :::note
     <CodeBlock language="bash">
       {dedent`
-        [bootstrap-token] Using token: fjt9ex.lwzqgdlvoxtqk4yw
+        [bootstrap-token] Using token: ${CUSTOM_VALUE.bootstrapToken.value}
         [bootstrap-token] Configuring bootstrap tokens, cluster-info ConfigMap, RBAC Roles
         [bootstrap-token] Configured RBAC rules to allow Node Bootstrap tokens to get nodes
         [bootstrap-token] Configured RBAC rules to allow Node Bootstrap tokens to post CSRs in order for nodes to get long term certificate credentials
