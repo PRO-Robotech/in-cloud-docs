@@ -1,0 +1,654 @@
+---
+id: authentication-dp
+title: "5.3.2. Аутентификация"
+---
+
+import KubeletServerMain from '@site/docs/tech-docs/kubernetes/certificates/components/kubelet/kubeletServer/main.mdx'
+import KubeletClientMain from '@site/docs/tech-docs/kubernetes/certificates/components/kubelet/kubeAPIClient/main.mdx'
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+import dedent from 'ts-dedent'
+import CodeBlock from '@theme/CodeBlock'
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+import { CERTIFICATES } from '@site/src/constants/kubernetes/certs'
+
+> Данный раздел описывает варианты аутентификации kubelet на worker-нодах при подключении к кластеру Kubernetes.
+> Выбор стратегии зависит от требований безопасности и способа установки.
+
+<Tabs groupId="auth-strategy">
+
+  <TabItem value="certificates" label="Сертификаты (Hard Way)">
+
+    > Ручная генерация серверного и клиентского сертификатов kubelet аналогично CP-узлам.
+    > Этот метод обеспечивает полный контроль над сертификатами, но требует доступа к приватному ключу CA.
+
+    :::danger Внимание
+    Для подписи сертификатов необходим **приватный ключ CA** (`ca.key`), который доступен только на мастер-нодах.
+    Генерация сертификатов должна выполняться на узле с доступом к `ca.key`, после чего файлы переносятся на worker-ноду.
+
+    Подробная процедура генерации описана в разделе [5.2.2. Аутентификация (CP)](/tech-docs/kubernetes/certificates/all-certificates).
+    :::
+
+    <h3>Получение CA-сертификата</h3>
+
+    :::info 🖥️ Worker-нода
+    Kubelet при запуске обращается к `ca.crt` на диске для валидации подключений.
+    На worker-ноде этот файл отсутствует — получаем его из публичного ConfigMap `cluster-info`.
+    :::
+
+    <CodeBlock language="bash">
+      {dedent`
+        export API_SERVER="https://api.${CUSTOM_VALUE.clusterName.value}.${CUSTOM_VALUE.kubernetesBaseDomain.value}:6443"
+      `}
+    </CodeBlock>
+
+    <CodeBlock language="bash">
+      {dedent`
+        export CA_DATA=$(curl -sk "$\{API_SERVER}/api/v1/namespaces/kube-public/configmaps/cluster-info" | \\
+          jq -r '.data.kubeconfig' | \\
+          grep 'certificate-authority-data' | \\
+          awk '{print $2}')
+      `}
+    </CodeBlock>
+
+    <CodeBlock language="bash">
+      {dedent`
+        mkdir -p ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/pki
+        echo "$\{CA_DATA}" | base64 -d > ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/pki/ca.crt
+      `}
+    </CodeBlock>
+
+    <h3>Генерация сертификатов</h3>
+
+    :::warning 🖥️ Мастер-нода
+    Генерация сертификатов выполняется на **мастер-ноде** (требуется `ca.key`). После генерации файлы переносятся на worker-ноду.
+    :::
+
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Kubelet Client Certificate</p>
+          <p className="obligatory-note-orange">● Обязателен к применению</p>
+        </div>
+      </summary>
+
+      > **Назначение:** Клиентский сертификат kubelet для подключения к kube-apiserver. Подписан **kubernetes-ca**.
+
+      <KubeletClientMain />
+    </details>
+
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Kubelet Server Certificate</p>
+          <p className="obligatory-note-orange">● Обязателен к применению</p>
+        </div>
+      </summary>
+      <KubeletServerMain />
+    </details>
+
+  </TabItem>
+
+  <TabItem value="bootstrap-token" label="Bootstrap Token (Hard Way)">
+
+    > Создание `bootstrap-kubelet.conf` вручную с использованием bootstrap-токена.
+    > После запуска kubelet автоматически выполнит TLS Bootstrap: получит клиентский сертификат и создаст `kubelet.conf`.
+
+    :::danger Внимание
+    В данном примере используется **статичный bootstrap-токен** для всех worker-узлов.
+    В продуктивной среде рекомендуется **генерировать уникальный токен для каждой ноды** с ограниченным временем жизни.
+    :::
+
+    <h3>Создание bootstrap-токена</h3>
+
+    > Bootstrap-токен — это Secret в namespace `kube-system`, который разрешает новой ноде присоединиться к кластеру.
+    > Ниже представлены два способа создания токена.
+
+    <Tabs groupId="token-creation">
+
+      <TabItem value="manual" label="Вручную">
+
+        :::warning 🖥️ Мастер-нода
+        Команды ниже выполняются на **мастер-ноде** или на хосте с kubeconfig, имеющим права на создание Secret в namespace `kube-system`.
+        :::
+
+        <h4>Переменные окружения</h4>
+        <CodeBlock language="bash">
+          {dedent`
+            export AUTH_EXTRA_GROUPS="system:bootstrappers:kubeadm:default-node-token"
+            export DESCRIPTION="kubeadm bootstrap token"
+            export EXPIRATION=$(date -d '24 hours' "+%Y-%m-%dT%H:%M:%SZ")
+            export TOKEN_ID="fjt9ex"
+            export TOKEN_SECRET="lwzqgdlvoxtqk4yw"
+            export USAGE_BOOTSTRAP_AUTHENTIFICATION="true"
+            export USAGE_BOOTSTRAP_SIGNING="true"
+          `}
+        </CodeBlock>
+
+        <h4>Создание Secret</h4>
+        <CodeBlock>
+          {dedent`
+            kubectl \\
+              --kubeconfig=${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/super-admin.conf \\
+              apply -f - <<EOF
+            ---
+            apiVersion: v1
+            kind: Secret
+            metadata:
+              name: bootstrap-token-$\{TOKEN_ID}
+              namespace: kube-system
+            data:
+              auth-extra-groups: $(echo -n "$AUTH_EXTRA_GROUPS" | base64)
+              description: $(echo -n "$DESCRIPTION" | base64)
+              expiration: $(echo -n "$EXPIRATION" | base64)
+              token-id: $(echo -n "$TOKEN_ID" | base64)
+              token-secret: $(echo -n "$TOKEN_SECRET" | base64)
+              usage-bootstrap-authentication: $(echo -n "$USAGE_BOOTSTRAP_AUTHENTIFICATION" | base64)
+              usage-bootstrap-signing: $(echo -n "$USAGE_BOOTSTRAP_SIGNING" | base64)
+            type: bootstrap.kubernetes.io/token
+            EOF
+          `}
+        </CodeBlock>
+
+      </TabItem>
+
+      <TabItem value="kubeadm-token" label="kubeadm token create">
+
+        :::warning 🖥️ Мастер-нода
+        Команда выполняется на **мастер-ноде** или на хосте с kubeconfig, имеющим права на управление bootstrap-токенами.
+        :::
+
+        <CodeBlock language="bash">
+          {dedent`
+            kubeadm token create \\
+              --kubeconfig=${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/super-admin.conf \\
+              --print-join-command \\
+              --ttl 24h
+          `}
+        </CodeBlock>
+
+        :::note Вывод команды
+        <CodeBlock language="bash">
+          {dedent`
+            kubeadm join api.${CUSTOM_VALUE.clusterName.value}.${CUSTOM_VALUE.kubernetesBaseDomain.value}:6443 \\
+              --token <generated-token> \\
+              --discovery-token-ca-cert-hash sha256:<hash>
+          `}
+        </CodeBlock>
+        :::
+
+        > Полученный токен можно использовать при создании `bootstrap-kubelet.conf` или передать в конфигурацию `kubeadm join`.
+
+      </TabItem>
+
+    </Tabs>
+
+    <h3>Создание bootstrap-kubelet.conf</h3>
+
+    :::info 🖥️ Worker-нода
+    Все команды данного этапа выполняются на **worker-ноде**.
+    На worker-ноде файл `ca.crt` ещё отсутствует. CA-данные получаем из публичного ConfigMap `cluster-info`
+    в namespace `kube-public`, доступного анонимно через kube-apiserver.
+    :::
+
+    <h4>Переменные окружения</h4>
+
+    <CodeBlock language="bash">
+      {dedent`
+        export BOOTSTRAP_TOKEN=${CUSTOM_VALUE.bootstrapToken.value}
+        export API_SERVER="https://api.${CUSTOM_VALUE.clusterName.value}.${CUSTOM_VALUE.kubernetesBaseDomain.value}:6443"
+      `}
+    </CodeBlock>
+
+    <h4>Рабочая директория</h4>
+
+    <CodeBlock language="bash">
+      {dedent`
+        mkdir -p ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}
+      `}
+    </CodeBlock>
+
+    <h4>Получение CA из cluster-info</h4>
+
+    <CodeBlock language="bash">
+      {dedent`
+        export CA_DATA=$(curl -sk "$\{API_SERVER}/api/v1/namespaces/kube-public/configmaps/cluster-info" | \\
+          jq -r '.data.kubeconfig' | \\
+          grep 'certificate-authority-data' | \\
+          awk '{print $2}')
+      `}
+    </CodeBlock>
+
+    <h4>Сохранение CA-сертификата</h4>
+
+    <CodeBlock language="bash">
+      {dedent`
+        mkdir -p ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/pki
+        echo "$\{CA_DATA}" | base64 -d > ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/pki/ca.crt
+      `}
+    </CodeBlock>
+
+    <h4>Генерация kubeconfig</h4>
+
+    <CodeBlock language="bash">
+      {dedent`
+        cat <<EOF > ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/bootstrap-kubelet.conf
+        apiVersion: v1
+        clusters:
+        - cluster:
+            certificate-authority-data: $\{CA_DATA}
+            server: $\{API_SERVER}
+          name: ${CUSTOM_VALUE.clusterName.value}
+        contexts:
+        - context:
+            cluster: ${CUSTOM_VALUE.clusterName.value}
+            user: tls-bootstrap-token-user
+          name: tls-bootstrap-token-user@kubernetes
+        current-context: tls-bootstrap-token-user@kubernetes
+        kind: Config
+        preferences: {}
+        users:
+        - name: tls-bootstrap-token-user
+          user:
+            token: $\{BOOTSTRAP_TOKEN}
+        EOF
+      `}
+    </CodeBlock>
+
+    <h3>Kubernetes CSR (имитация TLS Bootstrap)</h3>
+
+    > Данный подход имитирует поведение kubelet при TLS Bootstrap:
+    > приватные ключи генерируются на worker-ноде, CSR отправляются через Kubernetes API
+    > с использованием `bootstrap-kubelet.conf`, а утверждение выполняется администратором на мастере.
+    > Приватный ключ CA **не требуется** на worker-ноде.
+
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Kubelet Client Certificate (CSR)</p>
+          <p className="obligatory-note-orange">● Обязателен к применению</p>
+        </div>
+      </summary>
+
+      > **Назначение:** Клиентский сертификат kubelet для подключения к kube-apiserver.
+
+      <h4>1. Генерация ключа и CSR</h4>
+
+      :::info 🖥️ Worker-нода
+      Все команды данного этапа выполняются на **worker-ноде**.
+      :::
+
+      <CodeBlock language="bash">
+        {dedent`
+          export HOST_NAME=worker-1
+          export CLUSTER_NAME="${CUSTOM_VALUE.clusterName.value}"
+          export BASE_DOMAIN="${CUSTOM_VALUE.kubernetesBaseDomain.value}"
+          export FULL_HOST_NAME="${CUSTOM_VALUE.virtualMachineFullName.value}"
+        `}
+      </CodeBlock>
+
+      <CodeBlock language="bash">
+        {dedent`
+          mkdir -p ${CUSTOM_VALUE.kuberneteKubeletFolderPath.value}/pki
+          mkdir -p ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/openssl/csr
+        `}
+      </CodeBlock>
+
+      <CodeBlock language="bash">
+        {dedent`
+          cat <<EOF > ${CERTIFICATES.kubeletClient.crtConf}
+          [ req ]
+          default_bits        = ${CERTIFICATES.kubeletClient.keySize}
+          prompt              = no
+          default_md          = sha256
+          distinguished_name  = dn
+
+          [ dn ]
+          CN = system:node:$\{FULL_HOST_NAME}
+          O  = system:nodes
+
+          [ v3_ext ]
+          authorityKeyIdentifier=keyid,issuer:always
+          basicConstraints=CA:FALSE
+          keyUsage=keyEncipherment,dataEncipherment
+          extendedKeyUsage=clientAuth
+          EOF
+        `}
+      </CodeBlock>
+
+      <CodeBlock language="bash">
+        {dedent`
+          openssl genrsa \\
+            -out ${CERTIFICATES.kubeletClient.keyPath} ${CERTIFICATES.kubeletClient.keySize}
+        `}
+      </CodeBlock>
+
+      <CodeBlock language="bash">
+        {dedent`
+          openssl req -new \\
+            -key ${CERTIFICATES.kubeletClient.keyPath} \\
+            -out ${CERTIFICATES.kubeletClient.csrPath} \\
+            -config ${CERTIFICATES.kubeletClient.crtConf}
+        `}
+      </CodeBlock>
+
+      <h4>2. Отправка CSR в Kubernetes API</h4>
+
+      :::info 🖥️ Worker-нода
+      Worker-нода аутентифицируется bootstrap-токеном через `bootstrap-kubelet.conf`.
+      :::
+
+      <CodeBlock language="bash">
+        {dedent`
+          export HOST_NAME=worker-1
+          export CSR_NAME="$\{HOST_NAME}-kubelet-client"
+          export CSR_CONTENT=$(cat ${CERTIFICATES.kubeletClient.csrPath} | base64 | tr -d '\\n')
+        `}
+      </CodeBlock>
+
+      <CodeBlock>
+        {dedent`
+          kubectl \\
+            --kubeconfig=${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/bootstrap-kubelet.conf \\
+            apply -f - <<EOF
+          apiVersion: certificates.k8s.io/v1
+          kind: CertificateSigningRequest
+          metadata:
+            name: $\{CSR_NAME}
+          spec:
+            request: $\{CSR_CONTENT}
+            signerName: kubernetes.io/kube-apiserver-client-kubelet
+            usages:
+            - digital signature
+            - key encipherment
+            - client auth
+          EOF
+        `}
+      </CodeBlock>
+
+      <h4>3. Утверждение CSR</h4>
+
+      :::warning 🖥️ Мастер-нода
+      Утверждение CSR выполняется на **мастер-ноде**. Укажите имя worker-ноды, для которой утверждается CSR.
+      :::
+
+      <CodeBlock language="bash">
+        {dedent`
+          export HOST_NAME=worker-1
+          export CSR_NAME="$\{HOST_NAME}-kubelet-client"
+        `}
+      </CodeBlock>
+
+      <CodeBlock language="bash">
+        {dedent`
+          kubectl \\
+            --kubeconfig=${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/super-admin.conf \\
+            certificate approve $\{CSR_NAME}
+        `}
+      </CodeBlock>
+
+      <h4>4. Получение подписанного сертификата</h4>
+
+      :::info 🖥️ Worker-нода
+      Сертификат получаем на **worker-ноде** с использованием `bootstrap-kubelet.conf`.
+      :::
+
+      <CodeBlock language="bash">
+        {dedent`
+          export HOST_NAME=worker-1
+          export CSR_NAME="$\{HOST_NAME}-kubelet-client"
+        `}
+      </CodeBlock>
+
+      <CodeBlock language="bash">
+        {dedent`
+          kubectl \\
+            --kubeconfig=${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/bootstrap-kubelet.conf \\
+            get csr $\{CSR_NAME} \\
+            -o jsonpath='{.status.certificate}' | base64 -d > ${CERTIFICATES.kubeletClient.crtPath}
+        `}
+      </CodeBlock>
+
+      <CodeBlock language="bash">
+        {dedent`
+          cat ${CERTIFICATES.kubeletClient.crtPath} ${CERTIFICATES.kubeletClient.keyPath} > ${CERTIFICATES.kubeletNowClient.crtPath}
+          ln -sf ${CERTIFICATES.kubeletNowClient.crtPath} ${CERTIFICATES.kubeletCurrentClient.crtPath}
+        `}
+      </CodeBlock>
+
+    </details>
+
+    <details>
+      <summary>
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <p style={{ marginBottom: 0 }}>Kubelet Server Certificate (CSR)</p>
+          <p className="obligatory-note-orange">● Обязателен к применению</p>
+        </div>
+      </summary>
+
+      > **Назначение:** Серверный сертификат kubelet для TLS на порту 10250.
+
+      <h4>1. Генерация ключа и CSR</h4>
+
+      :::info 🖥️ Worker-нода
+      Все команды данного этапа выполняются на **worker-ноде**.
+      :::
+
+      <CodeBlock language="bash">
+        {dedent`
+          export HOST_NAME=worker-1
+          export CLUSTER_NAME="${CUSTOM_VALUE.clusterName.value}"
+          export BASE_DOMAIN="${CUSTOM_VALUE.kubernetesBaseDomain.value}"
+          export FULL_HOST_NAME="${CUSTOM_VALUE.virtualMachineFullName.value}"
+          export MACHINE_LOCAL_ADDRESS="${CUSTOM_VALUE.virtualMachineLocalAddress.value}"
+        `}
+      </CodeBlock>
+
+      <CodeBlock language="bash">
+        {dedent`
+          mkdir -p ${CUSTOM_VALUE.kuberneteKubeletFolderPath.value}/pki
+          mkdir -p ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/openssl/csr
+        `}
+      </CodeBlock>
+
+      <CodeBlock language="bash">
+        {dedent`
+          cat <<EOF > ${CERTIFICATES.kubeletServer.crtConf}
+          [ req ]
+          default_bits        = ${CERTIFICATES.kubeletServer.keySize}
+          prompt              = no
+          default_md          = sha256
+          distinguished_name  = dn
+          req_extensions      = req_ext
+
+          [ req_ext ]
+          subjectAltName = @alt_names
+
+          [ alt_names ]
+          DNS.1 = localhost
+          DNS.2 = $\{HOST_NAME}
+          DNS.3 = $\{FULL_HOST_NAME}
+          IP.1  = 127.0.0.1
+          IP.2  = 0:0:0:0:0:0:0:1
+          IP.3  = $\{MACHINE_LOCAL_ADDRESS}
+
+          [ dn ]
+          CN = system:node:$\{FULL_HOST_NAME}
+          O  = system:nodes
+
+          [ v3_ext ]
+          authorityKeyIdentifier=keyid,issuer:always
+          basicConstraints=CA:FALSE
+          keyUsage=keyEncipherment,dataEncipherment
+          extendedKeyUsage=serverAuth
+          subjectAltName=@alt_names
+          EOF
+        `}
+      </CodeBlock>
+
+      <CodeBlock language="bash">
+        {dedent`
+          openssl genrsa \\
+            -out ${CERTIFICATES.kubeletServer.keyPath} ${CERTIFICATES.kubeletServer.keySize}
+        `}
+      </CodeBlock>
+
+      <CodeBlock language="bash">
+        {dedent`
+          openssl req -new \\
+            -key ${CERTIFICATES.kubeletServer.keyPath} \\
+            -out ${CERTIFICATES.kubeletServer.csrPath} \\
+            -config ${CERTIFICATES.kubeletServer.crtConf}
+        `}
+      </CodeBlock>
+
+      <h4>2. Отправка CSR в Kubernetes API</h4>
+
+      :::info 🖥️ Worker-нода
+      Worker-нода аутентифицируется bootstrap-токеном через `bootstrap-kubelet.conf`.
+      :::
+
+      <CodeBlock language="bash">
+        {dedent`
+          export HOST_NAME=worker-1
+          export CSR_NAME="$\{HOST_NAME}-kubelet-server"
+          export CSR_CONTENT=$(cat ${CERTIFICATES.kubeletServer.csrPath} | base64 | tr -d '\\n')
+        `}
+      </CodeBlock>
+
+      <CodeBlock>
+        {dedent`
+          kubectl \\
+            --kubeconfig=${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/bootstrap-kubelet.conf \\
+            apply -f - <<EOF
+          apiVersion: certificates.k8s.io/v1
+          kind: CertificateSigningRequest
+          metadata:
+            name: $\{CSR_NAME}
+          spec:
+            request: $\{CSR_CONTENT}
+            signerName: kubernetes.io/kubelet-serving
+            usages:
+            - digital signature
+            - key encipherment
+            - server auth
+          EOF
+        `}
+      </CodeBlock>
+
+      <h4>3. Утверждение CSR</h4>
+
+      :::warning 🖥️ Мастер-нода
+      Утверждение CSR выполняется на **мастер-ноде**. Укажите имя worker-ноды, для которой утверждается CSR.
+      :::
+
+      <CodeBlock language="bash">
+        {dedent`
+          export HOST_NAME=worker-1
+          export CSR_NAME="$\{HOST_NAME}-kubelet-server"
+        `}
+      </CodeBlock>
+
+      <CodeBlock language="bash">
+        {dedent`
+          kubectl \\
+            --kubeconfig=${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/super-admin.conf \\
+            certificate approve $\{CSR_NAME}
+        `}
+      </CodeBlock>
+
+      <h4>4. Получение подписанного сертификата</h4>
+
+      :::info 🖥️ Worker-нода
+      Сертификат получаем на **worker-ноде** с использованием `bootstrap-kubelet.conf`.
+      :::
+
+      <CodeBlock language="bash">
+        {dedent`
+          export HOST_NAME=worker-1
+          export CSR_NAME="$\{HOST_NAME}-kubelet-server"
+        `}
+      </CodeBlock>
+
+      <CodeBlock language="bash">
+        {dedent`
+          kubectl \\
+            --kubeconfig=${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/bootstrap-kubelet.conf \\
+            get csr $\{CSR_NAME} \\
+            -o jsonpath='{.status.certificate}' | base64 -d > ${CERTIFICATES.kubeletServer.crtPath}
+        `}
+      </CodeBlock>
+
+      <CodeBlock language="bash">
+        {dedent`
+          cat ${CERTIFICATES.kubeletServer.crtPath} ${CERTIFICATES.kubeletServer.keyPath} > ${CERTIFICATES.kubeletNowServer.crtPath}
+          ln -sf ${CERTIFICATES.kubeletNowServer.crtPath} ${CERTIFICATES.kubeletCurrentServer.crtPath}
+        `}
+      </CodeBlock>
+
+    </details>
+
+  </TabItem>
+
+  <TabItem value="kubeadm" label="Kubeadm">
+
+    > При использовании kubeadm аутентификация worker-ноды происходит автоматически в процессе `kubeadm join`.
+    > Kubeadm использует bootstrap-токен из конфигурации для получения cluster-info, запуска kubelet и TLS Bootstrap.
+
+    <h3>Получение токена</h3>
+
+    > Если токен не был создан заранее или истёк, сгенерируйте новый.
+
+    :::warning 🖥️ Мастер-нода
+    Команда выполняется на **мастер-ноде** или на хосте с kubeconfig, имеющим права на управление bootstrap-токенами.
+    :::
+
+    <CodeBlock language="bash">
+      {dedent`
+        kubeadm token create \\
+          --kubeconfig=${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/super-admin.conf \\
+          --print-join-command \\
+          --ttl 24h
+      `}
+    </CodeBlock>
+
+    :::note Вывод команды
+    <CodeBlock language="bash">
+      {dedent`
+        kubeadm join api.${CUSTOM_VALUE.clusterName.value}.${CUSTOM_VALUE.kubernetesBaseDomain.value}:6443 \\
+          --token <generated-token> \\
+          --discovery-token-ca-cert-hash sha256:<hash>
+      `}
+    </CodeBlock>
+    :::
+
+    <h3>Конфигурация kubeadm</h3>
+
+    > Используйте полученный токен в конфигурационном файле kubeadm или передайте через аргументы командной строки.
+
+    :::warning Обратите внимание
+    Данный раздел зависит от следующих разделов:
+    - [Настройка ПО (DP)](/tech-docs/kubernetes/components/all-setup-dp) — конфигурация kubeadm для worker-ноды.
+    :::
+
+    <h4>Использование статичного конфига</h4>
+    <CodeBlock language="bash">
+      {dedent`
+        kubeadm join \\
+          --config=${CUSTOM_VALUE.kubeadmBaseConfigPath.value}/kubeadm.yaml
+      `}
+    </CodeBlock>
+
+    <h4>Использование токена из командной строки</h4>
+    <CodeBlock language="bash">
+      {dedent`
+        kubeadm join \\
+          api.${CUSTOM_VALUE.clusterName.value}.${CUSTOM_VALUE.kubernetesBaseDomain.value}:6443 \\
+          --token <generated-token> \\
+          --discovery-token-ca-cert-hash sha256:<hash>
+      `}
+    </CodeBlock>
+
+  </TabItem>
+
+</Tabs>

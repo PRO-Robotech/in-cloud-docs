@@ -23,7 +23,12 @@ export const kubernetesDP = [
   },
   {
     type: 'doc',
-    label: '5.3.2. Kubelet Start',
+    label: '5.3.2. Аутентификация',
+    id: 'tech-docs/kubernetes/certificates/authentication-dp',
+  },
+  {
+    type: 'doc',
+    label: '5.3.3. Kubelet Start',
     id: 'tech-docs/kubernetes/components/kubelet/all-kubelet-start-dp',
   },
 ]

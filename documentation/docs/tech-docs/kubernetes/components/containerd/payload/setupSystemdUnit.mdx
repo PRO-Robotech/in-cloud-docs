@@ -3,8 +3,6 @@ import CodeBlock from '@theme/CodeBlock'
 import TabItem from '@theme/TabItem'
 import Tabs from '@theme/Tabs'
 
-> `Delegate=yes` делегирует управление cgroup-подсистемой контейнерному рантайму (необходимо для корректной работы Kubernetes). `KillMode=process` гарантирует, что при остановке сервиса завершается только главный процесс containerd, а не дочерние контейнеры. `OOMScoreAdjust=-999` защищает процесс от OOM Killer — без рантайма все контейнеры на узле станут неуправляемыми.
-
 <Tabs groupId="install-type">
 
   <TabItem value='Bash'>

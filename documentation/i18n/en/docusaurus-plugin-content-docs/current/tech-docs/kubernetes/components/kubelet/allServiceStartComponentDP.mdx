@@ -1,6 +1,6 @@
 ---
 id: all-kubelet-start-dp
-title: "5.3.2. Kubelet Start"
+title: "5.3.3. Kubelet Start"
 ---
 
 import KubeletConfigFilesDefault from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/kubelet/payload/configFilesDefault.mdx'
@@ -38,9 +38,37 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
       > To authenticate the kubelet on a worker node, a bootstrap kubeconfig with a token is required.
       > After starting, the kubelet will automatically perform TLS Bootstrap and obtain a client certificate.
 
+      :::info
+      The `ca.crt` file is not yet present on the worker node. CA data is fetched from the public ConfigMap `cluster-info`
+      in the `kube-public` namespace, accessible anonymously via kube-apiserver.
+      :::
+
       <CodeBlock language="bash">
         {dedent`
           export BOOTSTRAP_TOKEN=${CUSTOM_VALUE.bootstrapToken.value}
+          export API_SERVER="https://api.${CUSTOM_VALUE.clusterName.value}.${CUSTOM_VALUE.kubernetesBaseDomain.value}:6443"
+        `}
+      </CodeBlock>
+
+      <CodeBlock language="bash">
+        {dedent`
+          mkdir -p ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}
+        `}
+      </CodeBlock>
+
+      <CodeBlock language="bash">
+        {dedent`
+          export CA_DATA=$(curl -sk "$\{API_SERVER}/api/v1/namespaces/kube-public/configmaps/cluster-info" | \\
+            jq -r '.data.kubeconfig' | \\
+            grep 'certificate-authority-data' | \\
+            awk '{print $2}')
+        `}
+      </CodeBlock>
+
+      <CodeBlock language="bash">
+        {dedent`
+          mkdir -p ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/pki
+          echo "$\{CA_DATA}" | base64 -d > ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/pki/ca.crt
         `}
       </CodeBlock>
 
@@ -50,8 +78,8 @@ import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
           apiVersion: v1
           clusters:
           - cluster:
-              certificate-authority-data: $(base64 -w 0 ${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/pki/ca.crt)
-              server: https://api.${CUSTOM_VALUE.clusterName.value}.${CUSTOM_VALUE.kubernetesBaseDomain.value}:6443
+              certificate-authority-data: $\{CA_DATA}
+              server: $\{API_SERVER}
             name: ${CUSTOM_VALUE.clusterName.value}
           contexts:
           - context:
