@@ -3,8 +3,6 @@ import CodeBlock from '@theme/CodeBlock'
 import TabItem from '@theme/TabItem'
 import Tabs from '@theme/Tabs'
 
-> `Delegate=yes` delegates cgroup subsystem management to the container runtime (required for proper Kubernetes operation). `KillMode=process` ensures that when the service is stopped, only the main containerd process is terminated, not the child containers. `OOMScoreAdjust=-999` protects the process from OOM Killer — without the runtime, all containers on the node become unmanageable.
-
 <Tabs groupId="install-type">
 
   <TabItem value='Bash'>

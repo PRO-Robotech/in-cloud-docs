@@ -21,3 +21,9 @@ export { default as AllBaseOSSetupComponent } from '@site/i18n/en/docusaurus-plu
 export { default as AllServiceStartComponent } from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/kubelet/allServiceStartComponent.mdx'
 export { default as KubernetesStatusReady } from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/statusCluster.mdx'
 export { default as AboutAllCertificates } from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/certificates/aboutAllComponent.mdx'
+
+export { default as AllBaseOSSetupComponentDP } from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/setup-environments/base-os/allBaseOSSetupComponentDP.mdx'
+export { default as AllInstallComponentDP } from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/allInstallComponentDP.mdx'
+export { default as AllSetupComponentDP } from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/allSetupComponentDP.mdx'
+export { default as AuthenticationDP } from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/certificates/authenticationDP.mdx'
+export { default as AllKubeletStartDP } from '@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/kubelet/allServiceStartComponentDP.mdx'

@@ -1,0 +1,405 @@
+---
+title: 'Kubernetes The Hard Way: Workers'
+description: 'Step-by-step guide to adding a Worker node to a Kubernetes cluster without kubeadm: OS setup, bootstrap tokens, CSR API, kubeadm join, and kubelet startup.'
+date: 2026-03-12
+slug: kubernetes-the-hard-way-workers
+authors: [dlputilin]
+tags: [Kubernetes, Hard-Way, Workers]
+---
+
+import CodeBlock from '@theme/CodeBlock'
+import dedent from 'ts-dedent'
+import { CUSTOM_VALUE } from '@site/src/constants/kubernetes/customValue'
+import { COMPONENTS_VERSION } from '@site/src/constants/kubernetes/componentsVersion'
+
+import {
+  AllModprobeComponent,
+  AllSysctlsComponent,
+  AllBaseOSSetupComponentDP,
+  AllInstallComponentDP,
+  AllSetupComponentDP,
+  AuthenticationDP,
+  AllKubeletStartDP,
+} from '@site/src/blog-components-en'
+import { getBasePrefix } from '@site/src/utils/getBasePrefix'
+
+<h3>
+  Kubernetes THW: Workers <span style={{ color: '#1cc5ac' }}>#</span>
+</h3>
+
+<p style={{ fontStyle: 'italic', fontWeight: 600 }}>Continuing Kubernetes The Hard Way: adding worker nodes to the cluster.</p>
+
+<div
+  style={{
+    display: 'flex',
+    flexWrap: 'wrap',
+    alignItems: 'flex-start',
+    gap: '30px',
+    marginTop: '1.5rem',
+  }}
+>
+  <div style={{ flex: '1 1 55%', minWidth: '280px' }}>
+    <p>
+      In the <a href="/blog/kubernetes-the-hard-way">previous article</a> we assembled the control plane manually: issued
+      certificates, prepared configurations, and launched the management components. The API server is responding, but the
+      cluster still has no worker nodes.
+    </p>
+
+    <p>
+      Without worker nodes there is nowhere to run application pods. In this article we will add a{' '}
+      <strong>Worker node</strong> and walk through the entire path from a bare VM to a registered Kubernetes node.
+    </p>
+
+    <p>
+      The format is the same as in the first part: prepare the OS, install <code>containerd</code> and <code>kubelet</code>,
+      set up cluster connectivity, and verify node registration. Two approaches are covered: the manual path via bootstrap
+      tokens and the CSR API, or the standard <code>kubeadm join</code> route.
+    </p>
+  </div>
+
+  <div
+    style={{
+      flex: '1 1 40%',
+      minWidth: '220px',
+      textAlign: 'center',
+      marginTop: '0rem',
+    }}
+  >
+    <img
+      src={`${getBasePrefix()}img/blog/kthw-promo.png`}
+      alt="Kubernetes The Hard Way"
+      style={{
+        width: '90%',
+        maxWidth: '330px',
+        filter: 'drop-shadow(0 0 12px rgba(255, 255, 255, 0.2))',
+        transition: 'transform 0.3s ease-in-out',
+      }}
+    />
+  </div>
+</div>
+
+{/* truncate */}
+
+### 1. Introduction
+
+The Control Plane makes decisions: which pods to schedule, how to maintain the desired state, and how to react to failures. But actual workloads run on **Worker nodes** — the data plane of the cluster.
+
+A worker node boils down to two main parts: `kubelet` and the container runtime, in our case `containerd`. `kubelet` communicates with the API server, receives pod specifications, and ensures the containers are actually running.
+
+Unlike master nodes, there is **no** etcd, `kube-apiserver`, `kube-controller-manager`, or `kube-scheduler` here. No control plane static pods. The CA private key never reaches the worker node either.
+
+This makes the machine setup simpler, but introduces a separate bootstrap challenge: how does a new node join the cluster when it has neither a client certificate nor trust in the API?
+
+<div className="alert alert--info" role="alert">
+  <strong>Prerequisites</strong>
+  <p>
+    This article continues <a href="/blog/kubernetes-the-hard-way">Kubernetes The Hard Way</a>.
+    Before starting, make sure that:
+  </p>
+  <ul>
+    <li>The Control Plane (CP) is deployed and running</li>
+    <li>The API server is accessible at <code>api.{CUSTOM_VALUE.clusterName.value}.{CUSTOM_VALUE.kubernetesBaseDomain.value}:6443</code></li>
+    <li>RBAC is configured and cluster configurations are loaded</li>
+  </ul>
+</div>
+
+<div style={{position: 'relative', marginTop: '2rem'}}>
+<h4>Chapters:</h4>
+
+<ul>
+  <li>
+    <a href="#1-introduction">1. Introduction</a>
+  </li>
+  <li>
+    <a href="#2-infrastructure">2. Infrastructure</a>
+  </li>
+  <li>
+    <a href="#3-base-os-setup">3. Base OS Setup</a>
+  </li>
+  <li>
+    <a href="#4-loading-kernel-modules">4. Loading Kernel Modules</a>
+  </li>
+  <li>
+    <a href="#5-configuring-sysctl-parameters">5. Configuring sysctl Parameters</a>
+  </li>
+  <li>
+    <a href="#6-installing-components">6. Installing Components</a>
+  </li>
+  <li>
+    <a href="#7-configuring-components">7. Configuring Components</a>
+  </li>
+  <li>
+    <a href="#8-authentication">8. Authentication</a>
+  </li>
+  <li>
+    <a href="#9-starting-kubelet">9. Starting Kubelet</a>
+  </li>
+  <li>
+    <a href="#10-verification">10. Verification</a>
+  </li>
+</ul>
+
+</div>
+
+---
+
+### 2. Infrastructure
+
+<p>
+  Below is the minimal set of parameters for adding a worker node: name, address, DNS, and software.
+  This is enough to reproduce the steps from this article in your own environment.
+</p>
+
+<h4>Worker Nodes</h4>
+
+<div style={{ overflowX: 'auto' }}>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>IP Address</th>
+        <th>Operating System</th>
+        <th>Resources</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          worker-1.{CUSTOM_VALUE.clusterName.value}.{CUSTOM_VALUE.kubernetesBaseDomain.value}
+        </td>
+        <td>NODE-IP-4</td>
+        <td>ubuntu-24-04-lts</td>
+        <td>2CPU / 4RAM / 40GB</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<h4>DNS Records</h4>
+
+<div style={{ overflowX: 'auto' }}>
+  <table>
+    <thead>
+      <tr>
+        <th>A Record</th>
+        <th>IP Address</th>
+        <th>TTL</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          worker-1.{CUSTOM_VALUE.clusterName.value}.{CUSTOM_VALUE.kubernetesBaseDomain.value}
+        </td>
+        <td>NODE-IP-4</td>
+        <td>60s</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<h4>Components</h4>
+
+<p>
+  Only the components needed to run workloads are installed on the worker node. Control plane components and etcd
+  are not required here.
+</p>
+
+<div style={{ overflowX: 'auto' }}>
+  <table>
+    <thead>
+      <tr>
+        <th>Component</th>
+        <th>Version</th>
+        <th>Purpose</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>containerd</td>
+        <td>{COMPONENTS_VERSION.containerd.value}</td>
+        <td>Container runtime managing the lifecycle of containers.</td>
+      </tr>
+      <tr>
+        <td>runc</td>
+        <td>{COMPONENTS_VERSION.runc.value}</td>
+        <td>Low-level tool for running containers using Linux kernel features.</td>
+      </tr>
+      <tr>
+        <td>crictl</td>
+        <td>{COMPONENTS_VERSION.crictl.value}</td>
+        <td>Debugging utility for CRI runtimes with containerd support.</td>
+      </tr>
+      <tr>
+        <td>kubelet</td>
+        <td>{COMPONENTS_VERSION.kubernetes.value}</td>
+        <td>Node agent ensuring pods are running and healthy.</td>
+      </tr>
+      <tr>
+        <td>kubectl</td>
+        <td>{COMPONENTS_VERSION.kubernetes.value}</td>
+        <td>CLI client for interacting with the Kubernetes API (optional).</td>
+      </tr>
+      <tr>
+        <td>kubeadm</td>
+        <td>{COMPONENTS_VERSION.kubernetes.value}</td>
+        <td>Tool for automating node joining (optional).</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+---
+
+### 3. Base OS Setup
+
+<p>
+  First, bring the OS into a predictable state: set environment variables, change the hostname, and install
+  basic utilities. The steps are nearly identical to master nodes — only the worker-specific values differ.
+</p>
+
+<AllBaseOSSetupComponentDP />
+
+---
+
+### 4. Loading Kernel Modules
+
+<p>
+  Load the kernel modules required by <code>containerd</code> and the Kubernetes network stack. The set is the same
+  as on master nodes.
+</p>
+
+<AllModprobeComponent />
+
+---
+
+### 5. Configuring sysctl Parameters
+
+<p>
+  Next, configure <code>sysctl</code>: enable IP forwarding and bridge traffic parameters. These values match
+  the control plane setup.
+</p>
+
+<AllSysctlsComponent />
+
+---
+
+### 6. Installing Components
+
+<p>
+  Only what is needed for running containers and registering the node is installed on the worker:
+  <code>containerd</code>, <code>kubelet</code>, and supporting utilities. Control plane components
+  are <strong>not installed</strong> here.
+</p>
+
+<AllInstallComponentDP />
+
+---
+
+### 7. Configuring Components
+
+<p>
+  After installation, configure <code>containerd</code>, <code>kubelet</code>, <code>crictl</code>,
+  and optionally <code>kubeadm</code>. For the worker node, <code>kubeadm</code> only needs a
+  <code>JoinConfiguration</code> block without the <code>controlPlane</code> section.
+</p>
+
+<AllSetupComponentDP />
+
+---
+
+### 8. Authentication
+
+<p>
+  This is the most important step in the entire article. The worker node has no access to the CA private key,
+  so it needs to securely establish trust with the cluster using one of two methods:
+</p>
+
+<ul>
+  <li><strong>Bootstrap Token + CSR API</strong> — manual path with full control over TLS Bootstrap</li>
+  <li><strong>Kubeadm</strong> — standard joining via <code>kubeadm join</code></li>
+</ul>
+
+<details>
+  <summary>
+    <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+      <p style={{ marginBottom: 0 }}>Worker node authentication</p>
+      <p className="obligatory-note-orange">● Required</p>
+    </div>
+  </summary>
+
+  <p>
+    The manual scenario covers fetching <code>ca.crt</code> from <code>cluster-info</code>, building
+    <code>bootstrap-kubelet.conf</code>, and optionally walking through the CSR flow for kubelet client
+    and server certificates.
+  </p>
+
+  <AuthenticationDP />
+</details>
+
+---
+
+### 9. Starting Kubelet
+
+<p>
+  Once authentication is complete, kubelet is ready to start. This step creates the kubelet config,
+  brings up the <code>systemd</code> service, and lets the node register in the cluster.
+</p>
+
+<AllKubeletStartDP />
+
+---
+
+### 10. Verification
+
+<p>
+  After starting <code>kubelet</code>, verify the node has appeared in the cluster. Until a network plugin
+  is installed, it may remain in <code>NotReady</code> state — this is expected.
+</p>
+
+<p>Run on a master node:</p>
+
+<CodeBlock language="bash">
+  {dedent`
+    kubectl --kubeconfig=${CUSTOM_VALUE.kubernetesBaseFolderPath.value}/super-admin.conf get nodes -o wide
+  `}
+</CodeBlock>
+
+:::info
+  <CodeBlock>
+    {dedent`
+      NAME                                          STATUS     ROLES    AGE   VERSION
+      master-1.${CUSTOM_VALUE.clusterName.value}.${CUSTOM_VALUE.kubernetesBaseDomain.value}         NotReady   master   1d    v1.32.0
+      master-2.${CUSTOM_VALUE.clusterName.value}.${CUSTOM_VALUE.kubernetesBaseDomain.value}         NotReady   master   1d    v1.32.0
+      master-3.${CUSTOM_VALUE.clusterName.value}.${CUSTOM_VALUE.kubernetesBaseDomain.value}         NotReady   master   1d    v1.32.0
+      worker-1.${CUSTOM_VALUE.clusterName.value}.${CUSTOM_VALUE.kubernetesBaseDomain.value}         NotReady   <none>   30s   v1.32.0
+    `}
+  </CodeBlock>
+:::
+
+:::info NotReady Status
+
+The `NotReady` status is normal behavior until a network plugin (CNI) is installed.
+After deploying a CNI (Calico, Cilium, Flannel, etc.) the node status will change to `Ready`.
+
+:::
+
+---
+
+## Conclusion
+
+The worker node has been added to the cluster. Now the control plane can be used as intended — it can accept real workloads.
+
+Along the way we:
+
+- Prepared the OS and network stack
+- Installed `containerd`, `kubelet`, and supporting utilities
+- Connected the node manually via bootstrap token and CSR API, or via `kubeadm`
+- Started `kubelet` and verified node registration
+
+The next logical step is to install a CNI plugin, set up in-cluster DNS, and only then move on to deploying application workloads.
+
+:::note
+If you've made it this far, you already have a manually assembled control plane and your first worker node.
+From here you can proceed to the network plugin and turn the cluster skeleton into a working environment.
+:::
