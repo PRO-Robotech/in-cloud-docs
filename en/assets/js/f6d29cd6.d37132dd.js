@@ -1,0 +1,686 @@
+"use strict";(globalThis.webpackChunkdocumentation=globalThis.webpackChunkdocumentation||[]).push([[389,1244,1438,1654,2032,2632,2646,2801,4487,5057,5227,5364,5782,6461,6769,8303,8662,9076,9107,9259,9663,9722],{75418(e,t,n){n.r(t),n.d(t,{assets:()=>v,contentTitle:()=>k,default:()=>j,frontMatter:()=>f,metadata:()=>s,toc:()=>E});const s=JSON.parse('{"id":"tech-docs/kubernetes/components/all-install-dp","title":"5.3.1.2. Software Installation","description":"This section describes the installation process for the components required on Kubernetes worker nodes.","source":"@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/allInstallComponentDP.mdx","sourceDirName":"tech-docs/kubernetes/components","slug":"/tech-docs/kubernetes/components/all-install-dp","permalink":"/en/tech-docs/kubernetes/components/all-install-dp","draft":false,"unlisted":false,"tags":[],"version":"current","frontMatter":{"id":"all-install-dp","title":"5.3.1.2. Software Installation"},"sidebar":"techDocs","previous":{"title":"5.3.1.1. \u041d\u0430\u0441\u0442\u0440\u043e\u0439\u043a\u0430 \u041e\u0421","permalink":"/en/tech-docs/kubernetes/setup-environments/os-setup-dp"},"next":{"title":"5.3.1.3. \u041d\u0430\u0441\u0442\u0440\u043e\u0439\u043a\u0430 \u041f\u041e","permalink":"/en/tech-docs/kubernetes/components/all-setup-dp"}}');var o=n(74848),r=n(28453),l=n(88193),c=n(86855),i=n(17698),a=n(46140),d=n(19417),u=n(96569),m=n(81127),h=n(8897),p=n(58041),g=n(94488),O=n(2320),b=n(82121),N=n(9792),x=n(76331);const f={id:"all-install-dp",title:"5.3.1.2. Software Installation"},k=void 0,v={},E=[...i.toc,...a.toc,...l.toc,...c.toc,...d.toc,...u.toc,...m.toc,...h.toc,...p.toc,...g.toc,...O.toc,...b.toc];function I(e){const t={blockquote:"blockquote",p:"p",...(0,r.R)(),...e.components},{Details:n}=t;return n||function(e,t){throw new Error("Expected "+(t?"component":"object")+" `"+e+"` to be defined: you likely forgot to import, pass, or provide it.")}("Details",!0),(0,o.jsxs)(o.Fragment,{children:[(0,o.jsxs)(t.blockquote,{children:["\n",(0,o.jsx)(t.p,{children:"This section describes the installation process for the components required on Kubernetes worker nodes.\nThe installation is performed manually and prepares the environment for subsequent node joining to the cluster."}),"\n"]}),"\n",(0,o.jsxs)(x.A,{groupId:"component",children:[(0,o.jsx)(N.A,{value:"runc",children:(0,o.jsxs)(n,{children:[(0,o.jsx)("summary",{children:(0,o.jsxs)("div",{style:{display:"flex",justifyContent:"space-between",flexWrap:"wrap"},children:[(0,o.jsx)("p",{style:{marginBottom:0},children:"Installation of runc"}),(0,o.jsx)("p",{className:"obligatory-note-orange",children:"\u25cf Required"})]})}),(0,o.jsx)(i.default,{}),(0,o.jsx)(a.default,{})]})}),(0,o.jsx)(N.A,{value:"containerd",children:(0,o.jsxs)(n,{children:[(0,o.jsx)("summary",{children:(0,o.jsxs)("div",{style:{display:"flex",justifyContent:"space-between",flexWrap:"wrap"},children:[(0,o.jsx)("p",{style:{marginBottom:0},children:"Installation of containerd"}),(0,o.jsx)("p",{className:"obligatory-note-orange",children:"\u25cf Required"})]})}),(0,o.jsx)(l.default,{}),(0,o.jsx)(c.default,{})]})}),(0,o.jsx)(N.A,{value:"kubelet",children:(0,o.jsxs)(n,{children:[(0,o.jsx)("summary",{children:(0,o.jsxs)("div",{style:{display:"flex",justifyContent:"space-between",flexWrap:"wrap"},children:[(0,o.jsx)("p",{style:{marginBottom:0},children:"Installation of kubelet"}),(0,o.jsx)("p",{className:"obligatory-note-orange",children:"\u25cf Required"})]})}),(0,o.jsx)(d.default,{}),(0,o.jsx)(u.default,{})]})}),(0,o.jsx)(N.A,{value:"kubectl",children:(0,o.jsxs)(n,{children:[(0,o.jsx)("summary",{children:(0,o.jsxs)("div",{style:{display:"flex",justifyContent:"space-between",flexWrap:"wrap"},children:[(0,o.jsx)("p",{style:{marginBottom:0},children:"Installation of kubectl"}),(0,o.jsx)("p",{className:"obligatory-note-green",children:"\u25cf Optional"})]})}),(0,o.jsx)(m.default,{}),(0,o.jsx)(h.default,{})]})}),(0,o.jsx)(N.A,{value:"crictl",children:(0,o.jsxs)(n,{children:[(0,o.jsx)("summary",{children:(0,o.jsxs)("div",{style:{display:"flex",justifyContent:"space-between",flexWrap:"wrap"},children:[(0,o.jsx)("p",{style:{marginBottom:0},children:"Installation of crictl"}),(0,o.jsx)("p",{className:"obligatory-note-green",children:"\u25cf Optional"})]})}),(0,o.jsx)(p.default,{}),(0,o.jsx)(g.default,{})]})}),(0,o.jsx)(N.A,{value:"kubeadm",children:(0,o.jsxs)(n,{children:[(0,o.jsx)("summary",{children:(0,o.jsxs)("div",{style:{display:"flex",justifyContent:"space-between",flexWrap:"wrap"},children:[(0,o.jsx)("p",{style:{marginBottom:0},children:"Installation of kubeadm"}),(0,o.jsx)("p",{className:"obligatory-note-green",children:"\u25cf Optional"})]})}),(0,o.jsx)(O.default,{}),(0,o.jsx)(b.default,{})]})})]})]})}function j(e={}){const{wrapper:t}={...(0,r.R)(),...e.components};return t?(0,o.jsx)(t,{...e,children:(0,o.jsx)(I,{...e})}):I(e)}},86855(e,t,n){n.r(t),n.d(t,{assets:()=>a,contentTitle:()=>i,default:()=>m,frontMatter:()=>c,metadata:()=>s,toc:()=>d});const s=JSON.parse('{"id":"tech-docs/kubernetes/components/containerd/checkBIN","title":"checkBIN","description":"Installation verification","source":"@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/containerd/checkBIN.mdx","sourceDirName":"tech-docs/kubernetes/components/containerd","slug":"/tech-docs/kubernetes/components/containerd/checkBIN","permalink":"/en/tech-docs/kubernetes/components/containerd/checkBIN","draft":false,"unlisted":false,"tags":[],"version":"current","frontMatter":{}}');var o=n(74848),r=n(28453),l=n(36668);const c={},i=void 0,a={},d=[...l.toc];function u(e){const{Details:t}={...(0,r.R)(),...e.components};return t||function(e,t){throw new Error("Expected "+(t?"component":"object")+" `"+e+"` to be defined: you likely forgot to import, pass, or provide it.")}("Details",!0),(0,o.jsxs)(o.Fragment,{children:[(0,o.jsx)("h3",{children:"Installation verification"}),"\n",(0,o.jsxs)(t,{className:"custom-blue-block",children:[(0,o.jsx)("summary",{children:"Installation verification"}),(0,o.jsx)(l.default,{})]})]})}function m(e={}){const{wrapper:t}={...(0,r.R)(),...e.components};return t?(0,o.jsx)(t,{...e,children:(0,o.jsx)(u,{...e})}):u(e)}},88193(e,t,n){n.r(t),n.d(t,{assets:()=>a,contentTitle:()=>i,default:()=>m,frontMatter:()=>c,metadata:()=>s,toc:()=>d});const s=JSON.parse('{"id":"tech-docs/kubernetes/components/containerd/lifecycleDownloadComponent","title":"lifecycleDownloadComponent","description":"Component installation steps","source":"@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/containerd/lifecycleDownloadComponent.mdx","sourceDirName":"tech-docs/kubernetes/components/containerd","slug":"/tech-docs/kubernetes/components/containerd/lifecycleDownloadComponent","permalink":"/en/tech-docs/kubernetes/components/containerd/lifecycleDownloadComponent","draft":false,"unlisted":false,"tags":[],"version":"current","frontMatter":{}}');var o=n(74848),r=n(28453),l=n(87672);const c={},i=void 0,a={},d=[...l.toc];function u(e){const t={li:"li",ul:"ul",...(0,r.R)(),...e.components};return(0,o.jsxs)(o.Fragment,{children:[(0,o.jsx)("h3",{children:"Component installation steps"}),"\n",(0,o.jsxs)(t.ul,{children:["\n",(0,o.jsx)(t.li,{children:"Creating working directories."}),"\n",(0,o.jsx)(t.li,{children:"Environment variables."}),"\n",(0,o.jsx)(t.li,{children:"Download instructions."}),"\n",(0,o.jsx)(t.li,{children:"Permission setup."}),"\n",(0,o.jsx)(t.li,{children:"Download service."}),"\n",(0,o.jsx)(t.li,{children:"Starting the download service."}),"\n"]}),"\n",(0,o.jsx)(l.default,{})]})}function m(e={}){const{wrapper:t}={...(0,r.R)(),...e.components};return t?(0,o.jsx)(t,{...e,children:(0,o.jsx)(u,{...e})}):u(e)}},36668(e,t,n){n.r(t),n.d(t,{assets:()=>d,contentTitle:()=>a,default:()=>h,frontMatter:()=>i,metadata:()=>s,toc:()=>u});const s=JSON.parse('{"id":"tech-docs/kubernetes/components/containerd/lifecycleDownloadStatus","title":"lifecycleDownloadStatus","description":"Executable files","source":"@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/containerd/lifecycleDownloadStatus.mdx","sourceDirName":"tech-docs/kubernetes/components/containerd","slug":"/tech-docs/kubernetes/components/containerd/lifecycleDownloadStatus","permalink":"/en/tech-docs/kubernetes/components/containerd/lifecycleDownloadStatus","draft":false,"unlisted":false,"tags":[],"version":"current","frontMatter":{}}');var o=n(74848),r=n(28453),l=n(94949),c=n(68741);const i={},a=void 0,d={},u=[];function m(e){return(0,o.jsxs)(o.Fragment,{children:[(0,o.jsx)("h3",{children:"Executable files"}),"\n",(0,o.jsx)(l.N,{binaryName:"containerd",version:c.M.containerd.value,installSteps:["Extracting files...","Installing binaries..."],successMessage:"Containerd successfully updated to",grepCommand:'-E "containerd|ctr"',lsOutput:"-rwxr-xr-x  1 root root  54855296 Feb 18 15:12 containerd\n-rwxr-xr-x  1 root root   7176192 Feb 18 15:12 containerd-shim\n-rwxr-xr-x  1 root root   8884224 Feb 18 15:12 containerd-shim-containerd-v1\n-rwxr-xr-x  1 root root  12169216 Feb 18 15:12 containerd-shim-containerd-v2\n-rwxr-xr-x  1 root root  12169216 Feb 18 15:12 ctr"}),"\n",(0,o.jsx)("h3",{children:"Executable file version"}),"\n",(0,o.jsx)(l.y,{command:"containerd --version",output:"containerd github.com/containerd/containerd v1.7.19 2bf793ef6dc9a18e00cb12efb64355c2c9d5eb41"})]})}function h(e={}){const{wrapper:t}={...(0,r.R)(),...e.components};return t?(0,o.jsx)(t,{...e,children:(0,o.jsx)(m,{...e})}):m()}},87672(e,t,n){n.r(t),n.d(t,{assets:()=>g,contentTitle:()=>p,default:()=>N,frontMatter:()=>h,metadata:()=>s,toc:()=>O});const s=JSON.parse('{"id":"tech-docs/kubernetes/components/containerd/payload/downloadBIN","title":"downloadBIN","description":"Creating working directories","source":"@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/containerd/payload/downloadBIN.mdx","sourceDirName":"tech-docs/kubernetes/components/containerd/payload","slug":"/tech-docs/kubernetes/components/containerd/payload/downloadBIN","permalink":"/en/tech-docs/kubernetes/components/containerd/payload/downloadBIN","draft":false,"unlisted":false,"tags":[],"version":"current","frontMatter":{}}');var o=n(74848),r=n(28453),l=n(60513),c=n(57390),i=n(58700),a=n(68741);const d={value:l.A`
+      #!/bin/bash
+      set -Eeuo pipefail
+
+
+      COMPONENT_VERSION="$\{COMPONENT_VERSION:-${a.M.containerd.value}}"
+      REPOSITORY="$\{REPOSITORY:-${i.m.containerd.baseUrl}}"
+      PATH_BIN="$\{REPOSITORY}/${i.m.containerd.templateUrlBin}"
+      PATH_SHA256="$\{REPOSITORY}/${i.m.containerd.templateUrlBinCheckSum}"
+      INSTALL_PATH="${i.m.containerd.path}"
+
+
+      LOG_TAG="containerd-installer"
+      TMP_DIR="$(mktemp -d)"
+
+      logger -t "$LOG_TAG" "[INFO] Checking current containerd version..."
+
+      CURRENT_VERSION=$($INSTALL_PATH/containerd --version 2>/dev/null | awk '{print $3}' | sed 's/v//') || CURRENT_VERSION="none"
+      COMPONENT_VERSION_CLEAN=$(echo "$COMPONENT_VERSION" | sed 's/^v//')
+
+      logger -t "$LOG_TAG" "[INFO] Current: $CURRENT_VERSION, Target: $COMPONENT_VERSION_CLEAN"
+
+      if [[ "$CURRENT_VERSION" != "$COMPONENT_VERSION_CLEAN" ]]; then
+        logger -t "$LOG_TAG" "[INFO] Download URL: $PATH_BIN"
+        logger -t "$LOG_TAG" "[INFO] Updating containerd to version $COMPONENT_VERSION_CLEAN..."
+
+        cd "$TMP_DIR"
+        logger -t "$LOG_TAG" "[INFO] Working directory: $PWD"
+
+        logger -t "$LOG_TAG" "[INFO] Downloading containerd..."
+        curl -fsSL -o "containerd-$\{COMPONENT_VERSION}-linux-amd64.tar.gz" "$PATH_BIN" || { logger -t "$LOG_TAG" "[ERROR] Failed to download containerd"; exit 1; }
+
+        logger -t "$LOG_TAG" "[INFO] Downloading checksum file..."
+        curl -fsSL -o "containerd.sha256sum" "$PATH_SHA256" || { logger -t "$LOG_TAG" "[ERROR] Failed to download checksum file"; exit 1; }
+
+        logger -t "$LOG_TAG" "[INFO] Verifying checksum..."
+        sha256sum -c containerd.sha256sum | grep 'OK' || { logger -t "$LOG_TAG" "[ERROR] Checksum verification failed!"; exit 1; }
+
+        logger -t "$LOG_TAG" "[INFO] Extracting files..."
+        tar -C "$TMP_DIR" -xvf "containerd-$\{COMPONENT_VERSION}-linux-amd64.tar.gz"
+
+        logger -t "$LOG_TAG" "[INFO] Installing binaries..."
+        install -m 755 "$TMP_DIR/bin/containerd" $INSTALL_PATH
+        install -m 755 "$TMP_DIR/bin/containerd-shim"* $INSTALL_PATH
+        install -m 755 "$TMP_DIR/bin/ctr" $INSTALL_PATH
+
+        logger -t "$LOG_TAG" "[INFO] Containerd successfully updated to $COMPONENT_VERSION."
+        rm -rf "$TMP_DIR"
+
+      else
+        logger -t "$LOG_TAG" "[INFO] Containerd is already up to date. Skipping installation."
+      fi
+    `};var u=n(9792),m=n(76331);const h={},p=void 0,g={},O=[];function b(e){return(0,o.jsxs)(m.A,{groupId:"install-type",children:[(0,o.jsxs)(u.A,{value:"Bash",children:[(0,o.jsx)("h4",{children:"Creating working directories"}),(0,o.jsx)(c.A,{language:"bash",children:l.A`
+        mkdir -p /etc/default/containerd
+      `}),(0,o.jsx)("h4",{children:"Environment variables"}),(0,o.jsx)(c.A,{language:"bash",children:l.A`
+        cat <<EOF > /etc/default/containerd/download.env
+        COMPONENT_VERSION="${a.M.containerd.value}"
+        REPOSITORY="${i.m.containerd.baseUrl}"
+        EOF
+      `}),(0,o.jsx)("h4",{children:"Download instructions"}),(0,o.jsx)(c.A,{language:"bash",children:l.A`
+        cat <<"EOF" > /etc/default/containerd/download-script.sh
+        ${d.value}
+        EOF
+      `}),(0,o.jsx)("h4",{children:"Permission setup"}),(0,o.jsx)(c.A,{language:"yaml",children:l.A`
+        chmod +x /etc/default/containerd/download-script.sh
+      `}),(0,o.jsx)("h4",{children:"Download service"}),(0,o.jsx)(c.A,{language:"bash",children:l.A`
+        cat <<EOF > /usr/lib/systemd/system/containerd-install.service
+        [Unit]
+        Description=Install and update in-cloud component containerd
+        After=network.target
+        Wants=network-online.target
+
+        [Service]
+        Type=oneshot
+        EnvironmentFile=-/etc/default/containerd/download.env
+        ExecStart=/bin/bash -c "/etc/default/containerd/download-script.sh"
+        RemainAfterExit=yes
+
+        [Install]
+        WantedBy=multi-user.target
+        EOF
+      `}),(0,o.jsx)("h4",{children:"Starting the download service"}),(0,o.jsx)(c.A,{language:"bash",children:l.A`
+        systemctl enable containerd-install.service
+        systemctl start containerd-install.service
+      `})]}),(0,o.jsxs)(u.A,{value:"Cloud-init",children:[(0,o.jsx)("h4",{children:"Environment variables"}),(0,o.jsx)(c.A,{language:"yaml",children:l.A`
+      - path: /etc/default/containerd/download.env
+        owner: root:root
+        permissions: '0644'
+        content: |
+          COMPONENT_VERSION="${a.M.containerd.value}"
+          REPOSITORY="${i.m.containerd.baseUrl}"
+    `}),(0,o.jsx)("h4",{children:"Download instructions/Permission setup"}),(0,o.jsx)(c.A,{language:"yaml",children:l.A`
+      - path: /etc/default/containerd/download-script.sh
+        owner: root:root
+        permissions: '0755'
+        content: |
+          ${d.value}
+    `}),(0,o.jsx)("h4",{children:"Download service"}),(0,o.jsx)(c.A,{language:"yaml",children:l.A`
+      - path: /usr/lib/systemd/system/containerd-install.service
+        owner: root:root
+        permissions: '0644'
+        content: |
+          [Unit]
+          Description=Install and update in-cloud component containerd
+          After=network.target
+          Wants=network-online.target
+
+          [Service]
+          Type=oneshot
+          EnvironmentFile=-/etc/default/containerd/download.env
+          ExecStart=/bin/bash -c "/etc/default/containerd/download-script.sh"
+          RemainAfterExit=yes
+
+          [Install]
+          WantedBy=multi-user.target
+    `}),(0,o.jsx)("h4",{children:"Starting the download service"}),(0,o.jsx)(c.A,{language:"bash",children:l.A`
+      - systemctl enable containerd-install.service
+      - systemctl start containerd-install.service
+    `})]})]})}function N(e={}){const{wrapper:t}={...(0,r.R)(),...e.components};return t?(0,o.jsx)(t,{...e,children:(0,o.jsx)(b,{...e})}):b()}},94488(e,t,n){n.r(t),n.d(t,{assets:()=>d,contentTitle:()=>a,default:()=>h,frontMatter:()=>i,metadata:()=>s,toc:()=>u});const s=JSON.parse('{"id":"tech-docs/kubernetes/components/crictl/checkBIN","title":"checkBIN","description":"Installation verification","source":"@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/crictl/checkBIN.mdx","sourceDirName":"tech-docs/kubernetes/components/crictl","slug":"/tech-docs/kubernetes/components/crictl/checkBIN","permalink":"/en/tech-docs/kubernetes/components/crictl/checkBIN","draft":false,"unlisted":false,"tags":[],"version":"current","frontMatter":{}}');var o=n(74848),r=n(28453),l=n(94949),c=n(68741);const i={},a=void 0,d={},u=[];function m(e){const{Details:t}={...(0,r.R)(),...e.components};return t||function(e,t){throw new Error("Expected "+(t?"component":"object")+" `"+e+"` to be defined: you likely forgot to import, pass, or provide it.")}("Details",!0),(0,o.jsxs)(o.Fragment,{children:[(0,o.jsx)("h4",{children:"Installation verification"}),"\n",(0,o.jsxs)(t,{className:"custom-blue-block",children:[(0,o.jsx)("summary",{children:"Installation verification"}),(0,o.jsx)(l.N,{binaryName:"crictl",version:c.M.crictl.value,installSteps:["Installing crictl..."],successMessage:"crictl successfully updated to",grepCommand:"'crictl$'",lsOutput:"-rwxr-xr-x  1 1001  127  58376628 Apr 18  2024 crictl"}),(0,o.jsx)(l.y,{command:"crictl --version",output:"crictl version v1.30.0"})]})]})}function h(e={}){const{wrapper:t}={...(0,r.R)(),...e.components};return t?(0,o.jsx)(t,{...e,children:(0,o.jsx)(m,{...e})}):m(e)}},58041(e,t,n){n.r(t),n.d(t,{assets:()=>a,contentTitle:()=>i,default:()=>m,frontMatter:()=>c,metadata:()=>s,toc:()=>d});const s=JSON.parse('{"id":"tech-docs/kubernetes/components/crictl/lifecycleDownloadComponent","title":"lifecycleDownloadComponent","description":"Component installation steps","source":"@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/crictl/lifecycleDownloadComponent.mdx","sourceDirName":"tech-docs/kubernetes/components/crictl","slug":"/tech-docs/kubernetes/components/crictl/lifecycleDownloadComponent","permalink":"/en/tech-docs/kubernetes/components/crictl/lifecycleDownloadComponent","draft":false,"unlisted":false,"tags":[],"version":"current","frontMatter":{}}');var o=n(74848),r=n(28453),l=n(14256);const c={},i=void 0,a={},d=[...l.toc];function u(e){const t={li:"li",ul:"ul",...(0,r.R)(),...e.components};return(0,o.jsxs)(o.Fragment,{children:[(0,o.jsx)("h3",{children:"Component installation steps"}),"\n",(0,o.jsxs)(t.ul,{children:["\n",(0,o.jsx)(t.li,{children:"Creating working directories."}),"\n",(0,o.jsx)(t.li,{children:"Environment variables."}),"\n",(0,o.jsx)(t.li,{children:"Download instructions."}),"\n",(0,o.jsx)(t.li,{children:"Permission setup."}),"\n",(0,o.jsx)(t.li,{children:"Download service."}),"\n",(0,o.jsx)(t.li,{children:"Starting the download service."}),"\n"]}),"\n",(0,o.jsx)(l.default,{})]})}function m(e={}){const{wrapper:t}={...(0,r.R)(),...e.components};return t?(0,o.jsx)(t,{...e,children:(0,o.jsx)(u,{...e})}):u(e)}},14256(e,t,n){n.r(t),n.d(t,{assets:()=>g,contentTitle:()=>p,default:()=>N,frontMatter:()=>h,metadata:()=>s,toc:()=>O});const s=JSON.parse('{"id":"tech-docs/kubernetes/components/crictl/payload/downloadBIN","title":"downloadBIN","description":"Creating working directories","source":"@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/crictl/payload/downloadBIN.mdx","sourceDirName":"tech-docs/kubernetes/components/crictl/payload","slug":"/tech-docs/kubernetes/components/crictl/payload/downloadBIN","permalink":"/en/tech-docs/kubernetes/components/crictl/payload/downloadBIN","draft":false,"unlisted":false,"tags":[],"version":"current","frontMatter":{}}');var o=n(74848),r=n(28453),l=n(60513),c=n(57390),i=n(58700),a=n(68741);const d={value:l.A`
+      #!/bin/bash
+      set -Eeuo pipefail
+
+
+      COMPONENT_VERSION="$\{COMPONENT_VERSION:-${a.M.crictl.value}}"
+      REPOSITORY="$\{REPOSITORY:-${i.m.crictl.baseUrl}}"
+      PATH_BIN="$\{REPOSITORY}/${i.m.crictl.templateUrlBin}"
+      PATH_SHA256="$\{REPOSITORY}/${i.m.crictl.templateUrlBinCheckSum}"
+      INSTALL_PATH="${i.m.crictl.path}"
+
+
+      LOG_TAG="crictl-installer"
+      TMP_DIR="$(mktemp -d)"
+
+      logger -t "$LOG_TAG" "[INFO] Checking current crictl version..."
+
+      CURRENT_VERSION=$($INSTALL_PATH --version 2>/dev/null | awk '{print $3}' | sed 's/v//') || CURRENT_VERSION="none"
+      COMPONENT_VERSION_CLEAN=$(echo "$COMPONENT_VERSION" | sed 's/^v//')
+
+      logger -t "$LOG_TAG" "[INFO] Current: $CURRENT_VERSION, Target: $COMPONENT_VERSION_CLEAN"
+
+      if [[ "$CURRENT_VERSION" != "$COMPONENT_VERSION_CLEAN" ]]; then
+        logger -t "$LOG_TAG" "[INFO] Download URL: $PATH_BIN"
+        logger -t "$LOG_TAG" "[INFO] Updating crictl to version $COMPONENT_VERSION_CLEAN..."
+
+        cd "$TMP_DIR"
+        logger -t "$LOG_TAG" "[INFO] Working directory: $PWD"
+
+        logger -t "$LOG_TAG" "[INFO] Downloading crictl..."
+        curl -fsSL -o crictl.tar.gz "$PATH_BIN" || { logger -t "$LOG_TAG" "[ERROR] Failed to download crictl"; exit 1; }
+
+        logger -t "$LOG_TAG" "[INFO] Downloading checksum file..."
+        curl -fsSL -o crictl.sha256sum "$PATH_SHA256" || { logger -t "$LOG_TAG" "[ERROR] Failed to download checksum file"; exit 1; }
+
+        logger -t "$LOG_TAG" "[INFO] Verifying checksum..."
+        awk '{print $1"  crictl.tar.gz"}' crictl.sha256sum | sha256sum -c - || { logger -t "$LOG_TAG" "[ERROR] Checksum verification failed!"; exit 1; }
+
+        logger -t "$LOG_TAG" "[INFO] Extracting files..."
+        tar -C "$TMP_DIR" -xvf crictl.tar.gz
+
+        logger -t "$LOG_TAG" "[INFO] Installing crictl..."
+        install -m 755 "$TMP_DIR/crictl" "$INSTALL_PATH"
+
+        logger -t "$LOG_TAG" "[INFO] crictl successfully updated to $COMPONENT_VERSION_CLEAN."
+        rm -rf "$TMP_DIR"
+
+      else
+        logger -t "$LOG_TAG" "[INFO] crictl is already up to date. Skipping installation."
+      fi
+    `};var u=n(9792),m=n(76331);const h={},p=void 0,g={},O=[];function b(e){return(0,o.jsxs)(m.A,{groupId:"install-type",children:[(0,o.jsxs)(u.A,{value:"Bash",children:[(0,o.jsx)("h4",{children:"Creating working directories"}),(0,o.jsx)(c.A,{language:"bash",children:l.A`
+            mkdir -p /etc/default/crictl
+          `}),(0,o.jsx)("h4",{children:"Environment variables"}),(0,o.jsx)(c.A,{language:"bash",children:l.A`
+            cat <<EOF > /etc/default/crictl/download.env
+            COMPONENT_VERSION="${a.M.crictl.value}"
+            REPOSITORY="${i.m.crictl.baseUrl}"
+            EOF
+          `}),(0,o.jsx)("h4",{children:"Download instructions"}),(0,o.jsx)(c.A,{language:"bash",children:l.A`
+            cat <<"EOF" > /etc/default/crictl/download-script.sh
+            ${d.value}
+            EOF
+          `}),(0,o.jsx)("h4",{children:"Permission setup"}),(0,o.jsx)(c.A,{language:"bash",children:l.A`
+            chmod +x /etc/default/crictl/download-script.sh
+          `}),(0,o.jsx)("h4",{children:"Download service"}),(0,o.jsx)(c.A,{language:"bash",children:l.A`
+            cat <<EOF > /usr/lib/systemd/system/crictl-install.service
+            [Unit]
+            Description=Install and update in-cloud component crictl
+            After=network.target
+            Wants=network-online.target
+
+            [Service]
+            Type=oneshot
+            EnvironmentFile=-/etc/default/crictl/download.env
+            ExecStart=/bin/bash -c "/etc/default/crictl/download-script.sh"
+            RemainAfterExit=yes
+
+            [Install]
+            WantedBy=multi-user.target
+            EOF
+          `}),(0,o.jsx)("h4",{children:"Download"}),(0,o.jsx)(c.A,{language:"bash",children:l.A`
+            systemctl enable crictl-install.service
+            systemctl start crictl-install.service
+          `})]}),(0,o.jsxs)(u.A,{value:"Cloud-init",children:[(0,o.jsx)("h4",{children:"Environment variables"}),(0,o.jsx)(c.A,{language:"yaml",children:l.A`
+            - path: /etc/default/crictl/download.env
+              owner: root:root
+              permissions: '0644'
+              content: |
+                COMPONENT_VERSION="${a.M.crictl.value}"
+                REPOSITORY="${i.m.crictl.baseUrl}"
+          `}),(0,o.jsx)("h4",{children:"Download instructions/Permission setup"}),(0,o.jsx)(c.A,{language:"yaml",children:l.A`
+            - path: /etc/default/crictl/download-script.sh
+              owner: root:root
+              permissions: '0755'
+              content: |
+                ${d.value}
+          `}),(0,o.jsx)("h4",{children:"Download service"}),(0,o.jsx)(c.A,{language:"yaml",children:l.A`
+            - path: /usr/lib/systemd/system/crictl-install.service
+              owner: root:root
+              permissions: '0644'
+              content: |
+                [Unit]
+                Description=Install and update in-cloud component crictl
+                After=network.target
+                Wants=network-online.target
+
+                [Service]
+                Type=oneshot
+                EnvironmentFile=-/etc/default/crictl/download.env
+                ExecStart=/bin/bash -c "/etc/default/crictl/download-script.sh"
+                RemainAfterExit=yes
+
+                [Install]
+                WantedBy=multi-user.target
+          `}),(0,o.jsx)("h4",{children:"Download"}),(0,o.jsx)(c.A,{language:"bash",children:l.A`
+            - systemctl enable crictl-install.service
+            - systemctl start crictl-install.service
+          `})]})]})}function N(e={}){const{wrapper:t}={...(0,r.R)(),...e.components};return t?(0,o.jsx)(t,{...e,children:(0,o.jsx)(b,{...e})}):b()}},82121(e,t,n){n.r(t),n.d(t,{assets:()=>d,contentTitle:()=>a,default:()=>h,frontMatter:()=>i,metadata:()=>s,toc:()=>u});const s=JSON.parse('{"id":"tech-docs/kubernetes/components/kubeadm/checkBIN","title":"checkBIN","description":"Installation verification","source":"@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/kubeadm/checkBIN.mdx","sourceDirName":"tech-docs/kubernetes/components/kubeadm","slug":"/tech-docs/kubernetes/components/kubeadm/checkBIN","permalink":"/en/tech-docs/kubernetes/components/kubeadm/checkBIN","draft":false,"unlisted":false,"tags":[],"version":"current","frontMatter":{}}');var o=n(74848),r=n(28453),l=n(94949),c=n(68741);const i={},a=void 0,d={},u=[];function m(e){const{Details:t}={...(0,r.R)(),...e.components};return t||function(e,t){throw new Error("Expected "+(t?"component":"object")+" `"+e+"` to be defined: you likely forgot to import, pass, or provide it.")}("Details",!0),(0,o.jsxs)(o.Fragment,{children:[(0,o.jsx)("h4",{children:"Installation verification"}),"\n",(0,o.jsxs)(t,{className:"custom-blue-block",children:[(0,o.jsx)("summary",{children:"Installation verification"}),(0,o.jsx)(l.N,{binaryName:"kubeadm",version:c.M.kubernetes.value,installSteps:["Extracting files...","Installing binaries..."],successMessage:"kubeadm successfully updated to",grepCommand:"'kubeadm$'",lsOutput:"-rwxr-xr-x  1 root root  50253976 Aug 14  2024 kubeadm"}),(0,o.jsx)(l.y,{command:"kubeadm version",output:'kubeadm version: &version.Info{Major:"1", Minor:"30", GitVersion:"v1.30.4", GitCommit:"a51b3b711150f57ffc1f526a640ec058514ed596", GitTreeState:"clean", BuildDate:"2024-08-14T19:02:46Z", GoVersion:"go1.22.5", Compiler:"gc", Platform:"linux/amd64"}'})]})]})}function h(e={}){const{wrapper:t}={...(0,r.R)(),...e.components};return t?(0,o.jsx)(t,{...e,children:(0,o.jsx)(m,{...e})}):m(e)}},2320(e,t,n){n.r(t),n.d(t,{assets:()=>a,contentTitle:()=>i,default:()=>m,frontMatter:()=>c,metadata:()=>s,toc:()=>d});const s=JSON.parse('{"id":"tech-docs/kubernetes/components/kubeadm/lifecycleDownloadComponent","title":"lifecycleDownloadComponent","description":"Component installation steps","source":"@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/kubeadm/lifecycleDownloadComponent.mdx","sourceDirName":"tech-docs/kubernetes/components/kubeadm","slug":"/tech-docs/kubernetes/components/kubeadm/lifecycleDownloadComponent","permalink":"/en/tech-docs/kubernetes/components/kubeadm/lifecycleDownloadComponent","draft":false,"unlisted":false,"tags":[],"version":"current","frontMatter":{}}');var o=n(74848),r=n(28453),l=n(96336);const c={},i=void 0,a={},d=[...l.toc];function u(e){const t={li:"li",ul:"ul",...(0,r.R)(),...e.components};return(0,o.jsxs)(o.Fragment,{children:[(0,o.jsx)("h3",{children:"Component installation steps"}),"\n",(0,o.jsxs)(t.ul,{children:["\n",(0,o.jsx)(t.li,{children:"Creating working directories."}),"\n",(0,o.jsx)(t.li,{children:"Environment variables."}),"\n",(0,o.jsx)(t.li,{children:"Download instructions."}),"\n",(0,o.jsx)(t.li,{children:"Permission setup."}),"\n",(0,o.jsx)(t.li,{children:"Download service."}),"\n",(0,o.jsx)(t.li,{children:"Starting the download service."}),"\n"]}),"\n",(0,o.jsx)(l.default,{})]})}function m(e={}){const{wrapper:t}={...(0,r.R)(),...e.components};return t?(0,o.jsx)(t,{...e,children:(0,o.jsx)(u,{...e})}):u(e)}},96336(e,t,n){n.r(t),n.d(t,{assets:()=>g,contentTitle:()=>p,default:()=>N,frontMatter:()=>h,metadata:()=>s,toc:()=>O});const s=JSON.parse('{"id":"tech-docs/kubernetes/components/kubeadm/payload/downloadBIN","title":"downloadBIN","description":"Creating working directories","source":"@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/kubeadm/payload/downloadBIN.mdx","sourceDirName":"tech-docs/kubernetes/components/kubeadm/payload","slug":"/tech-docs/kubernetes/components/kubeadm/payload/downloadBIN","permalink":"/en/tech-docs/kubernetes/components/kubeadm/payload/downloadBIN","draft":false,"unlisted":false,"tags":[],"version":"current","frontMatter":{}}');var o=n(74848),r=n(28453),l=n(60513),c=n(57390),i=n(58700),a=n(68741);const d={value:l.A`
+      #!/bin/bash
+      set -Eeuo pipefail
+
+
+      COMPONENT_VERSION="$\{COMPONENT_VERSION:-${a.M.kubernetes.value}}"
+      REPOSITORY="$\{REPOSITORY:-${i.m.kubeadm.baseUrl}}"
+      PATH_BIN="$\{REPOSITORY}/${i.m.kubeadm.templateUrlBin}"
+      PATH_SHA256="$\{REPOSITORY}/${i.m.kubeadm.templateUrlBinCheckSum}"
+      INSTALL_PATH="${i.m.kubeadm.path}"
+
+
+      LOG_TAG="kubeadm-installer"
+      TMP_DIR="$(mktemp -d)"
+
+      logger -t "$LOG_TAG" "[INFO] Checking current kubeadm version..."
+
+      CURRENT_VERSION=$($INSTALL_PATH version -o json 2>/dev/null | jq -r '.clientVersion.gitVersion' | sed 's/^v//') || CURRENT_VERSION="none"
+      COMPONENT_VERSION_CLEAN=$(echo "$COMPONENT_VERSION" | sed 's/^v//')
+
+      logger -t "$LOG_TAG" "[INFO] Current: $CURRENT_VERSION, Target: $COMPONENT_VERSION_CLEAN"
+
+      if [[ "$CURRENT_VERSION" != "$COMPONENT_VERSION_CLEAN" ]]; then
+        logger -t "$LOG_TAG" "[INFO] Download URL: $PATH_BIN"
+        logger -t "$LOG_TAG" "[INFO] Updating kubeadm to version $COMPONENT_VERSION_CLEAN..."
+
+        cd "$TMP_DIR"
+        logger -t "$LOG_TAG" "[INFO] Working directory: $PWD"
+
+        logger -t "$LOG_TAG" "[INFO] Downloading kubeadm..."
+        curl -fsSL -o kubeadm "$PATH_BIN" || { logger -t "$LOG_TAG" "[ERROR] Failed to download kubeadm"; exit 1; }
+
+        logger -t "$LOG_TAG" "[INFO] Downloading checksum file..."
+        curl -fsSL -o kubeadm.sha256sum "$PATH_SHA256" || { logger -t "$LOG_TAG" "[ERROR] Failed to download checksum file"; exit 1; }
+
+        logger -t "$LOG_TAG" "[INFO] Verifying checksum..."
+        awk '{print $1"  kubeadm"}' kubeadm.sha256sum | sha256sum -c - || { logger -t "$LOG_TAG" "[ERROR] Checksum verification failed!"; exit 1; }
+
+        logger -t "$LOG_TAG" "[INFO] Installing kubeadm..."
+        install -m 755 kubeadm "$INSTALL_PATH"
+
+        logger -t "$LOG_TAG" "[INFO] kubeadm successfully updated to $COMPONENT_VERSION_CLEAN."
+        rm -rf "$TMP_DIR"
+
+      else
+        logger -t "$LOG_TAG" "[INFO] kubeadm is already up to date. Skipping installation."
+      fi
+    `};var u=n(9792),m=n(76331);const h={},p=void 0,g={},O=[];function b(e){return(0,o.jsxs)(m.A,{groupId:"install-type",children:[(0,o.jsxs)(u.A,{value:"Bash",children:[(0,o.jsx)("h4",{children:"Creating working directories"}),(0,o.jsx)(c.A,{language:"bash",children:l.A`
+            mkdir -p /etc/default/kubeadm
+          `}),(0,o.jsx)("h4",{children:"Environment variables"}),(0,o.jsx)(c.A,{language:"bash",children:l.A`
+            cat <<EOF > /etc/default/kubeadm/download.env
+            COMPONENT_VERSION="${a.M.kubernetes.value}"
+            REPOSITORY="${i.m.kubeadm.baseUrl}"
+            EOF
+          `}),(0,o.jsx)("h4",{children:"Download instructions"}),(0,o.jsx)(c.A,{language:"bash",children:l.A`
+          cat <<"EOF" > /etc/default/kubeadm/download-script.sh
+          ${d.value}
+          EOF
+        `}),(0,o.jsx)("h4",{children:"Permission setup"}),(0,o.jsx)(c.A,{language:"bash",children:l.A`
+          chmod +x /etc/default/kubeadm/download-script.sh
+        `}),(0,o.jsx)("h4",{children:"Download service"}),(0,o.jsx)(c.A,{language:"bash",children:l.A`
+          cat <<EOF > /usr/lib/systemd/system/kubeadm-install.service
+          [Unit]
+          Description=Install and update kubeadm
+          After=network.target
+          Wants=network-online.target
+
+          [Service]
+          Type=oneshot
+          EnvironmentFile=-/etc/default/kubeadm/download.env
+          ExecStart=/bin/bash -c "/etc/default/kubeadm/download-script.sh"
+          RemainAfterExit=yes
+
+          [Install]
+          WantedBy=multi-user.target
+          EOF
+        `}),(0,o.jsx)("h4",{children:"Download"}),(0,o.jsx)(c.A,{language:"bash",children:l.A`
+          systemctl enable kubeadm-install.service
+          systemctl start kubeadm-install.service
+        `})]}),(0,o.jsxs)(u.A,{value:"Cloud-init",children:[(0,o.jsx)("h4",{children:"Environment variables"}),(0,o.jsx)(c.A,{language:"yaml",children:l.A`
+          - path: /etc/default/kubeadm/download.env
+            owner: root:root
+            permissions: '0644'
+            content: |
+              COMPONENT_VERSION="${a.M.kubernetes.value}"
+              REPOSITORY="${i.m.kubeadm.baseUrl}"
+        `}),(0,o.jsx)("h4",{children:"Download instructions/Permission setup"}),(0,o.jsx)(c.A,{language:"yaml",children:l.A`
+          - path: /etc/default/kubeadm/download-script.sh
+            owner: root:root
+            permissions: '0755'
+            content: |
+              ${d.value}
+        `}),(0,o.jsx)("h4",{children:"Download service"}),(0,o.jsx)(c.A,{language:"yaml",children:l.A`
+          - path: /usr/lib/systemd/system/kubeadm-install.service
+            owner: root:root
+            permissions: '0644'
+            content: |
+              [Unit]
+              Description=Install and update kubeadm
+              After=network.target
+              Wants=network-online.target
+
+              [Service]
+              Type=oneshot
+              EnvironmentFile=-/etc/default/kubeadm/download.env
+              ExecStart=/bin/bash -c "/etc/default/kubeadm/download-script.sh"
+              RemainAfterExit=yes
+
+              [Install]
+              WantedBy=multi-user.target
+        `}),(0,o.jsx)("h4",{children:"Download"}),(0,o.jsx)(c.A,{language:"bash",children:l.A`
+          - systemctl enable kubeadm-install.service
+          - systemctl start kubeadm-install.service
+        `})]})]})}function N(e={}){const{wrapper:t}={...(0,r.R)(),...e.components};return t?(0,o.jsx)(t,{...e,children:(0,o.jsx)(b,{...e})}):b()}},8897(e,t,n){n.r(t),n.d(t,{assets:()=>a,contentTitle:()=>i,default:()=>m,frontMatter:()=>c,metadata:()=>s,toc:()=>d});const s=JSON.parse('{"id":"tech-docs/kubernetes/components/kubectl/checkBIN","title":"checkBIN","description":"Installation verification","source":"@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/kubectl/checkBIN.mdx","sourceDirName":"tech-docs/kubernetes/components/kubectl","slug":"/tech-docs/kubernetes/components/kubectl/checkBIN","permalink":"/en/tech-docs/kubernetes/components/kubectl/checkBIN","draft":false,"unlisted":false,"tags":[],"version":"current","frontMatter":{}}');var o=n(74848),r=n(28453),l=n(90084);const c={},i=void 0,a={},d=[...l.toc];function u(e){const{Details:t}={...(0,r.R)(),...e.components};return t||function(e,t){throw new Error("Expected "+(t?"component":"object")+" `"+e+"` to be defined: you likely forgot to import, pass, or provide it.")}("Details",!0),(0,o.jsxs)(o.Fragment,{children:[(0,o.jsx)("h3",{children:"Installation verification"}),"\n",(0,o.jsxs)(t,{className:"custom-blue-block",children:[(0,o.jsx)("summary",{children:"Installation verification"}),(0,o.jsx)(l.default,{})]})]})}function m(e={}){const{wrapper:t}={...(0,r.R)(),...e.components};return t?(0,o.jsx)(t,{...e,children:(0,o.jsx)(u,{...e})}):u(e)}},4588(e,t,n){n.r(t),n.d(t,{assets:()=>g,contentTitle:()=>p,default:()=>N,frontMatter:()=>h,metadata:()=>s,toc:()=>O});const s=JSON.parse('{"id":"tech-docs/kubernetes/components/kubectl/downloadBIN","title":"downloadBIN","description":"Creating working directories","source":"@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/kubectl/downloadBIN.mdx","sourceDirName":"tech-docs/kubernetes/components/kubectl","slug":"/tech-docs/kubernetes/components/kubectl/downloadBIN","permalink":"/en/tech-docs/kubernetes/components/kubectl/downloadBIN","draft":false,"unlisted":false,"tags":[],"version":"current","frontMatter":{}}');var o=n(74848),r=n(28453),l=n(60513),c=n(57390),i=n(58700),a=n(68741);const d={value:l.A`
+      #!/bin/bash
+      set -Eeuo pipefail
+
+
+      COMPONENT_VERSION="$\{COMPONENT_VERSION:-${a.M.kubernetes.value}}"
+      REPOSITORY="$\{REPOSITORY:-${i.m.kubectl.baseUrl}}"
+      PATH_BIN="$\{REPOSITORY}/${i.m.kubectl.templateUrlBin}"
+      PATH_SHA256="$\{REPOSITORY}/${i.m.kubectl.templateUrlBinCheckSum}"
+      INSTALL_PATH="${i.m.kubectl.path}"
+
+
+      LOG_TAG="kubectl-installer"
+      TMP_DIR="$(mktemp -d)"
+
+      logger -t "$LOG_TAG" "[INFO] Checking current kubectl version..."
+
+      CURRENT_VERSION=$($INSTALL_PATH version -o json --client=true 2>/dev/null | jq -r '.clientVersion.gitVersion' | sed 's/^v//') || CURRENT_VERSION="none"
+      COMPONENT_VERSION_CLEAN=$(echo "$COMPONENT_VERSION" | sed 's/^v//')
+
+      logger -t "$LOG_TAG" "[INFO] Current: $CURRENT_VERSION, Target: $COMPONENT_VERSION_CLEAN"
+
+      if [[ "$CURRENT_VERSION" != "$COMPONENT_VERSION_CLEAN" ]]; then
+        logger -t "$LOG_TAG" "[INFO] Download URL: $PATH_BIN"
+        logger -t "$LOG_TAG" "[INFO] Updating kubectl to version $COMPONENT_VERSION_CLEAN..."
+
+        cd "$TMP_DIR"
+        logger -t "$LOG_TAG" "[INFO] Working directory: $PWD"
+
+        logger -t "$LOG_TAG" "[INFO] Downloading kubectl..."
+        curl -fsSL -o kubectl "$PATH_BIN" || { logger -t "$LOG_TAG" "[ERROR] Failed to download kubectl"; exit 1; }
+
+        logger -t "$LOG_TAG" "[INFO] Downloading checksum file..."
+        curl -fsSL -o kubectl.sha256sum "$PATH_SHA256" || { logger -t "$LOG_TAG" "[ERROR] Failed to download checksum file"; exit 1; }
+
+        logger -t "$LOG_TAG" "[INFO] Verifying checksum..."
+        awk '{print $1"  kubectl"}' kubectl.sha256sum | sha256sum -c - || { logger -t "$LOG_TAG" "[ERROR] Checksum verification failed!"; exit 1; }
+
+        logger -t "$LOG_TAG" "[INFO] Installing kubectl..."
+        install -m 755 kubectl "$INSTALL_PATH"
+
+        logger -t "$LOG_TAG" "[INFO] kubectl successfully updated to $COMPONENT_VERSION_CLEAN."
+        rm -rf "$TMP_DIR"
+
+      else
+        logger -t "$LOG_TAG" "[INFO] kubectl is already up to date. Skipping installation."
+      fi
+    `};var u=n(9792),m=n(76331);const h={},p=void 0,g={},O=[];function b(e){return(0,o.jsxs)(m.A,{groupId:"install-type",children:[(0,o.jsxs)(u.A,{value:"Bash",children:[(0,o.jsx)("h4",{children:"Creating working directories"}),(0,o.jsx)(c.A,{language:"bash",children:l.A`
+            mkdir -p /etc/default/kubectl
+          `}),(0,o.jsx)("h4",{children:"Environment variables"}),(0,o.jsx)(c.A,{language:"bash",children:l.A`
+            cat <<EOF > /etc/default/kubectl/download.env
+            COMPONENT_VERSION="${a.M.kubernetes.value}"
+            REPOSITORY="${i.m.kubectl.baseUrl}"
+            EOF
+          `}),(0,o.jsx)("h4",{children:"Download instructions"}),(0,o.jsx)(c.A,{language:"bash",children:l.A`
+          cat <<"EOF" > /etc/default/kubectl/download-script.sh
+          ${d.value}
+          EOF
+        `}),(0,o.jsx)("h4",{children:"Permission setup"}),(0,o.jsx)(c.A,{language:"bash",children:l.A`
+          chmod +x /etc/default/kubectl/download-script.sh
+        `}),(0,o.jsx)("h4",{children:"Download service"}),(0,o.jsx)(c.A,{language:"bash",children:l.A`
+          cat <<EOF > /usr/lib/systemd/system/kubectl-install.service
+          [Unit]
+          Description=Install and update kubectl
+          After=network.target
+          Wants=network-online.target
+
+          [Service]
+          Type=oneshot
+          EnvironmentFile=-/etc/default/kubectl/download.env
+          ExecStart=/bin/bash -c "/etc/default/kubectl/download-script.sh"
+          RemainAfterExit=yes
+
+          [Install]
+          WantedBy=multi-user.target
+          EOF
+        `}),(0,o.jsx)("h4",{children:"Download"}),(0,o.jsx)(c.A,{language:"bash",children:l.A`
+          systemctl enable kubectl-install.service
+          systemctl start kubectl-install.service
+        `})]}),(0,o.jsxs)(u.A,{value:"Cloud-init",children:[(0,o.jsx)("h4",{children:"Environment variables"}),(0,o.jsx)(c.A,{language:"yaml",children:l.A`
+          - path: /etc/default/kubectl/download.env
+            owner: root:root
+            permissions: '0644'
+            content: |
+              COMPONENT_VERSION="${a.M.kubernetes.value}"
+              REPOSITORY="${i.m.kubectl.baseUrl}"
+        `}),(0,o.jsx)("h4",{children:"Download instructions/Permission setup"}),(0,o.jsx)(c.A,{language:"yaml",children:l.A`
+          - path: /etc/default/kubectl/download-script.sh
+            owner: root:root
+            permissions: '0755'
+            content: |
+              ${d.value}
+        `}),(0,o.jsx)("h4",{children:"Download service"}),(0,o.jsx)(c.A,{language:"yaml",children:l.A`
+          - path: /usr/lib/systemd/system/kubectl-install.service
+            owner: root:root
+            permissions: '0644'
+            content: |
+              [Unit]
+              Description=Install and update kubectl
+              After=network.target
+              Wants=network-online.target
+
+              [Service]
+              Type=oneshot
+              EnvironmentFile=-/etc/default/kubectl/download.env
+              ExecStart=/bin/bash -c "/etc/default/kubectl/download-script.sh"
+              RemainAfterExit=yes
+
+              [Install]
+              WantedBy=multi-user.target
+        `}),(0,o.jsx)("h4",{children:"Download"}),(0,o.jsx)(c.A,{language:"bash",children:l.A`
+          - systemctl enable kubectl-install.service
+          - systemctl start kubectl-install.service
+        `})]})]})}function N(e={}){const{wrapper:t}={...(0,r.R)(),...e.components};return t?(0,o.jsx)(t,{...e,children:(0,o.jsx)(b,{...e})}):b()}},81127(e,t,n){n.r(t),n.d(t,{assets:()=>a,contentTitle:()=>i,default:()=>m,frontMatter:()=>c,metadata:()=>s,toc:()=>d});const s=JSON.parse('{"id":"tech-docs/kubernetes/components/kubectl/lifecycleDownloadComponent","title":"lifecycleDownloadComponent","description":"Component installation steps","source":"@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/kubectl/lifecycleDownloadComponent.mdx","sourceDirName":"tech-docs/kubernetes/components/kubectl","slug":"/tech-docs/kubernetes/components/kubectl/lifecycleDownloadComponent","permalink":"/en/tech-docs/kubernetes/components/kubectl/lifecycleDownloadComponent","draft":false,"unlisted":false,"tags":[],"version":"current","frontMatter":{}}');var o=n(74848),r=n(28453),l=n(4588);const c={},i=void 0,a={},d=[...l.toc];function u(e){const t={li:"li",ul:"ul",...(0,r.R)(),...e.components};return(0,o.jsxs)(o.Fragment,{children:[(0,o.jsx)("h3",{children:"Component installation steps"}),"\n",(0,o.jsxs)(t.ul,{children:["\n",(0,o.jsx)(t.li,{children:"Creating working directories."}),"\n",(0,o.jsx)(t.li,{children:"Environment variables."}),"\n",(0,o.jsx)(t.li,{children:"Download instructions."}),"\n",(0,o.jsx)(t.li,{children:"Permission setup."}),"\n",(0,o.jsx)(t.li,{children:"Download service."}),"\n",(0,o.jsx)(t.li,{children:"Starting the download service."}),"\n"]}),"\n",(0,o.jsx)(l.default,{})]})}function m(e={}){const{wrapper:t}={...(0,r.R)(),...e.components};return t?(0,o.jsx)(t,{...e,children:(0,o.jsx)(u,{...e})}):u(e)}},90084(e,t,n){n.r(t),n.d(t,{assets:()=>d,contentTitle:()=>a,default:()=>h,frontMatter:()=>i,metadata:()=>s,toc:()=>u});const s=JSON.parse('{"id":"tech-docs/kubernetes/components/kubectl/lifecycleDownloadStatus","title":"lifecycleDownloadStatus","description":"Executable files","source":"@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/kubectl/lifecycleDownloadStatus.mdx","sourceDirName":"tech-docs/kubernetes/components/kubectl","slug":"/tech-docs/kubernetes/components/kubectl/lifecycleDownloadStatus","permalink":"/en/tech-docs/kubernetes/components/kubectl/lifecycleDownloadStatus","draft":false,"unlisted":false,"tags":[],"version":"current","frontMatter":{}}');var o=n(74848),r=n(28453),l=n(94949),c=n(68741);const i={},a=void 0,d={},u=[];function m(e){return(0,o.jsxs)(o.Fragment,{children:[(0,o.jsx)("h3",{children:"Executable files"}),"\n",(0,o.jsx)(l.N,{binaryName:"kubectl",version:c.M.kubernetes.value,installSteps:["Installing kubectl..."],successMessage:"kubectl successfully updated to",grepCommand:"'kubectl$'",lsOutput:"-rwxr-xr-x  1 root root  51454104 Aug 14  2024 kubectl"}),"\n",(0,o.jsx)("h3",{children:"Executable file version"}),"\n",(0,o.jsx)(l.y,{command:"kubectl version",output:"Client Version: v1.30.4\nKustomize Version: v5.0.4-0.20230601165947-6ce0bf390ce3"})]})}function h(e={}){const{wrapper:t}={...(0,r.R)(),...e.components};return t?(0,o.jsx)(t,{...e,children:(0,o.jsx)(m,{...e})}):m()}},96569(e,t,n){n.r(t),n.d(t,{assets:()=>d,contentTitle:()=>a,default:()=>h,frontMatter:()=>i,metadata:()=>s,toc:()=>u});const s=JSON.parse('{"id":"tech-docs/kubernetes/components/kubelet/checkBIN","title":"checkBIN","description":"Installation check","source":"@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/kubelet/checkBIN.mdx","sourceDirName":"tech-docs/kubernetes/components/kubelet","slug":"/tech-docs/kubernetes/components/kubelet/checkBIN","permalink":"/en/tech-docs/kubernetes/components/kubelet/checkBIN","draft":false,"unlisted":false,"tags":[],"version":"current","frontMatter":{}}');var o=n(74848),r=n(28453),l=n(94949),c=n(68741);const i={},a=void 0,d={},u=[];function m(e){const{Details:t}={...(0,r.R)(),...e.components};return t||function(e,t){throw new Error("Expected "+(t?"component":"object")+" `"+e+"` to be defined: you likely forgot to import, pass, or provide it.")}("Details",!0),(0,o.jsxs)(o.Fragment,{children:[(0,o.jsx)("h4",{children:"Installation check"}),"\n",(0,o.jsxs)(t,{className:"custom-blue-block",children:[(0,o.jsx)("summary",{children:"Installation check"}),(0,o.jsx)(l.N,{binaryName:"kubelet",version:c.M.kubernetes.value,installSteps:["Installing kubelet..."],successMessage:"kubelet successfully updated to",grepCommand:"'kubelet$'",lsOutput:"-rwxr-xr-x  1 root root 100125080 Aug 14  2024 kubelet"}),(0,o.jsx)(l.y,{command:"kubelet --version",output:"Kubernetes v1.30.4"})]})]})}function h(e={}){const{wrapper:t}={...(0,r.R)(),...e.components};return t?(0,o.jsx)(t,{...e,children:(0,o.jsx)(m,{...e})}):m(e)}},19417(e,t,n){n.r(t),n.d(t,{assets:()=>a,contentTitle:()=>i,default:()=>m,frontMatter:()=>c,metadata:()=>s,toc:()=>d});const s=JSON.parse('{"id":"tech-docs/kubernetes/components/kubelet/lifecycleDownloadComponent","title":"lifecycleDownloadComponent","description":"Component installation steps","source":"@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/kubelet/lifecycleDownloadComponent.mdx","sourceDirName":"tech-docs/kubernetes/components/kubelet","slug":"/tech-docs/kubernetes/components/kubelet/lifecycleDownloadComponent","permalink":"/en/tech-docs/kubernetes/components/kubelet/lifecycleDownloadComponent","draft":false,"unlisted":false,"tags":[],"version":"current","frontMatter":{}}');var o=n(74848),r=n(28453),l=n(86426);const c={},i=void 0,a={},d=[...l.toc];function u(e){const t={li:"li",ul:"ul",...(0,r.R)(),...e.components};return(0,o.jsxs)(o.Fragment,{children:[(0,o.jsx)("h3",{children:"Component installation steps"}),"\n",(0,o.jsxs)(t.ul,{children:["\n",(0,o.jsx)(t.li,{children:"Creating working directories."}),"\n",(0,o.jsx)(t.li,{children:"Environment variables."}),"\n",(0,o.jsx)(t.li,{children:"Download instructions."}),"\n",(0,o.jsx)(t.li,{children:"Permissions setup."}),"\n",(0,o.jsx)(t.li,{children:"Download service."}),"\n",(0,o.jsx)(t.li,{children:"Starting the download service."}),"\n"]}),"\n",(0,o.jsx)(l.default,{})]})}function m(e={}){const{wrapper:t}={...(0,r.R)(),...e.components};return t?(0,o.jsx)(t,{...e,children:(0,o.jsx)(u,{...e})}):u(e)}},86426(e,t,n){n.r(t),n.d(t,{assets:()=>g,contentTitle:()=>p,default:()=>N,frontMatter:()=>h,metadata:()=>s,toc:()=>O});const s=JSON.parse('{"id":"tech-docs/kubernetes/components/kubelet/payload/downloadBIN","title":"downloadBIN","description":"Creating working directories","source":"@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/kubelet/payload/downloadBIN.mdx","sourceDirName":"tech-docs/kubernetes/components/kubelet/payload","slug":"/tech-docs/kubernetes/components/kubelet/payload/downloadBIN","permalink":"/en/tech-docs/kubernetes/components/kubelet/payload/downloadBIN","draft":false,"unlisted":false,"tags":[],"version":"current","frontMatter":{}}');var o=n(74848),r=n(28453),l=n(60513),c=n(57390),i=n(58700),a=n(68741);const d={value:l.A`
+      #!/bin/bash
+      set -Eeuo pipefail
+
+
+      COMPONENT_VERSION="$\{COMPONENT_VERSION:-${a.M.kubernetes.value}}"
+      REPOSITORY="$\{REPOSITORY:-${i.m.kubelet.baseUrl}}"
+      PATH_BIN="$\{REPOSITORY}/${i.m.kubelet.templateUrlBin}"
+      PATH_SHA256="$\{REPOSITORY}/${i.m.kubelet.templateUrlBinCheckSum}"
+      INSTALL_PATH="${i.m.kubelet.path}"
+
+
+      LOG_TAG="kubelet-installer"
+      TMP_DIR="$(mktemp -d)"
+
+      logger -t "$LOG_TAG" "[INFO] Checking current kubelet version..."
+
+      CURRENT_VERSION=$($INSTALL_PATH --version 2>/dev/null | awk '{print $2}' | sed 's/v//') || CURRENT_VERSION="none"
+      COMPONENT_VERSION_CLEAN=$(echo "$COMPONENT_VERSION" | sed 's/^v//')
+
+      logger -t "$LOG_TAG" "[INFO] Current: $CURRENT_VERSION, Target: $COMPONENT_VERSION_CLEAN"
+
+      if [[ "$CURRENT_VERSION" != "$COMPONENT_VERSION_CLEAN" ]]; then
+        logger -t "$LOG_TAG" "[INFO] Download URL: $PATH_BIN"
+        logger -t "$LOG_TAG" "[INFO] Updating kubelet to version $COMPONENT_VERSION_CLEAN..."
+
+        cd "$TMP_DIR"
+        logger -t "$LOG_TAG" "[INFO] Working directory: $PWD"
+
+        logger -t "$LOG_TAG" "[INFO] Downloading kubelet..."
+        curl -fsSL -o kubelet "$PATH_BIN" || { logger -t "$LOG_TAG" "[ERROR] Failed to download kubelet"; exit 1; }
+
+        logger -t "$LOG_TAG" "[INFO] Downloading checksum file..."
+        curl -fsSL -o kubelet.sha256sum "$PATH_SHA256" || { logger -t "$LOG_TAG" "[ERROR] Failed to download checksum file"; exit 1; }
+
+        logger -t "$LOG_TAG" "[INFO] Verifying checksum..."
+        awk '{print $1"  kubelet"}' kubelet.sha256sum | sha256sum -c - || { logger -t "$LOG_TAG" "[ERROR] Checksum verification failed!"; exit 1; }
+
+        logger -t "$LOG_TAG" "[INFO] Installing kubelet..."
+        install -m 755 kubelet "$INSTALL_PATH"
+
+        logger -t "$LOG_TAG" "[INFO] kubelet successfully updated to $COMPONENT_VERSION_CLEAN."
+        rm -rf "$TMP_DIR"
+
+      else
+        logger -t "$LOG_TAG" "[INFO] kubelet is already up to date. Skipping installation."
+      fi
+    `};var u=n(9792),m=n(76331);const h={},p=void 0,g={},O=[];function b(e){return(0,o.jsxs)(m.A,{groupId:"install-type",children:[(0,o.jsxs)(u.A,{value:"Bash",children:[(0,o.jsx)("h4",{children:"Creating working directories"}),(0,o.jsx)(c.A,{language:"bash",children:l.A`
+            mkdir -p /etc/default/kubelet
+          `}),(0,o.jsx)("h4",{children:"Environment variables"}),(0,o.jsx)(c.A,{language:"bash",children:l.A`
+            cat <<EOF > /etc/default/kubelet/download.env
+            COMPONENT_VERSION="${a.M.kubernetes.value}"
+            REPOSITORY="${i.m.kubelet.baseUrl}"
+            EOF
+          `}),(0,o.jsx)("h4",{children:"Download instructions"}),(0,o.jsx)(c.A,{language:"bash",children:l.A`
+          cat <<"EOF" > /etc/default/kubelet/download-script.sh
+          ${d.value}
+          EOF
+        `}),(0,o.jsx)("h4",{children:"Permissions setup"}),(0,o.jsx)(c.A,{language:"bash",children:l.A`
+          chmod +x /etc/default/kubelet/download-script.sh
+        `}),(0,o.jsx)("h4",{children:"Download service"}),(0,o.jsx)(c.A,{language:"bash",children:l.A`
+          cat <<EOF > /usr/lib/systemd/system/kubelet-install.service
+          [Unit]
+          Description=Install and update kubelet
+          After=network.target
+          Wants=network-online.target
+
+          [Service]
+          Type=oneshot
+          EnvironmentFile=-/etc/default/kubelet/download.env
+          ExecStart=/bin/bash -c "/etc/default/kubelet/download-script.sh"
+          RemainAfterExit=yes
+
+          [Install]
+          WantedBy=multi-user.target
+          EOF
+        `}),(0,o.jsx)("h4",{children:"Download"}),(0,o.jsx)(c.A,{language:"bash",children:l.A`
+          systemctl enable kubelet-install.service
+          systemctl start kubelet-install.service
+        `})]}),(0,o.jsxs)(u.A,{value:"Cloud-init",children:[(0,o.jsx)("h4",{children:"Environment variables"}),(0,o.jsx)(c.A,{language:"yaml",children:l.A`
+          - path: /etc/default/kubelet/download.env
+            owner: root:root
+            permissions: '0644'
+            content: |
+              COMPONENT_VERSION="${a.M.kubernetes.value}"
+              REPOSITORY="${i.m.kubelet.baseUrl}"
+        `}),(0,o.jsx)("h4",{children:"Download instructions/Permissions setup"}),(0,o.jsx)(c.A,{language:"yaml",children:l.A`
+          - path: /etc/default/kubelet/download-script.sh
+            owner: root:root
+            permissions: '0755'
+            content: |
+              ${d.value}
+        `}),(0,o.jsx)("h4",{children:"Download service"}),(0,o.jsx)(c.A,{language:"yaml",children:l.A`
+          - path: /usr/lib/systemd/system/kubelet-install.service
+            owner: root:root
+            permissions: '0644'
+            content: |
+              [Unit]
+              Description=Install and update kubelet
+              After=network.target
+              Wants=network-online.target
+
+              [Service]
+              Type=oneshot
+              EnvironmentFile=-/etc/default/kubelet/download.env
+              ExecStart=/bin/bash -c "/etc/default/kubelet/download-script.sh"
+              RemainAfterExit=yes
+
+              [Install]
+              WantedBy=multi-user.target
+        `}),(0,o.jsx)("h4",{children:"Download"}),(0,o.jsx)(c.A,{language:"bash",children:l.A`
+          - systemctl enable kubelet-install.service
+          - systemctl start kubelet-install.service
+        `})]})]})}function N(e={}){const{wrapper:t}={...(0,r.R)(),...e.components};return t?(0,o.jsx)(t,{...e,children:(0,o.jsx)(b,{...e})}):b()}},46140(e,t,n){n.r(t),n.d(t,{assets:()=>a,contentTitle:()=>i,default:()=>m,frontMatter:()=>c,metadata:()=>s,toc:()=>d});const s=JSON.parse('{"id":"tech-docs/kubernetes/components/runc/checkBIN","title":"checkBIN","description":"Installation check","source":"@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/runc/checkBIN.mdx","sourceDirName":"tech-docs/kubernetes/components/runc","slug":"/tech-docs/kubernetes/components/runc/checkBIN","permalink":"/en/tech-docs/kubernetes/components/runc/checkBIN","draft":false,"unlisted":false,"tags":[],"version":"current","frontMatter":{}}');var o=n(74848),r=n(28453),l=n(41284);const c={},i=void 0,a={},d=[...l.toc];function u(e){const{Details:t}={...(0,r.R)(),...e.components};return t||function(e,t){throw new Error("Expected "+(t?"component":"object")+" `"+e+"` to be defined: you likely forgot to import, pass, or provide it.")}("Details",!0),(0,o.jsxs)(o.Fragment,{children:[(0,o.jsx)("h4",{children:"Installation check"}),"\n",(0,o.jsxs)(t,{className:"custom-blue-block",children:[(0,o.jsx)("summary",{children:"Installation check"}),(0,o.jsx)(l.default,{})]})]})}function m(e={}){const{wrapper:t}={...(0,r.R)(),...e.components};return t?(0,o.jsx)(t,{...e,children:(0,o.jsx)(u,{...e})}):u(e)}},17255(e,t,n){n.r(t),n.d(t,{assets:()=>g,contentTitle:()=>p,default:()=>N,frontMatter:()=>h,metadata:()=>s,toc:()=>O});const s=JSON.parse('{"id":"tech-docs/kubernetes/components/runc/downloadBIN","title":"downloadBIN","description":"Creating working directories","source":"@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/runc/downloadBIN.mdx","sourceDirName":"tech-docs/kubernetes/components/runc","slug":"/tech-docs/kubernetes/components/runc/downloadBIN","permalink":"/en/tech-docs/kubernetes/components/runc/downloadBIN","draft":false,"unlisted":false,"tags":[],"version":"current","frontMatter":{}}');var o=n(74848),r=n(28453),l=n(60513),c=n(57390),i=n(58700),a=n(68741);const d={value:l.A`
+      #!/bin/bash
+      set -Eeuo pipefail
+
+
+      COMPONENT_VERSION="$\{COMPONENT_VERSION:-${a.M.runc.value}}"
+      REPOSITORY="$\{REPOSITORY:-https://github.com/opencontainers/runc/releases/download}"
+      PATH_BIN="$\{REPOSITORY}/${i.m.runc.templateUrlBin}"
+      PATH_SHA256="$\{REPOSITORY}/${i.m.runc.templateUrlBinCheckSum}"
+      INSTALL_PATH="${i.m.runc.path}"
+
+      LOG_TAG="runc-installer"
+      TMP_DIR="$(mktemp -d)"
+
+      logger -t "$LOG_TAG" "[INFO] Checking current runc version..."
+
+      CURRENT_VERSION=$($INSTALL_PATH --version 2>/dev/null | head -n1 | awk '{print $NF}') || CURRENT_VERSION="none"
+      COMPONENT_VERSION_CLEAN=$(echo "$COMPONENT_VERSION" | sed 's/^v//')
+
+      logger -t "$LOG_TAG" "[INFO] Current: $CURRENT_VERSION, Target: $COMPONENT_VERSION_CLEAN"
+
+      if [[ "$CURRENT_VERSION" != "$COMPONENT_VERSION_CLEAN" ]]; then
+        logger -t "$LOG_TAG" "[INFO] Download URL: $PATH_BIN"
+        logger -t "$LOG_TAG" "[INFO] Updating runc to version $COMPONENT_VERSION..."
+
+        cd "$TMP_DIR"
+        logger -t "$LOG_TAG" "[INFO] Working directory: $PWD"
+
+        logger -t "$LOG_TAG" "[INFO] Downloading runc..."
+        curl -fsSL -o runc.amd64 "$PATH_BIN" || { logger -t "$LOG_TAG" "[ERROR] Failed to download runc"; exit 1; }
+
+        logger -t "$LOG_TAG" "[INFO] Downloading checksum file..."
+        curl -fsSL -o runc.sha256sum "$PATH_SHA256" || { logger -t "$LOG_TAG" "[ERROR] Failed to download checksum file"; exit 1; }
+
+        logger -t "$LOG_TAG" "[INFO] Verifying checksum..."
+        grep "runc.amd64" runc.sha256sum | sha256sum -c - || { logger -t "$LOG_TAG" "[ERROR] Checksum verification failed!"; exit 1; }
+
+        logger -t "$LOG_TAG" "[INFO] Installing runc..."
+        install -m 755 runc.amd64 "$INSTALL_PATH"
+
+        logger -t "$LOG_TAG" "[INFO] runc successfully updated to $COMPONENT_VERSION."
+        rm -rf "$TMP_DIR"
+
+      else
+        logger -t "$LOG_TAG" "[INFO] runc is already up to date. Skipping installation."
+      fi
+    `};var u=n(9792),m=n(76331);const h={},p=void 0,g={},O=[];function b(e){return(0,o.jsxs)(m.A,{groupId:"install-type",children:[(0,o.jsxs)(u.A,{value:"Bash",children:[(0,o.jsx)("h4",{children:"Creating working directories"}),(0,o.jsx)(c.A,{language:"bash",children:l.A`
+      mkdir -p /etc/default/runc
+    `}),(0,o.jsx)("h4",{children:"Environment variables"}),(0,o.jsx)(c.A,{language:"bash",children:l.A`
+      cat <<EOF > /etc/default/runc/download.env
+      COMPONENT_VERSION="${a.M.runc.value}"
+      REPOSITORY="${i.m.runc.baseUrl}"
+      EOF
+    `}),(0,o.jsx)("h4",{children:"Download instructions"}),(0,o.jsx)(c.A,{language:"bash",children:l.A`
+      cat <<"EOF" > /etc/default/runc/download-script.sh
+      ${d.value}
+      EOF
+    `}),(0,o.jsx)("h4",{children:"Permissions setup"}),(0,o.jsx)(c.A,{language:"bash",children:l.A`
+      chmod +x /etc/default/runc/download-script.sh
+    `}),(0,o.jsx)("h4",{children:"Download service"}),(0,o.jsx)(c.A,{language:"bash",children:l.A`
+      cat <<EOF > /usr/lib/systemd/system/runc-install.service
+      [Unit]
+      Description=Install and update in-cloud component runc
+      After=network.target
+      Wants=network-online.target
+
+      [Service]
+      Type=oneshot
+      EnvironmentFile=-/etc/default/runc/download.env
+      ExecStart=/bin/bash -c "/etc/default/runc/download-script.sh"
+      RemainAfterExit=yes
+
+      [Install]
+      WantedBy=multi-user.target
+      EOF
+    `}),(0,o.jsx)("h4",{children:"Download"}),(0,o.jsx)(c.A,{language:"bash",children:l.A`
+      systemctl enable runc-install.service
+      systemctl start runc-install.service
+    `})]}),(0,o.jsxs)(u.A,{value:"Cloud-init",children:[(0,o.jsx)("h4",{children:"Environment variables"}),(0,o.jsx)(c.A,{language:"yaml",children:l.A`
+      - path: /etc/default/runc/download.env
+        owner: root:root
+        permissions: '0644'
+        content: |
+          COMPONENT_VERSION="${a.M.runc.value}"
+          REPOSITORY="${i.m.runc.baseUrl}"
+    `}),(0,o.jsx)("h4",{children:"Download instructions/Permissions setup"}),(0,o.jsx)(c.A,{language:"yaml",children:l.A`
+      - path: /etc/default/runc/download-script.sh
+        owner: root:root
+        permissions: '0755'
+        content: |
+          ${d.value}
+    `}),(0,o.jsx)("h4",{children:"Download service"}),(0,o.jsx)(c.A,{language:"yaml",children:l.A`
+      - path: /usr/lib/systemd/system/runc-install.service
+        owner: root:root
+        permissions: '0644'
+        content: |
+          [Unit]
+          Description=Install and update in-cloud component runc
+          After=network.target
+          Wants=network-online.target
+
+          [Service]
+          Type=oneshot
+          EnvironmentFile=-/etc/default/runc/download.env
+          ExecStart=/bin/bash -c "/etc/default/runc/download-script.sh"
+          RemainAfterExit=yes
+
+          [Install]
+          WantedBy=multi-user.target
+    `}),(0,o.jsx)("h4",{children:"Download"}),(0,o.jsx)(c.A,{language:"bash",children:l.A`
+      - systemctl enable runc-install.service
+      - systemctl start runc-install.service
+    `})]})]})}function N(e={}){const{wrapper:t}={...(0,r.R)(),...e.components};return t?(0,o.jsx)(t,{...e,children:(0,o.jsx)(b,{...e})}):b()}},17698(e,t,n){n.r(t),n.d(t,{assets:()=>a,contentTitle:()=>i,default:()=>m,frontMatter:()=>c,metadata:()=>s,toc:()=>d});const s=JSON.parse('{"id":"tech-docs/kubernetes/components/runc/lifecycleDownloadComponent","title":"lifecycleDownloadComponent","description":"Component installation steps","source":"@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/runc/lifecycleDownloadComponent.mdx","sourceDirName":"tech-docs/kubernetes/components/runc","slug":"/tech-docs/kubernetes/components/runc/lifecycleDownloadComponent","permalink":"/en/tech-docs/kubernetes/components/runc/lifecycleDownloadComponent","draft":false,"unlisted":false,"tags":[],"version":"current","frontMatter":{}}');var o=n(74848),r=n(28453),l=n(17255);const c={},i=void 0,a={},d=[...l.toc];function u(e){const t={li:"li",ul:"ul",...(0,r.R)(),...e.components};return(0,o.jsxs)(o.Fragment,{children:[(0,o.jsx)("h3",{children:"Component installation steps"}),"\n",(0,o.jsxs)(t.ul,{children:["\n",(0,o.jsx)(t.li,{children:"Creating working directories."}),"\n",(0,o.jsx)(t.li,{children:"Environment variables."}),"\n",(0,o.jsx)(t.li,{children:"Download instructions."}),"\n",(0,o.jsx)(t.li,{children:"Permissions setup."}),"\n",(0,o.jsx)(t.li,{children:"Download service."}),"\n",(0,o.jsx)(t.li,{children:"Starting the download service."}),"\n"]}),"\n",(0,o.jsx)(l.default,{})]})}function m(e={}){const{wrapper:t}={...(0,r.R)(),...e.components};return t?(0,o.jsx)(t,{...e,children:(0,o.jsx)(u,{...e})}):u(e)}},41284(e,t,n){n.r(t),n.d(t,{assets:()=>d,contentTitle:()=>a,default:()=>h,frontMatter:()=>i,metadata:()=>s,toc:()=>u});const s=JSON.parse('{"id":"tech-docs/kubernetes/components/runc/lifecycleDownloadStatus","title":"lifecycleDownloadStatus","description":"Executable files","source":"@site/i18n/en/docusaurus-plugin-content-docs/current/tech-docs/kubernetes/components/runc/lifecycleDownloadStatus.mdx","sourceDirName":"tech-docs/kubernetes/components/runc","slug":"/tech-docs/kubernetes/components/runc/lifecycleDownloadStatus","permalink":"/en/tech-docs/kubernetes/components/runc/lifecycleDownloadStatus","draft":false,"unlisted":false,"tags":[],"version":"current","frontMatter":{}}');var o=n(74848),r=n(28453),l=n(94949),c=n(68741);const i={},a=void 0,d={},u=[];function m(e){return(0,o.jsxs)(o.Fragment,{children:[(0,o.jsx)("h3",{children:"Executable files"}),"\n",(0,o.jsx)(l.N,{binaryName:"runc",version:c.M.runc.value,installSteps:["Installing runc..."],successMessage:"runc successfully updated to",grepCommand:"'runc$'",lsOutput:"-rwxr-xr-x  1 root root  10709696 Jan 23  2024 runc"}),"\n",(0,o.jsx)("h3",{children:"Executable file version"}),"\n",(0,o.jsx)(l.y,{command:"runc --version",output:"runc version 1.1.12\ncommit: v1.1.12-0-g51d5e946\nspec: 1.0.2-dev\ngo: go1.20.13\nlibseccomp: 2.5.4"})]})}function h(e={}){const{wrapper:t}={...(0,r.R)(),...e.components};return t?(0,o.jsx)(t,{...e,children:(0,o.jsx)(m,{...e})}):m()}},27653(e,t,n){n.d(t,{A:()=>y});var s=n(96540),o=n(74848);function r(e){const{mdxAdmonitionTitle:t,rest:n}=function(e){const t=s.Children.toArray(e),n=t.find(e=>s.isValidElement(e)&&"mdxAdmonitionTitle"===e.type),r=t.filter(e=>e!==n),l=n?.props.children;return{mdxAdmonitionTitle:l,rest:r.length>0?(0,o.jsx)(o.Fragment,{children:r}):null}}(e.children),r=e.title??t;return{...e,...r&&{title:r},children:n}}var l=n(34164),c=n(21312),i=n(17559);const a="admonition_xJq3",d="admonitionHeading_Gvgb",u="admonitionIcon_Rf37",m="admonitionContent_BuS1";function h({type:e,className:t,children:n}){return(0,o.jsx)("div",{className:(0,l.A)(i.G.common.admonition,i.G.common.admonitionType(e),a,t),children:n})}function p({icon:e,title:t}){return(0,o.jsxs)("div",{className:d,children:[(0,o.jsx)("span",{className:u,children:e}),t]})}function g({children:e}){return e?(0,o.jsx)("div",{className:m,children:e}):null}function O(e){const{type:t,icon:n,title:s,children:r,className:l}=e;return(0,o.jsxs)(h,{type:t,className:l,children:[s||n?(0,o.jsx)(p,{title:s,icon:n}):null,(0,o.jsx)(g,{children:r})]})}function b(e){return(0,o.jsx)("svg",{viewBox:"0 0 14 16",...e,children:(0,o.jsx)("path",{fillRule:"evenodd",d:"M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"})})}const N={icon:(0,o.jsx)(b,{}),title:(0,o.jsx)(c.A,{id:"theme.admonition.note",description:"The default label used for the Note admonition (:::note)",children:"note"})};function x(e){return(0,o.jsx)(O,{...N,...e,className:(0,l.A)("alert alert--secondary",e.className),children:e.children})}function f(e){return(0,o.jsx)("svg",{viewBox:"0 0 12 16",...e,children:(0,o.jsx)("path",{fillRule:"evenodd",d:"M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 1.22 0 2.36.42 3.22 1.19C10.55 2.94 11 3.94 11 5c0 .66-.44 1.78-.86 2.48zM4 14h5c-.23 1.14-1.3 2-2.5 2s-2.27-.86-2.5-2z"})})}const k={icon:(0,o.jsx)(f,{}),title:(0,o.jsx)(c.A,{id:"theme.admonition.tip",description:"The default label used for the Tip admonition (:::tip)",children:"tip"})};function v(e){return(0,o.jsx)(O,{...k,...e,className:(0,l.A)("alert alert--success",e.className),children:e.children})}function E(e){return(0,o.jsx)("svg",{viewBox:"0 0 14 16",...e,children:(0,o.jsx)("path",{fillRule:"evenodd",d:"M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"})})}const I={icon:(0,o.jsx)(E,{}),title:(0,o.jsx)(c.A,{id:"theme.admonition.info",description:"The default label used for the Info admonition (:::info)",children:"info"})};function j(e){return(0,o.jsx)(O,{...I,...e,className:(0,l.A)("alert alert--info",e.className),children:e.children})}function A(e){return(0,o.jsx)("svg",{viewBox:"0 0 16 16",...e,children:(0,o.jsx)("path",{fillRule:"evenodd",d:"M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"})})}const T={icon:(0,o.jsx)(A,{}),title:(0,o.jsx)(c.A,{id:"theme.admonition.warning",description:"The default label used for the Warning admonition (:::warning)",children:"warning"})};function w(e){return(0,o.jsx)("svg",{viewBox:"0 0 12 16",...e,children:(0,o.jsx)("path",{fillRule:"evenodd",d:"M5.05.31c.81 2.17.41 3.38-.52 4.31C3.55 5.67 1.98 6.45.9 7.98c-1.45 2.05-1.7 6.53 3.53 7.7-2.2-1.16-2.67-4.52-.3-6.61-.61 2.03.53 3.33 1.94 2.86 1.39-.47 2.3.53 2.27 1.67-.02.78-.31 1.44-1.13 1.81 3.42-.59 4.78-3.42 4.78-5.56 0-2.84-2.53-3.22-1.25-5.61-1.52.13-2.03 1.13-1.89 2.75.09 1.08-1.02 1.8-1.86 1.33-.67-.41-.66-1.19-.06-1.78C8.18 5.31 8.68 2.45 5.05.32L5.03.3l.02.01z"})})}const R={icon:(0,o.jsx)(w,{}),title:(0,o.jsx)(c.A,{id:"theme.admonition.danger",description:"The default label used for the Danger admonition (:::danger)",children:"danger"})};const $={icon:(0,o.jsx)(A,{}),title:(0,o.jsx)(c.A,{id:"theme.admonition.caution",description:"The default label used for the Caution admonition (:::caution)",children:"caution"})};const _={...{note:x,tip:v,info:j,warning:function(e){return(0,o.jsx)(O,{...T,...e,className:(0,l.A)("alert alert--warning",e.className),children:e.children})},danger:function(e){return(0,o.jsx)(O,{...R,...e,className:(0,l.A)("alert alert--danger",e.className),children:e.children})}},...{secondary:e=>(0,o.jsx)(x,{title:"secondary",...e}),important:e=>(0,o.jsx)(j,{title:"important",...e}),success:e=>(0,o.jsx)(v,{title:"success",...e}),caution:function(e){return(0,o.jsx)(O,{...$,...e,className:(0,l.A)("alert alert--warning",e.className),children:e.children})}}};function y(e){const t=r(e),n=(s=t.type,_[s]||(console.warn(`No admonition component found for admonition type "${s}". Using Info as fallback.`),_.info));var s;return(0,o.jsx)(n,{...t})}},94949(e,t,n){n.d(t,{N:()=>i,y:()=>c});n(96540);var s=n(57390),o=n(27653),r=n(21312),l=n(74848);const c=({command:e,output:t})=>(0,l.jsxs)(l.Fragment,{children:[(0,l.jsx)(s.A,{language:"bash",children:e}),(0,l.jsx)(o.A,{type:"note",title:(0,r.T)({id:"common.commandOutput",message:"\u0412\u044b\u0432\u043e\u0434 \u043a\u043e\u043c\u0430\u043d\u0434\u044b"}),children:(0,l.jsx)(s.A,{language:"bash",children:t})})]}),i=({binaryName:e,version:t,installSteps:n,successMessage:c,grepCommand:i,lsOutput:a})=>{const d=[`***** [INFO] Checking current ${e} version...`,`***** [INFO] Current: none, Target: ${t}`,"***** [INFO] Download URL: https://*******",`***** [INFO] Updating ${e} to version ${t}...`,"***** [INFO] Working directory: /tmp/tmp.*****",`***** [INFO] Downloading ${e}...`,"***** [INFO] Downloading checksum file...","***** [INFO] Verifying checksum...",...n.map(e=>`***** [INFO] ${e}`),`***** [INFO] ${c} ${t}.`].join("\n");return(0,l.jsxs)(l.Fragment,{children:[(0,l.jsx)(s.A,{language:"bash",children:`journalctl -t ${e}-installer`}),(0,l.jsx)(o.A,{type:"note",title:(0,r.T)({id:"common.commandOutput",message:"\u0412\u044b\u0432\u043e\u0434 \u043a\u043e\u043c\u0430\u043d\u0434\u044b"}),children:(0,l.jsx)(s.A,{language:"text",children:d})}),(0,l.jsx)(s.A,{language:"bash",children:`ls -la /usr/local/bin/ | grep ${i}`}),(0,l.jsx)(o.A,{type:"note",title:(0,r.T)({id:"common.commandOutput",message:"\u0412\u044b\u0432\u043e\u0434 \u043a\u043e\u043c\u0430\u043d\u0434\u044b"}),children:(0,l.jsx)(s.A,{language:"bash",children:a})})]})}},68741(e,t,n){n.d(t,{M:()=>s});const s={kubernetes:{value:"v1.30.4"},etcd:{value:"3.5.12-0"},etcdctl:{value:"v3.5.12"},runc:{value:"v1.1.12"},containerd:{value:"1.7.19"},crictl:{value:"v1.30.0"}}},58700(e,t,n){n.d(t,{m:()=>s});const s={kubelet:{path:"/usr/local/bin/kubelet",templateUrlBin:"${COMPONENT_VERSION}/bin/linux/amd64/kubelet",templateUrlBinCheckSum:"${COMPONENT_VERSION}/bin/linux/amd64/kubelet.sha256",baseUrl:"https://dl.k8s.io"},kubectl:{path:"/usr/local/bin/kubectl",templateUrlBin:"${COMPONENT_VERSION}/bin/linux/amd64/kubectl",templateUrlBinCheckSum:"${COMPONENT_VERSION}/bin/linux/amd64/kubectl.sha256",baseUrl:"https://dl.k8s.io"},kubeadm:{path:"/usr/local/bin/kubeadm",templateUrlBin:"${COMPONENT_VERSION}/bin/linux/amd64/kubeadm",templateUrlBinCheckSum:"${COMPONENT_VERSION}/bin/linux/amd64/kubeadm.sha256",baseUrl:"https://dl.k8s.io"},runc:{path:"/usr/local/bin/runc",templateUrlBin:"${COMPONENT_VERSION}/runc.amd64",templateUrlBinCheckSum:"${COMPONENT_VERSION}/runc.sha256sum",baseUrl:"https://github.com/opencontainers/runc/releases/download"},containerd:{path:"/usr/local/bin/",templateUrlBin:"v${COMPONENT_VERSION}/containerd-${COMPONENT_VERSION}-linux-amd64.tar.gz",templateUrlBinCheckSum:"v${COMPONENT_VERSION}/containerd-${COMPONENT_VERSION}-linux-amd64.tar.gz.sha256sum",baseUrl:"https://github.com/containerd/containerd/releases/download"},crictl:{path:"/usr/local/bin/crictl",templateUrlBin:"${COMPONENT_VERSION}/crictl-${COMPONENT_VERSION}-linux-amd64.tar.gz",templateUrlBinCheckSum:"${COMPONENT_VERSION}/crictl-${COMPONENT_VERSION}-linux-amd64.tar.gz.sha256",baseUrl:"https://github.com/kubernetes-sigs/cri-tools/releases/download"},etcdctl:{path:"/usr/local/bin/",templateUrlBin:"${COMPONENT_VERSION}/etcd-${COMPONENT_VERSION}-linux-amd64.tar.gz",templateUrlBinCheckSum:"${COMPONENT_VERSION}/SHA256SUMS",baseUrl:"https://github.com/etcd-io/etcd/releases/download"}}}}]);

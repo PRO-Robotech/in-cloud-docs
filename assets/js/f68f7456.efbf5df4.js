@@ -1,0 +1,7 @@
+"use strict";(globalThis.webpackChunkdocumentation=globalThis.webpackChunkdocumentation||[]).push([[7761],{60224(e,r,s){s.r(r),s.d(r,{assets:()=>h,contentTitle:()=>d,default:()=>p,frontMatter:()=>i,metadata:()=>t,toc:()=>k});const t=JSON.parse('{"id":"tech-docs/kubernetes/setup-environments/allWorkerTabs","title":"allWorkerTabs","description":"{dedent`","source":"@site/docs/tech-docs/kubernetes/setup-environments/allWorkerTabs.mdx","sourceDirName":"tech-docs/kubernetes/setup-environments","slug":"/tech-docs/kubernetes/setup-environments/allWorkerTabs","permalink":"/tech-docs/kubernetes/setup-environments/allWorkerTabs","draft":false,"unlisted":false,"tags":[],"version":"current","frontMatter":{}}');var n=s(74848),o=s(28453),a=s(9792),c=s(76331),l=s(60513),u=s(57390);const i={},d=void 0,h={},k=[];function b(e){return(0,n.jsxs)(c.A,{children:[(0,n.jsx)(a.A,{value:"worker-1",children:(0,n.jsx)(u.A,{language:"bash",children:l.A`
+        export HOST_NAME=worker-1
+      `})}),(0,n.jsx)(a.A,{value:"worker-2",children:(0,n.jsx)(u.A,{language:"bash",children:l.A`
+        export HOST_NAME=worker-2
+      `})}),(0,n.jsx)(a.A,{value:"worker-3",children:(0,n.jsx)(u.A,{language:"bash",children:l.A`
+        export HOST_NAME=worker-3
+      `})})]})}function p(e={}){const{wrapper:r}={...(0,o.R)(),...e.components};return r?(0,n.jsx)(r,{...e,children:(0,n.jsx)(b,{...e})}):b()}}}]);

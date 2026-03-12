@@ -1,0 +1,18 @@
+"use strict";(globalThis.webpackChunkdocumentation=globalThis.webpackChunkdocumentation||[]).push([[5725],{27043(e,n,s){s.r(n),s.d(n,{assets:()=>p,contentTitle:()=>h,default:()=>x,frontMatter:()=>d,metadata:()=>t,toc:()=>m});const t=JSON.parse('{"id":"tech-docs/kubernetes/setup-environments/base-os/baseOSSetupComponentDP","title":"baseOSSetupComponentDP","description":"\u0411\u0430\u0437\u043e\u0432\u044b\u0435 \u043d\u0430\u0441\u0442\u0440\u043e\u0439\u043a\u0438 \u0443\u0437\u043b\u043e\u0432","source":"@site/docs/tech-docs/kubernetes/setup-environments/base-os/baseOSSetupComponentDP.mdx","sourceDirName":"tech-docs/kubernetes/setup-environments/base-os","slug":"/tech-docs/kubernetes/setup-environments/base-os/baseOSSetupComponentDP","permalink":"/tech-docs/kubernetes/setup-environments/base-os/baseOSSetupComponentDP","draft":false,"unlisted":false,"tags":[],"version":"current","frontMatter":{}}');var a=s(74848),o=s(28453),r=s(44349),l=s(9792),u=s(76331),c=s(57390),i=s(60513);const d={},h=void 0,p={},m=[];function b(e){const n={li:"li",ul:"ul",...(0,o.R)(),...e.components};return(0,a.jsxs)(a.Fragment,{children:[(0,a.jsx)("h4",{children:"\u0411\u0430\u0437\u043e\u0432\u044b\u0435 \u043d\u0430\u0441\u0442\u0440\u043e\u0439\u043a\u0438 \u0443\u0437\u043b\u043e\u0432"}),"\n",(0,a.jsxs)(n.ul,{children:["\n",(0,a.jsx)(n.li,{children:"\u041f\u0435\u0440\u0435\u043c\u0435\u043d\u043d\u044b\u0435 \u043e\u043a\u0440\u0443\u0436\u0435\u043d\u0438\u044f \u0443\u0437\u043b\u0430."}),"\n",(0,a.jsx)(n.li,{children:"\u0418\u0437\u043c\u0435\u043d\u0435\u043d\u0438\u0435 \u0438\u043c\u0435\u043d\u0438 \u0443\u0437\u043b\u0430."}),"\n",(0,a.jsx)(n.li,{children:"\u0423\u0441\u0442\u0430\u043d\u043e\u0432\u043a\u0430 \u0437\u0430\u0432\u0438\u0441\u0438\u043c\u043e\u0441\u0442\u0435\u0439."}),"\n"]}),"\n",(0,a.jsx)("h4",{children:"\u041f\u0435\u0440\u0435\u043c\u0435\u043d\u043d\u044b\u0435 \u043e\u043a\u0440\u0443\u0436\u0435\u043d\u0438\u044f \u0443\u0437\u043b\u0430"}),"\n",(0,a.jsx)(c.A,{language:"bash",children:i.A`
+  export HOST_NAME=worker-1
+  export CLUSTER_NAME="${r.M.clusterName.value}"
+  export BASE_DOMAIN="${r.M.kubernetesBaseDomain.value}"
+  export CLUSTER_DOMAIN="${r.M.kubernetesClusterDomain.value}"
+  export FULL_HOST_NAME="${r.M.virtualMachineFullName.value}"
+`}),"\n",(0,a.jsx)("h4",{children:"\u0418\u0437\u043c\u0435\u043d\u0435\u043d\u0438\u0435 \u0438\u043c\u0435\u043d\u0438 \u0443\u0437\u043b\u0430"}),"\n",(0,a.jsx)(c.A,{language:"bash",children:i.A`
+  hostnamectl set-hostname $\{FULL_HOST_NAME}
+`}),"\n",(0,a.jsx)("h4",{children:"\u0423\u0441\u0442\u0430\u043d\u043e\u0432\u043a\u0430 \u0437\u0430\u0432\u0438\u0441\u0438\u043c\u043e\u0441\u0442\u0435\u0439"}),"\n",(0,a.jsxs)(u.A,{groupId:"install-pkg",children:[(0,a.jsx)(l.A,{value:"apt",children:(0,a.jsx)(c.A,{language:"bash",children:i.A`
+        sudo apt update
+        sudo apt install -y conntrack socat jq tree
+      `})}),(0,a.jsx)(l.A,{value:"yum",children:(0,a.jsx)(c.A,{language:"bash",children:i.A`
+        sudo yum update
+        sudo yum install -y conntrack-tools socat jq tree
+      `})}),(0,a.jsx)(l.A,{value:"dnf",children:(0,a.jsx)(c.A,{language:"bash",children:i.A`
+        sudo dnf update
+        sudo dnf install -y conntrack-tools socat jq tree
+      `})})]})]})}function x(e={}){const{wrapper:n}={...(0,o.R)(),...e.components};return n?(0,a.jsx)(n,{...e,children:(0,a.jsx)(b,{...e})}):b(e)}}}]);
