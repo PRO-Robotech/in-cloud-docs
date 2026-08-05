@@ -6,7 +6,7 @@ export const CUSTOM_VALUE: TCustomValueItems = {
     value: 'registry.k8s.io',
   },
   pausedImage: {
-    value: 'pause:3.9',
+    value: 'pause:3.10.1',
   },
   kubernetesBaseDomain: {
     value: 'example.com',

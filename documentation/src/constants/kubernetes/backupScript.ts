@@ -61,7 +61,7 @@ export const BACKUP_SCRIPT: TCustomValueItems = {
 
     # === Уникальная дата до секунд ===
     DATE_NOW="$(date +%Y%m%d)"
-    ETCD_RESTORE_DIR="/var/lib/etcd-restore-\${DATE_NOW}"
+    ETCD_RESTORE_DIR="/var/lib/etcd-restore-\${DATE_NOW}/restore"
 
     install -d -m 0755 "$\{ETCD_RESTORE_DIR}"
 
@@ -122,7 +122,7 @@ export const BACKUP_SCRIPT: TCustomValueItems = {
     # Имя временного контейнера
     RESTORE_CONTAINER_ID="etcd-restore-$\{DATE_NOW}"
 
-    IMAGE="europe-docker.pkg.dev/gardener-project/releases/gardener/etcdbrctl:v0.36.3"
+    IMAGE="europe-docker.pkg.dev/gardener-project/releases/gardener/etcdbrctl:v0.43.0"
     CONTAINER_ID="etcd-restore-$\{DATE_NOW}"
 
     # Запускаем контейнер с пробросом всего необходимого

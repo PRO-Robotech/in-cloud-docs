@@ -2,21 +2,21 @@ import { TComponentsVersionItems } from '../../customTypes/componentsVersion'
 
 export const COMPONENTS_VERSION: TComponentsVersionItems = {
   kubernetes: {
-    value: 'v1.30.4',
+    value: 'v1.34.5',
   },
   etcd: {
-    value: '3.5.12-0',
+    value: '3.6.5-0',
   },
   etcdctl: {
-    value: 'v3.5.12',
+    value: 'v3.6.5',
   },
   runc: {
-    value: 'v1.1.12',
+    value: 'v1.3.4',
   },
   containerd: {
-    value: '1.7.19',
+    value: '2.1.6',
   },
   crictl: {
-    value: 'v1.30.0',
+    value: 'v1.33.0',
   },
 }
